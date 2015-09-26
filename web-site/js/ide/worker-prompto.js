@@ -147,31 +147,22 @@ function handleUpdate(worker, previous, current, dialect, listener) {
     if(worker.$core)
         return;
     // don't annotate previous content
-    var old_decls = parse(previous, dialect);
+    var previousListener = new AnnotatingErrorListener();
+    var old_decls = parse(previous, dialect, previousListener); // we'll ignore these errors but let's catch them
     // only update catalog and appContext if syntax is correct
     if (listener.problems.length == 0) {
         // only update catalog if event results from an edit
         if(previous!=current) {
-            // discover new declarations
-            var new_context = prompto.runtime.Context.newGlobalContext();
-            new_context.problemListener = new AnnotatingErrorListener(); // we'll ignore these errors but let's catch them;
-            new_decls.register(new_context);
-            var added = new_context.getLocalCatalog();
-            // don't register core duplicates
-            filterOutCoreFromCatalog(added);
-            // discover old declarations
-            var old_context = prompto.runtime.Context.newGlobalContext();
-            old_context.problemListener = new AnnotatingErrorListener(); // we'll ignore these errors but let's catch them
-            old_decls.register(old_context);
-            var removed = old_context.getLocalCatalog();
-            // don't unregister core duplicates
-            filterOutCoreFromCatalog(removed);
-            var delta = {
-                removed: removed,
-                added: added
-            };
-            // filter out code only changes
+            var added = readCatalog(new_decls);
+            // only remove previous decls if parsing successful. This is because
+            // if previous parsing failed, we never actually reached this section
+            var removed = [];
+            if(previousListener.problems.length == 0)
+                removed = readCatalog(old_decls);
+            // compute delta
+            var delta = { removed: removed, added: added };
             var count = filterOutDuplicates(delta);
+            // done
             if (count)
                 worker.sender.emit("catalog", delta);
         }
@@ -182,6 +173,15 @@ function handleUpdate(worker, previous, current, dialect, listener) {
         new_decls.check(appContext);
         appContext.problemListener = null;
     }
+}
+
+function readCatalog(decls) {
+    var context = prompto.runtime.Context.newGlobalContext();
+    context.problemListener = new AnnotatingErrorListener(); // we'll ignore these errors but let's catch them
+    decls.register(context);
+    var catalog = context.getLocalCatalog();
+    filterOutCoreFromCatalog(catalog);
+    return catalog;
 }
 
 function filterOutCoreFromCatalog(catalog) {
@@ -234,13 +234,13 @@ function filterOutDuplicatesInMethods(a, b) {
         sortBy(a, "name");
         sortBy(b, "name");
         for(var i=0,j=0;i<a.length && j<b.length;) {
-            if(a[i]===b[j]) {
+            if(a[i].name===b[j].name) {
                 filterOutDuplicatesInLists(a.protos, b.protos);
                 if(!a.protos || !a.protos.length)
                     a.splice(i,1);
                 if(!b.protos || !b.protos.length)
                     b.splice(j,1);
-            } else if(a[i]>b[j]) {
+            } else if(a[i].name>b[j].name) {
                 j++;
             } else {
                 i++;

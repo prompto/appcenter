@@ -50,7 +50,7 @@
         };
 
         function makeId(name) {
-            return name.replace(" ", "_").replace('"',"").replace("'","");
+            return name.replace(" ", "_").replace('"',"").replace("'","").replace("(","").replace(")","").replace(",","");
         }
 
         function sortBy(a, f) {
@@ -114,12 +114,11 @@
         }
 
         function attributesRemoved(removed) {
-            for(var i=0;i<removed.length;i++) {
-                var name = removed[i];
-                var j = findBy(catalog.attributes, 'name', name);
-                catalog.attributes.splice(j, 1);
+            removed.apply(function(name) {
+                var idx = findBy(catalog.attributes, 'name', name);
+                catalog.attributes.splice(idx, 1);
                 $('#attribute_' + name).remove();
-            }
+            });
         }
 
         function categoriesAdded(added, core) {
@@ -137,12 +136,11 @@
         }
 
         function categoriesRemoved(removed) {
-            for(var i=0;i<removed.length;i++) {
-                var name = removed[i];
-                var j = findBy(catalog.categories, 'name', name);
-                catalog.categories.splice(j, 1);
+            removed.apply(function(name) {
+                var idx = findBy(catalog.categories, 'name', name);
+                catalog.categories.splice(idx, 1);
                 $('#category_' + name).remove();
-            }
+            });
         }
 
         function testsAdded(added, core) {
@@ -160,12 +158,11 @@
         }
 
         function testsRemoved(removed) {
-            for(var i=0;i<removed.length;i++) {
-                var name = removed[i];
-                var j = findBy(catalog.tests, 'name', name);
-                catalog.tests.splice(j, 1);
+            removed.apply(function(name) {
+                var idx = findBy(catalog.tests, 'name', name);
+                catalog.tests.splice(idx, 1);
                 $('#test_' + makeId(name)).remove();
-            }
+            });
         }
 
         function htmlForMethods(methods) {
@@ -175,7 +172,9 @@
                     html.push("<li class='list-group-item");
                     if(method.core)
                         html.push(" core");
-                    $.merge(html, ["'><label class='tree-toggler nav-header'>",
+                    $.merge(html, ["' id='method_",
+                                    method.name,
+                                    "'><label class='tree-toggler nav-header'>",
                                     method.name,
                                     "</label>",
                                     "<ul class='list-group method' id='method_",
@@ -185,7 +184,9 @@
                         html.push("<li class='list-group-item");
                         if(method.core)
                             html.push(" core");
-                        $.merge(html, ["'><a core='",
+                        $.merge(html, ["' id='proto_",
+                                        makeId(proto),
+                                        "'><a core='",
                                         method.core,
                                         "'>",
                                         proto,
@@ -216,7 +217,8 @@
 
         function methodsAdded(added, core) {
             added = added.map(function(method) { method.core = core; return method; });
-            catalog.methods = sortBy(catalog.methods.concat(added), 'name');
+            added = catalog.methods.concat(added);
+            catalog.methods = sortBy(added, 'name');
             var html = htmlForMethods(catalog.methods);
             $('#methods').html(html);
            // need to reinstall click handlers
@@ -237,6 +239,22 @@
         }
 
         function methodsRemoved(removed) {
+            removed.map(function(method) {
+                var idx1 = findBy(catalog.methods, 'name', method.name);
+                if(idx1>=0) {
+                    var map = catalog.methods[idx1];
+                    method.protos.map(function(proto) {
+                        var idx2 = map.protos.indexOf(proto);
+                        if(idx2>=0)
+                            map.protos.splice(idx2, 1);
+                        $("#method_" + method.name + " > #proto_" + makeId(proto)).remove();
+                    });
+                    if(map.protos.length==0) {
+                        catalog.methods.splice(idx1, 1);
+                        $("#method_" + method.name).remove();
+                    }
+                }
+           });
         }
 
         function catalogUpdated(delta) {
