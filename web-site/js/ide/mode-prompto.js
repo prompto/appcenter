@@ -162,7 +162,8 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
             });
 
             this.$worker.on("value", function(v) {
-                session.$editor.setValue(v.data, -1);
+                session.setValue(v.data);
+                session.$editor.focus();
                 session.$editor.focus();
             });
 

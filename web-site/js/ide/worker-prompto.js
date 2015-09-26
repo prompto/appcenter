@@ -10,6 +10,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         this.setTimeout(200);
         this.$dialect = null;
         this.$value = this.doc.getValue();
+        this.$core = false;
         this.onInit();
     };
 
@@ -32,15 +33,18 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         var worker = this;
         safe_require(function() {
             var value = "";
+            var core = false;
             if(id) {
                 var decl = getDeclaration(id);
                 var dialect = prompto.parser.Dialect[worker.$dialect];
                 var writer = new prompto.utils.CodeWriter(dialect, appContext);
                 decl.toDialect(writer);
                 value = writer.toString();
+                core = id.core || false;
             }
             // remember value since it does not result from an edit
             worker.$value = value;
+            worker.$core = core;
             worker.sender.emit("value", worker.$value);
         });
     };
@@ -58,7 +62,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         var annotations = [];
         var errorListener = new AnnotatingErrorListener(annotations);
         var worker = this;
-        safe_require(function() { annotateAndUpdateCatalog(worker, worker.$value, value, worker.$dialect, errorListener); });
+        safe_require(function() { handleUpdate(worker, worker.$value, value, worker.$dialect, errorListener); });
         this.$value = value;
         this.sender.emit("annotate", annotations);
     };
@@ -135,27 +139,38 @@ function parse(input, dialect, listener) {
     return parser.parse();
 }
 
-// method for updating context on user input
-function annotateAndUpdateCatalog(worker, previous, current, dialect, listener) {
-    // don't annotate previous content
-    var old_decls = parse(previous, dialect);
+// method for updating context, catalog and annotations on document update
+function handleUpdate(worker, previous, current, dialect, listener) {
     // always annotate new content
     var new_decls = parse(current, dialect, listener);
+    // if this is a core object, we're done
+    if(worker.$core)
+        return;
+    // don't annotate previous content
+    var old_decls = parse(previous, dialect);
     // only update catalog and appContext if syntax is correct
     if (listener.problems.length == 0) {
         // only update catalog if event results from an edit
         if(previous!=current) {
-            // update catalog using isolated contexts
+            // discover new declarations
             var new_context = prompto.runtime.Context.newGlobalContext();
             new_context.problemListener = new AnnotatingErrorListener(); // we'll ignore these errors but let's catch them;
             new_decls.register(new_context);
+            var added = new_context.getLocalCatalog();
+            // don't register core duplicates
+            shrinkCatalog(added);
+            // discover old declarations
             var old_context = prompto.runtime.Context.newGlobalContext();
             old_context.problemListener = new AnnotatingErrorListener(); // we'll ignore these errors but let's catch them
             old_decls.register(old_context);
+            var removed = old_context.getLocalCatalog();
+            // don't unregister core duplicates
+            shrinkCatalog(removed);
             var delta = {
-                removed: old_context.getLocalCatalog(),
-                added: new_context.getLocalCatalog()
+                removed: removed,
+                added: added
             };
+            // filter out code only changes
             var count = shrinkDelta(delta);
             if (count)
                 worker.sender.emit("catalog", delta);
@@ -169,8 +184,24 @@ function annotateAndUpdateCatalog(worker, previous, current, dialect, listener) 
     }
 }
 
+function shrinkCatalog(catalog) {
+    shrinkCore(catalog, "attributes");
+    // TODO shrink methods
+    shrinkCore(catalog, "categories");
+    shrinkCore(catalog, "tests");
+}
+
+function shrinkCore(catalog, type) {
+    if(catalog[type]) {
+        catalog[type] = catalog[type].filter(function (name) {
+            return coreContext.contextForDeclaration(name) == null;
+        });
+    }
+}
+
 function shrinkDelta(delta) {
     var length = shrinkLists(delta.removed.attributes, delta.added.attributes);
+    // TODO shrink methods
     length += shrinkLists(delta.removed.categories, delta.added.categories);
     length += shrinkLists(delta.removed.tests, delta.added.tests);
     return length;
