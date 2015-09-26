@@ -158,20 +158,20 @@ function handleUpdate(worker, previous, current, dialect, listener) {
             new_decls.register(new_context);
             var added = new_context.getLocalCatalog();
             // don't register core duplicates
-            shrinkCatalog(added);
+            filterOutCoreFromCatalog(added);
             // discover old declarations
             var old_context = prompto.runtime.Context.newGlobalContext();
             old_context.problemListener = new AnnotatingErrorListener(); // we'll ignore these errors but let's catch them
             old_decls.register(old_context);
             var removed = old_context.getLocalCatalog();
             // don't unregister core duplicates
-            shrinkCatalog(removed);
+            filterOutCoreFromCatalog(removed);
             var delta = {
                 removed: removed,
                 added: added
             };
             // filter out code only changes
-            var count = shrinkDelta(delta);
+            var count = filterOutDuplicates(delta);
             if (count)
                 worker.sender.emit("catalog", delta);
         }
@@ -184,30 +184,83 @@ function handleUpdate(worker, previous, current, dialect, listener) {
     }
 }
 
-function shrinkCatalog(catalog) {
-    shrinkCore(catalog, "attributes");
-    // TODO shrink methods
-    shrinkCore(catalog, "categories");
-    shrinkCore(catalog, "tests");
+function filterOutCoreFromCatalog(catalog) {
+    filterOutCoreObjects(catalog, "attributes");
+    filterOutCoreMethods(catalog);
+    filterOutCoreObjects(catalog, "categories");
+    filterOutCoreObjects(catalog, "tests");
 }
 
-function shrinkCore(catalog, type) {
-    if(catalog[type]) {
+function filterOutCoreMethods(catalog) {
+    if(catalog.methods)
+        catalog.methods = catalog.methods.filter(function (method) {
+            var context = coreContext.contextForDeclaration(method.name);
+            if(context==null)
+                return true;
+            // if core has such method, need to check protos
+            if(method.protos.length==1)
+                return false;
+            var map = coreContext.getRegisteredDeclaration(method.name);
+            method.protos = method.protos.filter(function (proto) {
+                return !map.hasPrototype(proto);
+            });
+            return method.protos.length>0;
+       });
+}
+
+function filterOutCoreObjects(catalog, type) {
+    if(catalog[type])
         catalog[type] = catalog[type].filter(function (name) {
             return coreContext.contextForDeclaration(name) == null;
         });
-    }
 }
 
-function shrinkDelta(delta) {
-    var length = shrinkLists(delta.removed.attributes, delta.added.attributes);
-    // TODO shrink methods
-    length += shrinkLists(delta.removed.categories, delta.added.categories);
-    length += shrinkLists(delta.removed.tests, delta.added.tests);
+function filterOutDuplicates(delta) {
+    var length = filterOutDuplicatesInLists(delta.removed.attributes, delta.added.attributes);
+    length += filterOutDuplicatesInMethods(delta.removed.methods, delta.added.methods)
+    length += filterOutDuplicatesInLists(delta.removed.categories, delta.added.categories);
+    length += filterOutDuplicatesInLists(delta.removed.tests, delta.added.tests);
     return length;
 }
 
-function shrinkLists(a, b) {
+function sortBy(a, f) {
+    return a.sort(function(i1,i2) {
+        return (i1[f]>i2[f]) ? 1 : ((i1[f]<i2[f]) ? -1 : 0);
+    });
+}
+
+function filterOutDuplicatesInMethods(a, b) {
+    if(a && b) {
+        sortBy(a, "name");
+        sortBy(b, "name");
+        for(var i=0,j=0;i<a.length && j<b.length;) {
+            if(a[i]===b[j]) {
+                filterOutDuplicatesInLists(a.protos, b.protos);
+                if(!a.protos || !a.protos.length)
+                    a.splice(i,1);
+                if(!b.protos || !b.protos.length)
+                    b.splice(j,1);
+            } else if(a[i]>b[j]) {
+                j++;
+            } else {
+                i++;
+            }
+        }
+        var length = a.length + b.length;
+        if(!a.length)
+            delete a;
+        if(!b.length)
+            delete b;
+        return length;
+    } else if(a)
+        return a.length;
+    else if(b)
+        return b.length;
+    else
+        return 0;
+}
+
+function filterOutDuplicatesInLists(a, b) {
     if(a && b) {
         a.sort();
         b.sort();
@@ -222,10 +275,10 @@ function shrinkLists(a, b) {
             }
         }
         var length = a.length + b.length;
-        if(!length) {
+        if(!a.length)
             delete a;
+        if(!b.length)
             delete b;
-        }
         return length;
     } else if(a)
         return a.length;
@@ -301,11 +354,11 @@ function getDeclaration(id) {
     if(id.test)
         return appContext.getRegisteredTest(id.test);
     else if(id.method) {
-        var decl = appContext.getRegisteredDeclaration(id.method);
+        var map = appContext.getRegisteredDeclaration(id.method);
         if(id.proto)
-            return decl.methods[id.proto];
-        else for(var proto in decl.methods)
-            return decl.methods[proto];
+            return map.protos[id.proto];
+        else for(var proto in map.protos)
+            return map.protos[proto];
     } else {
         var name = id.attribute || id.category
         return appContext.getRegisteredDeclaration(name);

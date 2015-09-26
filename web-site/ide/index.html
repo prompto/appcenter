@@ -168,30 +168,58 @@
             }
         }
 
+        function htmlForMethods(methods) {
+            var html = [];
+            methods.map(function(method) {
+                if(method.protos.length>1) {
+                    html.push("<li class='list-group-item");
+                    if(method.core)
+                        html.push(" core");
+                    $.merge(html, ["'><label class='tree-toggler nav-header'>",
+                                    method.name,
+                                    "</label>",
+                                    "<ul class='list-group method' id='method_",
+                                    method.name,
+                                    "'>" ]);
+                    method.protos.map( function(proto) {
+                        html.push("<li class='list-group-item");
+                        if(method.core)
+                            html.push(" core");
+                        $.merge(html, ["'><a core='",
+                                        method.core,
+                                        "'>",
+                                        proto,
+                                        "</a>" ]);
+                        if(method.core)
+                            html.push("<span class='glyphicon glyphicon-cog'>");
+                        html.push("</li>");
+
+                    });
+                    html.push("</ul></li>");
+                } else {
+                    html.push("<li class='list-group-item");
+                    if (method.core)
+                        html.push(" core");
+                    $.merge(html, ["'><a core='",
+                        method.core,
+                        "'>",
+                        method.name,
+                        "</a>"]);
+                    if(method.core)
+                        html.push("<span class='glyphicon glyphicon-cog'>");
+                    html.push("</li>");
+                }
+            });
+            return html.join("");
+
+        }
+
         function methodsAdded(added, core) {
             added = added.map(function(method) { method.core = core; return method; });
             catalog.methods = sortBy(catalog.methods.concat(added), 'name');
-            $('#methods').html(catalog.methods.map(function(method) {
-                if(method.protos) {
-                    var lis = [ "<li class='list-group-item" + (method.core ? " core" : "") + "'>",
-                                "<label class='tree-toggler nav-header'>",
-                                method.name,
-                                "</label>",
-                                "<ul class='list-group method' id='method_",
-                                method.name,
-                                "'>" ];
-                    lis = lis.concat(method.protos.map( function(proto) {
-                        return "<li class='list-group-item" +
-                                (method.core ? " core" : "") + "'><a core='" +
-                                method.core + "'>" + proto + "</a></li>"
-                    }));
-                    lis = lis.concat(["</ul>", "</li>"]);
-                    return lis.join("");
-                } else
-                    return "<li class='list-group-item" + (method.core ? " core" : "") + "'><a core='" +
-                            method.core + "'>" + method.name + "</a></li>";
-            }).join(""));
-            // need to reinstall click handler
+            var html = htmlForMethods(catalog.methods);
+            $('#methods').html(html);
+           // need to reinstall click handlers
             $('#methods > li').click(function (e) {
                 e.stopPropagation();
                 var a = $(e.target);
@@ -208,7 +236,7 @@
             });
         }
 
-        function methodsRemoved(added) {
+        function methodsRemoved(removed) {
         }
 
         function catalogUpdated(delta) {
@@ -297,26 +325,18 @@
                     <ul class="list-group">
                         <li class="list-group-item"><label class="tree-toggler nav-header">Attributes</label>
                             <ul id="attributes" class="list-group">
-                                <li class="list-group-item"><a>id</a></li>
-                                <li class="list-group-item"><a>text</a></li>
                             </ul>
                         </li>
                         <li class="list-group-item"><label class="tree-toggler nav-header">Methods</label>
                             <ul id="methods" class="list-group">
-                                <li class="list-group-item"><a>print</a></li>
-                                <li class="list-group-item"><a>main</a></li>
                             </ul>
                         </li>
                         <li class="list-group-item"><label class="tree-toggler nav-header">Categories</label>
                             <ul id="categories" class="list-group">
-                                <li class="list-group-item"><a>Person</a></li>
-                                <li class="list-group-item"><a>Employee</a></li>
                             </ul>
                         </li>
                         <li class="list-group-item"><label class="tree-toggler nav-header">Tests</label>
                             <ul id="tests" class="list-group">
-                                <li class="list-group-item"><a>It just works!</a></li>
-                                <li class="list-group-item"><a>Name must be identical</a></li>
                             </ul>
                         </li>
                     </ul>
