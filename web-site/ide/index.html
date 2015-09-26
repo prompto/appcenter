@@ -36,6 +36,9 @@
         .no-core {
             display: none;
         }
+        .glyphicon {
+            float: right;
+        }
     </style>
     <script type="text/javascript">
 
@@ -82,14 +85,25 @@
                 $(".core").addClass("no-core");
         }
 
+        function htmlForList(list, type) {
+            var html = [];
+            list.map(function (item) {
+                $.merge(html, ["<li id='", type, "_", item.name, "' class='list-group-item"]);
+                if(item.core)
+                    html.push(" core");
+                $.merge(html, ["'><a core='", item.core, "'>", item.name, "</a>"]);
+                if(item.core)
+                    html.push("<span class='glyphicon glyphicon-cog'>");
+                html.push("</li>");
+            });
+            return html.join("");
+        }
+
         function attributesAdded(added, core) {
             added = added.map(function(name) { return { name : name, core : core }; });
             catalog.attributes = sortBy(catalog.attributes.concat(added), 'name');
-            $('#attributes').html(catalog.attributes.map(function (attr) {
-                return "<li id='attribute_" + attr.name + "' class='list-group-item" +
-                        (attr.core ? " core" : "") + "'><a core='" +
-                        attr.core + "'>" + attr.name + "</a></li>";
-            }).join(""));
+            var html = htmlForList(catalog.attributes, "attribute");
+            $('#attributes').html(html);
             // need to reinstall click handler
             $('#attributes > li').click(function (e) {
                 e.stopPropagation();
@@ -111,11 +125,8 @@
         function categoriesAdded(added, core) {
             added = added.map(function(name) { return { name : name, core : core }; });
             catalog.categories = sortBy(catalog.categories.concat(added), 'name');
-            $('#categories').html(catalog.categories.map(function(cat) {
-                return "<li id='category_" + cat.name + "' class='list-group-item" +
-                        (cat.core ? " core" : "") + "'><a core='" +
-                        cat.core + "'>" + cat.name + "</a></li>";
-            }).join(""));
+            var html = htmlForList(catalog.categories, "category");
+            $('#categories').html(html);
             // need to reinstall click handler
             $('#categories > li').click(function (e) {
                 e.stopPropagation();
@@ -137,11 +148,8 @@
         function testsAdded(added, core) {
             added = added.map(function(name) { return { name : name, core : core }; });
             catalog.tests = sortBy(catalog.tests.concat(added), 'name');
-            $('#tests').html(catalog.tests.map(function(test) {
-                return "<li id='test_" + makeId(test.name) + "' class='list-group-item" +
-                        (test.core ? " core" : "") + "'><a core='" +
-                        test.core + "'>" + test.name + "</a></li>";
-            }).join(""));
+            var html = htmlForList(catalog.tests, "test");
+            $('#tests').html(html);
             // need to reinstall click handler
             $('#tests > li').click(function (e) {
                 e.stopPropagation();
@@ -280,7 +288,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-2 sidebar">
+            <div class="col-md-3 sidebar">
                 <div class="checkbox">
                     <label>
                         <input id="show-core" type="checkbox" checked="true" onclick="showCore(this)"> Show core
@@ -313,7 +321,7 @@
                         </li>
                     </ul>
             </div>
-            <div class="col-md-10 col-md-offset-2 main" style="padding: 0px">
+            <div class="col-md-9 col-md-offset-3 main" style="padding: 0px">
                <div class="embed-responsive embed-responsive-4by3 collapse in">
                     <iframe id="editor" class="embed-responsive-item" src="editor.html"/>
                </div>
