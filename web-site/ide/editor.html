@@ -34,10 +34,12 @@
         }
 
         function setContent(id) {
-            var mode = editor.getSession().getMode();
+            var session = editor.getSession();
+            var mode = session.getMode();
             mode.setContent(id);
             var ro = id ? id.core : false;
             editor.setReadOnly(ro);
+            session.setScrollTop(0);
         }
 
         function setCodebase(path) {
