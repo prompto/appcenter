@@ -49,6 +49,21 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         });
     };
 
+    PromptoWorker.prototype.interpretTest = function(id) {
+        var worker = this;
+        var old_print = prompto.declaration.TestMethodDeclaration.print;
+        prompto.declaration.TestMethodDeclaration.print = function(msg) {
+            worker.sender.emit("print", msg);
+        };
+        try {
+            safe_require(function () {
+                prompto.runtime.Interpreter.interpretTest(appContext, id.test);
+            });
+        } finally {
+            prompto.declaration.TestMethodDeclaration.print = old_print;
+        }
+    }
+
     PromptoWorker.prototype.setCodebase = function(path) {
         var worker = this;
         safe_require(function() {
@@ -168,10 +183,14 @@ function handleUpdate(worker, previous, current, dialect, listener) {
         }
         // update appContext, collecting prompto errors
         old_decls.unregister(appContext); // TODO: manage damage on objects referring to these
-        appContext.problemListener = listener;
-        new_decls.register(appContext);
-        new_decls.check(appContext);
-        appContext.problemListener = null;
+        var saved_listener = appContext.problemListener;
+        try {
+            appContext.problemListener = listener;
+            new_decls.register(appContext);
+            new_decls.check(appContext);
+        } finally {
+            appContext.problemListener = saved_listener;
+        }
     }
 }
 

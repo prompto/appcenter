@@ -289,12 +289,7 @@
             showCore(input);
         }
 
-        function setContent(id) {
-            var frame = document.getElementById("editor");
-            frame.contentWindow.setContent(id);
-        }
-
-        $(document).ready(function () {
+       $(document).ready(function () {
 
             $('#nav-dialect > li').click(function () {
                 $('#nav-dialect > li').removeClass('active');
@@ -308,6 +303,67 @@
                 $(this).parent().children('ul').toggle(300);
             });
         });
+
+        var contentId = null;
+
+        function setContent(id) {
+            if(id===contentId)
+                return;
+            contentId = id;
+            var frame = document.getElementById("editor");
+            frame.contentWindow.setContent(id);
+        }
+
+        function run() {
+            var msg = getRunnableAlert(contentId);
+            if(msg)
+                alert(msg);
+            else {
+                switchUIToRunMode();
+                print("Running " + contentId.test + "...");
+                var frame = document.getElementById("editor");
+                frame.contentWindow.run(contentId);
+            }
+        }
+
+        function getRunnableAlert(id) {
+            if (!id)
+                return "Nothing to run!";
+            else if(!id.test)
+                return "Can only run tests!";
+            else
+                return null;
+        }
+
+        function stop() {
+            edit();
+        }
+
+        function edit() {
+            switchUIToEditMode();
+        }
+
+        function switchUIToRunMode() {
+            $(".edit-mode").hide();
+            $(".run-mode").show();
+            var button = document.getElementById("run-button");
+            button.onclick = function() { stop(); };
+            button.innerHTML = "Stop";
+        }
+
+        function switchUIToEditMode() {
+            $(".run-mode").hide();
+            $(".edit-mode").show();
+            var button = document.getElementById("run-button");
+            button.onclick = function() { run(); };
+            button.innerHTML = "Run";
+        }
+
+        function print(msg) {
+            var doc = document.getElementById("output");
+            doc.innerHTML += msg + "<br/>";
+        }
+
     </script>
 </head>
 
@@ -325,6 +381,9 @@
                 </ul>
                 <a class="navbar-brand navbar-right">Dialect:</a>
                 <form class="navbar-form navbar-right">
+                    <button id="run-button" type="button" class="form-control" onclick="run();" value="">Run</button>
+                </form>
+                <form class="navbar-form navbar-right edit-mode">
                     <button type="button" class="form-control" onclick="setContent(null);">New</button>
                     <input type="text" class="form-control" placeholder="Search...">
                 </form>
@@ -332,7 +391,7 @@
         </div>
     </nav>
 
-    <div class="container-fluid">
+    <div class="container-fluid edit-mode">
         <div class="row">
             <div class="col-md-3 sidebar">
                 <div class="checkbox">
@@ -365,6 +424,8 @@
                </div>
             </div>
         </div>
+    </div>
+    <div id="output" class="container-fluid run-mode">
     </div>
 </body>
 </html>

@@ -51,6 +51,11 @@
             editor.setValue(value, -1);
         }
 
+        function run(id) {
+            var mode = editor.getSession().getMode();
+            mode.run(id);
+        }
+
         $(document).ready(function () {
             parent.editorReady();
         });

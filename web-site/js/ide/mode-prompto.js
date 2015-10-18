@@ -134,6 +134,10 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
             this.$worker && this.$worker.send("setCodebase", [ path ] );
         };
 
+        this.run = function(id) {
+            this.$worker && this.$worker.send("interpretTest", [ id ] );
+        };
+
         this.createWorker = function(session) {
             this.$worker = new WorkerClient(["ace"], "ace/worker/prompto", "PromptoWorker", "../js/ide/worker-prompto.js");
             this.$worker.send("setDialect", [ this.$dialect ] );
@@ -171,6 +175,9 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
                 parent.catalogUpdated(v.data);
             });
 
+            this.$worker.on("print", function(v) {
+                parent.print(v.data);
+            });
             return this.$worker;
 
         };
