@@ -336,7 +336,7 @@ var coreContext = prompto.runtime.Context.newGlobalContext();
 var appContext = coreContext.newLocalContext();
 
 function loadCore(worker) {
-    var code = loadCode("../../prompto/core.pec");
+    var code = loadCode("../../prompto/prompto.pec");
     var decls = parse(code, "E");
     decls.register(coreContext);
 }

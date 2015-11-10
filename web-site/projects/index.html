@@ -30,11 +30,12 @@
 <!-- ensure content menu is highlighted -->
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('ul.nav > li').click(function(e) {
-			$('ul.nav > li').removeClass('active');
-			$(this).addClass('active');
-		});
+        $.get("/ws/getRecentProjects", null, displayRecent);
 	});
+
+    function displayRecent(projs) {
+        alert(projs.toString());
+    }
 </script>
 
 </head>
@@ -43,8 +44,9 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-sm-9 col-md-10 main">
-				<h1 class="page-header">Favourite Apps</h1>
+				<h1 class="page-header">Recent projects</h1>
 				<div class="row placeholders">
+                    <!--
 					<div class="col-xs-4 col-sm-2 placeholder">
 						<h4>
 							<a href="../ide/index.html" target="_blank" class="thumbnail">
@@ -78,6 +80,7 @@
 							</a>
 						</h4>
 					</div>
+					-->
 				</div>
 			</div>
 		</div>
