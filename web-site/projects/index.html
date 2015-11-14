@@ -30,12 +30,44 @@
 <!-- ensure content menu is highlighted -->
 <script type="text/javascript">
 	$(document).ready(function() {
-        $.get("/ws/getRecentProjects", null, displayRecent);
+        $.getJSON('/ws/getRecentProjects?params=[{"name":"count", "type":"Integer", "value":10}]', null, displayRecent);
+        $.getJSON('/ws/getAllProjects', null, displayAll);
 	});
 
-    function displayRecent(projs) {
-        alert(projs.toString());
+    function displayRecent(response) {
+        display('recent', response);
     }
+
+    function displayAll(response) {
+        display('all', response);
+    }
+
+    function display(id, response) {
+        if(response.error)
+            alert(response.error);
+        if(response.data.length==0)
+            $("#" + id).hide();
+        else {
+            var html = [];
+            response.data.map( function(project) {
+                $.merge(html, [
+                        '<div class="col-xs-4 col-sm-2 placeholder">',
+                        '<h4>',
+                        '<a href="../ide/index.html" target="_blank" class="thumbnail">',
+                        '<img src="" width="100px" height="100px">',
+                        '<strong>',
+                        project.name,
+                        '</strong>',
+                        '</a>',
+                        '</h4>',
+                        '</div>'
+                ]);
+            });
+            $("#" + id + "-items").html(html.join(""));
+            $("#" + id).show();
+        }
+    }
+
 </script>
 
 </head>
@@ -43,9 +75,9 @@
 <body>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-sm-9 col-md-10 main">
+			<div id="recent" class="col-sm-9 col-md-10 main">
 				<h1 class="page-header">Recent projects</h1>
-				<div class="row placeholders">
+				<div id="recent-items" class="row placeholders">
                     <!--
 					<div class="col-xs-4 col-sm-2 placeholder">
 						<h4>
@@ -83,6 +115,11 @@
 					-->
 				</div>
 			</div>
+            <div id="all" class="col-sm-9 col-md-10 main">
+                <h1 class="page-header">All projects</h1>
+                <div id="all-items" class="row placeholders">
+               </div>
+            </div>
 		</div>
 	</div>
 </body>
