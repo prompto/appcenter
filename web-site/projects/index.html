@@ -30,8 +30,8 @@
 <!-- ensure content menu is highlighted -->
 <script type="text/javascript">
 	$(document).ready(function() {
-        $.getJSON('/ws/getRecentProjects?params=[{"name":"count", "type":"Integer", "value":10}]', null, displayRecent);
-        $.getJSON('/ws/getAllProjects', null, displayAll);
+        $.getJSON('/ws/run/getRecentProjects?params=[{"name":"count", "type":"Integer", "value":10}]', null, displayRecent);
+        $.getJSON('/ws/run/getAllProjects', null, displayAll);
 	});
 
     function displayRecent(response) {
@@ -49,12 +49,15 @@
             $("#" + id).hide();
         else {
             var html = [];
-            response.data.map( function(project) {
+            response.data.map( function(item) {
+                var project = item.project ? item.project : item;
                 $.merge(html, [
                         '<div class="col-xs-4 col-sm-2 placeholder">',
                         '<h4>',
                         '<a href="../ide/index.html" target="_blank" class="thumbnail">',
-                        '<img src="" width="100px" height="100px">',
+                        '<img src="',
+                        project.image,
+                        '" width="100px" height="100px">',
                         '<strong>',
                         project.name,
                         '</strong>',
