@@ -11,14 +11,14 @@ ace.define('ace/mode/prompto_highlight_rules',["require","exports","module","ace
         );
 
         var types = (
-            "Java|C#|Python2|Python3|JavaScript|Swift|Boolean|Character|Text|" +
-            "Integer|Decimal|Date|Time|DateTime|Period|Method|Code|Document|" +
+            "Java|C#|Python2|Python3|JavaScript|Swift|Any|Blob|Boolean|Character|Text|" +
+            "Image|Integer|Decimal|Date|Time|DateTime|Period|Method|Code|Document|" +
             "attr|attribute|attributes|bindings|enum|category|class|getter|" +
             "method|methods|operator|resource|setter|singleton|test"
         );
 
         var modifiers = (
-            "abstract|enumerated|extends|mutable|native|sorted"
+            "abstract|enumerated|extends|mutable|native|sorted|storable"
         );
 
         var operators = (
@@ -27,11 +27,11 @@ ace.define('ace/mode/prompto_highlight_rules',["require","exports","module","ace
 
         var other = (
             "all|any|as|contains|def|define|doing|expecting|" +
-            "matching|receiving|returning"
+            "matching|receiving|returning|verifying"
         );
 
         var functions = (
-            "write|read|close|open|execute|invoke|pass|fetch"
+            "write|read|close|open|execute|invoke|pass|fetch|store"
         );
 
         var constants = (
@@ -66,7 +66,7 @@ ace.define('ace/mode/prompto_highlight_rules',["require","exports","module","ace
                 },
                 {
                     token: keywordMapper,
-                    regex: "[a-zA-Z_$][a-zA-Z0-9_$]*\\b"
+                    regex: "C#|[a-zA-Z][a-zA-Z0-9]*\\b"
                 },
                 {
                     token : "constant.numeric", // hex

@@ -311,11 +311,8 @@ function filterOutDuplicatesInLists(a, b) {
 // method for translating current input to other dialect
 function translate(input, from, to) {
     var decls = parse(input, from); // could be cached
-    var ctx = prompto.runtime.Context.newGlobalContext();
-    decls.register(ctx);
-    // rewrite
     var dialect = prompto.parser.Dialect[to];
-    var writer = new prompto.utils.CodeWriter(dialect, ctx);
+    var writer = new prompto.utils.CodeWriter(dialect, appContext);
     decls.toDialect(writer);
     return writer.toString();
 }
