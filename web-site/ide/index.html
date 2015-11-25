@@ -42,6 +42,11 @@
     </style>
     <script type="text/javascript">
 
+        function getParam(name) {
+            // return new URL(window.location.href).searchParams.get(name);
+            return new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href)[1];
+        }
+
         var catalog = {
             attributes : [],
             methods : [],
@@ -75,7 +80,7 @@
         function editorReady() {
             var frame = document.getElementById("editor");
             frame.contentWindow.setDialect("E");
-            frame.contentWindow.setCodebase("../../prompto/application.pec");
+            frame.contentWindow.setProject(getParam("dbId"));
         }
 
         function showCore(input) {
@@ -371,7 +376,7 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand">Prompto Dev Center for MyApp</a>
+                <a class="navbar-brand">Prompto Dev Center for: <b></b><script>document.write(getParam("name"));</script></b></a>
             </div>
             <div id="navbar" class="navbar-collapse">
                 <ul id="nav-dialect" class="nav navbar-nav navbar-right">

@@ -130,8 +130,8 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
             this.$worker && this.$worker.send("setContent", [ id ] );
         };
 
-        this.setCodebase = function(path) {
-            this.$worker && this.$worker.send("setCodebase", [ path ] );
+        this.setProject = function(dbId) {
+            this.$worker && this.$worker.send("setProject", [ dbId ] );
         };
 
         this.run = function(id) {

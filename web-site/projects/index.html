@@ -54,7 +54,11 @@
                 $.merge(html, [
                         '<div class="col-xs-4 col-sm-2 placeholder" width="120px">',
                         '<h4>',
-                        '<a href="../ide/index.html" target="_blank" class="thumbnail">',
+                        '<a href="../ide/index.html?dbId=',
+                        project.dbId,
+                        '&name=',
+                        project.name,
+                        '" target="_blank" class="thumbnail">',
                         '<img src="',
                         project.image ? project.image : "/img/library.jpg",
                         '" max-width="90%">',

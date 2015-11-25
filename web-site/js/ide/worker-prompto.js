@@ -64,11 +64,11 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         }
     }
 
-    PromptoWorker.prototype.setCodebase = function(path) {
+    PromptoWorker.prototype.setProject = function(dbId) {
         var worker = this;
         safe_require(function() {
-            loadCodebase(worker, path);
-            publishCodebase(worker);
+            loadProject(worker, dbId);
+            publishProject(worker);
         });
     };
 
@@ -351,14 +351,16 @@ function inferDialect(path) {
     return path.substring(path.length-2, path.length-1).toUpperCase();
 }
 
-function loadCodebase(worker, path) {
+function loadProject(worker, dbId) {
+    /*
     var code = loadCode(path);
     var dialect = inferDialect(path);
     var decls = parse(code, dialect);
     decls.register(appContext);
+    */
 }
 
-function publishCodebase(worker) {
+function publishProject(worker) {
     var delta = {
         removed : {},
         added   : appContext.getLocalCatalog()

@@ -33,6 +33,11 @@
             mode.setDialect(dialect);
         }
 
+        function setProject(dbId) {
+            var mode = editor.getSession().getMode();
+            mode.setProject(dbId);
+        }
+
         function setContent(id) {
             var session = editor.getSession();
             var mode = session.getMode();
@@ -40,11 +45,6 @@
             var ro = id ? id.core : false;
             editor.setReadOnly(ro);
             session.setScrollTop(0);
-        }
-
-        function setCodebase(path) {
-            var mode = editor.getSession().getMode();
-            mode.setCodebase(path);
         }
 
         function setValue(value) {
