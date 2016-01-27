@@ -317,8 +317,7 @@ function translate(input, from, to) {
     return writer.toString();
 }
 
-// method for downloading prompto code
-function loadCode(url) {
+function loadText(url) {
     var xhr = new XMLHttpRequest();
     xhr.onerror = function(e) {
         self.console.log("Error " + e.target.status + " occurred while receiving the document.");
@@ -333,7 +332,7 @@ var coreContext = prompto.runtime.Context.newGlobalContext();
 var appContext = coreContext.newLocalContext();
 
 function loadCore(worker) {
-    var code = loadCode("../../prompto/prompto.pec");
+    var code = loadText("../../prompto/prompto.pec");
     var decls = parse(code, "E");
     decls.register(coreContext);
 }
@@ -352,6 +351,9 @@ function inferDialect(path) {
 }
 
 function loadProject(worker, dbId) {
+    self.console.log("Load project " + dbId.toString());
+    var url = '/ws/run/getProjectDeclarations?params=[{"name":"dbId", "value":"' + dbId.toString() + '"}]';
+    var declarations = loadText(url);
     /*
     var code = loadCode(path);
     var dialect = inferDialect(path);
