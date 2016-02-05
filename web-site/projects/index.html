@@ -30,8 +30,8 @@
 <!-- ensure content menu is highlighted -->
 <script type="text/javascript">
 	$(document).ready(function() {
-        $.getJSON('/ws/run/getRecentProjects?params=[{"name":"count", "type":"Integer", "value":10}]', null, displayRecent);
-        $.getJSON('/ws/run/getAllProjects', null, displayAll);
+        $.getJSON('/ws/run/getRecentModules?params=[{"name":"count", "type":"Integer", "value":10}]', null, displayRecent);
+        $.getJSON('/ws/run/getAllModules', null, displayAll);
 	});
 
     function displayRecent(response) {

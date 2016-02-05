@@ -351,8 +351,8 @@ function inferDialect(path) {
 }
 
 function loadProject(worker, dbId) {
-    self.console.log("Load project " + dbId.toString());
-    var url = '/ws/run/getProjectDeclarations?params=[{"name":"dbId", "value":"' + dbId.toString() + '"}]';
+    self.console.log("Load module " + dbId.toString());
+    var url = '/ws/run/getModuleDeclarations?params=[{"name":"dbId", "value":"' + dbId.toString() + '"}]';
     var declarations = loadText(url);
     /*
     var code = loadCode(path);
