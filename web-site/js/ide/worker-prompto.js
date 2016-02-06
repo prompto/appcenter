@@ -37,7 +37,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
             if(id) {
                 var decl = getDeclaration(id);
                 var dialect = prompto.parser.Dialect[worker.$dialect];
-                var writer = new prompto.utils.CodeWriter(dialect, appContext);
+                var writer = new prompto.utils.CodeWriter(dialect, appContext.newChildContext());
                 decl.toDialect(writer);
                 value = writer.toString();
                 core = id.core || false;
@@ -187,7 +187,7 @@ function handleUpdate(worker, previous, current, dialect, listener) {
         try {
             appContext.problemListener = listener;
             new_decls.register(appContext);
-            new_decls.check(appContext);
+            new_decls.check(appContext.newChildContext());// don't pollute appContext
         } finally {
             appContext.problemListener = saved_listener;
         }
@@ -312,7 +312,7 @@ function filterOutDuplicatesInLists(a, b) {
 function translate(input, from, to) {
     var decls = parse(input, from); // could be cached
     var dialect = prompto.parser.Dialect[to];
-    var writer = new prompto.utils.CodeWriter(dialect, appContext);
+    var writer = new prompto.utils.CodeWriter(dialect, appContext.newChildContext());
     decls.toDialect(writer);
     return writer.toString();
 }
@@ -353,13 +353,16 @@ function inferDialect(path) {
 function loadProject(worker, dbId) {
     self.console.log("Load module " + dbId.toString());
     var url = '/ws/run/getModuleDeclarations?params=[{"name":"dbId", "value":"' + dbId.toString() + '"}]';
-    var declarations = loadText(url);
-    /*
-    var code = loadCode(path);
-    var dialect = inferDialect(path);
-    var decls = parse(code, dialect);
-    decls.register(appContext);
-    */
+    var text = loadText(url);
+    var declarations = JSON.parse(text);
+    if(declarations.error)
+        ; // do something
+    else {
+        declarations.data.map( function(d) {
+            var decl = parse(d.body, d.dialect);
+            decl.register(appContext);
+        });
+    }
 }
 
 function publishProject(worker) {
