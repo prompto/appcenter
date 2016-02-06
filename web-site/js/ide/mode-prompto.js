@@ -53,8 +53,7 @@ ace.define('ace/mode/prompto_highlight_rules',["require","exports","module","ace
             "start": [
                 {
                     token : "comment",
-                    regex : "//",
-                    next : "singleLineComment"
+                    regex : "\\/\\/.*\\n"
                 },
                 {
                     token : "string", // text literal
