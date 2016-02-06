@@ -113,7 +113,7 @@
             $('#attributes > li').click(function (e) {
                 e.stopPropagation();
                 var a = $(e.target);
-                var core = eval(a.attr("core") || "false");
+                var core = a.attr("core") ? eval(a.attr("core")) : false;
                 setContent({attribute: a.text(), core: core});
             });
         }
@@ -135,7 +135,7 @@
             $('#categories > li').click(function (e) {
                 e.stopPropagation();
                 var a = $(e.target);
-                var core = eval(a.attr("core") || "false");
+                var core = a.attr("core") ? eval(a.attr("core")) : false;
                 setContent({category: a.text(), core: core});
             });
         }
@@ -157,7 +157,7 @@
             $('#tests > li').click(function (e) {
                 e.stopPropagation();
                 var a = $(e.target);
-                var core = eval(a.attr("core") || "false");
+                var core = a.attr("core") ? eval(a.attr("core")) : false;
                 setContent({test: a.text(), core: core});
             });
         }
@@ -230,14 +230,14 @@
             $('#methods > li').click(function (e) {
                 e.stopPropagation();
                 var a = $(e.target);
-                var core = a.attr("core");
-                setContent({method: a.text(), core: core || "false"});
+                var core = a.attr("core") ? eval(a.attr("core")) : false;
+                setContent({method: a.text(), core: core});
             });
             catalog.methods.map( function(method) {
                 $('#method_' + method.name + ' > li').click(function (e) {
                     e.stopPropagation();
                     var a = $(e.target);
-                    var core = eval(a.attr("core") || "false");
+                    var core = a.attr("core") ? eval(a.attr("core")) : false;
                     setContent({ method : method.name, proto : a.text(), core: core });
                 });
             });
