@@ -134,20 +134,21 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
         };
 
         this.run = function(id) {
-            this.$worker && this.$worker.send("interpretTest", [ id ] );
+            this.$worker && this.$worker.send("interpret", [ id ] );
         };
 
         this.createWorker = function(session) {
             this.$worker = new WorkerClient(["ace"], "ace/worker/prompto", "PromptoWorker", "../js/ide/worker-prompto.js");
             this.$worker.send("setDialect", [ this.$dialect ] );
             this.$worker.attachToDocument(session.getDocument());
+
             var $markers = [];
 
             this.$worker.on("errors", function(e) {
                 session.setAnnotations(e.data);
             });
 
-            this.annotate = function(e) {
+            this.$worker.on("annotate", function(e) {
                 session.setAnnotations(e.data);
                 while($markers.length)
                     session.removeMarker($markers.pop());
@@ -156,9 +157,7 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
                     var marker = session.addMarker(range, "ace_error-word", "text", true);
                     $markers.push(marker);
                 });
-            };
-
-            this.$worker.on("annotate", this.annotate);
+            });
 
             this.$worker.on("terminate", function() {
                 session.clearAnnotations();
@@ -174,9 +173,6 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
                 parent.catalogUpdated(v.data);
             });
 
-            this.$worker.on("print", function(v) {
-                parent.print(v.data);
-            });
             return this.$worker;
 
         };

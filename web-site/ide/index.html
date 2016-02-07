@@ -190,11 +190,13 @@
                         if(method.core)
                             html.push(" core");
                         $.merge(html, ["' id='proto_",
-                                        makeId(proto),
+                                        makeId(proto.proto),
                                         "'><a core='",
                                         method.core,
+                                        "' main='",
+                                        proto.main,
                                         "'>",
-                                        proto,
+                                        proto.proto,
                                         "</a>" ]);
                         if(method.core)
                             html.push("<span class='glyphicon glyphicon-cog'>");
@@ -208,6 +210,8 @@
                         html.push(" core");
                     $.merge(html, ["'><a core='",
                         method.core,
+                        "' main='",
+                        method.protos[0].main,
                         "'>",
                         method.name,
                         "</a>"]);
@@ -231,14 +235,16 @@
                 e.stopPropagation();
                 var a = $(e.target);
                 var core = a.attr("core") ? eval(a.attr("core")) : false;
-                setContent({method: a.text(), core: core});
+                var main = a.attr("main") ? eval(a.attr("main")) : false;
+                setContent({method: a.text(), core: core, main: main});
             });
             catalog.methods.map( function(method) {
                 $('#method_' + method.name + ' > li').click(function (e) {
                     e.stopPropagation();
                     var a = $(e.target);
                     var core = a.attr("core") ? eval(a.attr("core")) : false;
-                    setContent({ method : method.name, proto : a.text(), core: core });
+                    var main = a.attr("main") ? eval(a.attr("main")) : false;
+                    setContent({ method : method.name, proto : a.text(), core: core, main: main });
                 });
             });
         }
@@ -325,7 +331,8 @@
                 alert(msg);
             else {
                 switchUIToRunMode();
-                print("Running " + contentId.test + "...");
+                var name = contentId.test || contentId.method;
+                print("Running " + name + "...");
                 var frame = document.getElementById("editor");
                 frame.contentWindow.run(contentId);
             }
@@ -334,8 +341,8 @@
         function getRunnableAlert(id) {
             if (!id)
                 return "Nothing to run!";
-            else if(!id.test)
-                return "Can only run tests!";
+            else if(!id.test && !id.main)
+                return "Can only run tests or main methods!";
             else
                 return null;
         }
@@ -349,6 +356,8 @@
         }
 
         function switchUIToRunMode() {
+            var doc = document.getElementById("output");
+            doc.innerHTML = "";
             $(".edit-mode").hide();
             $(".run-mode").show();
             var button = document.getElementById("run-button");

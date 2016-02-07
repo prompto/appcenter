@@ -49,19 +49,13 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         });
     };
 
-    PromptoWorker.prototype.interpretTest = function(id) {
-        var worker = this;
-        var old_print = prompto.declaration.TestMethodDeclaration.print;
-        prompto.declaration.TestMethodDeclaration.print = function(msg) {
-            worker.sender.emit("print", msg);
-        };
-        try {
-            safe_require(function () {
+    PromptoWorker.prototype.interpret = function(id) {
+        safe_require(function () {
+            if(id.test)
                 prompto.runtime.Interpreter.interpretTest(appContext, id.test);
-            });
-        } finally {
-            prompto.declaration.TestMethodDeclaration.print = old_print;
-        }
+            else if(id.method)
+                prompto.runtime.Interpreter.interpret(appContext, id.method, "");
+        });
     }
 
     PromptoWorker.prototype.setProject = function(dbId) {
@@ -221,7 +215,7 @@ function filterOutCoreMethods(catalog) {
                 return false;
             var map = coreContext.getRegisteredDeclaration(method.name);
             method.protos = method.protos.filter(function (proto) {
-                return !map.hasPrototype(proto);
+                return !map.hasPrototype(proto.proto);
             });
             return method.protos.length>0;
        });
@@ -254,7 +248,7 @@ function filterOutDuplicatesInMethods(a, b) {
         sortBy(b, "name");
         for(var i=0,j=0;i<a.length && j<b.length;) {
             if(a[i].name===b[j].name) {
-                filterOutDuplicatesInLists(a.protos, b.protos);
+                filterOutDuplicatesInLists(a.protos, b.protos, "proto");
                 if(!a.protos || !a.protos.length)
                     a.splice(i,1);
                 if(!b.protos || !b.protos.length)
@@ -279,15 +273,26 @@ function filterOutDuplicatesInMethods(a, b) {
         return 0;
 }
 
-function filterOutDuplicatesInLists(a, b) {
+function filterOutDuplicatesInLists(a, b, field) {
     if(a && b) {
-        a.sort();
-        b.sort();
+        if(field) {
+            sortBy(a, field);
+            sortBy(b, field);
+        } else {
+            a.sort();
+            b.sort();
+        }
         for(var i=0,j=0;i<a.length && j< b.length;) {
-            if(a[i]===b[j]) {
+            var va = a[i];
+            if(field)
+                va = va[field];
+            var vb = b[j];
+            if(field)
+                vb = vb[field];
+            if(va===vb) {
                 a.splice(i,1);
                 b.splice(j,1);
-            } else if(a[i]>b[j]) {
+            } else if(va>vb) {
                 j++;
             } else {
                 i++;
