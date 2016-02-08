@@ -398,8 +398,11 @@
                     <button id="run-button" type="button" class="form-control" onclick="run();" value="">Run</button>
                 </form>
                 <form class="navbar-form navbar-right edit-mode">
-                    <button type="button" class="form-control" onclick="setContent(null);">New</button>
-                    <input type="text" class="form-control" placeholder="Search...">
+                    <button id="btnNew" type="button" class="form-control" onclick="setContent(null);">New</button>
+                    <button id="btnDelete" type="button" class="form-control" onclick="destroy();">Delete</button>
+                    <button id="btnRevert" type="button" class="form-control" onclick="revert();">Revert</button>
+                    <button id="btnCommit" type="button" class="form-control" onclick="commit();">Commit</button>
+                    <input id="search" type="text" class="form-control" placeholder="Search...">
                 </form>
             </div>
         </div>

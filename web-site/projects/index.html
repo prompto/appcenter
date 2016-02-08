@@ -54,7 +54,9 @@
                 $.merge(html, [
                         '<div class="col-xs-4 col-sm-2 placeholder" width="120px">',
                         '<h4>',
-                        '<a href="../ide/index.html?dbId=',
+                        '<a id="',
+                        project.dbId,
+                        '" href="../ide/index.html?dbId=',
                         project.dbId,
                         '&name=',
                         project.name,
