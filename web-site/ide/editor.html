@@ -49,6 +49,13 @@
             session.setScrollTop(0);
         }
 
+        function destroy(id) {
+            var session = editor.getSession();
+            var mode = session.getMode();
+            mode.destroy(id);
+            session.setScrollTop(0);
+        }
+
         function setValue(value) {
             editor.setValue(value, -1);
         }

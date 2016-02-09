@@ -119,7 +119,7 @@
         }
 
         function attributesRemoved(removed) {
-            removed.apply(function(name) {
+            removed.map(function(name) {
                 var idx = findBy(catalog.attributes, 'name', name);
                 catalog.attributes.splice(idx, 1);
                 $('#attribute_' + name).remove();
@@ -208,7 +208,9 @@
                     html.push("<li class='list-group-item");
                     if (method.core)
                         html.push(" core");
-                    $.merge(html, ["'><a core='",
+                    $.merge(html, ["' id='method_",
+                        method.name,
+                        "'><a core='",
                         method.core,
                         "' main='",
                         method.protos[0].main,
@@ -254,15 +256,16 @@
                 var idx1 = findBy(catalog.methods, 'name', method.name);
                 if(idx1>=0) {
                     var map = catalog.methods[idx1];
-                    method.protos.map(function(proto) {
-                        var idx2 = map.protos.indexOf(proto);
-                        if(idx2>=0)
-                            map.protos.splice(idx2, 1);
-                        $("#method_" + method.name + " > #proto_" + makeId(proto)).remove();
-                    });
-                    if(map.protos.length==0) {
+                    if(map.protos.length==1) {
                         catalog.methods.splice(idx1, 1);
                         $("#method_" + method.name).remove();
+                    } else {
+                        method.protos.map(function (proto) {
+                            var idx2 = map.protos.indexOf(proto);
+                            if (idx2 >= 0)
+                                map.protos.splice(idx2, 1);
+                            $("#method_" + method.name + " > #proto_" + makeId(proto.proto)).remove();
+                        });
                     }
                 }
            });
@@ -325,6 +328,17 @@
             frame.contentWindow.setContent(id);
         }
 
+        function destroy() {
+            if(contentId===null)
+                window.alert("Nothing to destroy!");
+            else {
+                var id = contentId;
+                contentId = null;
+                var frame = document.getElementById("editor");
+                frame.contentWindow.destroy(id);
+            }
+        }
+
         function run() {
             var msg = getRunnableAlert(contentId);
             if(msg)
@@ -377,6 +391,7 @@
             var doc = document.getElementById("output");
             doc.innerHTML += msg + "<br/>";
         }
+
 
     </script>
 </head>

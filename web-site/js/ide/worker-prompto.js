@@ -23,7 +23,9 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
             var value = this.doc.getValue();
             if(value) {
                 // remember value since it does not result from an edit
-                this.$value = safe_require(function() { return translate(value, old, dialect); } );
+                this.$value = safe_require(function() {
+                    return translate(value, old, dialect);
+                });
                 this.sender.emit("value", this.$value);
             }
         }
@@ -49,6 +51,15 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         });
     };
 
+    PromptoWorker.prototype.destroy = function(id) {
+        var worker = this;
+        safe_require(function() {
+            handleUpdate(worker, worker.$value, "", worker.$dialect, new AnnotatingErrorListener());
+        });
+        this.$value = "";
+        this.sender.emit("value", this.$value);
+    }
+
     PromptoWorker.prototype.interpret = function(id) {
         safe_require(function () {
             if(id.test)
@@ -71,7 +82,9 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         var annotations = [];
         var errorListener = new AnnotatingErrorListener(annotations);
         var worker = this;
-        safe_require(function() { handleUpdate(worker, worker.$value, value, worker.$dialect, errorListener); });
+        safe_require(function() {
+            handleUpdate(worker, worker.$value, value, worker.$dialect, errorListener);
+        });
         this.$value = value;
         this.sender.emit("annotate", annotations);
     };
@@ -155,7 +168,7 @@ function handleUpdate(worker, previous, current, dialect, listener) {
     // if this is a core object, we're done
     if(worker.$core)
         return;
-    // don't annotate previous content
+    // don't annotate previous content using provided listener
     var previousListener = new AnnotatingErrorListener();
     var old_decls = parse(previous, dialect, previousListener); // we'll ignore these errors but let's catch them
     // only update catalog and appContext if syntax is correct
