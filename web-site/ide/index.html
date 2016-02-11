@@ -55,7 +55,7 @@
         };
 
         function makeId(name) {
-            return name.replace(" ", "_").replace('"',"").replace("'","").replace("(","").replace(")","").replace(",","");
+            return name.replace(/[ ]/g, "_").replace(/[\"\'\(\),]/g,"");
         }
 
         function sortBy(a, f) {
@@ -93,7 +93,7 @@
         function htmlForList(list, type) {
             var html = [];
             list.map(function (item) {
-                $.merge(html, ["<li id='", type, "_", item.name, "' class='list-group-item"]);
+                $.merge(html, ["<li id='", type, "_", makeId(item.name), "' class='list-group-item"]);
                 if(item.core)
                     html.push(" core");
                 $.merge(html, ["'><a core='", item.core, "'>", item.name, "</a>"]);
@@ -141,7 +141,7 @@
         }
 
         function categoriesRemoved(removed) {
-            removed.apply(function(name) {
+            removed.map(function(name) {
                 var idx = findBy(catalog.categories, 'name', name);
                 catalog.categories.splice(idx, 1);
                 $('#category_' + name).remove();
@@ -163,7 +163,7 @@
         }
 
         function testsRemoved(removed) {
-            removed.apply(function(name) {
+            removed.map(function(name) {
                 var idx = findBy(catalog.tests, 'name', name);
                 catalog.tests.splice(idx, 1);
                 $('#test_' + makeId(name)).remove();
@@ -321,7 +321,7 @@
         var contentId = null;
 
         function setContent(id) {
-            if(id===contentId)
+            if(id && id===contentId)
                 return;
             contentId = id;
             var frame = document.getElementById("editor");

@@ -132,12 +132,12 @@ function safe_require(method) {
 }
 // class for gathering errors and posting them to editor
 var AnnotatingErrorListener = function(problems) {
-    prompto.parser.ProblemCollector.call(this);
+    prompto.problem.ProblemCollector.call(this);
     this.problems = problems || [];
     return this;
 };
 
-AnnotatingErrorListener.prototype = Object.create(prompto.parser.ProblemCollector.prototype);
+AnnotatingErrorListener.prototype = Object.create(prompto.problem.ProblemCollector.prototype);
 AnnotatingErrorListener.prototype.constructor = AnnotatingErrorListener;
 
 AnnotatingErrorListener.prototype.collectProblem = function(problem) {
@@ -202,8 +202,8 @@ function handleUpdate(worker, previous, current, dialect, listener) {
 }
 
 function readCatalog(decls) {
-    var context = prompto.runtime.Context.newGlobalContext();
-    context.problemListener = new AnnotatingErrorListener(); // we'll ignore these errors but let's catch them
+    var context = prompto.runtime.Context.newGlobalContext(); // need a fresh context to ensure all get registered
+    context.problemListener = new prompto.problem.ProblemCollector(); // we'll ignore these errors but let's catch them
     decls.register(context);
     var catalog = context.getLocalCatalog();
     filterOutCoreFromCatalog(catalog);
