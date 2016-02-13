@@ -112,11 +112,12 @@ try {
 }
 
 // load antlr4 and prompto
-var antlr4, prompto;
+var antlr4, prompto, delta;
 try {
     self.require = antlr4_require;
     antlr4 = require('antlr4/index');
     prompto = require('prompto/index');
+    delta = require('ide/delta');
 } finally {
     self.require = ace_require;
 }
@@ -174,19 +175,13 @@ function handleUpdate(worker, previous, current, dialect, listener) {
     // only update catalog and appContext if syntax is correct
     if (listener.problems.length == 0) {
         // only update catalog if event results from an edit
+        var changes = new delta.Delta();
         if(previous!=current) {
-            var added = readCatalog(new_decls);
+            changes.added = new delta.Catalog(prompto, new_decls, coreContext);
             // only remove previous decls if parsing successful. This is because
             // if previous parsing failed, we never actually reached this section
-            var removed = [];
             if(previousListener.problems.length == 0)
-                removed = readCatalog(old_decls);
-            // compute delta
-            var delta = { removed: removed, added: added };
-            var count = filterOutDuplicates(delta);
-            // done
-            if (count)
-                worker.sender.emit("catalog", delta);
+                changes.removed = new delta.Catalog(prompto, old_decls, coreContext);
         }
         // update appContext, collecting prompto errors
         old_decls.unregister(appContext); // TODO: manage damage on objects referring to these
@@ -194,137 +189,15 @@ function handleUpdate(worker, previous, current, dialect, listener) {
         try {
             appContext.problemListener = listener;
             new_decls.register(appContext);
-            new_decls.check(appContext.newChildContext());// don't pollute appContext
+            new_decls.check(appContext.newChildContext()); // don't pollute appContext
         } finally {
             appContext.problemListener = saved_listener;
         }
+        // done
+        if(changes.adjustForMovingProtos(appContext))
+            worker.sender.emit("catalog", changes.getContent());
     }
 }
-
-function readCatalog(decls) {
-    var context = prompto.runtime.Context.newGlobalContext(); // need a fresh context to ensure all get registered
-    context.problemListener = new prompto.problem.ProblemCollector(); // we'll ignore these errors but let's catch them
-    decls.register(context);
-    var catalog = context.getLocalCatalog();
-    filterOutCoreFromCatalog(catalog);
-    return catalog;
-}
-
-function filterOutCoreFromCatalog(catalog) {
-    filterOutCoreObjects(catalog, "attributes");
-    filterOutCoreMethods(catalog);
-    filterOutCoreObjects(catalog, "categories");
-    filterOutCoreObjects(catalog, "tests");
-}
-
-function filterOutCoreMethods(catalog) {
-    if(catalog.methods)
-        catalog.methods = catalog.methods.filter(function (method) {
-            var context = coreContext.contextForDeclaration(method.name);
-            if(context==null)
-                return true;
-            // if core has such method, need to check protos
-            if(method.protos.length==1)
-                return false;
-            var map = coreContext.getRegisteredDeclaration(method.name);
-            method.protos = method.protos.filter(function (proto) {
-                return !map.hasPrototype(proto.proto);
-            });
-            return method.protos.length>0;
-       });
-}
-
-function filterOutCoreObjects(catalog, type) {
-    if(catalog[type])
-        catalog[type] = catalog[type].filter(function (name) {
-            return coreContext.contextForDeclaration(name) == null;
-        });
-}
-
-function filterOutDuplicates(delta) {
-    var length = filterOutDuplicatesInLists(delta.removed.attributes, delta.added.attributes);
-    length += filterOutDuplicatesInMethods(delta.removed.methods, delta.added.methods)
-    length += filterOutDuplicatesInLists(delta.removed.categories, delta.added.categories);
-    length += filterOutDuplicatesInLists(delta.removed.tests, delta.added.tests);
-    return length;
-}
-
-function sortBy(a, f) {
-    return a.sort(function(i1,i2) {
-        return (i1[f]>i2[f]) ? 1 : ((i1[f]<i2[f]) ? -1 : 0);
-    });
-}
-
-function filterOutDuplicatesInMethods(a, b) {
-    if(a && b) {
-        sortBy(a, "name");
-        sortBy(b, "name");
-        for(var i=0,j=0;i<a.length && j<b.length;) {
-            if(a[i].name===b[j].name) {
-                filterOutDuplicatesInLists(a.protos, b.protos, "proto");
-                if(!a.protos || !a.protos.length)
-                    a.splice(i,1);
-                if(!b.protos || !b.protos.length)
-                    b.splice(j,1);
-            } else if(a[i].name>b[j].name) {
-                j++;
-            } else {
-                i++;
-            }
-        }
-        var length = a.length + b.length;
-        if(!a.length)
-            delete a;
-        if(!b.length)
-            delete b;
-        return length;
-    } else if(a)
-        return a.length;
-    else if(b)
-        return b.length;
-    else
-        return 0;
-}
-
-function filterOutDuplicatesInLists(a, b, field) {
-    if(a && b) {
-        if(field) {
-            sortBy(a, field);
-            sortBy(b, field);
-        } else {
-            a.sort();
-            b.sort();
-        }
-        for(var i=0,j=0;i<a.length && j< b.length;) {
-            var va = a[i];
-            if(field)
-                va = va[field];
-            var vb = b[j];
-            if(field)
-                vb = vb[field];
-            if(va===vb) {
-                a.splice(i,1);
-                b.splice(j,1);
-            } else if(va>vb) {
-                j++;
-            } else {
-                i++;
-            }
-        }
-        var length = a.length + b.length;
-        if(!a.length)
-            delete a;
-        if(!b.length)
-            delete b;
-        return length;
-    } else if(a)
-        return a.length;
-    else if(b)
-        return b.length;
-    else
-        return 0;
-}
-
 
 // method for translating current input to other dialect
 function translate(input, from, to) {

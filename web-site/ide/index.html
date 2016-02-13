@@ -286,7 +286,7 @@
                 testsRemoved(delta.removed.tests);
             }
             // add newly created elements
-            var core = eval(delta.core || "false");
+            var core = eval(delta.core) || false;
             if(delta.added.attributes) {
                 attributesAdded(delta.added.attributes, core);
             }
