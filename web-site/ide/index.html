@@ -256,12 +256,12 @@
                 var idx1 = findBy(catalog.methods, 'name', method.name);
                 if(idx1>=0) {
                     var map = catalog.methods[idx1];
-                    if(map.protos.length==1) {
+                    if(map.protos.length==method.protos.length) {
                         catalog.methods.splice(idx1, 1);
                         $("#method_" + method.name).remove();
                     } else {
                         method.protos.map(function (proto) {
-                            var idx2 = map.protos.indexOf(proto);
+                            var idx2 = findBy(map.protos, 'proto', proto.proto);
                             if (idx2 >= 0)
                                 map.protos.splice(idx2, 1);
                             $("#method_" + method.name + " > #proto_" + makeId(proto.proto)).remove();
