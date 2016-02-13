@@ -72,6 +72,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     PromptoWorker.prototype.setProject = function(dbId) {
         var worker = this;
         safe_require(function() {
+            unpublish(worker);
             loadProject(worker, dbId);
             publishProject(worker);
         });
@@ -239,6 +240,15 @@ function publishCore(worker) {
 
 function inferDialect(path) {
     return path.substring(path.length-2, path.length-1).toUpperCase();
+}
+
+function unpublish(worker) {
+    var delta = {
+        removed : appContext.getLocalCatalog(),
+        added   : {}
+    };
+    appContext = coreContext.newLocalContext();
+    worker.sender.emit("catalog", delta);
 }
 
 function loadProject(worker, dbId) {

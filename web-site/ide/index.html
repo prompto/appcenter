@@ -339,6 +339,13 @@
             }
         }
 
+        function revert() {
+            // TODO confirm
+            setContent(null);
+            var frame = document.getElementById("editor");
+            frame.contentWindow.setProject(getParam("dbId"));
+        }
+
         function run() {
             var msg = getRunnableAlert(contentId);
             if(msg)
