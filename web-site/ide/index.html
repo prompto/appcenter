@@ -346,6 +346,13 @@
             frame.contentWindow.setProject(getParam("dbId"));
         }
 
+        function commit() {
+            // TODO confirm
+            setContent(null);
+            var frame = document.getElementById("editor");
+            frame.contentWindow.commit(getParam("dbId"));
+        }
+
         function run() {
             var msg = getRunnableAlert(contentId);
             if(msg)

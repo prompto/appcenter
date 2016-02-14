@@ -56,6 +56,12 @@
             session.setScrollTop(0);
         }
 
+        function commit(id) {
+            var session = editor.getSession();
+            var mode = session.getMode();
+            mode.commit(id);
+        }
+
         function setValue(value) {
             editor.setValue(value, -1);
         }

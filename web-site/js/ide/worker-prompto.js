@@ -38,10 +38,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
             var core = false;
             if(id) {
                 var decl = getDeclaration(id);
-                var dialect = prompto.parser.Dialect[worker.$dialect];
-                var writer = new prompto.utils.CodeWriter(dialect, appContext.newChildContext());
-                decl.toDialect(writer);
-                value = writer.toString();
+                value = getDeclarationBody(decl, worker.$dialect);
                 core = id.core || false;
             }
             // remember value since it does not result from an edit
@@ -54,6 +51,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     PromptoWorker.prototype.destroy = function(id) {
         var worker = this;
         safe_require(function() {
+            registerDestroyed(id);
             handleUpdate(worker, worker.$value, "", worker.$dialect, new AnnotatingErrorListener());
         });
         this.$value = "";
@@ -72,9 +70,16 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     PromptoWorker.prototype.setProject = function(dbId) {
         var worker = this;
         safe_require(function() {
-            unpublish(worker);
+            unpublishProject(worker);
             loadProject(worker, dbId);
             publishProject(worker);
+        });
+    };
+
+    PromptoWorker.prototype.commit = function(dbId) {
+        var worker = this;
+        safe_require(function() {
+            commitProject(worker, dbId);
         });
     };
 
@@ -153,6 +158,14 @@ AnnotatingErrorListener.prototype.collectProblem = function(problem) {
     this.problems.push(problem);
 };
 
+// method for producing editor input
+function getDeclarationBody(decl, dialect) {
+    var dialect = prompto.parser.Dialect[dialect];
+    var writer = new prompto.utils.CodeWriter(dialect, appContext.newChildContext());
+    decl.toDialect(writer);
+    return writer.toString();
+}
+
 // method for parsing editor input
 function parse(input, dialect, listener) {
     var klass = prompto.parser[dialect + "CleverParser"];
@@ -173,6 +186,7 @@ function handleUpdate(worker, previous, current, dialect, listener) {
     // don't annotate previous content using provided listener
     var previousListener = new AnnotatingErrorListener();
     var old_decls = parse(previous, dialect, previousListener); // we'll ignore these errors but let's catch them
+    registerDirty(new_decls, dialect); // the old decls were either clean, or went through this call previously
     // only update catalog and appContext if syntax is correct
     if (listener.problems.length == 0) {
         // only update catalog if event results from an edit
@@ -222,6 +236,41 @@ function loadText(url) {
 
 var coreContext = prompto.runtime.Context.newGlobalContext();
 var appContext = coreContext.newLocalContext();
+var moduleId = null;
+var statuses = {};
+
+function registerStatus(d) {
+    var id = d.name + d.prototype ? "/" + d.prototype : "";
+    statuses[id] = d;
+}
+
+function registerDestroyed(id) {
+    var id = id.attribute ? id.attribute :
+        id.category ? id.category :
+            id.test ? id.test :
+                id.method + id.proto ? "/" + id.proto : "";
+    var status = statuses[id];
+    if (status)
+        status.editStatus = "DELETED";
+}
+
+function registerDirty(decls, dialect) {
+    decls.map(function(decl) {
+        var proto = decl.getProto ? decl.getProto() : null;
+        var body = getDeclarationBody(decl, dialect);
+        var id = decl.name + proto ? "/" + proto : "";
+        var existing = statuses[id];
+        if(existing) {
+            if(existing.dialect != dialect || existing.body != body) {
+                existing.dialect = dialect;
+                existing.body = body;
+                if (existing.editStatus != "CREATED") // don't overwrite
+                    existing.editStatus = "DIRTY";
+            }
+        } else
+            statuses[id] = { name : decl.name, version : "0.0.0.1", dialect : dialect, prototype : proto, body : body, module : moduleId, editStatus : "CREATED" };
+    });
+}
 
 function loadCore(worker) {
     var code = loadText("../../prompto/prompto.pec");
@@ -242,7 +291,7 @@ function inferDialect(path) {
     return path.substring(path.length-2, path.length-1).toUpperCase();
 }
 
-function unpublish(worker) {
+function unpublishProject(worker) {
     var delta = {
         removed : appContext.getLocalCatalog(),
         added   : {}
@@ -253,6 +302,7 @@ function unpublish(worker) {
 
 function loadProject(worker, dbId) {
     self.console.log("Load module " + dbId.toString());
+    moduleId = dbId;
     var url = '/ws/run/getModuleDeclarations?params=[{"name":"dbId", "value":"' + dbId.toString() + '"}]';
     var text = loadText(url);
     var declarations = JSON.parse(text);
@@ -262,6 +312,9 @@ function loadProject(worker, dbId) {
         declarations.data.map( function(d) {
             var decl = parse(d.body, d.dialect);
             decl.register(appContext);
+            d.editStatus = "CLEAN";
+            d.module = moduleId; // TODO for now, to avoid sending back the image
+            registerStatus(d);
         });
     }
 }
@@ -272,6 +325,21 @@ function publishProject(worker) {
         added   : appContext.getLocalCatalog()
     };
     worker.sender.emit("catalog", delta);
+}
+
+function commitProject(worker, dbId) {
+    var edited = [];
+    for(var id in statuses) {
+        if(statuses[id].editStatus!="CLEAN")
+            edited.push({ type : "EditedDeclaration", value : statuses[id] });
+    }
+    var form = new FormData();
+    form.append("params", JSON.stringify([ { name: "edited", type: "EditedDeclaration[]", value : edited } ]));
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', console.log("Commit ok!"));
+    xhr.addEventListener('error', console.log("Commit failed!"));
+    xhr.open('POST', '/ws/run/storeDeclarations', true);
+    xhr.send(form);
 }
 
 function getDeclaration(id) {
