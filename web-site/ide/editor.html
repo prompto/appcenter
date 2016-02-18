@@ -71,6 +71,13 @@
             mode.run(id);
         }
 
+        // a utility method to inspect worker data in Firefox/Safari
+        function inspect(name) {
+            var session = editor.getSession();
+            var mode = session.getMode();
+            mode.inspect(name);
+        }
+
         $(document).ready(function () {
             parent.editorReady();
         });

@@ -50,26 +50,26 @@
         else {
             var html = [];
             response.data.map( function(item) {
-                var project = item.project ? item.project : item;
+                var module = item.value;
                 $.merge(html, [
                         '<div class="col-xs-4 col-sm-2 placeholder" width="120px">',
                         '<h4>',
                         '<a id="',
-                        project.dbId,
+                        module.dbId,
                         '" href="../ide/index.html?dbId=',
-                        project.dbId,
+                        module.dbId,
                         '&name=',
-                        project.name,
+                        module.name,
                         '" target="_blank" class="thumbnail">',
                         '<img src="',
-                        project.image ? project.image : "/img/library.jpg",
+                        module.image ? module.image : "/img/library.jpg",
                         '" max-width="90%">',
                         '<strong>',
-                        project.name,
+                        module.name,
                         '</strong>',
                         '<br/>',
                         '<span class="text-muted">',
-                        project.description,
+                        module.description,
                         '</span>',
                         '</a>',
                         '</h4>',

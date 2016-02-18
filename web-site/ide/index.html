@@ -210,7 +210,9 @@
                         html.push(" core");
                     $.merge(html, ["' id='method_",
                         method.name,
-                        "'><a core='",
+                        "'><a proto='",
+                        method.protos[0].proto,
+                        "' core='",
                         method.core,
                         "' main='",
                         method.protos[0].main,
@@ -238,7 +240,9 @@
                 var a = $(e.target);
                 var core = a.attr("core") ? eval(a.attr("core")) : false;
                 var main = a.attr("main") ? eval(a.attr("main")) : false;
-                setContent({method: a.text(), core: core, main: main});
+                var proto = a.attr("proto");
+                var id = {method: a.text(), proto : proto, core: core, main: main};
+                setContent(id);
             });
             catalog.methods.map( function(method) {
                 $('#method_' + method.name + ' > li').click(function (e) {
@@ -246,7 +250,8 @@
                     var a = $(e.target);
                     var core = a.attr("core") ? eval(a.attr("core")) : false;
                     var main = a.attr("main") ? eval(a.attr("main")) : false;
-                    setContent({ method : method.name, proto : a.text(), core: core, main: main });
+                    id = { method : method.name, proto : a.text(), core: core, main: main };
+                    setContent(id);
                 });
             });
         }
@@ -273,31 +278,35 @@
 
         function catalogUpdated(delta) {
             // remove deleted elements
-            if(delta.removed.attributes) {
-                attributesRemoved(delta.removed.attributes);
-            }
-            if(delta.removed.methods) {
-                methodsRemoved(delta.removed.methods);
-            }
-            if(delta.removed.categories) {
-                categoriesRemoved(delta.removed.categories);
-            }
-            if(delta.removed.tests) {
-                testsRemoved(delta.removed.tests);
+            if(delta.removed) {
+                if (delta.removed.attributes) {
+                    attributesRemoved(delta.removed.attributes);
+                }
+                if (delta.removed.methods) {
+                    methodsRemoved(delta.removed.methods);
+                }
+                if (delta.removed.categories) {
+                    categoriesRemoved(delta.removed.categories);
+                }
+                if (delta.removed.tests) {
+                    testsRemoved(delta.removed.tests);
+                }
             }
             // add newly created elements
-            var core = eval(delta.core) || false;
-            if(delta.added.attributes) {
-                attributesAdded(delta.added.attributes, core);
-            }
-            if(delta.added.methods) {
-                methodsAdded(delta.added.methods, core);
-            }
-            if(delta.added.categories) {
-                categoriesAdded(delta.added.categories, core);
-            }
-            if(delta.added.tests) {
-                testsAdded(delta.added.tests, core);
+            if(delta.added) {
+                var core = eval(delta.core) || false;
+                if (delta.added.attributes) {
+                    attributesAdded(delta.added.attributes, core);
+                }
+                if (delta.added.methods) {
+                    methodsAdded(delta.added.methods, core);
+                }
+                if (delta.added.categories) {
+                    categoriesAdded(delta.added.categories, core);
+                }
+                if (delta.added.tests) {
+                    testsAdded(delta.added.tests, core);
+                }
             }
             var input = $("#show-core")[0];
             showCore(input);
@@ -406,6 +415,16 @@
             doc.innerHTML += msg + "<br/>";
         }
 
+        // a utility method to inspect worker data in Firefox/Safari
+        function inspect(name) {
+            var frame = document.getElementById("editor");
+            frame.contentWindow.inspect(name);
+        }
+
+        // a utility method to inspect worker data in Firefox/Safari
+        function inspected(data) {
+            console.log(data);
+        }
 
     </script>
 </head>

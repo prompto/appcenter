@@ -145,6 +145,11 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
             this.$worker && this.$worker.send("interpret", [ id ] );
         };
 
+        // a utility method to inspect worker data in Firefox/Safari
+        this.inspect = function(name) {
+            this.$worker && this.$worker.send("inspect", [ name ] );
+        };
+
         this.createWorker = function(session) {
             this.$worker = new WorkerClient(["ace"], "ace/worker/prompto", "PromptoWorker", "../js/ide/worker-prompto.js");
             this.$worker.send("setDialect", [ this.$dialect ] );
@@ -179,6 +184,11 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
 
             this.$worker.on("catalog", function(v) {
                 parent.catalogUpdated(v.data);
+            });
+
+            // a utility method to inspect worker data in Firefox/Safari
+            this.$worker.on("inspected", function(v) {
+                parent.inspected(v.data);
             });
 
             return this.$worker;

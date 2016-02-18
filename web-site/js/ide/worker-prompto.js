@@ -83,6 +83,13 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         });
     };
 
+    PromptoWorker.prototype.inspect = function(name) {
+        var worker = this;
+        safe_require(function() {
+            inspect(worker, name);
+        });
+    };
+
     PromptoWorker.prototype.onUpdate = function() {
         var value = this.doc.getValue();
         var annotations = [];
@@ -239,16 +246,37 @@ var appContext = coreContext.newLocalContext();
 var moduleId = null;
 var statuses = {};
 
-function registerStatus(d) {
-    var id = d.name + d.prototype ? "/" + d.prototype : "";
-    statuses[id] = d;
+function prepareCommit() {
+    var edited = [];
+    for(var id in statuses) {
+        if(statuses[id].editStatus!="CLEAN")
+            edited.push({ type : "EditedDeclaration", value : statuses[id] });
+    }
+    if(edited.length)
+        return edited;
+    else
+        return null;
+}
+
+function registerCommitted(obj) {
+    var d = obj.value;
+    var id = d.name + ( d.prototype ? "/" + d.prototype : "" );
+    statuses[id].declaration.dbId = d.dbId;
+    statuses[id].editStatus = "CLEAN";
+}
+
+
+function registerClean(obj) {
+    var d = obj.value;
+    var id = d.name + ( d.prototype ? "/" + d.prototype : "" );
+    statuses[id] = { declaration : obj, editStatus : "CLEAN" };
 }
 
 function registerDestroyed(id) {
     var id = id.attribute ? id.attribute :
         id.category ? id.category :
             id.test ? id.test :
-                id.method + id.proto ? "/" + id.proto : "";
+                id.method + ( id.proto ? "/" + id.proto : "" );
     var status = statuses[id];
     if (status)
         status.editStatus = "DELETED";
@@ -258,17 +286,37 @@ function registerDirty(decls, dialect) {
     decls.map(function(decl) {
         var proto = decl.getProto ? decl.getProto() : null;
         var body = getDeclarationBody(decl, dialect);
-        var id = decl.name + proto ? "/" + proto : "";
+        var id = decl.name + ( proto ? "/" + proto : "" );
         var existing = statuses[id];
         if(existing) {
-            if(existing.dialect != dialect || existing.body != body) {
-                existing.dialect = dialect;
-                existing.body = body;
+            var d = existing.declaration.value;
+            if(d.dialect != dialect || d.body != body) {
+                d.dialect = dialect;
+                d.body = body;
                 if (existing.editStatus != "CREATED") // don't overwrite
                     existing.editStatus = "DIRTY";
             }
-        } else
-            statuses[id] = { name : decl.name, version : "0.0.0.1", dialect : dialect, prototype : proto, body : body, module : moduleId, editStatus : "CREATED" };
+        } else {
+            statuses[id] = {
+                editStatus: "CREATED",
+                declaration : {
+                    type: decl.getDeclarationType() + "Declaration",
+                    value: {
+                        name: decl.name,
+                        version: "0.0.0.1",
+                        dialect: dialect,
+                        prototype: proto,
+                        body: body,
+                        module: {
+                            type: "Module",
+                            value: {
+                                dbId: moduleId
+                            }
+                        }
+                    },
+                }
+            };
+        }
     });
 }
 
@@ -300,21 +348,26 @@ function unpublishProject(worker) {
     worker.sender.emit("catalog", delta);
 }
 
+function fetchProject(worker, dbId) {
+    var url = '/ws/run/getModuleDeclarations?params=[{"name":"dbId", "value":"' + dbId.toString() + '"}]';
+    var text = loadText(url);
+    return JSON.parse(text);
+}
+
 function loadProject(worker, dbId) {
     self.console.log("Load module " + dbId.toString());
     moduleId = dbId;
-    var url = '/ws/run/getModuleDeclarations?params=[{"name":"dbId", "value":"' + dbId.toString() + '"}]';
-    var text = loadText(url);
-    var declarations = JSON.parse(text);
+    var declarations = fetchProject(worker, dbId);
     if(declarations.error)
         ; // do something
     else {
-        declarations.data.map( function(d) {
-            var decl = parse(d.body, d.dialect);
+        declarations.data.map( function(obj) {
+            var decl = parse(obj.value.body, obj.value.dialect);
             decl.register(appContext);
-            d.editStatus = "CLEAN";
-            d.module = moduleId; // TODO for now, to avoid sending back the image
-            registerStatus(d);
+            // prepare for commit
+            if(obj.value.module)
+                delete obj.value.module.value.image; // to avoid sending it back
+            registerClean(obj);
         });
     }
 }
@@ -328,18 +381,35 @@ function publishProject(worker) {
 }
 
 function commitProject(worker, dbId) {
-    var edited = [];
-    for(var id in statuses) {
-        if(statuses[id].editStatus!="CLEAN")
-            edited.push({ type : "EditedDeclaration", value : statuses[id] });
+    var edited = prepareCommit();
+    if(edited) {
+        var form = new FormData();
+        form.append("params", JSON.stringify([{name: "edited", type: "EditedDeclaration[]", value: edited}]));
+        var xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener('load', commitSuccessful(worker));
+        xhr.addEventListener('error', commitFailed(worker));
+        xhr.open('POST', '/ws/run/storeDeclarations', true);
+        xhr.send(form);
     }
-    var form = new FormData();
-    form.append("params", JSON.stringify([ { name: "edited", type: "EditedDeclaration[]", value : edited } ]));
-    var xhr = new XMLHttpRequest();
-    xhr.addEventListener('load', console.log("Commit ok!"));
-    xhr.addEventListener('error', console.log("Commit failed!"));
-    xhr.open('POST', '/ws/run/storeDeclarations', true);
-    xhr.send(form);
+}
+
+function commitFailed(worker) {
+    return function(worker) {
+        console.log("Commit failed!");
+    };
+}
+
+function commitSuccessful(worker) {
+    return function(worker) {
+        console.log("Commit ok!");
+        var declarations = fetchProject(worker, moduleId);
+        if(declarations.error)
+            ; // do something
+        else
+            declarations.data.map( function(obj) {
+                registerCommitted(obj);
+            });
+    };
 }
 
 function getDeclaration(id) {
@@ -356,6 +426,13 @@ function getDeclaration(id) {
         return appContext.getRegisteredDeclaration(name);
     }
 }
+
+// a utility method to inspect worker data in Firefox/Safari
+function inspect(worker, name) {
+    var inspected = eval(name);
+    worker.sender.emit("inspected", inspected);
+}
+
 
 
 
