@@ -27,12 +27,23 @@
 <script src="../js/lib/bootstrap.min.js"></script>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="../js/lib/ie10-viewport-bug-workaround.js"></script>
-<!-- ensure content menu is highlighted -->
+<!-- install event handlers -->
 <script type="text/javascript">
 	$(document).ready(function() {
-        $.getJSON('/ws/run/getRecentModules?params=[{"name":"count", "type":"Integer", "value":10}]', null, displayRecent);
+        $.getJSON('/ws/run/getRecentModules?params=[{"name":"count", "type":"Integer", "value":8}]', null, displayRecent);
         $.getJSON('/ws/run/getAllModules', null, displayAll);
-	});
+        $('[id^=new-module-type-]').on('click',function() {
+            $('[id^=new-module-type-]').removeClass('active');
+            $(this).addClass('active');
+            $('[id^=new-module-entry-point]').attr('disabled', this.id.indexOf('batch')<0);
+            var isCreate = document.getElementById('new-module-entry-point-create').checked;
+            document.getElementById('new-module-entry-point-text').disabled = this.id.indexOf('batch')<0 || isCreate;
+        });
+        $('[name=radio-entry-point]').on('click',function() {
+            var isCreate = document.getElementById('new-module-entry-point-create').checked;
+            document.getElementById('new-module-entry-point-text').disabled = isCreate;
+        });
+    });
 
     function displayRecent(response) {
         display('recent', response);
@@ -42,11 +53,48 @@
         display('all', response);
     }
 
+    function createNewModule() {
+        var formData = new FormData();
+        var type = $('.active[id^=new-module-type-]')[0].id.substring("new-module-type-".length);
+        var name = document.getElementById('new-module-name-text').value;
+        var description = document.getElementById('new-module-description-text').value;
+        var create = document.getElementById('new-module-entry-point-create').checked;
+        var entryPoint = document.getElementById('new-module-entry-point-text').value;
+        var image = null;
+        var files = document.getElementById('new-module-icon-file').files;
+        if(files.length) {
+            image = "@" + files[0].name;
+            formData.append(image, files[0]);
+        }
+        var params = [
+            {name: "type", type: "Text", value: type},
+            {name: "name", type: "Text", value: name},
+            {name: "description", type: "Text", value: description},
+            {name: "createEntryPoint", type: "Boolean", value: create},
+            {name: "entryPoint", type: "Text", value: entryPoint},
+            {name: "image", type: "Image", value: image}
+        ];
+        formData.append("params", JSON.stringify(params));
+        $.ajax({
+            url: "/ws/run/createModule",
+            type: 'POST',
+            data: formData,
+            async: true,
+            cache: false,
+            contentType: false,
+            processData: false,
+            error: function (xhr, status, thrown) {
+                alert(thrown);
+            },
+            success: function (returndata) {
+                alert("Thank you for your comment!");
+            }
+        });
+    };
+
     function display(id, response) {
         if(response.error)
             alert(response.error);
-        if(response.data.length==0)
-            $("#" + id).hide();
         else {
             var html = [];
             response.data.map( function(item) {
@@ -76,6 +124,21 @@
                         '</div>'
                 ]);
             });
+            if(id=="recent") {
+                $.merge(html, [
+                    '<div class="col-xs-4 col-sm-2 placeholder" width="120px"><h4><a ',
+                    'class="thumbnail" onClick="$(\x27#new-project-dialog\x27).modal(\x27show\x27);">',
+                    '<img src="/img/wizard.jpg" max-width="90%">',
+                    '<strong>New project</strong>',
+                    '</a></h4></div>',
+                    '<div class="col-xs-4 col-sm-2 placeholder" width="120px"><h4><a ',
+                    'class="thumbnail" onClick="import();">',
+                    '<img src="/img/import.jpg" max-width="90%">',
+                    '<strong>Import project</strong>',
+                    '</a></h4></div>'
+                ]);
+
+            }
             $("#" + id + "-items").html(html.join(""));
             $("#" + id).show();
         }
@@ -99,7 +162,94 @@
                </div>
             </div>
 		</div>
-	</div>
+        <div id="new-project-dialog" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">New project</h4>
+                    </div>
+                    <div class="modal-body row">
+                        <form id="new-module-form" role="form">
+                            <div class="col-md-12">
+                                <div id="new-module-type" class="form-group">
+                                    <label for="new-module-type">Type</label>
+                                    <div id="new-module-type placeholders btn-group" data-toggle="buttons">
+                                        <div class="col-md-2 placeholder" style="margin-left: 5px; margin-right: 0px">
+                                            <h5>
+                                                <a id="new-module-type-batch" class="thumbnail active" style="text-align: center">
+                                                    <img src="/img/batch.jpg" max-width="90%">
+                                                    <strong>Batch</strong>
+                                                </a>
+                                            </h5>
+                                        </div>
+                                        <div class="col-md-2 placeholder" style="margin-left: 5px; margin-right: 0px">
+                                            <h5>
+                                                <a id="new-module-type-script" class="thumbnail" style="text-align: center">
+                                                    <img src="/img/script.jpg" max-width="90%">
+                                                    <strong>Script</strong>
+                                                </a>
+                                            </h5>
+                                        </div>
+                                        <div class="col-md-2 placeholder" style="margin-left: 5px; margin-right: 0px">
+                                            <h5>
+                                                <a id="new-module-type-service" class="thumbnail" style="text-align: center">
+                                                    <img src="/img/service.jpg" max-width="90%">
+                                                    <strong>Web service</strong>
+                                                </a>
+                                            </h5>
+                                        </div>
+                                        <div class="col-md-2 placeholder" style="margin-left: 5px; margin-right: 0px">
+                                            <h5>
+                                                <a id="new-module-type-website" class="thumbnail" style="text-align: center">
+                                                    <img src="/img/website.jpg" max-width="90%">
+                                                    <strong>Web site</strong>
+                                                </a>
+                                            </h5>
+                                        </div>
+                                        <div class="col-md-2 placeholder" style="margin-left: 0px; margin-right: 0px">
+                                            <h5>
+                                                <a id="new-module-type-library" class="thumbnail" style="text-align: center">
+                                                    <img src="/img/library.jpg" max-width="90%">
+                                                    <strong>Library</strong>
+                                                </a>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div id="new-module-name" class="form-group">
+                                    <label for="new-module-name-input">Name</label>
+                                    <input type="text" class="form-control" id="new-module-name-text" placeholder="Enter module name"/>
+                                </div>
+                                <div id="new-module-description" class="form-group">
+                                    <label for="new-module-description-input" >Description</label>
+                                    <input type="text" class="form-control" id="new-module-description-text" placeholder="Enter module description"/>
+                                </div>
+                                <div id="new-module-icon" class="form-group">
+                                    <label for="new-module-icon" >Image</label>
+                                    <input type="file" accept="image/*" class="form-control" id="new-module-icon-file" placeholder="Icon file"/>
+                                </div>
+                                <div id="new-module-entry-point" class="form-group buttons">
+                                    <label for="">Entry point</label>&nbsp;
+                                    <label class="radio-inline">
+                                        <input id="new-module-entry-point-create" type="radio" name="radio-entry-point" checked>Create</label>
+                                    <label class="radio-inline">
+                                        <input id="new-module-entry-point-existing" type="radio" name="radio-entry-point">Use existing</label>
+                                    <input type="text" class="form-control" id="new-module-entry-point-text" disabled placeholder="Enter existing entry point"/>
+                                </div>
+                           </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createNewModule();">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
