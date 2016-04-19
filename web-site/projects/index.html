@@ -29,21 +29,56 @@
 <script src="../js/lib/ie10-viewport-bug-workaround.js"></script>
 <!-- install event handlers -->
 <script type="text/javascript">
-	$(document).ready(function() {
-        $.getJSON('/ws/run/getRecentModules?params=[{"name":"count", "type":"Integer", "value":8}]', null, displayRecent);
-        $.getJSON('/ws/run/getAllModules', null, displayAll);
+
+    $(document).ready(function() {
+        getRecentModules();
+        getAllModules();
+        prepareNewProjectDialog();
+        prepareProjectContextualMenu();
+    });
+
+    var projectContextMenu;
+    var contextMenuProject;
+
+    function prepareProjectContextualMenu() {
+        projectContextMenu = $("#project-context-menu");
+        projectContextMenu.on("click", "a", function() {
+            projectContextMenu.hide();
+        });
+        $('body').click(function () {
+            projectContextMenu.hide();
+        });
+    }
+
+    function exportProject() {
+        alert("Export " + contextMenuProject);
+    }
+
+    function prepareNewProjectDialog() {
+        // install project type handlers
         $('[id^=new-module-type-]').on('click',function() {
+            // install radio button behavior
             $('[id^=new-module-type-]').removeClass('active');
             $(this).addClass('active');
+            // enable/disable entry point items
             $('[id^=new-module-entry-point]').attr('disabled', this.id.indexOf('batch')<0);
             var isCreate = document.getElementById('new-module-entry-point-create').checked;
             document.getElementById('new-module-entry-point-text').disabled = this.id.indexOf('batch')<0 || isCreate;
         });
+        // enable/disable entry point text box
         $('[name=radio-entry-point]').on('click',function() {
             var isCreate = document.getElementById('new-module-entry-point-create').checked;
             document.getElementById('new-module-entry-point-text').disabled = isCreate;
         });
-    });
+    }
+
+    function getAllModules() {
+        $.getJSON('/ws/run/getAllModules', null, displayAll);
+    }
+
+    function getRecentModules() {
+        $.getJSON('/ws/run/getRecentModules?params=[{"name":"count", "type":"Integer", "value":8}]', null, displayRecent);
+    }
 
     function displayRecent(response) {
         display('recent', response);
@@ -100,12 +135,12 @@
             response.data.map( function(item) {
                 var module = item.value;
                 $.merge(html, [
-                        '<div class="col-xs-4 col-sm-2 placeholder" width="120px">',
+                        '<div class="col-xs-4 col-sm-2 placeholder project" width="120px">',
                         '<h4>',
                         '<a id="',
-                        module.dbId,
+                        module.dbId.value,
                         '" href="../ide/index.html?dbId=',
-                        module.dbId,
+                        module.dbId.value,
                         '&name=',
                         module.name,
                         '" target="_blank" class="thumbnail">',
@@ -141,6 +176,17 @@
             }
             $("#" + id + "-items").html(html.join(""));
             $("#" + id).show();
+            $(".project").on("contextmenu", function(e) {
+                var thumbnail = $(e.target).closest("a")[0];
+                contextMenuProject = thumbnail.id;
+                e.preventDefault();
+                projectContextMenu.css({
+                    display: "block",
+                    left: e.pageX,
+                    top: e.pageY
+                });
+                return false;
+            });
         }
     }
 
@@ -249,6 +295,11 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div id="project-context-menu" class="dropdown clearfix" style="position: absolute; display: none">
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
+            <li><a tabindex="-1" href="#" onclick="exportProject();">Export</a></li>
+        </ul>
     </div>
 </body>
 </html>
