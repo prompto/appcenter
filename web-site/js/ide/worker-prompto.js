@@ -200,10 +200,7 @@ function handleUpdate(worker, previous, current, dialect, listener) {
         var changes = new delta.Delta();
         if(previous!=current) {
             changes.added = new delta.Catalog(prompto, new_decls, coreContext);
-            // only remove previous decls if parsing successful. This is because
-            // if previous parsing failed, we never actually reached this section
-            if(previousListener.problems.length == 0)
-                changes.removed = new delta.Catalog(prompto, old_decls, coreContext);
+            changes.removed = new delta.Catalog(prompto, old_decls, coreContext);
         }
         // update appContext, collecting prompto errors
         old_decls.unregister(appContext); // TODO: manage damage on objects referring to these
@@ -215,8 +212,8 @@ function handleUpdate(worker, previous, current, dialect, listener) {
         } finally {
             appContext.problemListener = saved_listener;
         }
-        // done
-        if(changes.adjustForMovingProtos(appContext))
+        // only update UI if this input fixed an error or there was a change meaningful to the UI
+        if(previousListener.problems.length || changes.adjustForMovingProtos(appContext))
             worker.sender.emit("catalog", changes.getContent());
     }
 }
