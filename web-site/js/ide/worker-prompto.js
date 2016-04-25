@@ -196,14 +196,15 @@ function handleUpdate(worker, previous, current, dialect, listener) {
     registerDirty(new_decls, dialect); // the old decls were either clean, or went through this call previously
     // only update catalog and appContext if syntax is correct
     if (listener.problems.length == 0) {
-        // only update catalog if event results from an edit
         var changes = new delta.Delta();
+        // only update catalog if event results from an edit
         if(previous!=current) {
             changes.added = new delta.Catalog(prompto, new_decls, coreContext);
             changes.removed = new delta.Catalog(prompto, old_decls, coreContext);
         }
         // update appContext, collecting prompto errors
         old_decls.unregister(appContext); // TODO: manage damage on objects referring to these
+        new_decls.unregister(appContext); // avoid duplicate declaration errors
         var saved_listener = appContext.problemListener;
         try {
             appContext.problemListener = listener;
