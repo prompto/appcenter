@@ -296,15 +296,19 @@
             if(delta.added) {
                 var core = eval(delta.core) || false;
                 if (delta.added.attributes) {
+                    attributesRemoved(delta.added.attributes, core);
                     attributesAdded(delta.added.attributes, core);
                 }
                 if (delta.added.methods) {
+                    methodsRemoved(delta.added.methods, core);
                     methodsAdded(delta.added.methods, core);
                 }
                 if (delta.added.categories) {
+                    categoriesRemoved(delta.added.categories, core);
                     categoriesAdded(delta.added.categories, core);
                 }
                 if (delta.added.tests) {
+                    testsRemoved(delta.added.tests, core);
                     testsAdded(delta.added.tests, core);
                 }
             }
