@@ -9,7 +9,7 @@
 <meta name="author" content="">
 <link rel="icon" href="../../favicon.ico">
 
-<title>The Prompto Platform</title>
+<title>Prompto Development Center</title>
 
 <!-- Bootstrap core CSS -->
 <link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -157,6 +157,11 @@
             if(id=="recent") {
                 $.merge(html, [
                     '<div class="col-xs-4 col-sm-2 placeholder" width="120px"><h4><a ',
+                    'id = "data-explorer" class="thumbnail" href="" target="_blank">',
+                    '<img src="/img/explorer.png" max-width="90%">',
+                    '<br/><strong>Data explorer</strong>',
+                    '</a></h4></div>',
+                    '<div class="col-xs-4 col-sm-2 placeholder" width="120px"><h4><a ',
                     'class="thumbnail" onClick="$(\x27#new-project-dialog\x27).modal(\x27show\x27);">',
                     '<img src="/img/wizard.jpg" max-width="90%">',
                     '<strong>New project</strong>',
@@ -167,6 +172,12 @@
                     '<strong>Import project</strong>',
                     '</a></h4></div>'
                 ]);
+                $.getJSON('/ws/run/getDataExplorerURL', null, function(response) {
+                    if(response.error)
+                        ;
+                    else
+                        $("#data-explorer").attr("href", response.data);
+                });
 
             }
             $("#" + id + "-items").html(html.join(""));
