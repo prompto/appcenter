@@ -38,13 +38,16 @@
         return n
     }, e.require = function(t, n) {
         n || (n = t, t = null);
-        if (!n.charAt) throw new Error("worker.js require() accepts only (parentId, id) as arguments");
+        if (!n.charAt)
+            throw new Error("worker.js require() accepts only (parentId, id) as arguments");
         n = e.normalizeModule(t, n);
         var r = e.require.modules[n];
-        if (r) return r.initialized || (r.initialized = !0, r.exports = r.factory()
+        if (r)
+            return r.initialized || (r.initialized = !0, r.exports = r.factory()
             .exports), r.exports;
         var i = n.split("/");
-        if (!e.require.tlns) return console.log("unable to load " + n);
+        if (!e.require.tlns)
+            return console.log("unable to load " + n);
         i[0] = e.require.tlns[i[0]] || i[0];
         var s = i.join("/") + ".js";
         return e.require.id = n, importScripts(s), e.require(t, n)
@@ -108,7 +111,8 @@
     e.onmessage = function(r) {
         var i = r.data;
         if (i.command) {
-            if (!t[i.command]) throw new Error("Unknown command:" + i.command);
+            if (!t[i.command])
+                throw new Error("Unknown command:" + i.command);
             t[i.command].apply(t, i.args)
         } else if (i.init) {
             initBaseUrls(i.tlns), require("ace/lib/es5-shim"), n = e.sender = initSender();
@@ -764,7 +768,8 @@
     }
     Function.prototype.bind || (Function.prototype.bind = function(t) {
         var n = this;
-        if (typeof n != "function") throw new TypeError("Function.prototype.bind called on incompatible " + n);
+        if (typeof n != "function")
+            throw new TypeError("Function.prototype.bind called on incompatible " + n);
         var i = u.call(arguments, 1),
             s = function() {
                 if (this instanceof s) {
