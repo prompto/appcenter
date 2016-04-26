@@ -282,39 +282,46 @@ function registerDestroyed(id) {
 
 function registerDirty(decls, dialect) {
     decls.map(function(decl) {
-        var proto = decl.getProto ? decl.getProto() : null;
-        var body = getDeclarationBody(decl, dialect);
-        var id = decl.name + ( proto ? "/" + proto : "" );
+        var id = decl.name + ( decl.getProto!==undefined ? "/" + decl.getProto() : "" );
         var existing = statuses[id];
         if(existing) {
             var d = existing.declaration.value;
+            var body = getDeclarationBody(decl, dialect);
             if(d.dialect != dialect || d.body != body) {
                 d.dialect = dialect;
                 d.body = body;
                 if (existing.editStatus != "CREATED") // don't overwrite
                     existing.editStatus = "DIRTY";
+                if(decl.getProto!==undefined)
+                    d.prototype = decl.getProto();
+                if(decl.storable!==undefined)
+                    d.storable = decl.storable;
             }
         } else {
+            var d = {
+                name: decl.name,
+                version: "0.0.0.1",
+                dialect: dialect,
+                body: getDeclarationBody(decl, dialect),
+                module: {
+                    type: "Module",
+                    value: {
+                        dbId: moduleId
+                    }
+                }
+            };
+            if(decl.getProto!==undefined)
+                d.prototype = decl.getProto();
+            if(decl.storable!==undefined)
+                d.storable = decl.storable;
             statuses[id] = {
                 editStatus: "CREATED",
                 declaration : {
                     type: decl.getDeclarationType() + "Declaration",
-                    value: {
-                        name: decl.name,
-                        version: "0.0.0.1",
-                        dialect: dialect,
-                        prototype: proto,
-                        body: body,
-                        module: {
-                            type: "Module",
-                            value: {
-                                dbId: moduleId
-                            }
-                        }
-                    },
+                    value: d
                 }
             };
-        }
+        };
     });
 }
 
