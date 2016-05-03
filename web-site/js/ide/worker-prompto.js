@@ -13,6 +13,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         this.$value = this.doc.getValue();
         this.$core = false;
         this.$repo = new codebase.Repository();
+        this.$loading = {};
         this.onInit();
     };
 
@@ -75,26 +76,69 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
 
     PromptoWorker.prototype.setProject = function(projectId) {
         this.$projectId = projectId;
+        this.unpublishProject();
+        this.loadProject(projectId);
+    };
+
+    PromptoWorker.prototype.loadDependency = function(dependency) {
+        this.markLoading(dependency.name);
         var worker = this;
-        safe_require(function() {
-            worker.unpublishProject();
-            worker.loadProject(projectId);
-            worker.publishProject();
+        this.fetchLibraryDeclarations(dependency.name, dependency.version, function(response) {
+            if(response.error)
+                ; // TODO something
+            else {
+                safe_require(function() {
+                    var declarations = response.data;
+                    worker.$repo.registerLibraryDeclarations(declarations);
+                    worker.markLoaded(dependency.name);
+                });
+            }
         });
     };
 
     PromptoWorker.prototype.loadProject = function(projectId) {
-        var declarations = this.fetchProjectDeclarations(projectId);
-        if(declarations.error)
-            ; // TODO something
-        else
-            this.$repo.loadProject(projectId, declarations.data);
+        var worker = this;
+        this.fetchModuleDescription(projectId, true, function(response) {
+            if(response.error)
+                ; // TODO something
+            else {
+                var project = response.data.value;
+                if(project.dependencies) {
+                    project.dependencies.map(function(dep) {
+                        worker.loadDependency(dep.value);
+                    });
+                }
+            }
+        });
+        this.fetchProjectDeclarations(projectId, function(response) {
+            if(response.error)
+                ; // TODO something
+            else {
+                safe_require(function() {
+                    var declarations = response.data;
+                    worker.$repo.registerProjectDeclarations(projectId, declarations);
+                    worker.markLoaded("Project");
+                });
+            }
+        });
     };
 
-    PromptoWorker.prototype.fetchProjectDeclarations = function(projectId) {
-        var url = '/ws/run/getModuleDeclarations?params=[{"name":"dbId", "value":"' + projectId.toString() + '"}]';
-        var text = this.loadText(url);
-        return JSON.parse(text);
+    PromptoWorker.prototype.fetchModuleDescription = function(projectId, register, success) {
+        var params = [ {name:"dbId", value:projectId.toString()}, {name:"register", type:"Boolean", value:register}];
+        var url = '/ws/run/getModuleDescription?params=' + JSON.stringify(params);
+        var text = this.loadJSON(url, success);
+    };
+
+    PromptoWorker.prototype.fetchLibraryDeclarations = function(name, version, success) {
+        var params = [ {name:"name", type:"Text", value:name}, {name:"version", type:"Text", value:version}];
+        var url = '/ws/run/getModuleDeclarations?params=' + JSON.stringify(params);
+        var text = this.loadJSON(url, success);
+    };
+
+    PromptoWorker.prototype.fetchProjectDeclarations = function(projectId, success) {
+        var params = [ {name:"dbId", value:projectId.toString()}];
+        var url = '/ws/run/getModuleDeclarations?params=' + JSON.stringify(params);
+        var text = this.loadJSON(url, success);
     };
 
     PromptoWorker.prototype.commit = function() {
@@ -125,23 +169,54 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     };
 
     PromptoWorker.prototype.onInit = function() {
+        this.markLoading("Project");
+        // load core
+        this.markLoading("Core");
         var worker = this;
-        safe_require(function() {
-            worker.$repo.loadCore(worker);
-            worker.publishLibraries(); // TODO move after libraries are loaded
+        this.loadText("../../prompto/prompto.pec", function(text) {
+            safe_require(function() {
+                worker.$repo.registerLibraryCode(text, "E");
+                worker.markLoaded("Core");
+            });
         });
     };
 
+    PromptoWorker.prototype.markLoading = function(name) {
+        this.$loading[name] = true;
+    };
 
-    PromptoWorker.prototype.loadText = function(url) {
+
+    PromptoWorker.prototype.markLoaded = function(name) {
+        delete this.$loading[name];
+        // is this the Project ?
+        if(name=="Project")
+            this.publishProject();
+        // is this the last library ?
+        else if (Object.keys(this.$loading).length == 1 && "Project" in this.$loading)
+            this.publishLibraries();
+        // is this the last loading
+        else if (Object.keys(this.$loading).length == 0)
+            this.publishLibraries();
+    };
+
+    PromptoWorker.prototype.loadJSON = function(url, success) {
+        this.loadText(url, function (text) {
+            var json = JSON.parse(text);
+            success(json);
+        });
+    };
+
+    PromptoWorker.prototype.loadText = function(url, success) {
         var xhr = new XMLHttpRequest();
         xhr.onerror = function(e) {
             self.console.log("Error " + e.target.status + " occurred while receiving the document.");
             return null;
         };
-        xhr.open('GET', url, false);
+        xhr.onload = function(e) {
+            success(xhr.responseText);
+        };
+        xhr.open('GET', url);
         xhr.send(null);
-        return xhr.responseText;
     };
 
     PromptoWorker.prototype.publishLibraries = function () {
@@ -181,13 +256,14 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
 
     PromptoWorker.prototype.commitSuccessful = function(success) {
         console.log("Commit ok!");
-        var declarations = this.fetchProjectDeclarations(this.$projectId);
-        if(declarations.error)
-            ; // TODO something
-        else {
-            this.$repo.loadProject(this.$projectId, declarations.data);
-            this.$repo.registerCommitted(declarations.data);
-        }
+        var declarations = this.fetchProjectDeclarations(this.$projectId, function(response) {
+            if (response.error)
+                ; // TODO something
+            else {
+                this.$repo.loadProject(this.$projectId, response.data);
+                this.$repo.registerCommitted(declarations.data);
+            }
+        });
     };
 
 

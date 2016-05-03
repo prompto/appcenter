@@ -66,10 +66,17 @@ function Repository() {
 }
 
 
-Repository.prototype.loadCore = function(worker) {
-    var code = worker.loadText("../../prompto/prompto.pec");
-    var decls = parse(code, "E");
+Repository.prototype.registerLibraryCode = function(code, dialect) {
+    var decls = parse(code, dialect);
     decls.register(this.librariesContext);
+};
+
+Repository.prototype.registerLibraryDeclarations = function(declarations) {
+    var worker = this;
+    declarations.map( function(obj) {
+        var decl = parse(obj.value.body, obj.value.dialect);
+        decl.register(worker.librariesContext);
+    });
 };
 
 Repository.prototype.publishLibraries = function() {
@@ -99,7 +106,7 @@ Repository.prototype.unpublishProject = function() {
     return delta;
 };
 
-Repository.prototype.loadProject = function(moduleId, declarations) {
+Repository.prototype.registerProjectDeclarations = function(moduleId, declarations) {
     this.moduleId = moduleId;
     var worker = this;
     declarations.map( function(obj) {
