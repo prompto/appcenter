@@ -8,9 +8,11 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     var PromptoWorker = function(sender) {
         Mirror.call(this, sender);
         this.setTimeout(200);
+        this.$projectId = null;
         this.$dialect = null;
         this.$value = this.doc.getValue();
         this.$core = false;
+        this.$repo = new codebase.Repository();
         this.onInit();
     };
 
@@ -22,9 +24,10 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         if(old && dialect!==old) {
             var value = this.doc.getValue();
             if(value) {
+                var worker = this;
                 // remember value since it does not result from an edit
                 this.$value = safe_require(function() {
-                    return translate(value, old, dialect);
+                    return worker.$repo.translate(value, old, dialect);
                 });
                 this.sender.emit("value", this.$value);
             }
@@ -34,16 +37,14 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     PromptoWorker.prototype.setContent = function(id) {
         var worker = this;
         safe_require(function() {
-            var value = "";
-            var core = false;
-            if(id) {
-                var decl = getDeclaration(id);
-                value = getDeclarationBody(decl, worker.$dialect);
-                core = id.core || false;
-            }
             // remember value since it does not result from an edit
-            worker.$value = value;
-            worker.$core = core;
+            if(id) {
+                worker.$value = worker.$repo.getDeclarationBody(id, worker.$dialect);
+                worker.$core = id.core || false;
+            } else {
+                worker.$value = "";
+                worker.$core = false;
+            }
             worker.sender.emit("value", worker.$value);
         });
     };
@@ -51,86 +52,156 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     PromptoWorker.prototype.destroy = function(id) {
         var worker = this;
         safe_require(function() {
-            registerDestroyed(id);
-            handleUpdate(worker, worker.$value, "", worker.$dialect, new AnnotatingErrorListener());
+            worker.$repo.registerDestroyed(id);
+            var catalog = worker.$repo.handleUpdate(worker.$core, worker.$value, "", worker.$dialect, new AnnotatingErrorListener());
+            if(catalog) {
+                worker.sender.emit("catalog", catalog);
+            }
         });
         this.$value = "";
         this.sender.emit("value", this.$value);
     }
 
     PromptoWorker.prototype.interpret = function(id) {
+        var context = this.$repo.projectContext;
         safe_require(function () {
             if(id.test)
-                prompto.runtime.Interpreter.interpretTest(appContext, id.test);
+                prompto.runtime.Interpreter.interpretTest(context, id.test);
             else if(id.method)
-                prompto.runtime.Interpreter.interpret(appContext, id.method, "");
+                prompto.runtime.Interpreter.interpret(context, id.method, "");
         });
+        this.sender.emit("done");
     }
 
-    PromptoWorker.prototype.setProject = function(dbId) {
+    PromptoWorker.prototype.setProject = function(projectId) {
+        this.$projectId = projectId;
         var worker = this;
         safe_require(function() {
-            unpublishProject(worker);
-            loadProject(worker, dbId);
-            publishProject(worker);
+            worker.unpublishProject();
+            worker.loadProject(projectId);
+            worker.publishProject();
         });
     };
 
-    PromptoWorker.prototype.commit = function(dbId) {
+    PromptoWorker.prototype.loadProject = function(projectId) {
+        var declarations = this.fetchProjectDeclarations(projectId);
+        if(declarations.error)
+            ; // TODO something
+        else
+            this.$repo.loadProject(projectId, declarations.data);
+    };
+
+    PromptoWorker.prototype.fetchProjectDeclarations = function(projectId) {
+        var url = '/ws/run/getModuleDeclarations?params=[{"name":"dbId", "value":"' + projectId.toString() + '"}]';
+        var text = this.loadText(url);
+        return JSON.parse(text);
+    };
+
+    PromptoWorker.prototype.commit = function() {
         var worker = this;
         safe_require(function() {
-            commitProject(worker, dbId);
+            worker.commitProject();
         });
     };
 
+    /* a utility function to inspect worker data from Safari/Firefox/IE */
     PromptoWorker.prototype.inspect = function(name) {
-        var worker = this;
-        safe_require(function() {
-            inspect(worker, name);
-        });
+        var inspected = eval(name);
+        this.sender.emit("inspected", inspected);
     };
 
     PromptoWorker.prototype.onUpdate = function() {
         var value = this.doc.getValue();
-        var annotations = [];
-        var errorListener = new AnnotatingErrorListener(annotations);
+        var errorListener = new AnnotatingErrorListener();
         var worker = this;
         safe_require(function() {
-            handleUpdate(worker, worker.$value, value, worker.$dialect, errorListener);
+            var catalog = worker.$repo.handleUpdate(worker.$core, worker.$value, value, worker.$dialect, errorListener);
+            if(catalog) {
+                worker.sender.emit("catalog", catalog);
+            }
         });
         this.$value = value;
-        this.sender.emit("annotate", annotations);
+        this.sender.emit("annotate", errorListener.problems);
     };
 
     PromptoWorker.prototype.onInit = function() {
         var worker = this;
         safe_require(function() {
-            loadCore(worker);
-            publishCore(worker);
+            worker.$repo.loadCore(worker);
+            worker.publishLibraries(); // TODO move after libraries are loaded
         });
     };
+
+
+    PromptoWorker.prototype.loadText = function(url) {
+        var xhr = new XMLHttpRequest();
+        xhr.onerror = function(e) {
+            self.console.log("Error " + e.target.status + " occurred while receiving the document.");
+            return null;
+        };
+        xhr.open('GET', url, false);
+        xhr.send(null);
+        return xhr.responseText;
+    };
+
+    PromptoWorker.prototype.publishLibraries = function () {
+        var catalog = this.$repo.publishLibraries();
+        this.sender.emit("catalog", catalog);
+    };
+
+
+    PromptoWorker.prototype.publishProject = function() {
+        var catalog = this.$repo.publishProject();
+        this.sender.emit("catalog", catalog);
+    };
+
+
+    PromptoWorker.prototype.unpublishProject = function() {
+        var catalog = this.$repo.unpublishProject();
+        this.sender.emit("catalog", catalog);
+    };
+
+    PromptoWorker.prototype.commitProject = function() {
+        var edited = this.$repo.prepareCommit();
+        if(edited) {
+            var worker = this;
+            var form = new FormData();
+            form.append("params", JSON.stringify([{name: "edited", type: "EditedDeclaration[]", value: edited}]));
+            var xhr = new XMLHttpRequest();
+            xhr.upload.addEventListener('load', function(success) { worker.commitSuccessful(success); });
+            xhr.addEventListener('error', function(failure) { worker.commitFailed(failure); });
+            xhr.open('POST', '/ws/run/storeDeclarations', true);
+            xhr.send(form);
+        }
+    };
+
+    PromptoWorker.prototype.commitFailed = function(failure) {
+        console.log("Commit failed!"); // TODO send to UI
+    };
+
+    PromptoWorker.prototype.commitSuccessful = function(success) {
+        console.log("Commit ok!");
+        var declarations = this.fetchProjectDeclarations(this.$projectId);
+        if(declarations.error)
+            ; // TODO something
+        else {
+            this.$repo.loadProject(this.$projectId, declarations.data);
+            this.$repo.registerCommitted(declarations.data);
+        }
+    };
+
 
     exports.PromptoWorker = PromptoWorker;
 });
 
 // load nodejs compatible require
+var antlr4_require = null;
 var ace_require = require;
 try {
     self.require = undefined;
     Honey = {'requirePath': ['..']}; // walk up to js folder
     importScripts("../lib/require.js");
-    var antlr4_require = require;
-} finally {
-    self.require = ace_require;
-}
-
-// load antlr4 and prompto
-var antlr4, prompto, delta;
-try {
-    self.require = antlr4_require;
-    antlr4 = require('antlr4/index');
-    prompto = require('prompto/index');
-    delta = require('ide/delta');
+    antlr4_require = require;
 } finally {
     self.require = ace_require;
 }
@@ -144,6 +215,15 @@ function safe_require(method) {
     }
 
 }
+
+// load codebase
+var codebase = null;
+var prompto = null;
+safe_require(function() {
+    codebase = require('ide/codebase');
+    prompto = codebase.prompto;
+});
+
 // class for gathering errors and posting them to editor
 var AnnotatingErrorListener = function(problems) {
     prompto.problem.ProblemCollector.call(this);
@@ -164,279 +244,6 @@ AnnotatingErrorListener.prototype.collectProblem = function(problem) {
         text : problem.message };
     this.problems.push(problem);
 };
-
-// method for producing editor input
-function getDeclarationBody(decl, dialect) {
-    var dialect = prompto.parser.Dialect[dialect];
-    var writer = new prompto.utils.CodeWriter(dialect, appContext.newChildContext());
-    decl.toDialect(writer);
-    return writer.toString();
-}
-
-// method for parsing editor input
-function parse(input, dialect, listener) {
-    var klass = prompto.parser[dialect + "CleverParser"];
-    var parser = new klass(input);
-    parser.removeErrorListeners();
-    if(listener)
-        parser.addErrorListener(listener);
-    return parser.parse();
-}
-
-// method for updating context, catalog and annotations on document update
-function handleUpdate(worker, previous, current, dialect, listener) {
-    // always annotate new content
-    var new_decls = parse(current, dialect, listener);
-    // if this is a core object, we're done
-    if(worker.$core)
-        return;
-    // don't annotate previous content using provided listener
-    var previousListener = new AnnotatingErrorListener();
-    var old_decls = parse(previous, dialect, previousListener); // we'll ignore these errors but let's catch them
-    registerDirty(new_decls, dialect); // the old decls were either clean, or went through this call previously
-    // only update catalog and appContext if syntax is correct
-    if (listener.problems.length == 0) {
-        var changes = new delta.Delta();
-        // only update catalog if event results from an edit
-        if(previous!=current) {
-            changes.added = new delta.Catalog(prompto, new_decls, coreContext);
-            changes.removed = new delta.Catalog(prompto, old_decls, coreContext);
-        }
-        // update appContext, collecting prompto errors
-        old_decls.unregister(appContext); // TODO: manage damage on objects referring to these
-        new_decls.unregister(appContext); // avoid duplicate declaration errors
-        var saved_listener = appContext.problemListener;
-        try {
-            appContext.problemListener = listener;
-            new_decls.register(appContext);
-            new_decls.check(appContext.newChildContext()); // don't pollute appContext
-        } finally {
-            appContext.problemListener = saved_listener;
-        }
-        // only update UI if this input fixed an error or there was a change meaningful to the UI
-        if(previousListener.problems.length || changes.adjustForMovingProtos(appContext))
-            worker.sender.emit("catalog", changes.getContent());
-    }
-}
-
-// method for translating current input to other dialect
-function translate(input, from, to) {
-    var decls = parse(input, from); // could be cached
-    var dialect = prompto.parser.Dialect[to];
-    var writer = new prompto.utils.CodeWriter(dialect, appContext.newChildContext());
-    decls.toDialect(writer);
-    return writer.toString();
-}
-
-function loadText(url) {
-    var xhr = new XMLHttpRequest();
-    xhr.onerror = function(e) {
-        self.console.log("Error " + e.target.status + " occurred while receiving the document.");
-        return null;
-    };
-    xhr.open('GET', url, false);
-    xhr.send(null);
-    return xhr.responseText;
-}
-
-var coreContext = prompto.runtime.Context.newGlobalContext();
-var appContext = coreContext.newLocalContext();
-var moduleId = null;
-var statuses = {};
-
-function prepareCommit() {
-    var edited = [];
-    for(var id in statuses) {
-        if(statuses[id].editStatus!="CLEAN")
-            edited.push({ type : "EditedDeclaration", value : statuses[id] });
-    }
-    if(edited.length)
-        return edited;
-    else
-        return null;
-}
-
-function registerCommitted(obj) {
-    var d = obj.value;
-    var id = d.name + ( d.prototype ? "/" + d.prototype : "" );
-    statuses[id].declaration.dbId = d.dbId;
-    statuses[id].editStatus = "CLEAN";
-}
-
-
-function registerClean(obj) {
-    var d = obj.value;
-    var id = d.name + ( d.prototype ? "/" + d.prototype : "" );
-    statuses[id] = { declaration : obj, editStatus : "CLEAN" };
-}
-
-function registerDestroyed(id) {
-    var id = id.attribute ? id.attribute :
-        id.category ? id.category :
-            id.test ? id.test :
-                id.method + ( id.proto ? "/" + id.proto : "" );
-    var status = statuses[id];
-    if (status)
-        status.editStatus = "DELETED";
-}
-
-function registerDirty(decls, dialect) {
-    decls.map(function(decl) {
-        var id = decl.name + ( decl.getProto!==undefined ? "/" + decl.getProto() : "" );
-        var existing = statuses[id];
-        if(existing) {
-            var d = existing.declaration.value;
-            var body = getDeclarationBody(decl, dialect);
-            if(d.dialect != dialect || d.body != body) {
-                d.dialect = dialect;
-                d.body = body;
-                if (existing.editStatus != "CREATED") // don't overwrite
-                    existing.editStatus = "DIRTY";
-                if(decl.getProto!==undefined)
-                    d.prototype = decl.getProto();
-                if(decl.storable!==undefined)
-                    d.storable = decl.storable;
-            }
-        } else {
-            var d = {
-                name: decl.name,
-                version: "0.0.0.1",
-                dialect: dialect,
-                body: getDeclarationBody(decl, dialect),
-                module: {
-                    type: "Module",
-                    value: {
-                        dbId: moduleId
-                    }
-                }
-            };
-            if(decl.getProto!==undefined)
-                d.prototype = decl.getProto();
-            if(decl.storable!==undefined)
-                d.storable = decl.storable;
-            statuses[id] = {
-                editStatus: "CREATED",
-                declaration : {
-                    type: decl.getDeclarationType() + "Declaration",
-                    value: d
-                }
-            };
-        };
-    });
-}
-
-function loadCore(worker) {
-    var code = loadText("../../prompto/prompto.pec");
-    var decls = parse(code, "E");
-    decls.register(coreContext);
-}
-
-function publishCore(worker) {
-    var delta = {
-        removed : {},
-        added   : coreContext.getCatalog(),
-        core    : true
-    };
-    worker.sender.emit("catalog", delta);
-}
-
-function inferDialect(path) {
-    return path.substring(path.length-2, path.length-1).toUpperCase();
-}
-
-function unpublishProject(worker) {
-    var delta = {
-        removed : appContext.getLocalCatalog(),
-        added   : {}
-    };
-    appContext = coreContext.newLocalContext();
-    worker.sender.emit("catalog", delta);
-}
-
-function fetchProject(worker, dbId) {
-    var url = '/ws/run/getModuleDeclarations?params=[{"name":"dbId", "value":"' + dbId.toString() + '"}]';
-    var text = loadText(url);
-    return JSON.parse(text);
-}
-
-function loadProject(worker, dbId) {
-    self.console.log("Load module " + dbId.toString());
-    moduleId = dbId;
-    var declarations = fetchProject(worker, dbId);
-    if(declarations.error)
-        ; // do something
-    else {
-        declarations.data.map( function(obj) {
-            var decl = parse(obj.value.body, obj.value.dialect);
-            decl.register(appContext);
-            // prepare for commit
-            if(obj.value.module)
-                delete obj.value.module.value.image; // to avoid sending it back
-            registerClean(obj);
-        });
-    }
-}
-
-function publishProject(worker) {
-    var delta = {
-        removed : {},
-        added   : appContext.getLocalCatalog()
-    };
-    worker.sender.emit("catalog", delta);
-}
-
-function commitProject(worker, dbId) {
-    var edited = prepareCommit();
-    if(edited) {
-        var form = new FormData();
-        form.append("params", JSON.stringify([{name: "edited", type: "EditedDeclaration[]", value: edited}]));
-        var xhr = new XMLHttpRequest();
-        xhr.upload.addEventListener('load', commitSuccessful(worker));
-        xhr.addEventListener('error', commitFailed(worker));
-        xhr.open('POST', '/ws/run/storeDeclarations', true);
-        xhr.send(form);
-    }
-}
-
-function commitFailed(worker) {
-    return function(worker) {
-        console.log("Commit failed!");
-    };
-}
-
-function commitSuccessful(worker) {
-    return function(worker) {
-        console.log("Commit ok!");
-        var declarations = fetchProject(worker, moduleId);
-        if(declarations.error)
-            ; // do something
-        else
-            declarations.data.map( function(obj) {
-                registerCommitted(obj);
-            });
-    };
-}
-
-function getDeclaration(id) {
-    if(id.test)
-        return appContext.getRegisteredTest(id.test);
-    else if(id.method) {
-        var map = appContext.getRegisteredDeclaration(id.method);
-        if(id.proto)
-            return map.protos[id.proto];
-        else for(var proto in map.protos)
-            return map.protos[proto];
-    } else {
-        var name = id.attribute || id.category
-        return appContext.getRegisteredDeclaration(name);
-    }
-}
-
-// a utility method to inspect worker data in Firefox/Safari
-function inspect(worker, name) {
-    var inspected = eval(name);
-    worker.sender.emit("inspected", inspected);
-}
 
 
 

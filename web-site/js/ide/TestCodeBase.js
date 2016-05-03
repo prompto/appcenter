@@ -1,9 +1,10 @@
-/**
- * Created by ericvergnaud on 13/02/16.
- */
-var prompto = require("../../../../prompto-javascript/JavaScript-Core/src/test/prompto/parser/PromptoLoader").prompto;
-var Catalog = require("./delta").Catalog;
-var Delta = require("./delta").Delta;
+var codebase = require("./codebase");
+var prompto = codebase.prompto;
+var Repository = codebase.Repository;
+var Catalog = codebase.Catalog;
+var Delta = codebase.Delta;
+var path = require("path");
+var fs = require("fs");
 
 var noDecls = new prompto.declaration.DeclarationList();
 
@@ -99,7 +100,7 @@ function createContextWithMethods(methods) {
         var args = new prompto.grammar.ArgumentList();
         method.args.map( function(name) {
             var id = new prompto.grammar.Identifier(name);
-            var arg = new prompto.grammar.AttributeArgument(id);
+            var arg = new prompto.argument.AttributeArgument(id);
             args.push(arg);
         });
         var id = new prompto.grammar.Identifier(method.name);
@@ -152,8 +153,8 @@ exports.testMoving1ProtoChanged = function(test) {
 };
 
 exports.testMoving2ndProtoAdded = function(test) {
-    var context = createContextWithMethods([ { name : "test", args : [ "simple1" ] },
-        { name : "test", args : [ "simple2" ] }]);
+    var context = createContextWithMethods([ { name : "test", args : [ "(simple1)" ] },
+        { name : "test", args : [ "(simple2)" ] }]);
     var delta = new Delta();
     delta.added = new Catalog();
     delta.added.methods = [ { name : "test", protos : [
@@ -173,7 +174,7 @@ exports.testMoving2ndProtoAdded = function(test) {
 };
 
 exports.testMoving2ndProtoRemoved = function(test) {
-    var context = createContextWithMethods([ { name : "test", args : [ "simple2" ] }]);
+    var context = createContextWithMethods([ { name : "test", args : [ "(simple2)" ] }]);
     var delta = new Delta();
     delta.removed = new Catalog();
     delta.removed.methods = [ { name : "test", protos : [
@@ -191,4 +192,20 @@ exports.testMoving2ndProtoRemoved = function(test) {
     test.equal(method.protos[0].proto, "(simple2)");
     test.done();
 };
+
+
+var worker = {
+    fixPath : function(filePath) { return path.normalize(path.dirname(path.dirname(module.filename)) + filePath); },
+    loadText : function(filePath) { return fs.readFileSync(this.fixPath(filePath), { encoding : 'utf8'} ); }
+};
+
+exports.testLoadCore = function(test) {
+    var repo = new Repository();
+    repo.loadCore(worker);
+    test.ok(repo.librariesContext);
+    test.ok(Object.keys(repo.librariesContext.declarations).length>0);
+    test.done();
+};
+
+
 

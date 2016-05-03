@@ -56,10 +56,10 @@
             session.setScrollTop(0);
         }
 
-        function commit(id) {
+        function commit() {
             var session = editor.getSession();
             var mode = session.getMode();
-            mode.commit(id);
+            mode.commit();
         }
 
         function setValue(value) {
@@ -67,7 +67,8 @@
         }
 
         function run(id) {
-            var mode = editor.getSession().getMode();
+            var session = editor.getSession();
+            var mode = session.getMode();
             mode.run(id);
         }
 
@@ -77,6 +78,11 @@
             var mode = session.getMode();
             mode.inspect(name);
         }
+
+        function done(data) {
+            parent.done(data);
+        }
+
 
         $(document).ready(function () {
             parent.editorReady();

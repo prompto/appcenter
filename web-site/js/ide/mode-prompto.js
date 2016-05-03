@@ -27,7 +27,7 @@ ace.define('ace/mode/prompto_highlight_rules',["require","exports","module","ace
 
         var other = (
             "all|any|as|contains|def|define|doing|expecting|" +
-            "matching|receiving|returning|verifying"
+            "index|matching|receiving|returning|verifying"
         );
 
         var functions = (
@@ -184,6 +184,10 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
 
             this.$worker.on("catalog", function(v) {
                 parent.catalogUpdated(v.data);
+            });
+
+            this.$worker.on("done", function(v) {
+                parent.done(v.data);
             });
 
             // a utility method to inspect worker data in Firefox/Safari

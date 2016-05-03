@@ -87,6 +87,10 @@ define user as storable Text attribute with key and value index
 define image as storable Image attribute
 // many events have a timeStamp
 define timeStamp as storable DateTime attribute
+// urls, files and fragments have a path
+define path as Text attribute
+// external text sources have an encoding such as "UTF-8"
+define encoding as Text attribute
 define Error as enumerated category with attributes name and text, and symbols:
 	DIVIDE_BY_ZERO with "Divide by zero!" as text
 	INDEX_OUT_OF_RANGE with "Index out of range!" as text
@@ -200,9 +204,6 @@ define getHttpSession as native method returning Document doing:
 	Python2: return getHttpSession() from module: prompto.server.Server
 	Python3: return getHttpSession() from module: prompto.server.Server
 	JavaScript: return getHttpSession(); from module: prompto/server/Server.js
-define path as Text attribute
-define encoding as Text attribute
-
 define Url as native resource with attributes path and encoding, and bindings:
 	
 	define category bindings as:
@@ -217,4 +218,51 @@ define "reads from www.html5rocks.com" as test method doing:
 	content = read from Url with "http://www.html5rocks.com/en/" as path
 and verifying: 
 	content contains "HTML5 Rocks"
+
+define iterateCsv as native method receiving text, Text{} columnNames = nothing, Character separator = ',', Character quote = '"' returning Iterator<Document> doing:
+	Java: return prompto.reader.CSVReader.iterator(text, columnNames, separator, quote);
+	C#: return prompto.reader.CSVReader.iterator(text, columnNames, separator, quote); 
+	Python2: return csvIterate(text, columnNames, separator, quote) from module: prompto.reader.CSVReader
+	Python3: return csvIterate(text, columnNames, separator, quote) from module: prompto.reader.CSVReader
+	JavaScript: return csvIterate(text, columnNames, separator, quote); from module: prompto/reader/CSVReader.js
+
+
+define readCsv as native method receiving text, Text{} columnNames = nothing, Character separator = ',', Character quote = '"' returning Document[] doing:
+	Java: return prompto.reader.CSVReader.read(text, columnNames, separator, quote);
+	C#: return prompto.reader.CSVReader.read(text, columnNames, separator, quote); 
+	Python2: return csvRead(text, columnNames, separator, quote) from module: prompto.reader.CSVReader
+	Python3: return csvRead(text, columnNames, separator, quote) from module: prompto.reader.CSVReader
+	JavaScript: return csvRead(text, columnNames, separator, quote); from module: prompto/reader/CSVReader.js
+
+
+define "reads from csv text" as test method doing:
+	docs = readCsv with "id,name\n1,John\n2,Riou\\, Sylvie\n" as text
+and verifying: 
+	docs.length = 2
+	docs[1].id = "1"
+	docs[1].name = "John"
+	docs[2].id = "2"
+	docs[2].name = "Riou, Sylvie"
+
+define "iterates from csv text" as test method doing:
+	iterCsv = iterateCsv with "id,name\n1,John\n2,Riou\\, Sylvie\n" as text
+	docs = [] as Document[] 
+	for each doc in iterCsv:
+		docs = docs + [doc]
+and verifying: 
+	docs.length = 2
+	docs[1].id = "1"
+	docs[1].name = "John"
+	docs[2].id = "2"
+	docs[2].name = "Riou, Sylvie"
+	
+define "maps csv headers" as test method doing:
+	names = { "Code" : "id", "Name" : "name" }
+	docs = readCsv with "Code,Name\n1,John\n2,Riou\\, Sylvie\n" as text and names as columnNames
+and verifying: 
+	docs.length = 2
+	docs[1].id = "1"
+	docs[1].name = "John"
+	docs[2].id = "2"
+	docs[2].name = "Riou, Sylvie"
  

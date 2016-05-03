@@ -356,14 +356,14 @@
             // TODO confirm
             setContent(null);
             var frame = document.getElementById("editor");
-            frame.contentWindow.setProject(getParam("dbId"));
+            frame.contentWindow.setProject(getParam("dbId")); // TODO move to codebase.js
         }
 
         function commit() {
             // TODO confirm
             setContent(null);
             var frame = document.getElementById("editor");
-            frame.contentWindow.commit(getParam("dbId"));
+            frame.contentWindow.commit();
         }
 
         function run() {
@@ -377,6 +377,11 @@
                 var frame = document.getElementById("editor");
                 frame.contentWindow.run(contentId);
             }
+        }
+
+        function done(data) {
+            var button = document.getElementById("run-button");
+            button.innerHTML = "Done";
         }
 
         function getRunnableAlert(id) {
