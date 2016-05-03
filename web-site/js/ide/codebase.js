@@ -36,6 +36,11 @@ function parse(input, dialect, listener) {
 function unparse(context, decl, dialect) {
     var dialect = prompto.parser.Dialect[dialect];
     var writer = new prompto.utils.CodeWriter(dialect, context.newChildContext());
+    if(decl.comments) {
+        decl.comments.forEach(function (cmt) {
+            cmt.toDialect(writer);
+        });
+    }
     decl.toDialect(writer);
     return writer.toString();
 }
