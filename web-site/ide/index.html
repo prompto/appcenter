@@ -83,7 +83,7 @@
             frame.contentWindow.setProject(getParam("dbId"));
         }
 
-        function showCore(input) {
+        function showLibraries(input) {
             if(input.checked)
                 $(".core").removeClass("no-core");
             else
@@ -121,8 +121,10 @@
         function attributesRemoved(removed) {
             removed.map(function(name) {
                 var idx = findBy(catalog.attributes, 'name', name);
-                catalog.attributes.splice(idx, 1);
-                $('#attribute_' + name).remove();
+                if(idx>=0) {
+                    catalog.attributes.splice(idx, 1);
+                    $('#attribute_' + name).remove();
+                }
             });
         }
 
@@ -143,8 +145,10 @@
         function categoriesRemoved(removed) {
             removed.map(function(name) {
                 var idx = findBy(catalog.categories, 'name', name);
-                catalog.categories.splice(idx, 1);
-                $('#category_' + name).remove();
+                if(idx>=0) {
+                    catalog.categories.splice(idx, 1);
+                    $('#category_' + name).remove();
+                }
             });
         }
 
@@ -165,8 +169,10 @@
         function testsRemoved(removed) {
             removed.map(function(name) {
                 var idx = findBy(catalog.tests, 'name', name);
-                catalog.tests.splice(idx, 1);
-                $('#test_' + makeId(name)).remove();
+                if(idx>=0) {
+                    catalog.tests.splice(idx, 1);
+                    $('#test_' + makeId(name)).remove();
+                }
             });
         }
 
@@ -267,9 +273,10 @@
                     } else {
                         method.protos.map(function (proto) {
                             var idx2 = findBy(map.protos, 'proto', proto.proto);
-                            if (idx2 >= 0)
+                            if (idx2 >= 0) {
                                 map.protos.splice(idx2, 1);
-                            $("#method_" + method.name + " > #proto_" + makeId(proto.proto)).remove();
+                                $("#method_" + method.name + " > #proto_" + makeId(proto.proto)).remove();
+                            }
                         });
                     }
                 }
@@ -296,24 +303,20 @@
             if(delta.added) {
                 var core = eval(delta.core) || false;
                 if (delta.added.attributes) {
-                    attributesRemoved(delta.added.attributes, core);
                     attributesAdded(delta.added.attributes, core);
                 }
                 if (delta.added.methods) {
-                    methodsRemoved(delta.added.methods, core);
                     methodsAdded(delta.added.methods, core);
                 }
                 if (delta.added.categories) {
-                    categoriesRemoved(delta.added.categories, core);
                     categoriesAdded(delta.added.categories, core);
                 }
                 if (delta.added.tests) {
-                    testsRemoved(delta.added.tests, core);
                     testsAdded(delta.added.tests, core);
                 }
             }
-            var input = $("#show-core")[0];
-            showCore(input);
+            var input = $("#show-libs")[0];
+            showLibraries(input);
         }
 
        $(document).ready(function () {
@@ -366,6 +369,17 @@
             frame.contentWindow.commit();
         }
 
+        function setRunMode(label) {
+            $("#run-mode").html(" " + label + " " + "<span class='caret'/>");
+        }
+
+
+        function getRunMode() {
+            var text = $("#run-mode").text();
+            var mode = text.indexOf("compiled")>=0 ? "EXECUTE/" : "INTERPRET/";
+            return mode + (text.indexOf("Server")>=0 ? "REMOTE" : "LOCAL");
+        }
+
         function run() {
             var msg = getRunnableAlert(contentId);
             if(msg)
@@ -374,8 +388,9 @@
                 switchUIToRunMode();
                 var name = contentId.test || contentId.method;
                 print("Running " + name + "...");
+                var runMode = getRunMode();
                 var frame = document.getElementById("editor");
-                frame.contentWindow.run(contentId);
+                frame.contentWindow.runMethod(contentId, runMode);
             }
         }
 
@@ -442,7 +457,7 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand">Prompto Dev Center for: <b></b><script>document.write(getParam("name"));</script></b></a>
+                <a class="navbar-brand">Prompto Code Editor for: <b></b><script>document.write(getParam("name"));</script></b></a>
             </div>
             <div id="navbar" class="navbar-collapse">
                 <ul id="nav-dialect" class="nav navbar-nav navbar-right">
@@ -452,7 +467,16 @@
                 </ul>
                 <a class="navbar-brand navbar-right">Dialect:</a>
                 <form class="navbar-form navbar-right">
-                    <button id="run-button" type="button" class="form-control" onclick="run();" value="">Run</button>
+                    <div id="run-button-group" class="btn-group">
+                        <button id="run-button" type="button" class="btn btn-default" onclick="run();" value="">Run</button>
+                        <button id="run-mode" type="button" class="btn btn-default dropdown-toggle"
+                                data-toggle="dropdown"> Local <span class="caret"/></button>
+                        <ul class="dropdown-menu">
+                            <li><a id="run-local-interpreted" onclick="setRunMode('Local');">Local</a></li>
+                            <li><a id="run-server-commpiled" onclick="setRunMode('Server compiled');">Server compiled</a></li>
+                            <li><a id="run-server-interpreted" onclick="setRunMode('Server interpreted');">Server interpreted</a></li>
+                        </ul>
+                    </div>
                 </form>
                 <form class="navbar-form navbar-right edit-mode">
                     <button id="btnNew" type="button" class="form-control" onclick="setContent(null);">New</button>
@@ -470,7 +494,7 @@
             <div class="col-md-3 sidebar">
                 <div class="checkbox">
                     <label>
-                        <input id="show-core" type="checkbox" checked onclick="showCore(this)"> Show core
+                        <input id="show-libs" type="checkbox" checked onclick="showLibraries(this)"> Show libraries
                     </label>
                 </div>
                     <ul class="list-group">

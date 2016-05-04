@@ -38,7 +38,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     PromptoWorker.prototype.setContent = function(id) {
         var worker = this;
         safe_require(function() {
-            // remember value since it does not result from an edit
+            // remember value if it does not result from an edit
             if(id) {
                 worker.$value = worker.$repo.getDeclarationBody(id, worker.$dialect);
                 worker.$core = id.core || false;
@@ -61,18 +61,47 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         });
         this.$value = "";
         this.sender.emit("value", this.$value);
-    }
+    };
 
-    PromptoWorker.prototype.interpret = function(id) {
+    PromptoWorker.prototype.runMethod = function(id, mode) {
+        if (mode.indexOf("LOCAL")>=0)
+            this.interpretLocally(id);
+        else if(mode.indexOf("INTERPRET")>=0)
+            this.runRemotely(id,"interpret");
+        else // compiled
+            this.runRemotely(id, "execute");
+    };
+
+    PromptoWorker.prototype.runRemotely = function(id, mode) {
+        var worker = this;
+        this.getDataExplorerURL(function(url) {
+            var name = id.method || id.test;
+            var fullUrl = url + "/ws/run/" + mode + "/" + name;
+            worker.loadJSON(fullUrl, function(response) {
+                console.log(response);
+                worker.sender.emit("done");
+            });
+        });
+    };
+
+    PromptoWorker.prototype.executeRemotely = function(id) {
+        var name = id.method || id.test;
+        console.log("Execute remotely " + name + " not implemented yet!")
+        this.sender.emit("done");
+    };
+
+    PromptoWorker.prototype.interpretLocally = function(id) {
         var context = this.$repo.projectContext;
         safe_require(function () {
             if(id.test)
                 prompto.runtime.Interpreter.interpretTest(context, id.test);
-            else if(id.method)
+            else if(id.method) {
                 prompto.runtime.Interpreter.interpret(context, id.method, "");
+                console.log("Finished running " + id.method);
+            }
         });
         this.sender.emit("done");
-    }
+    };
 
     PromptoWorker.prototype.setProject = function(projectId) {
         this.$projectId = projectId;
@@ -123,22 +152,34 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         });
     };
 
+    PromptoWorker.prototype.getDataExplorerURL = function(success) {
+        var url = '/ws/run/getDataExplorerURL';
+        this.loadJSON(url, function(response) {
+            if (response.error)
+                ; // TODO something
+            else {
+                var actual = response.data.substring(0, response.data.lastIndexOf("/"));
+                success(actual);
+            }
+        });
+    };
+
     PromptoWorker.prototype.fetchModuleDescription = function(projectId, register, success) {
         var params = [ {name:"dbId", value:projectId.toString()}, {name:"register", type:"Boolean", value:register}];
         var url = '/ws/run/getModuleDescription?params=' + JSON.stringify(params);
-        var text = this.loadJSON(url, success);
+        this.loadJSON(url, success);
     };
 
     PromptoWorker.prototype.fetchLibraryDeclarations = function(name, version, success) {
         var params = [ {name:"name", type:"Text", value:name}, {name:"version", type:"Text", value:version}];
         var url = '/ws/run/getModuleDeclarations?params=' + JSON.stringify(params);
-        var text = this.loadJSON(url, success);
+        this.loadJSON(url, success);
     };
 
     PromptoWorker.prototype.fetchProjectDeclarations = function(projectId, success) {
         var params = [ {name:"dbId", value:projectId.toString()}];
         var url = '/ws/run/getModuleDeclarations?params=' + JSON.stringify(params);
-        var text = this.loadJSON(url, success);
+        this.loadJSON(url, success);
     };
 
     PromptoWorker.prototype.commit = function() {
@@ -216,6 +257,8 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
             success(xhr.responseText);
         };
         xhr.open('GET', url);
+        if(url[0]!="/" && url[0]!=".")
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
         xhr.send(null);
     };
 
@@ -256,12 +299,13 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
 
     PromptoWorker.prototype.commitSuccessful = function(success) {
         console.log("Commit ok!");
+        var worker = this;
         var declarations = this.fetchProjectDeclarations(this.$projectId, function(response) {
             if (response.error)
                 ; // TODO something
             else {
-                this.$repo.loadProject(this.$projectId, response.data);
-                this.$repo.registerCommitted(declarations.data);
+                worker.$repo.registerProjectDeclarations(worker.$projectId, response.data);
+                worker.$repo.registerCommitted(response.data);
             }
         });
     };

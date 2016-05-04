@@ -141,8 +141,8 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
             this.$worker && this.$worker.send("commit", [ dbId ] );
         };
 
-        this.run = function(id) {
-            this.$worker && this.$worker.send("interpret", [ id ] );
+        this.runMethod = function(id, mode) {
+            this.$worker && this.$worker.send("runMethod", [ id, mode ] );
         };
 
         // a utility method to inspect worker data in Firefox/Safari

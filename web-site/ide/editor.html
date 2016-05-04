@@ -66,10 +66,10 @@
             editor.setValue(value, -1);
         }
 
-        function run(id) {
+        function runMethod(id, runMode) {
             var session = editor.getSession();
             var mode = session.getMode();
-            mode.run(id);
+            mode.runMethod(id, runMode);
         }
 
         // a utility method to inspect worker data in Firefox/Safari
