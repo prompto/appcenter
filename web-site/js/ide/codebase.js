@@ -149,18 +149,36 @@ Repository.prototype.getDeclaration = function(id) {
     }
 }
 
+/* dbDecl = object received from the server */
+Repository.prototype.idFromDbDecl = function(dbDecl) {
+    if(dbDecl.type=="MethodDeclaration")
+        return dbDecl.value.name + "/" + ( dbDecl.value.prototype || "" );
+    else
+        return dbDecl.value.name;
+};
+
+
+/* id = object received from the UI */
+Repository.prototype.idFromEditorId = function(id) {
+    if(id.method)
+        return id.method + "/" + (id.proto || "");
+    else
+        return id.attribute || id.category || id.test;
+};
+
+/* decl = object received from the parser */
+Repository.prototype.idFromDecl = function(decl) {
+    return decl.name + ( decl.getProto!==undefined ? "/" + ( decl.getProto() || "") : "" );
+};
+
 Repository.prototype.registerClean = function(obj) {
-    var decl = obj.value;
-    var id = decl.name + ( decl.prototype ? "/" + decl.prototype : "" );
+    var id = this.idFromDbDecl(obj);
     this.statuses[id] = { declaration : obj, editStatus : "CLEAN" };
 };
 
 
 Repository.prototype.registerDestroyed = function(id) {
-    var id = id.attribute ? id.attribute :
-        id.category ? id.category :
-            id.test ? id.test :
-            id.method + ( id.proto ? "/" + id.proto : "" );
+    var id = this.idFromEditorId(is);
     var status = this.statuses[id];
     if (status)
         status.editStatus = "DELETED";
@@ -168,13 +186,13 @@ Repository.prototype.registerDestroyed = function(id) {
 
 
 Repository.prototype.registerDirty = function(decls, dialect) {
-    var worker = this;
+    var repo = this;
     decls.map(function(decl) {
-        var id = decl.name + ( decl.getProto!==undefined ? "/" + decl.getProto() : "" );
-        var existing = worker.statuses[id];
+        var id = repo.idFromDecl(decl);
+        var existing = repo.statuses[id];
         if(existing) {
             var decl_obj = existing.declaration.value;
-            var body = unparse(worker.projectContext, decl, dialect);
+            var body = unparse(repo.projectContext, decl, dialect);
             if(decl_obj.dialect != dialect || decl_obj.body != body) {
                 decl_obj.dialect = dialect;
                 decl_obj.body = body;
@@ -190,11 +208,11 @@ Repository.prototype.registerDirty = function(decls, dialect) {
                 name: decl.name,
                 version: "0.0.0.1",
                 dialect: dialect,
-                body: unparse(worker.projectContext, decl, dialect),
+                body: unparse(repo.projectContext, decl, dialect),
                 module: {
                     type: "Module",
                     value: {
-                        dbId: worker.moduleId
+                        dbId: repo.moduleId
                     }
                 }
             };
@@ -202,7 +220,7 @@ Repository.prototype.registerDirty = function(decls, dialect) {
                 decl_obj.prototype = decl.getProto();
             if(decl.storable!==undefined)
                 decl_obj.storable = decl.storable;
-            worker.statuses[id] = {
+            repo.statuses[id] = {
                 editStatus: "CREATED",
                 declaration : {
                     type: decl.getDeclarationType() + "Declaration",
@@ -215,12 +233,11 @@ Repository.prototype.registerDirty = function(decls, dialect) {
 
 
 Repository.prototype.registerCommitted = function(declarations) {
-    var worker = this;
+    var repo = this;
     declarations.map(function (decl) {
-        var decl_obj = obj.value;
-        var id = decl_obj.name + ( decl_obj.prototype ? "/" + decl_obj.prototype : "" );
-        worker.statuses[id].declaration.dbId = d.dbId;
-        worker.statuses[id].editStatus = "CLEAN";
+        var id = repo.idFromDbDecl(decl);
+        repo.statuses[id].declaration.dbId = decl.dbId;
+        repo.statuses[id].editStatus = "CLEAN";
     });
 };
 

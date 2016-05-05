@@ -78,7 +78,10 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
             var name = id.method || id.test;
             var fullUrl = url + "/ws/run/" + mode + "/" + name;
             worker.loadJSON(fullUrl, function(response) {
-                console.log(response);
+                if(response.error)
+                    console.log(response.error);
+                else
+                    console.log(response.data);
                 worker.sender.emit("done");
             });
         });
@@ -117,7 +120,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
                 ; // TODO something
             else {
                 safe_require(function() {
-                    var declarations = response.data;
+                    var declarations = response.data.value;
                     worker.$repo.registerLibraryDeclarations(declarations);
                     worker.markLoaded(dependency.name);
                 });
@@ -133,10 +136,11 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
             else {
                 var project = response.data.value;
                 if(project.dependencies) {
-                    project.dependencies.map(function(dep) {
+                    project.dependencies.value.map(function(dep) {
                         worker.loadDependency(dep.value);
                     });
                 }
+                worker.markLoaded("%Description%");
             }
         });
         this.fetchProjectDeclarations(projectId, function(response) {
@@ -144,7 +148,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
                 ; // TODO something
             else {
                 safe_require(function() {
-                    var declarations = response.data;
+                    var declarations = response.data.value;
                     worker.$repo.registerProjectDeclarations(projectId, declarations);
                     worker.markLoaded("Project");
                 });
@@ -211,6 +215,8 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
 
     PromptoWorker.prototype.onInit = function() {
         this.markLoading("Project");
+        // fake 'library' to ensure libraries are published only once dependencies are loaded
+        this.markLoading("%Description%");
         // load core
         this.markLoading("Core");
         var worker = this;
@@ -304,8 +310,8 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
             if (response.error)
                 ; // TODO something
             else {
-                worker.$repo.registerProjectDeclarations(worker.$projectId, response.data);
-                worker.$repo.registerCommitted(response.data);
+                var declarations = response.data.value;
+                worker.$repo.registerCommitted(declarations);
             }
         });
     };
