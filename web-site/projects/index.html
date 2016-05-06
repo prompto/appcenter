@@ -127,7 +127,7 @@
             alert(response.error);
         else {
             var html = [];
-            response.data.map( function(item) {
+            response.data.value.map( function(item) {
                 var module = item.value;
                 $.merge(html, [
                         '<div class="col-xs-4 col-sm-2 placeholder project" width="120px">',
