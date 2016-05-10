@@ -178,7 +178,7 @@ Repository.prototype.registerClean = function(obj) {
 
 
 Repository.prototype.registerDestroyed = function(id) {
-    var id = this.idFromEditorId(is);
+    var id = this.idFromEditorId(id);
     var status = this.statuses[id];
     if (status)
         status.editStatus = "DELETED";
