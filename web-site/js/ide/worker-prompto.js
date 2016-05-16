@@ -51,15 +51,14 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     };
 
     PromptoWorker.prototype.destroy = function(id) {
+        this.$value = "";
         var worker = this;
         safe_require(function() {
-            worker.$repo.registerDestroyed(id);
-            var catalog = worker.$repo.handleUpdate(worker.$core, worker.$value, "", worker.$dialect, new AnnotatingErrorListener());
+            var catalog = worker.$repo.handleDestroyed(id);
             if(catalog) {
                 worker.sender.emit("catalog", catalog);
             }
         });
-        this.$value = "";
         this.sender.emit("value", this.$value);
     };
 
@@ -203,10 +202,14 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         var value = this.doc.getValue();
         var errorListener = new AnnotatingErrorListener();
         var worker = this;
-        safe_require(function() {
-            var catalog = worker.$repo.handleUpdate(worker.$core, worker.$value, value, worker.$dialect, errorListener);
-            if(catalog) {
-                worker.sender.emit("catalog", catalog);
+        safe_require(function () {
+            if(value==worker.$value)
+                worker.$repo.handleSetContent(value, worker.$dialect, errorListener);
+            else {
+                var catalog = worker.$repo.handleEditContent(value, worker.$dialect, errorListener);
+                if (catalog) {
+                    worker.sender.emit("catalog", catalog);
+                }
             }
         });
         this.$value = value;

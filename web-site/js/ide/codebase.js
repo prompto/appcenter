@@ -1,16 +1,3 @@
-/**
- * The purpose of these classes is to minimize the re-processing in the IDE
- * when code is updated. Typically, various scenarios can occur:
- *  - code body change, this has not impact on the catalog
- *  - declaration removed
- *  - declaration added
- *  - declarations changed, which for global methods adds complexity because
- *  methods are displayed differently depending on their number of prototypes
- *  The below code is not optimized. The optimization is to only redisplay what is needed,
- *  not to optimize the calculating what needs to be redisplayed.
- *  This follows the assumption that the number of prototypes is generally very low.
- */
-
 var isNodeJs = typeof window === 'undefined' && typeof importScripts === 'undefined';
 
 var prompto = isNodeJs ?
@@ -61,11 +48,13 @@ function sortBy(a, f) {
     });
 }
 
-/* an object holding all data required for an edit session */
+/* the purpose of this class is to maintain an up-to-date copy of the repository */
+/* which can be used to detect required changes in the UI, and deltas to commit */
 function Repository() {
     this.librariesContext = prompto.runtime.Context.newGlobalContext();
     this.projectContext = this.librariesContext.newLocalContext();
     this.moduleId = null;
+    this.lastSuccess = ""; // last piece of code successfully register through handleUpdate
     this.statuses = {};
     return this;
 }
@@ -179,20 +168,19 @@ Repository.prototype.registerClean = function(obj) {
 
 Repository.prototype.registerDestroyed = function(id) {
     var id = this.idFromEditorId(id);
-    var status = this.statuses[id];
-    if (status)
-        status.editStatus = "DELETED";
+    var obj_status = this.statuses[id];
+    if (obj_status)
+        obj_status.editStatus = "DELETED";
 };
 
 
 Repository.prototype.registerDirty = function(decls, dialect) {
-    var repo = this;
     decls.map(function(decl) {
-        var id = repo.idFromDecl(decl);
-        var existing = repo.statuses[id];
+        var id = this.idFromDecl(decl);
+        var existing = this.statuses[id];
         if(existing) {
             var decl_obj = existing.declaration.value;
-            var body = unparse(repo.projectContext, decl, dialect);
+            var body = unparse(this.projectContext, decl, dialect);
             if(decl_obj.dialect != dialect || decl_obj.body != body) {
                 decl_obj.dialect = dialect;
                 decl_obj.body = body;
@@ -208,11 +196,11 @@ Repository.prototype.registerDirty = function(decls, dialect) {
                 name: decl.name,
                 version: "0.0.0.1",
                 dialect: dialect,
-                body: unparse(repo.projectContext, decl, dialect),
+                body: unparse(this.projectContext, decl, dialect),
                 module: {
                     type: "Module",
                     value: {
-                        dbId: repo.moduleId
+                        dbId: this.moduleId
                     }
                 }
             };
@@ -220,7 +208,7 @@ Repository.prototype.registerDirty = function(decls, dialect) {
                 decl_obj.prototype = decl.getProto();
             if(decl.storable!==undefined)
                 decl_obj.storable = decl.storable;
-            repo.statuses[id] = {
+            this.statuses[id] = {
                 editStatus: "CREATED",
                 declaration : {
                     type: decl.getDeclarationType() + "Declaration",
@@ -228,7 +216,7 @@ Repository.prototype.registerDirty = function(decls, dialect) {
                 }
             };
         };
-    });
+    }, this);
 };
 
 
@@ -254,50 +242,116 @@ Repository.prototype.prepareCommit = function () {
         return null;
 };
 
+
 Repository.prototype.translate = function (data, from, to) {
     return translate(this.projectContext, data, from, to);
 };
 
 
-Repository.prototype.handleUpdate = function (isCore, previous, current, dialect, listener) {
-    // always annotate new content
-    var new_decls = parse(current, dialect, listener);
-    // if this is a core object, no catalog update required
-    if(isCore)
+Repository.prototype.handleDestroyed = function (id) {
+    this.registerDestroyed(id);
+    var id = this.idFromEditorId(id);
+    var obj_status = this.statuses[id];
+    if (obj_status && obj_status.editStatus == "DELETED") {
+        var decls = parse(obj_status.declaration.value.body, obj_status.declaration.value.dialect);
+        decls[0].unregister(this.projectContext);
+        var delta = new Delta();
+        delta.removed = new Catalog(decls, this.librariesContext);
+        delta.filterOutDuplicates();
+        return delta.getContent();
+    } else
         return null;
-    // we'll ignore errors but let's catch them using a temporary listener
+};
+
+
+Repository.prototype.handleSetContent = function (content, dialect, listener) {
+    parse(content, dialect, listener);
+    this.lastSuccess = content; // assume registered content is always parsed successfully
+};
+
+
+Repository.prototype.handleEditContent = function (content, dialect, listener) {
+    // analyze what has changed, we'll ignore errors but let's catch them using a temporary listener
     var previousListener = Object.create(listener);
-    var old_decls = parse(previous, dialect, previousListener);
-    // only update catalog and projectContext if syntax is correct
+    var old_decls = parse(this.lastSuccess, dialect, previousListener);
+    // always annotate new content
+    var new_decls = parse(content, dialect, listener);
+    // only update catalog if syntax is correct
     if (listener.problems.length == 0) {
-        var changes = new Delta();
-        // only update catalog if event results from an edit
-        if(previous!=current) {
-            changes.removed = new Catalog(old_decls, this.librariesContext);
-            changes.added = new Catalog(new_decls, this.librariesContext);
-            // mark decls as dirty
-            this.registerDirty(new_decls, dialect); // the old decls were either clean, or went through this call previously
-        }
-        // update appContext, collecting prompto errors
-        old_decls.unregister(this.projectContext); // TODO: manage damage on objects referring to these
-        new_decls.unregister(this.projectContext); // avoid duplicate declaration errors
-        var saved_listener = this.projectContext.problemListener;
-        try {
-            this.projectContext.problemListener = listener;
-            new_decls.register(this.projectContext);
-            new_decls.check(this.projectContext.newChildContext()); // don't pollute projectContext
-        } finally {
-            this.projectContext.problemListener = saved_listener;
-        }
-        // only update UI if this input fixed an error or there was a change meaningful to the UI
-        if(previousListener.problems.length || changes.adjustForMovingProtos(this.projectContext))
-            return changes.getContent();
-        else
-            return null;
+        this.lastSuccess = content;
+        return this.updateCatalog(old_decls, new_decls, dialect, listener);
+    } else
+        return null;
+};
+
+
+Repository.prototype.updateCatalog = function (old_decls, new_decls, dialect, listener) {
+    var delta = new Delta();
+    delta.removed = new Catalog(old_decls, this.librariesContext);
+    delta.added = new Catalog(new_decls, this.librariesContext);
+    var changedIdsCount = delta.filterOutDuplicates();
+    var handled = false;
+    // special case when changing id of a single declaration
+    if (changedIdsCount != 0 && old_decls.length == 1 && new_decls.length == 1) {
+        // assume the old_decl changed id/nature
+        // check for existing old decl
+        var old_id = this.idFromDecl(old_decls[0]);
+        var old_obj = this.statuses[old_id];
+        // check for non existing new decl
+        var new_id = this.idFromDecl(new_decls[0]);
+        var new_obj = this.statuses[new_id];
+        // all ok, move the object
+        if (old_obj && !new_obj) {
+            // update statuses
+            this.statuses[new_id] = this.statuses[old_id];
+            delete this.statuses[old_id];
+            // update status obj
+            new_obj = old_obj;
+            new_obj.type = decl.getDeclarationType() + "Declaration";
+            if (new_obj.editStatus != "CREATED") // don't overwrite
+                new_obj.editStatus = "DIRTY";
+            // update declaration obj
+            var new_decl = new_decls[0];
+            var decl_obj = new_obj.declaration;
+            decl_obj.name = new_decl.name;
+            decl_obj.dialect = dialect;
+            decl_obj.body = unparse(this.projectContext, new_decl, dialect);
+            if(new_decl.getProto!==undefined)
+                decl_obj.prototype = new_decl.getProto();
+            if(new_decl.storable!==undefined)
+                decl_obj.storable = new_decl.storable;
+            handled = true;
+        } else
+            handled = false; // fallback to conservative strategy
+    }
+    if(!handled) {
+        // either no change in ids, or more than one decl
+        // simply mark new decls as dirty, don't destroy old ones, since this can
+        // be achieved safely through an explicit action in the UI
+        this.registerDirty(new_decls, dialect);
+    }
+    this.updateAppContext(old_decls, new_decls, listener);
+    if(changedIdsCount != 0) {
+        delta.adjustForMovingProtos(this.projectContext);
+        return delta.getContent();
+    } else
+        return null; // no UI update required
+};
+
+Repository.prototype.updateAppContext = function (old_decls, new_decls, listener) {
+    old_decls.unregister(this.projectContext); // TODO: manage damage on objects referring to these
+    new_decls.unregister(this.projectContext); // avoid duplicate declaration errors
+    var saved_listener = this.projectContext.problemListener;
+    try {
+        this.projectContext.problemListener = listener;
+        new_decls.register(this.projectContext);
+        new_decls.check(this.projectContext.newChildContext()); // don't pollute projectContext
+    } finally {
+        this.projectContext.problemListener = saved_listener;
     }
 };
 
-/* an object which represents a catalog of declarations */
+/* an object which represents a catalog of declarations, classified by type */
 function Catalog(decls, filterContext) {
     this.readCatalog(decls);
     if(filterContext)
@@ -369,7 +423,19 @@ Catalog.prototype.filterOutMethods = function(filterContext) {
         });
 };
 
-/* an object which represents the delat between 2 catalogs */
+/**
+ * An object which represents the delta between 2 catalogs
+ * The purpose of this class is to minimize the re-processing in the IDE
+ * when code is updated. Typically, various scenarios can occur:
+ *  - code body change, this has not impact on the catalog
+ *  - declaration removed
+ *  - declaration added
+ *  - declarations changed, which for global methods adds complexity because
+ *  methods are displayed differently depending on their number of prototypes
+ *  The below code is not optimized. The optimization is to only redisplay what is needed,
+ *  not to optimize the calculation of what needs to be redisplayed.
+ *  This follows the assumption that the number of overloads for a method name is generally very low (< 10).
+ */
 function Delta() {
     this.removed = null;
     this.added = null;
@@ -476,25 +542,21 @@ Delta.prototype.filterOutDuplicatesInMethods = function(a, b) {
 }
 
 Delta.prototype.adjustForMovingProtos = function(context) {
-    var count = this.filterOutDuplicates();
-    if(count==0)
-        return false;
     // methods with 1 proto are displayed differently than methods with multiple protos
     // if proto cardinality changes from N to 1 or 1 to N, we need to rebuild the corresponding displays
-    var self = this;
     if (this.removed && this.removed.methods) {
         this.removed.methods.map(function (method) {
             var decl = context.getRegisteredDeclaration(method.name);
             if (decl && Object.keys(decl.protos).length == 1) // moved from N to 1
-                self.adjustMethodForRemovedProtos(method, decl);
-        });
+                this.adjustMethodForRemovedProtos(method, decl);
+        }, this);
     }
     if (this.added && this.added.methods) {
         this.added.methods.map(function (method) {
             var decl = context.getRegisteredDeclaration(method.name);
             if (decl && Object.keys(decl.protos).length - method.protos.length == 1) // moved from 1 to N
-                self.adjustMethodForAddedProtos(method, decl);
-        });
+                this.adjustMethodForAddedProtos(method, decl);
+        }, this);
     }
     // cleanup
     if (this.removed && this.removed.methods) {
@@ -515,8 +577,6 @@ Delta.prototype.adjustForMovingProtos = function(context) {
             }
         });
     }
-    // done
-    return true;
 };
 
 
