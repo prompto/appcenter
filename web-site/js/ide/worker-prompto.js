@@ -105,10 +105,10 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         this.sender.emit("done");
     };
 
-    PromptoWorker.prototype.setProject = function(projectId) {
+    PromptoWorker.prototype.setProject = function(projectId, loadDependencies) {
         this.$projectId = projectId;
         this.unpublishProject();
-        this.loadProject(projectId);
+        this.loadProject(projectId, loadDependencies);
     };
 
     PromptoWorker.prototype.loadDependency = function(dependency) {
@@ -127,14 +127,14 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         });
     };
 
-    PromptoWorker.prototype.loadProject = function(projectId) {
+    PromptoWorker.prototype.loadProject = function(projectId, loadDependencies) {
         var worker = this;
         this.fetchModuleDescription(projectId, true, function(response) {
             if(response.error)
                 ; // TODO something
             else {
                 var project = response.data.value;
-                if(project.dependencies) {
+                if(loadDependencies && project.dependencies) {
                     project.dependencies.value.map(function(dep) {
                         worker.loadDependency(dep.value);
                     });

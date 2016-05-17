@@ -80,7 +80,7 @@
         function editorReady() {
             var frame = document.getElementById("editor");
             frame.contentWindow.setDialect("E");
-            frame.contentWindow.setProject(getParam("dbId"));
+            frame.contentWindow.setProject(getParam("dbId"), true);
         }
 
         function showLibraries(input) {
@@ -359,7 +359,7 @@
             // TODO confirm
             setContent(null);
             var frame = document.getElementById("editor");
-            frame.contentWindow.setProject(getParam("dbId")); // TODO move to codebase.js
+            frame.contentWindow.setProject(getParam("dbId"), false); // TODO move to codebase.js
         }
 
         function commit() {

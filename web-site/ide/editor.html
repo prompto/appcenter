@@ -35,9 +35,9 @@
             mode.setDialect(dialect);
         }
 
-        function setProject(dbId) {
+        function setProject(dbId, loadDependencies) {
             var mode = editor.getSession().getMode();
-            mode.setProject(dbId);
+            mode.setProject(dbId, loadDependencies);
         }
 
         function setContent(id) {

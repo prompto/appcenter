@@ -133,8 +133,8 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
             this.$worker && this.$worker.send("destroy", [ id ] );
         };
 
-        this.setProject = function(dbId) {
-            this.$worker && this.$worker.send("setProject", [ dbId ] );
+        this.setProject = function(dbId, loadDependencies) {
+            this.$worker && this.$worker.send("setProject", [ dbId, loadDependencies ] );
         };
 
         this.commit = function(dbId) {
