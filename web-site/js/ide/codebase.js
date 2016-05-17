@@ -52,9 +52,10 @@ function sortBy(a, f) {
 /* which can be used to detect required changes in the UI, and deltas to commit */
 function Repository() {
     this.librariesContext = prompto.runtime.Context.newGlobalContext();
-    this.projectContext = this.librariesContext.newLocalContext();
+    this.projectContext = prompto.runtime.Context.newGlobalContext();
+    this.projectContext.setParentContext(this.librariesContext);
     this.moduleId = null;
-    this.lastSuccess = ""; // last piece of code successfully register through handleUpdate
+    this.lastSuccess = ""; // last piece of code successfully registered through handleUpdate
     this.statuses = {};
     return this;
 }
@@ -95,7 +96,8 @@ Repository.prototype.unpublishProject = function() {
         removed: this.projectContext.getLocalCatalog(),
         added: {}
     };
-    this.projectContext = this.librariesContext.newLocalContext();
+    this.projectContext = prompto.runtime.Context.newGlobalContext();
+    this.projectContext.setParentContext(this.librariesContext);
     this.statuses = {};
     return delta;
 };
@@ -224,7 +226,7 @@ Repository.prototype.registerCommitted = function(declarations) {
     var repo = this;
     declarations.map(function (decl) {
         var id = repo.idFromDbDecl(decl);
-        repo.statuses[id].declaration.dbId = decl.dbId;
+        repo.statuses[id].declaration.value.dbId = decl.dbId;
         repo.statuses[id].editStatus = "CLEAN";
     });
 };
@@ -296,23 +298,23 @@ Repository.prototype.updateCatalog = function (old_decls, new_decls, dialect, li
         // assume the old_decl changed id/nature
         // check for existing old decl
         var old_id = this.idFromDecl(old_decls[0]);
-        var old_obj = this.statuses[old_id];
+        var old_status = this.statuses[old_id];
         // check for non existing new decl
         var new_id = this.idFromDecl(new_decls[0]);
-        var new_obj = this.statuses[new_id];
+        var new_status = this.statuses[new_id];
         // all ok, move the object
-        if (old_obj && !new_obj) {
+        if (old_status && !new_status) {
             // update statuses
             this.statuses[new_id] = this.statuses[old_id];
             delete this.statuses[old_id];
             // update status obj
-            new_obj = old_obj;
-            new_obj.type = decl.getDeclarationType() + "Declaration";
-            if (new_obj.editStatus != "CREATED") // don't overwrite
-                new_obj.editStatus = "DIRTY";
+            new_status = old_status;
+            if (new_status.editStatus != "CREATED") // don't overwrite
+                new_status.editStatus = "DIRTY";
             // update declaration obj
             var new_decl = new_decls[0];
-            var decl_obj = new_obj.declaration;
+            new_status.declaration.type = new_decl.getDeclarationType() + "Declaration";
+            var decl_obj = new_status.declaration.value;
             decl_obj.name = new_decl.name;
             decl_obj.dialect = dialect;
             decl_obj.body = unparse(this.projectContext, new_decl, dialect);
