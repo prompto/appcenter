@@ -31,7 +31,7 @@ ace.define('ace/mode/prompto_highlight_rules',["require","exports","module","ace
         );
 
         var functions = (
-            "write|read|close|open|execute|invoke|pass|fetch|store"
+            "write|read|close|open|execute|invoke|pass|fetch|flush|store"
         );
 
         var constants = (
