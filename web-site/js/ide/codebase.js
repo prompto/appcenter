@@ -135,7 +135,7 @@ Repository.prototype.getDeclaration = function(id) {
             }
         }
     } else {
-        var name = id.attribute || id.category
+        var name = id.attribute || id.category || id.enumeration;
         return this.projectContext.getRegisteredDeclaration(name);
     }
 }
@@ -154,7 +154,7 @@ Repository.prototype.idFromEditorId = function(id) {
     if(id.method)
         return id.method + "/" + (id.proto || "");
     else
-        return id.attribute || id.category || id.test;
+        return id.attribute || id.category || id.enumeration || id.test;
 };
 
 /* decl = object received from the parser */
@@ -367,6 +367,8 @@ Catalog.prototype.length = function() {
         length += this.attributes.length;
     if(this.categories)
         length += this.categories.length;
+    if(this.enumerations)
+        length += this.enumerations.length;
     if(this.methods)
         length += this.methods.length;
     if(this.tests)
@@ -379,6 +381,7 @@ Catalog.prototype.readCatalog = function(decls) {
     var content = this.loadCatalog(decls);
     this.attributes = content.attributes;
     this.categories = content.categories;
+    this.enumerations = content.enumerations;
     this.methods = content.methods;
     this.tests = content.tests;
 };
@@ -398,6 +401,7 @@ Catalog.prototype.filterOutDeclarations = function(filterContext) {
     this.filterOutObjects("attributes", filterContext);
     this.filterOutMethods(filterContext);
     this.filterOutObjects("categories", filterContext);
+    this.filterOutObjects("enumerations", filterContext);
     this.filterOutObjects("tests", filterContext);
 };
 
@@ -467,6 +471,7 @@ Delta.prototype.filterOutDuplicates = function() {
     var length = this.filterOutDuplicatesInLists(this.removed.attributes, this.added.attributes);
     length += this.filterOutDuplicatesInMethods(this.removed.methods, this.added.methods)
     length += this.filterOutDuplicatesInLists(this.removed.categories, this.added.categories);
+    length += this.filterOutDuplicatesInLists(this.removed.enumerations, this.added.enumerations);
     length += this.filterOutDuplicatesInLists(this.removed.tests, this.added.tests);
     return length;
 };

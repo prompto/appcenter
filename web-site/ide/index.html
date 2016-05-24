@@ -51,6 +51,7 @@
             attributes : [],
             methods : [],
             categories : [],
+            enumerations : [],
             tests : []
         };
 
@@ -148,6 +149,31 @@
                 if(idx>=0) {
                     catalog.categories.splice(idx, 1);
                     $('#category_' + name).remove();
+                }
+            });
+        }
+
+
+        function enumerationsAdded(added, core) {
+            added = added.map(function(name) { return { name : name, core : core }; });
+            catalog.enumerations = sortBy(catalog.enumerations.concat(added), 'name');
+            var html = htmlForList(catalog.enumerations, "enumeration");
+            $('#enumerations').html(html);
+            // need to reinstall click handler
+            $('#enumerations > li').click(function (e) {
+                e.stopPropagation();
+                var a = $(e.target);
+                var core = a.attr("core") ? eval(a.attr("core")) : false;
+                setContent({enumeration: a.text(), core: core});
+            });
+        }
+
+        function enumerationsRemoved(removed) {
+            removed.map(function(name) {
+                var idx = findBy(catalog.enumerations, 'name', name);
+                if(idx>=0) {
+                    catalog.enumerations.splice(idx, 1);
+                    $('#enumeration_' + name).remove();
                 }
             });
         }
@@ -295,6 +321,9 @@
                 if (delta.removed.categories) {
                     categoriesRemoved(delta.removed.categories);
                 }
+                if (delta.removed.enumerations) {
+                    enumerationsRemoved(delta.removed.enumerations);
+                }
                 if (delta.removed.tests) {
                     testsRemoved(delta.removed.tests);
                 }
@@ -310,6 +339,9 @@
                 }
                 if (delta.added.categories) {
                     categoriesAdded(delta.added.categories, core);
+                }
+                if (delta.added.enumerations) {
+                    enumerationsAdded(delta.added.enumerations, core);
                 }
                 if (delta.added.tests) {
                     testsAdded(delta.added.tests, core);
@@ -508,6 +540,10 @@
                         </li>
                         <li class="list-group-item"><label class="tree-toggler nav-header">Categories</label>
                             <ul id="categories" class="list-group">
+                            </ul>
+                        </li>
+                        <li class="list-group-item"><label class="tree-toggler nav-header">Enumerations</label>
+                            <ul id="enumerations" class="list-group">
                             </ul>
                         </li>
                         <li class="list-group-item"><label class="tree-toggler nav-header">Tests</label>
