@@ -67,6 +67,13 @@
         });
     }
 
+    function deleteProject(dbId) {
+        var url = '/ws/run/deleteModule?params=[{"name":"dbId", "value":"' + dbId.toString() + '"}]';
+        $.getJSON(url, null, function() {
+            getRecentModules();
+            getAllModules();
+        });
+    }
     function getAllModules() {
         $.getJSON('/ws/run/getAllModules', null, displayAll);
     }
@@ -186,6 +193,10 @@
                 var thumbnail = $(e.target).closest("a")[0];
                 var url = '/ws/run/exportModule?params=[{"name":"dbId", "value":"' + thumbnail.id.toString() + '"}]';
                 $("#export-link").attr("href", url);
+                $("#delete-link").click(function(e) {
+                    e.preventDefault();
+                    deleteProject(thumbnail.id);
+                });
                 e.preventDefault();
                 projectContextMenu.css({
                     display: "block",
@@ -306,6 +317,7 @@
     <div id="project-context-menu" class="dropdown clearfix" style="position: absolute; display: none">
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
             <li><a id="export-link" tabindex="-1" href="#" target="_blank">Export</a></li>
+            <li><a id="delete-link" tabindex="-1" href="#">Delete</a></li>
         </ul>
     </div>
 </body>
