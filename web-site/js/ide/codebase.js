@@ -1,8 +1,11 @@
 var isNodeJs = typeof window === 'undefined' && typeof importScripts === 'undefined';
+var prompto = prompto;
 
-var prompto = isNodeJs ?
-    require("../../../../prompto-javascript/JavaScript-Core/src/test/prompto/parser/PromptoLoader").prompto :
-    require('prompto/index');
+if(typeof prompto === 'undefined') {
+    prompto = isNodeJs ?
+        require("../../../../prompto-javascript/JavaScript-Core/src/test/prompto/parser/PromptoLoader").prompto :
+        require('prompto/index');
+}
 
 /* a function for inferring dialect from file extension */
 function inferDialect(path) {
@@ -653,8 +656,10 @@ Delta.prototype.findOrCreateMethod = function(catalog, name) {
     return created;
 };
 
-
+if(typeof exports === 'undefined')
+    exports = {};
 exports.prompto = prompto;
 exports.Repository = Repository;
 exports.Catalog = Catalog;
 exports.Delta = Delta;
+codebase = exports;

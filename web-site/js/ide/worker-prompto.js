@@ -345,13 +345,8 @@ function safe_require(method) {
 
 }
 
-// load codebase
-var codebase = null;
-var prompto = null;
-safe_require(function() {
-    codebase = require('ide/codebase');
-    prompto = codebase.prompto;
-});
+// load antlr4, prompto and codebase
+importScripts("../lib/prompto.bundle.js", "codebase.js");
 
 // class for gathering errors and posting them to editor
 var AnnotatingErrorListener = function(problems) {
