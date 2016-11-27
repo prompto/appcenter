@@ -489,7 +489,7 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand">Prompto Code Editor for: <b></b><script>document.write(getParam("name"));</script></b></a>
+                <a class="navbar-brand">Prompto Code Editor for: <b><script>document.write(getParam("name"));</script></b></a>
             </div>
             <div id="navbar" class="navbar-collapse">
                 <ul id="nav-dialect" class="nav navbar-nav navbar-right">
@@ -502,7 +502,7 @@
                     <div id="run-button-group" class="btn-group">
                         <button id="run-button" type="button" class="btn btn-default" onclick="run();" value="">Run</button>
                         <button id="run-mode" type="button" class="btn btn-default dropdown-toggle"
-                                data-toggle="dropdown"> Local <span class="caret"/></button>
+                                data-toggle="dropdown"> Local <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a id="run-local-interpreted" onclick="setRunMode('Local');">Local</a></li>
                             <li><a id="run-server-commpiled" onclick="setRunMode('Server compiled');">Server compiled</a></li>
