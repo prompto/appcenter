@@ -88,7 +88,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
 
     PromptoWorker.prototype.executeRemotely = function(id) {
         var name = id.method || id.test;
-        console.log("Execute remotely " + name + " not implemented yet!")
+        console.log("Execute remotely " + name + " not implemented yet!");
         this.sender.emit("done");
     };
 
@@ -239,13 +239,13 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     PromptoWorker.prototype.markLoaded = function(name) {
         delete this.$loading[name];
         // is this the Project ?
-        if(name=="Project")
+        if(name==="Project")
             this.publishProject();
         // is this the last library ?
-        else if (Object.keys(this.$loading).length == 1 && "Project" in this.$loading)
+        else if (Object.keys(this.$loading).length === 1 && "Project" in this.$loading)
             this.publishLibraries();
         // is this the last loading
-        else if (Object.keys(this.$loading).length == 0)
+        else if (Object.keys(this.$loading).length === 0)
             this.publishLibraries();
     };
 
@@ -346,7 +346,7 @@ function safe_require(method) {
 }
 
 // load antlr4, prompto and codebase
-importScripts("../lib/prompto.bundle.js", "codebase.js");
+importScripts("../lib/prompto.core.bundle.js", "codebase.js");
 
 // class for gathering errors and posting them to editor
 var AnnotatingErrorListener = function(problems) {

@@ -91,6 +91,10 @@ define timeStamp as storable DateTime attribute
 define path as Text attribute
 // external text sources have an encoding such as "UTF-8"
 define encoding as Text attribute
+// many systems require a login
+define login as storable Text attribute with key and value index
+// many systems require a password
+define password as Text attribute
 define Error as enumerated category with attributes name and text, and symbols:
 	DIVIDE_BY_ZERO with "Divide by zero!" as text
 	INDEX_OUT_OF_RANGE with "Index out of range!" as text
@@ -101,6 +105,37 @@ define Error as enumerated category with attributes name and text, and symbols:
 define DecimalConstant as enumerated Decimal with symbols:
 	PI with 3.14159265358979323846 as value
 	E with 2.7182818284590452354 as value
+define parseInteger as native method receiving Text text returning Integer doing:
+	Java: return Long.parseLong(text);
+	C#: return Int64.Parse(text);
+	Python2: return int(text)
+	Python3: return int(text)
+	JavaScript: return parseInt(text);
+
+
+define parseDecimal as native method receiving Text text returning Decimal doing:
+	Java: return Double.parseDouble(text);
+	C#: return Double.Parse(text, CultureInfo.InvariantCulture);
+	Python2: return float(text)
+	Python3: return float(text)
+	JavaScript: return parseFloat(text);
+
+
+define "parse Integer" as test method doing:
+	i = parseInteger "123"
+and verifying:
+	i = 123
+
+define "parse Integer with leading 0" as test method doing:
+	i = parseInteger "0123"
+and verifying:
+	i = 123
+
+define "parse Decimal" as test method doing:
+	i = parseDecimal "123.45"
+and verifying:
+	i = 123.45
+
 define now as native method returning DateTime doing:
 	Java: return prompto.intrinsic.PromptoDateTime.now();
 	C#: return System.DateTimeOffset.Now;
@@ -272,6 +307,50 @@ define "reads from www.html5rocks.com" as test method doing:
 	content = read all from Url with "https://www.html5rocks.com/en/" as path
 and verifying: 
 	content contains "HTML5 Rocks"
+
+define readJson as native method receiving text returning Any doing:
+	Java: return prompto.reader.JSONReader.read(text);
+	C#: return prompto.reader.JSONReader.read(text); 
+	Python2: return jsonRead(text) from module: prompto.reader.JSONReader
+	Python3: return jsonRead(text) from module: prompto.reader.JSONReader
+	JavaScript: return jsonRead(text); from module: prompto/reader/JSONReader.js
+
+
+define "test that readJson returns a boolean" as test method doing:
+	o = readJson "true"
+and verifying:
+	o is a Boolean
+	o is true
+
+define "test that readJson returns an Integer" as test method doing:
+	o = readJson "237"
+and verifying:
+	o is an Integer
+	o = 237
+
+define "test that readJson returns a Decimal" as test method doing:
+	o = readJson "123.02"
+and verifying:
+	o is a Decimal
+	o = 123.02
+
+define "test that readJson returns a Text" as test method doing:
+	o = readJson "\"some text\""
+and verifying:
+	o is a Text
+	o = "some text"
+
+define "test that readJson returns a Document" as test method doing:
+	o = readJson "{\"field\":122}"
+and verifying:
+	o is a Document
+	o.field = 122
+
+define "test that readJson returns a List" as test method doing:
+	o = readJson "[{\"field\":122}]"
+and verifying:
+	o is a any[]
+	o[1].field = 122
 
 define iterateCsv as native method receiving text, Text{} columnNames = nothing, Character separator = ',', Character quote = '"' returning Iterator<Document> doing:
 	Java: return prompto.reader.CSVReader.iterator(text, columnNames, separator, quote);
