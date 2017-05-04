@@ -179,13 +179,19 @@
                     '<strong>Import project</strong>',
                     '</a></h4></div>'
                 ]);
-                $.getJSON('/ws/run/getDataExplorerURL', null, function(response) {
+                $.getJSON('/ws/run/getDataPort', null, function(response) {
                     if(response.error)
                         ;
-                    else
-                        $("#data-explorer").attr("href", response.data);
+                    else {
+                        var href = $(location).attr('protocol')
+                            + "//"
+                            + $(location).attr('hostname')
+                            + ":"
+                            + response.data
+                            + "/";
+                        $("#data-explorer").attr("href", href);
+                    }
                 });
-
             }
             $("#" + id + "-items").html(html.join(""));
             $("#" + id).show();
