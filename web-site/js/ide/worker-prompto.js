@@ -156,13 +156,16 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     };
 
     PromptoWorker.prototype.getDataExplorerURL = function(success) {
-        var url = '/ws/run/getDataExplorerURL';
+        var url = '/ws/run/getDataPort';
         this.loadJSON(url, function(response) {
             if (response.error)
                 ; // TODO something
             else {
-                var actual = response.data.substring(0, response.data.lastIndexOf("/"));
-                success(actual);
+                var href = self.location.substring(0, self.location.indexOf("/js/"))
+                    + "/"
+                    + response.data
+                    + "/";
+                success(href);
             }
         });
     };
