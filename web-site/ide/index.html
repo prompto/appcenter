@@ -28,15 +28,13 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../js/lib/ie10-viewport-bug-workaround.js"></script>
     <script src="../js/lib/FileSaver.js"></script>
-    <script src="../js/ide/editor.js"></script>
+    <script src="../js/lib/react.js"></script>
+    <script src="../js/lib/react-dom.js"></script>
+    <script src="../js/lib/babel.min.js"></script>
+    <script src="../js/ide/catalog.js"></script>
+    <script type="text/babel" src="../js/ide/editor.jsx"></script>
     <!-- catalog management -->
     <style type="text/css" media="screen">
-        .core {
-            display: block;
-        }
-        .no-core {
-            display: none;
-        }
         .glyphicon {
             float: right;
         }
@@ -47,9 +45,7 @@
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand">Prompto Code Editor for: <b><script>document.write(getParam("name"));</script></b></a>
-            </div>
+            <div id="project-name" class="navbar-header"> </div>
             <div id="navbar" class="navbar-collapse">
                 <form class="navbar-form navbar-right">
                     <div id="nav-dialect" class="dropdown">
@@ -90,33 +86,8 @@
     <div class="container-fluid edit-mode">
         <div class="row">
             <div class="col-md-3 sidebar">
-                <div class="checkbox">
-                    <label>
-                        <input id="show-libs" type="checkbox" checked onclick="showLibraries(this)"> Show libraries
-                    </label>
+                <div id = "project-tree">
                 </div>
-                    <ul class="list-group">
-                        <li class="list-group-item"><label class="tree-toggler nav-header">Attributes</label>
-                            <ul id="attributes" class="list-group">
-                            </ul>
-                        </li>
-                        <li class="list-group-item"><label class="tree-toggler nav-header">Methods</label>
-                            <ul id="methods" class="list-group">
-                            </ul>
-                        </li>
-                        <li class="list-group-item"><label class="tree-toggler nav-header">Categories</label>
-                            <ul id="categories" class="list-group">
-                            </ul>
-                        </li>
-                        <li class="list-group-item"><label class="tree-toggler nav-header">Enumerations</label>
-                            <ul id="enumerations" class="list-group">
-                            </ul>
-                        </li>
-                        <li class="list-group-item"><label class="tree-toggler nav-header">Tests</label>
-                            <ul id="tests" class="list-group">
-                            </ul>
-                        </li>
-                    </ul>
             </div>
             <div class="col-md-9 col-md-offset-3 main" style="padding: 0px">
                <div class="embed-responsive embed-responsive-4by3 collapse in">

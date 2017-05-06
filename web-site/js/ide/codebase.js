@@ -24,8 +24,8 @@ function parse(input, dialect, listener) {
 
 /* a function for producing code from a declaration object */
 function unparse(context, decl, dialect) {
-    var dialect = prompto.parser.Dialect[dialect];
-    var writer = new prompto.utils.CodeWriter(dialect, context.newChildContext());
+    var d = prompto.parser.Dialect[dialect];
+    var writer = new prompto.utils.CodeWriter(d, context.newChildContext());
     if(decl.comments) {
         decl.comments.forEach(function (cmt) {
             cmt.toDialect(writer);
@@ -145,7 +145,7 @@ Repository.prototype.getDeclaration = function(id) {
 
 /* dbDecl = object received from the server */
 Repository.prototype.idFromDbDecl = function(dbDecl) {
-    if(dbDecl.type=="MethodDeclaration")
+    if(dbDecl.type==="MethodDeclaration")
         return dbDecl.value.name + "/" + ( dbDecl.value.prototype || "" );
     else
         return dbDecl.value.name;
