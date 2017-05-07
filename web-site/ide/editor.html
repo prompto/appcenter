@@ -26,71 +26,13 @@
     <script src="../js/lib/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../js/lib/ie10-viewport-bug-workaround.js"></script>
-    <script type="text/javascript">
 
-        console.log = parent.print;
-
-        function setDialect(dialect) {
-            var mode = editor.getSession().getMode();
-            mode.setDialect(dialect);
-        }
-
-        function setProject(dbId, loadDependencies) {
-            var mode = editor.getSession().getMode();
-            mode.setProject(dbId, loadDependencies);
-        }
-
-        function setContent(id) {
-            var session = editor.getSession();
-            var mode = session.getMode();
-            mode.setContent(id);
-            var ro = id ? id.core : false;
-            editor.setReadOnly(ro);
-            session.setScrollTop(0);
-        }
-
-        function destroy(id) {
-            var session = editor.getSession();
-            var mode = session.getMode();
-            mode.destroy(id);
-            session.setScrollTop(0);
-        }
-
-        function commit() {
-            var session = editor.getSession();
-            var mode = session.getMode();
-            mode.commit();
-        }
-
-        function setValue(value) {
-            editor.setValue(value, -1);
-        }
-
-        function runMethod(id, runMode) {
-            var session = editor.getSession();
-            var mode = session.getMode();
-            mode.runMethod(id, runMode);
-        }
-
-        // a utility method to inspect worker data in Firefox/Safari
-        function inspect(name) {
-            var session = editor.getSession();
-            var mode = session.getMode();
-            mode.inspect(name);
-        }
-
-        function done(data) {
-            parent.done(data);
-        }
-
-
-        $(document).ready(function () {
-            parent.editorReady();
-        });
-
-    </script>
+    <!-- ace scripts-->
+    <script src="../js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../js/ide/mode-prompto.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../js/ide/editor.js" type="text/javascript" charset="utf-8"></script>
     <style type="text/css" media="screen">
-        #editor {
+        .editor {
             position: absolute;
             top: 0;
             right: 0;
@@ -107,21 +49,11 @@
 
 <body>
 
-    <div class="container">
-        <div id="editor"></div>
-        <script src="../js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
-        <script src="../js/ide/mode-prompto.js" type="text/javascript" charset="utf-8"></script>
-        <script>
-            var editor = ace.edit("editor");
-            editor.getSession().$editor = editor;
-            editor.getSession().setUseWorker(false);
-            editor.$blockScrolling = Infinity;
-            editor.setTheme("ace/theme/eclipse");
-            editor.setValue("", -1);
-            editor.getSession().setMode("ace/mode/prompto");
-            editor.getSession().getMode().setDialect("E"); // start with something
-            editor.getSession().setUseWorker(true);
-        </script>
+    <div class="container-fluid" id="prompto-container" style="display: block">
+        <div id="prompto-editor" class="editor"></div>
+    </div>
+    <div class="container-fluid" id="resource-container" style="display: none">
+        <div id="resource-editor" class="editor"></div>
     </div>
 
 </body>

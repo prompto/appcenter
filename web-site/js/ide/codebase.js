@@ -118,30 +118,28 @@ Repository.prototype.registerProjectDeclarations = function(moduleId, declaratio
     });
 };
 
-Repository.prototype.getDeclarationBody = function(id, dialect) {
-    var decl = this.getDeclaration(id);
+Repository.prototype.getDeclarationBody = function(content, dialect) {
+    var decl = this.getDeclaration(content);
     return unparse(this.projectContext, decl, dialect);
 };
 
 
-Repository.prototype.getDeclaration = function(id) {
-    if(id.test)
-        return this.projectContext.getRegisteredTest(id.test);
-    else if(id.method) {
-        var methodsMap = this.projectContext.getRegisteredDeclaration(id.method);
-        if(id.proto) {
-            return methodsMap.protos[id.proto];
+Repository.prototype.getDeclaration = function(content) {
+    if(content.subType==="test")
+        return this.projectContext.getRegisteredTest(content.name);
+    else if(content.subType==="method") {
+        var methodsMap = this.projectContext.getRegisteredDeclaration(content.name);
+        if(content.proto) {
+            return methodsMap.protos[content.proto];
         } else {
-            // simply return the first
+            // simply return the first proto
             for(var proto in methodsMap.protos) {
                 return methodsMap.protos[proto];
             }
         }
-    } else {
-        var name = id.attribute || id.category || id.enumeration;
-        return this.projectContext.getRegisteredDeclaration(name);
-    }
-}
+    } else
+        return this.projectContext.getRegisteredDeclaration(content.name);
+};
 
 /* dbDecl = object received from the server */
 Repository.prototype.idFromDbDecl = function(dbDecl) {
@@ -153,11 +151,11 @@ Repository.prototype.idFromDbDecl = function(dbDecl) {
 
 
 /* id = object received from the UI */
-Repository.prototype.idFromEditorId = function(id) {
-    if(id.method)
-        return id.method + "/" + (id.proto || "");
+Repository.prototype.idFromContent = function(content) {
+    if(content.subType==="method")
+        return content.name + "/" + (content.proto || "");
     else
-        return id.attribute || id.category || id.enumeration || id.test;
+        return content.name;
 };
 
 /* decl = object received from the parser */
@@ -172,7 +170,6 @@ Repository.prototype.registerClean = function(obj) {
 
 
 Repository.prototype.registerDestroyed = function(id) {
-    var id = this.idFromEditorId(id);
     var obj_status = this.statuses[id];
     if (obj_status)
         obj_status.editStatus = "DELETED";
@@ -186,10 +183,10 @@ Repository.prototype.registerDirty = function(decls, dialect) {
         if(existing) {
             var decl_obj = existing.declaration.value;
             var body = unparse(this.projectContext, decl, dialect);
-            if(decl_obj.dialect != dialect || decl_obj.body != body) {
+            if(decl_obj.dialect !== dialect || decl_obj.body !== body) {
                 decl_obj.dialect = dialect;
                 decl_obj.body = body;
-                if (existing.editStatus != "CREATED") // don't overwrite
+                if (existing.editStatus !== "CREATED") // don't overwrite
                     existing.editStatus = "DIRTY";
                 if(decl.getProto!==undefined)
                     decl_obj.prototype = decl.getProto();
@@ -220,7 +217,7 @@ Repository.prototype.registerDirty = function(decls, dialect) {
                     value: decl_obj
                 }
             };
-        };
+        }
     }, this);
 };
 
@@ -238,7 +235,7 @@ Repository.prototype.registerCommitted = function(declarations) {
 Repository.prototype.prepareCommit = function () {
     var edited = [];
     for(var id in this.statuses) {
-        if(this.statuses[id].editStatus!="CLEAN")
+        if(this.statuses[id].editStatus !== "CLEAN")
             edited.push({ type : "EditedDeclaration", value : this.statuses[id] });
     }
     if(edited.length)
@@ -253,11 +250,11 @@ Repository.prototype.translate = function (data, from, to) {
 };
 
 
-Repository.prototype.handleDestroyed = function (id) {
+Repository.prototype.handleDestroyed = function (content) {
+    var id = this.idFromContent(content);
     this.registerDestroyed(id);
-    var id = this.idFromEditorId(id);
     var obj_status = this.statuses[id];
-    if (obj_status && obj_status.editStatus == "DELETED") {
+    if (obj_status && obj_status.editStatus === "DELETED") {
         var decls = parse(obj_status.declaration.value.body, obj_status.declaration.value.dialect);
         decls[0].unregister(this.projectContext);
         var delta = new Delta();
@@ -282,7 +279,7 @@ Repository.prototype.handleEditContent = function (content, dialect, listener) {
     // always annotate new content
     var new_decls = parse(content, dialect, listener);
     // only update catalog if syntax is correct
-    if (listener.problems.length == 0) {
+    if (listener.problems.length === 0) {
         this.lastSuccess = content;
         return this.updateCatalog(old_decls, new_decls, dialect, listener);
     } else
@@ -297,7 +294,7 @@ Repository.prototype.updateCatalog = function (old_decls, new_decls, dialect, li
     var changedIdsCount = delta.filterOutDuplicates();
     var handled = false;
     // special case when changing id of a single declaration
-    if (changedIdsCount != 0 && old_decls.length == 1 && new_decls.length == 1) {
+    if (changedIdsCount !== 0 && old_decls.length === 1 && new_decls.length === 1) {
         // assume the old_decl changed id/nature
         // check for existing old decl
         var old_id = this.idFromDecl(old_decls[0]);
@@ -312,7 +309,7 @@ Repository.prototype.updateCatalog = function (old_decls, new_decls, dialect, li
             delete this.statuses[old_id];
             // update status obj
             new_status = old_status;
-            if (new_status.editStatus != "CREATED") // don't overwrite
+            if (new_status.editStatus !== "CREATED") // don't overwrite
                 new_status.editStatus = "DIRTY";
             // update declaration obj
             var new_decl = new_decls[0];
@@ -336,7 +333,7 @@ Repository.prototype.updateCatalog = function (old_decls, new_decls, dialect, li
         this.registerDirty(new_decls, dialect);
     }
     this.updateAppContext(old_decls, new_decls, listener);
-    if(changedIdsCount != 0) {
+    if(changedIdsCount !== 0) {
         delta.adjustForMovingProtos(this.projectContext);
         return delta.getContent();
     } else
@@ -411,7 +408,7 @@ Catalog.prototype.filterOutDeclarations = function(filterContext) {
 Catalog.prototype.filterOutObjects = function(type, filterContext) {
     if(this[type])
         this[type] = this[type].filter(function (name) {
-            return filterContext.contextForDeclaration(name) == null;
+            return filterContext.contextForDeclaration(name) === null;
         });
 };
 
@@ -419,10 +416,10 @@ Catalog.prototype.filterOutMethods = function(filterContext) {
     if(this.methods)
         this.methods = this.methods.filter(function (method) {
             var context = filterContext.contextForDeclaration(method.name);
-            if(context==null)
+            if(context === null)
                 return true;
             // if core has such method, need to check protos
-            if(method.protos.length==1)
+            if(method.protos.length === 1)
                 return false;
             var map = filterContext.getRegisteredDeclaration(method.name);
             method.protos = method.protos.filter(function (proto) {
@@ -557,14 +554,14 @@ Delta.prototype.adjustForMovingProtos = function(context) {
     if (this.removed && this.removed.methods) {
         this.removed.methods.map(function (method) {
             var decl = context.getRegisteredDeclaration(method.name);
-            if (decl && Object.keys(decl.protos).length == 1) // moved from N to 1
+            if (decl && Object.keys(decl.protos).length === 1) // moved from N to 1
                 this.adjustMethodForRemovedProtos(method, decl);
         }, this);
     }
     if (this.added && this.added.methods) {
         this.added.methods.map(function (method) {
             var decl = context.getRegisteredDeclaration(method.name);
-            if (decl && Object.keys(decl.protos).length - method.protos.length == 1) // moved from 1 to N
+            if (decl && Object.keys(decl.protos).length - method.protos.length === 1) // moved from 1 to N
                 this.adjustMethodForAddedProtos(method, decl);
         }, this);
     }
@@ -611,7 +608,7 @@ Delta.prototype.findPreExistingProto = function(method, decl) {
     for(var proto in decl.protos) {
         var found = false;
         for(var i=0; !found && i<method.protos.length; i++) {
-            found = proto == method.protos[i].proto;
+            found = proto === method.protos[i].proto;
         }
         if(!found)
             return proto;
@@ -636,7 +633,7 @@ Delta.prototype.adjustMethodForRemovedProto = function(method, decl, proto) {
     var added = this.findOrCreateMethod(this.added, decl.name);
     // avoid adding it twice (it might have just been added)
     added.protos.map(function (current) {
-        if (proto_to_move && proto_to_move.proto == current.proto)
+        if (proto_to_move && proto_to_move.proto === current.proto)
             proto_to_move = null; // don't add it
     });
     // not an existing proto ?

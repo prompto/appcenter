@@ -9814,7 +9814,7 @@ config.defineOptions(EditSession.prototype, "session", {
         handlesSet: true
     },
     mode: {
-        set: function(val) { this.setMode(val) },
+        set: function(val) { this.setEditorType(val) },
         get: function() { return this.$modeId }
     }
 });

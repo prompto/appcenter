@@ -32,7 +32,7 @@
     <script src="../js/lib/react-dom.js"></script>
     <script src="../js/lib/babel.min.js"></script>
     <script src="../js/ide/catalog.js"></script>
-    <script type="text/babel" src="../js/ide/editor.jsx"></script>
+    <script type="text/babel" src="../js/ide/index.jsx"></script>
     <!-- catalog management -->
     <style type="text/css" media="screen">
         .glyphicon {
@@ -49,11 +49,11 @@
             <div id="navbar" class="navbar-collapse">
                 <form class="navbar-form navbar-right">
                     <div id="nav-dialect" class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownDialect" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             Dialect
                             <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <ul class="dropdown-menu" aria-labelledby="dropdownDialect">
                             <li class="active"><a id="dialect-Engly">Engly</a></li>
                             <li><a id="dialect-Objy">Objy</a></li>
                             <li><a id="dialect-Monty">Monty</a></li>
@@ -73,11 +73,29 @@
                     </div>
                 </form>
                 <form class="navbar-form navbar-right edit-mode">
-                    <button id="btnNew" type="button" class="form-control" onclick="setContent(null);">New</button>
                     <button id="btnDelete" type="button" class="form-control" onclick="destroy();">Delete</button>
                     <button id="btnRevert" type="button" class="form-control" onclick="revert();">Revert</button>
                     <button id="btnCommit" type="button" class="form-control" onclick="commit();">Commit</button>
                     <input id="search" type="text" class="form-control" placeholder="Search...">
+                </form>
+                <form class="navbar-form navbar-right edit-mode">
+                    <div id="nav-new" class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownNew" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            New
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownNew">
+                            <li><a id="new-Prompto">Code</a></li>
+                            <li><a id="new-Html">Web page</a></li>
+                            <li><a id="new-Stylesheet">Stylesheet</a></li>
+                            <li><a id="new-Picture">Picture</a></li>
+                            <li><a id="new-Script">Script</a></li>
+                            <li><a id="new-Json">Json</a></li>
+                            <li><a id="new-Xml">Xml</a></li>
+                            <li><a id="new-Text">Text</a></li>
+                            <li><a id="new-Other">Other</a></li>
+                        </ul>
+                    </div>
                 </form>
             </div>
         </div>
@@ -98,6 +116,10 @@
     </div>
     <div id="output" class="container-fluid run-mode">
     </div>
+    <div id="new-resource" class="modal fade">
+    </div>
+
+
 </body>
 </html>
 

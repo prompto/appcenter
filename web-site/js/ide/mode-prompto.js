@@ -125,12 +125,12 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
             this.$worker && this.$worker.send("setDialect", [ this.$dialect ] );
         };
 
-        this.setContent = function(id) {
-            this.$worker && this.$worker.send("setContent", [ id ] );
+        this.setContent = function(content) {
+            this.$worker && this.$worker.send("setContent", [ content ] );
         };
 
-        this.destroy = function(id) {
-            this.$worker && this.$worker.send("destroy", [ id ] );
+        this.destroy = function(content) {
+            this.$worker && this.$worker.send("destroy", [ content ] );
         };
 
         this.setProject = function(dbId, loadDependencies) {

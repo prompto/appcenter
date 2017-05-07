@@ -10,7 +10,7 @@ function sortBy(a, f) {
 
 function findBy(a, f, v) {
     for(var i=0;i<a.length;i++) {
-        if(a[i][f]==v)
+        if(a[i][f] === v)
             return i;
     }
     return -1;
@@ -22,6 +22,7 @@ function Catalog() {
     this.categories = [];
     this.enumerations = [];
     this.tests = [];
+    this.resources = { html: [], css: [], img: [], js: [], json: [], xml: [], text: [], bin: []};
     this.showLibraries = false;
     // for performance reasons, we only receive a delta from the ace worker
     // so can't rely on just React virtual DOM
@@ -56,6 +57,8 @@ function Catalog() {
             this.enumerations = this.addStuffByName(this.enumerations, delta.enumerations, core);
         if (delta.tests)
             this.tests = this.addStuffByName(this.tests, delta.tests, core);
+        if (delta.resources)
+            this.addResources(delta.resources);
     };
     this.removeStuffByName = function(current, removed) {
         removed.map(name => {
@@ -92,6 +95,26 @@ function Catalog() {
         });
         const added = this.methods.concat(toAdd);
         this.methods = sortBy(added, 'name');
+    };
+    this.removeResources = function(removed) {
+        removed.map(res => {
+            const list = this.resources[res.type.toLowerCase()] || this.resources.bin;
+            const idx = findBy(list, 'path', res.path);
+            if (idx >= 0)
+                list.splice(idx, 1);
+        });
+    };
+    this.addResources = function(toAdd) {
+        toAdd.forEach(res => {
+            const list = this.resources[res.type.toLowerCase()] || this.resources.bin;
+            list.push(res);
+            sortBy(list, 'path');
+        });
+    };
+    this.getResourceBody = function(res) {
+        const list = this.resources[res.type.toLowerCase()] || this.resources.bin;
+        const item = findBy(list, 'path', res.path);
+        return list[item].body;
     };
     return this;
 }

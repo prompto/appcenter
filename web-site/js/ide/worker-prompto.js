@@ -35,13 +35,13 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         }
     };
 
-    PromptoWorker.prototype.setContent = function(id) {
+    PromptoWorker.prototype.setContent = function(content) {
         var worker = this;
         safe_require(function() {
             // remember value if it does not result from an edit
-            if(id) {
-                worker.$value = worker.$repo.getDeclarationBody(id, worker.$dialect);
-                worker.$core = id.core || false;
+            if(content.name) {
+                worker.$value = worker.$repo.getDeclarationBody(content, worker.$dialect);
+                worker.$core = content.core || false;
             } else {
                 worker.$value = "";
                 worker.$core = false;
@@ -50,11 +50,11 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         });
     };
 
-    PromptoWorker.prototype.destroy = function(id) {
+    PromptoWorker.prototype.destroy = function(content) {
         this.$value = "";
         var worker = this;
         safe_require(function() {
-            var catalog = worker.$repo.handleDestroyed(id);
+            var catalog = worker.$repo.handleDestroyed(content);
             if(catalog) {
                 worker.sender.emit("catalog", catalog);
             }
