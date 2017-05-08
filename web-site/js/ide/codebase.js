@@ -134,7 +134,8 @@ Repository.prototype.getDeclaration = function(content) {
         } else {
             // simply return the first proto
             for(var proto in methodsMap.protos) {
-                return methodsMap.protos[proto];
+                if(methodsMap.protos.hasOwnProperty(proto))
+                    return methodsMap.protos[proto];
             }
         }
     } else
@@ -178,10 +179,11 @@ Repository.prototype.registerDestroyed = function(id) {
 
 Repository.prototype.registerDirty = function(decls, dialect) {
     decls.map(function(decl) {
+        var decl_obj;
         var id = this.idFromDecl(decl);
         var existing = this.statuses[id];
         if(existing) {
-            var decl_obj = existing.declaration.value;
+            decl_obj = existing.declaration.value;
             var body = unparse(this.projectContext, decl, dialect);
             if(decl_obj.dialect !== dialect || decl_obj.body !== body) {
                 decl_obj.dialect = dialect;
@@ -194,7 +196,7 @@ Repository.prototype.registerDirty = function(decls, dialect) {
                     decl_obj.storable = decl.storable;
             }
         } else {
-            var decl_obj = {
+            decl_obj = {
                 name: decl.name,
                 version: "0.0.0.1",
                 dialect: dialect,
@@ -235,7 +237,7 @@ Repository.prototype.registerCommitted = function(declarations) {
 Repository.prototype.prepareCommit = function () {
     var edited = [];
     for(var id in this.statuses) {
-        if(this.statuses[id].editStatus !== "CLEAN")
+        if(this.statuses.hasOwnProperty(id) && this.statuses[id].editStatus !== "CLEAN")
             edited.push({ type : "EditedDeclaration", value : this.statuses[id] });
     }
     if(edited.length)
@@ -468,11 +470,21 @@ Delta.prototype.filterOutDuplicates = function() {
         return this.added.length();
     if(!this.added)
         return this.removed.length();
-    var length = this.filterOutDuplicatesInLists(this.removed.attributes, this.added.attributes);
-    length += this.filterOutDuplicatesInMethods(this.removed.methods, this.added.methods)
-    length += this.filterOutDuplicatesInLists(this.removed.categories, this.added.categories);
-    length += this.filterOutDuplicatesInLists(this.removed.enumerations, this.added.enumerations);
-    length += this.filterOutDuplicatesInLists(this.removed.tests, this.added.tests);
+    var length = this.filterOutDuplicatesInField("attributes");
+    length += this.filterOutDuplicatesInField("methods");
+    length += this.filterOutDuplicatesInField("categories");
+    length += this.filterOutDuplicatesInField("enumerations");
+    length += this.filterOutDuplicatesInField("tests");
+    return length;
+};
+
+Delta.prototype.filterOutDuplicatesInField = function(field) {
+    var fn = field==="methods" ? this.filterOutDuplicatesInMethods : this.filterOutDuplicatesInLists;
+    var length = fn.bind(this)(this.removed[field], this.added[field]);
+    if(this.removed[field] && !this.removed[field].length)
+        delete this.removed[field];
+    if(this.added[field] && !this.added[field].length)
+        delete this.added[field];
     return length;
 };
 
@@ -501,12 +513,7 @@ Delta.prototype.filterOutDuplicatesInLists = function(a, b, field) {
                 i++;
             }
         }
-        var length = a.length + b.length;
-        if(!a.length)
-            delete a;
-        if(!b.length)
-            delete b;
-        return length;
+        return a.length + b.length;
     } else if(a)
         return a.length;
     else if(b)
@@ -534,19 +541,14 @@ Delta.prototype.filterOutDuplicatesInMethods = function(a, b) {
                 i++;
             }
         }
-        var length = a.length + b.length;
-        if(!a.length)
-            delete a;
-        if(!b.length)
-            delete b;
-        return length;
+        return a.length + b.length;
     } else if(a)
         return a.length;
     else if(b)
         return b.length;
     else
         return 0;
-}
+};
 
 Delta.prototype.adjustForMovingProtos = function(context) {
     // methods with 1 proto are displayed differently than methods with multiple protos
@@ -606,20 +608,25 @@ Delta.prototype.adjustMethodForAddedProtos = function(method, decl)
 
 Delta.prototype.findPreExistingProto = function(method, decl) {
     for(var proto in decl.protos) {
-        var found = false;
-        for(var i=0; !found && i<method.protos.length; i++) {
-            found = proto === method.protos[i].proto;
+        if(decl.protos.hasOwnProperty(proto)) {
+            var found = false;
+            for (var i = 0; !found && i < method.protos.length; i++) {
+                found = proto === method.protos[i].proto;
+            }
+            if (!found)
+                return proto;
         }
-        if(!found)
-            return proto;
     }
     return null; // TODO throw error?
 };
 
 Delta.prototype.adjustMethodForRemovedProtos = function(method, decl) {
     // the below will only loop once
-    for (var proto in decl.protos)
-        this.adjustMethodForRemovedProto(method, decl, proto);
+    for (var proto in decl.protos) {
+        if (decl.protos.hasOwnProperty(proto)) {
+            this.adjustMethodForRemovedProto(method, decl, proto);
+        }
+    }
 };
 
 Delta.prototype.adjustMethodForRemovedProto = function(method, decl, proto) {

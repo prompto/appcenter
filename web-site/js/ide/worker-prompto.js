@@ -206,7 +206,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         var errorListener = new AnnotatingErrorListener();
         var worker = this;
         safe_require(function () {
-            if(value==worker.$value)
+            if(value === worker.$value)
                 worker.$repo.handleSetContent(value, worker.$dialect, errorListener);
             else {
                 var catalog = worker.$repo.handleEditContent(value, worker.$dialect, errorListener);
