@@ -188,10 +188,10 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         this.loadJSON(url, success);
     };
 
-    PromptoWorker.prototype.commit = function() {
+    PromptoWorker.prototype.prepareCommit = function() {
         var worker = this;
         safe_require(function() {
-            worker.commitProject();
+            worker.prepareCommit();
         });
     };
 
@@ -291,26 +291,12 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         this.sender.emit("catalog", catalog);
     };
 
-    PromptoWorker.prototype.commitProject = function() {
+    PromptoWorker.prototype.prepareCommit = function() {
         var edited = this.$repo.prepareCommit();
-        if(edited) {
-            var worker = this;
-            var form = new FormData();
-            form.append("params", JSON.stringify([{name: "edited", type: "EditedDeclaration[]", value: edited}]));
-            var xhr = new XMLHttpRequest();
-            xhr.upload.addEventListener('load', function(success) { worker.commitSuccessful(success); });
-            xhr.addEventListener('error', function(failure) { worker.commitFailed(failure); });
-            xhr.open('POST', '/ws/run/storeDeclarations', true);
-            xhr.send(form);
-        }
+        this.sender.emit("commitPrepared", edited);
     };
 
-    PromptoWorker.prototype.commitFailed = function(failure) {
-        console.log("Commit failed!"); // TODO send to UI
-    };
-
-    PromptoWorker.prototype.commitSuccessful = function(success) {
-        console.log("Commit ok!");
+    PromptoWorker.prototype.commitSuccessful = function() {
         var worker = this;
         var declarations = this.fetchProjectDeclarations(this.$projectId, function(response) {
             if (response.error)

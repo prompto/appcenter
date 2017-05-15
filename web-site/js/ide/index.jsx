@@ -11,10 +11,6 @@ function makeTreeId(content) {
     return (content.subType || content.type) + "_" + makeValidId(content.name || content.path);
 }
 
-function makeValidId(name) {
-    return name.replace(/[ ]/g, "_").replace(/[\"\'\(\),]/g,"");
-}
-
 function saveBlob() {
     const blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
     saveAs(blob,'test.txt');
@@ -202,9 +198,9 @@ function showLibraries(show) {
     ReactDOM.render(<ProjectTree catalog={catalog}/>, document.getElementById('project-tree'));
 }
 
-function catalogUpdated(delta) {
+function catalogUpdated(delta, callback) {
     catalog.applyDelta(delta);
-    ReactDOM.render(<ProjectTree catalog={catalog}/>, document.getElementById('project-tree'));
+    ReactDOM.render(<ProjectTree catalog={catalog}/>, document.getElementById('project-tree'), callback);
 }
 
 function installDialectDropdownHandler() {
@@ -253,14 +249,19 @@ $(document).ready(function () {
 
 function selectContentInProjectTree(content) {
     const id = makeTreeId(content);
-    $("#" + id).toggle(50);
+    $("#" + id).parentsUntil("#project-tree").show(50);
+    $("#" + id).trigger("click");
 }
 
 function setEditorContent(content) {
     if(content && content===currentContent)
         return;
-    currentContent = content;
     const frame = document.getElementById("editor");
+    if(currentContent && currentContent.type !== "Prompto") {
+        currentContent.body = frame.contentWindow.getResourceBody();
+        catalog.setResourceBody(currentContent);
+    }
+    currentContent = content;
     frame.contentWindow.setContent(content);
 }
 
@@ -318,17 +319,16 @@ function newTextResource(type, text) {
 }
 
 function createResource(mode, path) {
-    const id = createResourceInCatalog(mode, path);
+    const id = createResourceInCatalog(mode, path, () => selectContentInProjectTree(id));
     $('#new-resource').modal('toggle');
-    selectContentInProjectTree(id);
 }
 
-function createResourceInCatalog(mode, path) {
+function createResourceInCatalog(mode, path, callback) {
     const methodName = "createContent" + mode;
-    const text = window[methodName]();
-    const content = { path: path, type: mode, body: text };
+    const body = window[methodName]();
+    const content = { path: path, type: mode, body: body };
     const delta = { added: { resources: [content]}};
-    catalogUpdated(delta);
+    catalogUpdated(delta, callback);
     return content;
 }
 
@@ -366,7 +366,30 @@ function commit() {
     // TODO confirm
     setEditorContent({ type: "Prompto" });
     const frame = document.getElementById("editor");
-    frame.contentWindow.commit();
+    frame.contentWindow.prepareCommit();
+}
+
+function commitPrepared(edited) {
+    if(edited) {
+        var form = new FormData();
+        form.append("params", JSON.stringify([{name: "edited", type: "EditedDeclaration[]", value: edited}]));
+        var xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener('load', function(success) { commitSuccessful(success); });
+        xhr.addEventListener('error', function(failure) { commitFailed(failure); });
+        xhr.open('POST', '/ws/run/storeDeclarations', true);
+        xhr.send(form);
+    }
+}
+
+
+function commitFailed(failure) {
+    alert("Commit failed!"); // TODO send to UI
+}
+
+function commitSuccessful(success) {
+    alert("Commit ok!");
+    const frame = document.getElementById("editor");
+    frame.contentWindow.commitSuccessful();
 }
 
 function setRunMode(label) {

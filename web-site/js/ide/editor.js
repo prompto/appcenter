@@ -14,7 +14,7 @@ function setProject(dbId, loadDependencies) {
 }
 
 function setContent(content) {
-    setMode(content.type, (editor) => {
+    setMode(content.type, editor => {
         var methodName = "setContent" + content.type;
         window[methodName](editor, content);
     })
@@ -30,11 +30,14 @@ function setContentPrompto(editor, content) {
 }
 
 function setContentHtml(editor, content) {
-    editor.setValue(content.body);
+    editor.setValue(content.body, -1);
     editor.setReadOnly(false);
     editor.getSession().setScrollTop(0);
 }
 
+function getResourceBody() {
+    return resourceEditor.getValue();
+}
 
 function destroy(content) {
     var methodName = "destroy" + content.type;
@@ -48,10 +51,20 @@ function destroyPrompto(content) {
     session.setScrollTop(0);
 }
 
-function commit() {
+function prepareCommit() {
     var session = promptoEditor.getSession();
     var mode = session.getMode();
-    mode.commit();
+    mode.prepareCommit();
+}
+
+function commitPrepared(edited) {
+    parent.commitPrepared(edited);
+}
+
+function commitSuccessful() {
+    var session = promptoEditor.getSession();
+    var mode = session.getMode();
+    mode.commitSuccessful();
 }
 
 function runMethod(id, runMode) {

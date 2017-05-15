@@ -137,8 +137,12 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
             this.$worker && this.$worker.send("setProject", [ dbId, loadDependencies ] );
         };
 
-        this.commit = function(dbId) {
-            this.$worker && this.$worker.send("commit", [ dbId ] );
+        this.prepareCommit = function(dbId) {
+            this.$worker && this.$worker.send("prepareCommit", [ dbId ] );
+        };
+
+        this.commitSuccessful = function(dbId) {
+            this.$worker && this.$worker.send("commitSuccessful", [ dbId ] );
         };
 
         this.runMethod = function(id, mode) {
@@ -189,6 +193,11 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
             this.$worker.on("done", function(v) {
                 parent.done(v.data);
             });
+
+            this.$worker.on("commitPrepared", function(v) {
+                parent.commitPrepared(v.data);
+            });
+
 
             // a utility method to inspect worker data in Firefox/Safari
             this.$worker.on("inspected", function(v) {

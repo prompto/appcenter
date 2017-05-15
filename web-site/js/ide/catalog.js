@@ -1,4 +1,4 @@
-function makeId(name) {
+function makeValidId(name) {
     return name.replace(/[ ]/g, "_").replace(/[\"\'\(\),]/g,"");
 }
 
@@ -115,6 +115,11 @@ function Catalog() {
         const list = this.resources[res.type.toLowerCase()] || this.resources.bin;
         const item = findBy(list, 'path', res.path);
         return list[item].body;
+    };
+    this.setResourceBody = function(res) {
+        const list = this.resources[res.type.toLowerCase()] || this.resources.bin;
+        const item = findBy(list, 'path', res.path);
+        list[item].body = res.body;
     };
     return this;
 }
