@@ -1,5 +1,5 @@
 function makeValidId(name) {
-    return name.replace(/[ \.]/g, "_").replace(/[\"\'\(\),]/g,"");
+    return name.replace(/[ /\.]/g, "_").replace(/[\"\'\(\),]/g,"");
 }
 
 function Catalog() {

@@ -268,26 +268,34 @@ class NewTextResource extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {path: ''};
-        this.handlePath = this.handlePath.bind(this);
+        this.state = {folder: '', name: '', extension: ''};
+        this.handleFolder = this.handleFolder.bind(this);
+        this.handleName = this.handleName.bind(this);
+        this.handleExtension = this.handleExtension.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     render() {
-        const projectName = getParam("name");
-        const placeholder = projectName + "/" + this.props.label + "." + this.props.type.toLowerCase().replace(" ", "-");
-        return <div className="modal-dialog">
+        const folder = getParam("name");
+        const extension = this.props.type.toLowerCase().replace(" ", "-");
+        this.state = {folder: folder, name: '', extension: extension};
+        const placeholder = this.props.label;
+        return <div className="modal-dialog" style={{width:680}}>
                     <div className="modal-content">
                         <div className="modal-header">
                             <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>
                             <h4 className="modal-title">New {this.props.label}</h4>
                         </div>
                         <div className="modal-body">
-                            <form className="form" role="form" >
+                            <form className="form" role="form">
                                 <div className="form-group">
                                     <label className="control-label" htmlFor="resourcePath">Enter the unique path for this resource:</label>
                                     <div className="input-group input-group-lg">
-                                        <input type="text" className="form-control input-lg" id="resourcePath" placeholder={placeholder} style={{width:530}} onChange={this.handlePath}/>
+                                        <input type="text" className="form-control input-lg" id="folderInput" value={this.state.folder} style={{width:245}} onChange={this.handleFolder}/>
+                                        <span className="input-group-addon" id="basic-addon1">/</span>
+                                        <input type="text" className="form-control input-lg" id="nameInput" placeholder={placeholder} style={{width:245}} onChange={this.handleName}/>
+                                        <span className="input-group-addon" id="basic-addon2">.</span>
+                                        <input type="text" className="form-control input-lg" id="extensionInput" value={this.state.extension} style={{width:80}} onChange={this.handleExtension}/>
                                     </div>
                                 </div>
                             </form>
@@ -301,24 +309,35 @@ class NewTextResource extends React.Component {
                 </div>;
     }
 
-    handlePath(event) {
-        this.setState({path: event.target.value});
+    handleFolder(event) {
+        this.setState({folder: event.target.value});
+    }
+
+    handleName(event) {
+        this.setState({name: event.target.value});
+    }
+
+    handleExtension(event) {
+        this.setState({extension: event.target.value});
     }
 
     handleSubmit(event) {
-        this.props.submit(this.props.type, this.state.path);
+        const path = this.state.folder + "/" + this.state.name + "." + this.state.extension;
+        this.props.submit(this.props.type, path);
     }
 
 }
 
 function newTextResource(type, label) {
-    ReactDOM.render(<NewTextResource type={type} label={label} submit={createResource}/>, document.getElementById('new-resource'));
-    $("#new-resource").modal();
+    ReactDOM.render(<NewTextResource type={type} label={label} submit={createResource}/>, document.getElementById('new-text-resource'));
+    const dialog = $("#new-text-resource");
+    dialog.on('shown.bs.modal', () => $("#nameInput").focus());
+    dialog.modal();
 }
 
 function createResource(type, path) {
     const id = createResourceInCatalog(type, path, () => selectContentInProjectTree(id));
-    $('#new-resource').modal('toggle');
+    $('#new-text-resource').modal('toggle');
 }
 
 function createResourceInCatalog(type, path, callback) {
