@@ -8,7 +8,9 @@ function getParam(name) {
 
 
 function makeTreeId(content) {
-    return (content.subType || content.type) + "_" + makeValidId(content.name || content.value.name);
+    return content.type==="Prompto" ?
+        content.subType + "_" + makeValidId(content.name) :
+        content.value.mimeType.replace("/", "_") + "_" + makeValidId(content.value.name);
 }
 
 function saveBlob() {
@@ -128,7 +130,7 @@ class ResourceTree extends GroupTree {
     }
 
     renderItem(item) {
-        const key = item.value.mimeType + "_" + makeValidId(item.value.name);
+        const key = item.value.mimeType.replace("/", "_") + "_" + makeValidId(item.value.name);
         return <li id={key} key={key} className='list-group-item' onClick={this.itemClicked}>
             <a>{item.value.name}</a>
         </li>;
@@ -173,7 +175,7 @@ class ProjectTree extends React.Component {
                         <ResourceTree title="Stylesheets" items={catalog.resources.css} type="Css" showLibraries="true"/>
                         <ResourceTree title="Json" items={catalog.resources.json} type="Json" showLibraries="true"/>
                         <ResourceTree title="Xml" items={catalog.resources.xml} type="Xml" showLibraries="true"/>
-                        <ResourceTree title="Text" items={catalog.resources.txt} type="Txt" showLibraries="true"/>
+                        <ResourceTree title="Text" items={catalog.resources.text} type="Txt" showLibraries="true"/>
                         <ResourceTree title="Medias" items={[]} type="media" showLibraries="true"/>
                         <ResourceTree title="Other" items={[]} type="bin" showLibraries="true"/>
                     </ul>
@@ -275,28 +277,28 @@ class NewTextResource extends React.Component {
         const projectName = getParam("name");
         const placeholder = projectName + "/" + this.props.label + "." + this.props.type.toLowerCase().replace(" ", "-");
         return <div className="modal-dialog">
-            <div className="modal-content">
-                <div className="modal-header">
-                    <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 className="modal-title">New {this.props.label}</h4>
-                </div>
-                <div className="modal-body">
-                    <form className="form" role="form" >
-                        <div className="form-group">
-                            <label className="control-label" htmlFor="resourcePath">Enter the unique path for this resource:</label>
-                            <div className="input-group input-group-lg">
-                                <input type="text" className="form-control input-lg" id="resourcePath" placeholder={placeholder} style={{width:530}} onChange={this.handlePath}/>
-                            </div>
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h4 className="modal-title">New {this.props.label}</h4>
                         </div>
-                    </form>
-                </div>
-                <div className="modal-footer">
-                    <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="button" className="btn btn-primary" onClick={this.handleSubmit}>OK</button>
-                </div>
+                        <div className="modal-body">
+                            <form className="form" role="form" >
+                                <div className="form-group">
+                                    <label className="control-label" htmlFor="resourcePath">Enter the unique path for this resource:</label>
+                                    <div className="input-group input-group-lg">
+                                        <input type="text" className="form-control input-lg" id="resourcePath" placeholder={placeholder} style={{width:530}} onChange={this.handlePath}/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" className="btn btn-primary" onClick={this.handleSubmit}>OK</button>
+                        </div>
 
-            </div>
-        </div>;
+                    </div>
+                </div>;
     }
 
     handlePath(event) {
@@ -417,7 +419,7 @@ function createResourceXml(path) {
 }
 
 
-function createResourceText(path) {
+function createResourceTxt(path) {
     return {
         type: "TextResource",
         value: {

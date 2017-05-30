@@ -143,7 +143,7 @@ function setModeHtml(callback) {
     });
 }
 
-function setModeJavascript(callback) {
+function setModeJs(callback) {
     $("#resource-container").show();
     resourceEditor.getSession().setMode("ace/mode/javascript", () => {
         callback(resourceEditor);
@@ -178,7 +178,7 @@ function setModeXml(callback) {
     });
 }
 
-function setModeText(callback) {
+function setModeTxt(callback) {
     $("#resource-container").show();
     resourceEditor.getSession().setMode("ace/mode/text", () => {
         callback(resourceEditor);

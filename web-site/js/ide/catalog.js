@@ -1,5 +1,5 @@
 function makeValidId(name) {
-    return name.replace(/[ ]/g, "_").replace(/[\"\'\(\),]/g,"");
+    return name.replace(/[ \.]/g, "_").replace(/[\"\'\(\),]/g,"");
 }
 
 function Catalog() {
@@ -8,7 +8,17 @@ function Catalog() {
     this.categories = [];
     this.enumerations = [];
     this.tests = [];
-    this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], txt: [], media: [], bin: [], statuses: {}};
+    this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], text: [], media: [], bin: [], statuses: {}};
+    this.textMimeTypeToList = {
+        "text/html": this.resources.html,
+        "text/javascript": this.resources.js,
+        "text/babel": this.resources.jsx,
+        "text/css": this.resources.css,
+        "text/json": this.resources.json,
+        "text/xml": this.resources.xml,
+        "text/plain": this.resources.text
+    };
+    this.mediaMimeTypePrefixes = ["image", "audio", "video"];
     this.showLibraries = false;
     // for performance reasons, we only receive a delta from the ace worker
     // so can't rely on just React virtual DOM
@@ -86,11 +96,10 @@ function Catalog() {
     this.listFromResource = function(res) {
         var mimeType = res.value.mimeType;
         if(mimeType.startsWith("text/")) {
-            var type = mimeType.substring("text/".length).toLowerCase();
-            return this.resources[type];
+            return this.textMimeTypeToList[mimeType];
         } else {
             var prefix = mimeType.substring(0, mimeType.indexOf("/"));
-            if (["image", "audio", "video"].indexOf(prefix) >= 0)
+            if (this.mediaMimeTypePrefixes.indexOf(prefix) >= 0)
                 return this.resources.media;
             else
                 return this.resources.bin;
