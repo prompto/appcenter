@@ -56,7 +56,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         safe_require(function() {
             var catalog = worker.$repo.handleDestroyed(content);
             if(catalog) {
-                worker.sender.emit("catalog", catalog);
+                worker.sender.emit("catalogUpdated", catalog);
             }
         });
         this.sender.emit("value", this.$value);
@@ -211,7 +211,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
             else {
                 var catalog = worker.$repo.handleEditContent(value, worker.$dialect, errorListener);
                 if (catalog) {
-                    worker.sender.emit("catalog", catalog);
+                    worker.sender.emit("catalogUpdated", catalog);
                 }
             }
         });
@@ -276,19 +276,19 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
 
     PromptoWorker.prototype.publishLibraries = function () {
         var catalog = this.$repo.publishLibraries();
-        this.sender.emit("catalog", catalog);
+        this.sender.emit("catalogUpdated", catalog);
     };
 
 
     PromptoWorker.prototype.publishProject = function() {
         var catalog = this.$repo.publishProject();
-        this.sender.emit("catalog", catalog);
+        this.sender.emit("catalogUpdated", catalog);
     };
 
 
     PromptoWorker.prototype.unpublishProject = function() {
         var catalog = this.$repo.unpublishProject();
-        this.sender.emit("catalog", catalog);
+        this.sender.emit("catalogUpdated", catalog);
     };
 
     PromptoWorker.prototype.prepareCommit = function() {

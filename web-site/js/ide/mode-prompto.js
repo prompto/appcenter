@@ -186,7 +186,7 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
                 session.$editor.focus();
             });
 
-            this.$worker.on("catalog", function(v) {
+            this.$worker.on("catalogUpdated", function(v) {
                 parent.catalogUpdated(v.data);
             });
 

@@ -166,7 +166,7 @@ Repository.prototype.idFromDecl = function(decl) {
 
 Repository.prototype.registerClean = function(obj) {
     var id = this.idFromDbDecl(obj);
-    this.statuses[id] = { declaration : obj, editStatus : "CLEAN" };
+    this.statuses[id] = { stuff : obj, editStatus : "CLEAN" };
 };
 
 
@@ -183,7 +183,7 @@ Repository.prototype.registerDirty = function(decls, dialect) {
         var id = this.idFromDecl(decl);
         var existing = this.statuses[id];
         if(existing) {
-            decl_obj = existing.declaration.value;
+            decl_obj = existing.stuff.value;
             var body = unparse(this.projectContext, decl, dialect);
             if(decl_obj.dialect !== dialect || decl_obj.body !== body) {
                 decl_obj.dialect = dialect;
@@ -214,7 +214,7 @@ Repository.prototype.registerDirty = function(decls, dialect) {
                 decl_obj.storable = decl.storable;
             this.statuses[id] = {
                 editStatus: "CREATED",
-                declaration : {
+                stuff : {
                     type: decl.getDeclarationType() + "Declaration",
                     value: decl_obj
                 }
@@ -228,7 +228,7 @@ Repository.prototype.registerCommitted = function(declarations) {
     var repo = this;
     declarations.map(function (decl) {
         var id = repo.idFromDbDecl(decl);
-        repo.statuses[id].declaration.value.dbId = decl.dbId;
+        repo.statuses[id].stuff.value.dbId = decl.dbId;
         repo.statuses[id].editStatus = "CLEAN";
     });
 };
@@ -238,7 +238,7 @@ Repository.prototype.prepareCommit = function () {
     var edited = [];
     for(var id in this.statuses) {
         if(this.statuses.hasOwnProperty(id) && this.statuses[id].editStatus !== "CLEAN")
-            edited.push({ type : "EditedDeclaration", value : this.statuses[id] });
+            edited.push({type: "EditedStuff", value: this.statuses[id]});
     }
     if(edited.length)
         return edited;
@@ -257,7 +257,7 @@ Repository.prototype.handleDestroyed = function (content) {
     this.registerDestroyed(id);
     var obj_status = this.statuses[id];
     if (obj_status && obj_status.editStatus === "DELETED") {
-        var decls = parse(obj_status.declaration.value.body, obj_status.declaration.value.dialect);
+        var decls = parse(obj_status.stuff.value.body, obj_status.stuff.value.dialect);
         decls[0].unregister(this.projectContext);
         var delta = new Delta();
         delta.removed = new Catalog(decls, this.librariesContext);
@@ -315,8 +315,8 @@ Repository.prototype.updateCatalog = function (old_decls, new_decls, dialect, li
                 new_status.editStatus = "DIRTY";
             // update declaration obj
             var new_decl = new_decls[0];
-            new_status.declaration.type = new_decl.getDeclarationType() + "Declaration";
-            var decl_obj = new_status.declaration.value;
+            new_status.stuff.type = new_decl.getDeclarationType() + "Declaration";
+            var decl_obj = new_status.stuff.value;
             decl_obj.name = new_decl.name;
             decl_obj.dialect = dialect;
             decl_obj.body = unparse(this.projectContext, new_decl, dialect);

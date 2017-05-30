@@ -22,7 +22,7 @@ function Catalog() {
     this.categories = [];
     this.enumerations = [];
     this.tests = [];
-    this.resources = { html: [], css: [], img: [], js: [], json: [], xml: [], text: [], bin: []};
+    this.resources = { html: [], javascript: [], jsx: [], css: [], json: [], xml: [], text: [], media: [], bin: [], statuses: {}};
     this.showLibraries = false;
     // for performance reasons, we only receive a delta from the ace worker
     // so can't rely on just React virtual DOM
@@ -102,6 +102,12 @@ function Catalog() {
             const idx = findBy(list, 'path', res.path);
             if (idx >= 0)
                 list.splice(idx, 1);
+            var id = makeValidId(res.path);
+            let status = this.resources.statuses[id];
+            if(status && status.editStatus==="CREATED")
+                delete this.resources.statuses[id];
+            else
+                this.resources.statuses[id] = {editStatus: "DELETED", stuff: res };
         });
     };
     this.addResources = function(toAdd) {
@@ -109,6 +115,9 @@ function Catalog() {
             const list = this.resources[res.type.toLowerCase()] || this.resources.bin;
             list.push(res);
             sortBy(list, 'path');
+            // create status
+            var id = makeValidId(res.path);
+            this.resources.statuses[id] = {editStatus: "CREATED", stuff: res };
         });
     };
     this.getResourceBody = function(res) {
@@ -120,6 +129,27 @@ function Catalog() {
         const list = this.resources[res.type.toLowerCase()] || this.resources.bin;
         const item = findBy(list, 'path', res.path);
         list[item].body = res.body;
+        // update status
+        var id = makeValidId(res.path);
+        let status = this.resources.statuses[id];
+        if(!status)
+            this.resources.statuses[id] = {editStatus: "DIRTY", stuff: res };
+        else {
+            if(status.editStatus!=="CREATED")
+                status.editStatus = "DIRTY";
+            status.stuff.value = res;
+        }
+    };
+    this.prepareCommit = function() {
+        var edited = [];
+        for (var id in this.resources.statuses) {
+            if (this.statuses.hasOwnProperty(id) && this.statuses[id].editStatus !== "CLEAN")
+                edited.push({type: "EditedStuff", value: this.statuses[id]});
+        }
+        if (edited.length)
+            return edited;
+        else
+            return null;
     };
     return this;
 }

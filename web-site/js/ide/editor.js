@@ -29,10 +29,38 @@ function setContentPrompto(editor, content) {
     session.setScrollTop(0);
 }
 
-function setContentHtml(editor, content) {
+function setContentResource(editor, content) {
     editor.setValue(content.body, -1);
     editor.setReadOnly(false);
     editor.getSession().setScrollTop(0);
+}
+
+function setContentHtml(editor, content) {
+    setContentResource(editor, content);
+}
+
+function setContentJavascript(editor, content) {
+    setContentResource(editor, content);
+}
+
+function setContentJsx(editor, content) {
+    setContentResource(editor, content);
+}
+
+function setContentCss(editor, content) {
+    setContentResource(editor, content);
+}
+
+function setContentJson(editor, content) {
+    setContentResource(editor, content);
+}
+
+function setContentXml(editor, content) {
+    setContentResource(editor, content);
+}
+
+function setContentText(editor, content) {
+    setContentResource(editor, content);
 }
 
 function getResourceBody() {
@@ -57,8 +85,8 @@ function prepareCommit() {
     mode.prepareCommit();
 }
 
-function commitPrepared(edited) {
-    parent.commitPrepared(edited);
+function commitPrepared(declarations) {
+    parent.commitPrepared(declarations);
 }
 
 function commitSuccessful() {
@@ -103,6 +131,11 @@ function setMode(mode, callback) {
     });
 }
 
+function setModePrompto(callback) {
+    $("#prompto-container").show();
+    callback(promptoEditor);
+}
+
 function setModeHtml(callback) {
     $("#resource-container").show();
     resourceEditor.getSession().setMode("ace/mode/html", () => {
@@ -110,9 +143,46 @@ function setModeHtml(callback) {
     });
 }
 
-function setModePrompto(callback) {
-    $("#prompto-container").show();
-    callback(promptoEditor);
+function setModeJavascript(callback) {
+    $("#resource-container").show();
+    resourceEditor.getSession().setMode("ace/mode/javascript", () => {
+        callback(resourceEditor);
+    });
+}
+
+function setModeJsx(callback) {
+    $("#resource-container").show();
+    resourceEditor.getSession().setMode("ace/mode/jsx", () => {
+        callback(resourceEditor);
+    });
+}
+
+function setModeCss(callback) {
+    $("#resource-container").show();
+    resourceEditor.getSession().setMode("ace/mode/css", () => {
+        callback(resourceEditor);
+    });
+}
+
+function setModeJson(callback) {
+    $("#resource-container").show();
+    resourceEditor.getSession().setMode("ace/mode/json", () => {
+        callback(resourceEditor);
+    });
+}
+
+function setModeXml(callback) {
+    $("#resource-container").show();
+    resourceEditor.getSession().setMode("ace/mode/xml", () => {
+        callback(resourceEditor);
+    });
+}
+
+function setModeText(callback) {
+    $("#resource-container").show();
+    resourceEditor.getSession().setMode("ace/mode/text", () => {
+        callback(resourceEditor);
+    });
 }
 
 function initPromptoEditor(callback) {

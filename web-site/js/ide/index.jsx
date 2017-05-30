@@ -168,12 +168,13 @@ class ProjectTree extends React.Component {
                 <div>
                     <ul className="list-group">
                         <ResourceTree title="Web pages" items={catalog.resources.html} type="Html" showLibraries="true"/>
-                        <ResourceTree title="Stylesheets" items={[]} type="css" showLibraries="true"/>
-                        <ResourceTree title="Pictures" items={[]} type="img" showLibraries="true"/>
-                        <ResourceTree title="Scripts" items={[]} type="js" showLibraries="true"/>
-                        <ResourceTree title="Json" items={[]} type="json" showLibraries="true"/>
-                        <ResourceTree title="Xml" items={[]} type="xml" showLibraries="true"/>
-                        <ResourceTree title="Text" items={[]} type="text" showLibraries="true"/>
+                        <ResourceTree title="Javascripts" items={catalog.resources.javascript} type="Javascript" showLibraries="true"/>
+                        <ResourceTree title="Jsx" items={catalog.resources.jsx} type="Jsx" showLibraries="true"/>
+                        <ResourceTree title="Stylesheets" items={catalog.resources.css} type="Css" showLibraries="true"/>
+                        <ResourceTree title="Json" items={catalog.resources.json} type="Json" showLibraries="true"/>
+                        <ResourceTree title="Xml" items={catalog.resources.xml} type="Xml" showLibraries="true"/>
+                        <ResourceTree title="Text" items={catalog.resources.text} type="Text" showLibraries="true"/>
+                        <ResourceTree title="Pictures" items={[]} type="media" showLibraries="true"/>
                         <ResourceTree title="Other" items={[]} type="bin" showLibraries="true"/>
                     </ul>
                 </div>
@@ -249,8 +250,9 @@ $(document).ready(function () {
 
 function selectContentInProjectTree(content) {
     const id = makeTreeId(content);
-    $("#" + id).parentsUntil("#project-tree").show(50);
-    $("#" + id).trigger("click");
+    const leaf = $("#" + id);
+    leaf.parentsUntil("#project-tree").show(50);
+    leaf.trigger("click");
 }
 
 function setEditorContent(content) {
@@ -325,6 +327,8 @@ function createResource(mode, path) {
 
 function createResourceInCatalog(mode, path, callback) {
     const methodName = "createContent" + mode;
+    if(!window[methodName])
+        alert(methodName);
     const body = window[methodName]();
     const content = { path: path, type: mode, body: body };
     const delta = { added: { resources: [content]}};
@@ -343,6 +347,45 @@ function createContentHtml() {
         "\t</body>\n" +
         "</html>";
 }
+
+function createContentJavascript() {
+    return "function hello() {\n" +
+        "\talert('Hello');\n" +
+        "}";
+}
+
+
+function createContentJsx() {
+    return "function hello() {\n" +
+        "\talert('Hello');\n" +
+        "}";
+}
+
+
+function createContentCss() {
+    return "body {\n" +
+        "\tbackground-color: white;\n" +
+        "}";
+}
+
+
+function createContentJson() {
+    return '{ "field": 123 }';
+}
+
+
+function createContentXml() {
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' +
+            '<document>\n' +
+            '\tdata\n' +
+            '</document>\n';
+}
+
+
+function createContentText() {
+    return 'Hello there!';
+}
+
 
 function destroy() {
     if(currentContent===null)
@@ -369,14 +412,17 @@ function commit() {
     frame.contentWindow.prepareCommit();
 }
 
-function commitPrepared(edited) {
-    if(edited) {
+function commitPrepared(declarations) {
+    var resources = catalog.prepareCommit();
+    var stuff = (declarations || []).concat(resources || []);
+    if(stuff.length > 0) {
+        var params = [{name: "edited", type: "EditedStuff[]", value: stuff}];
         var form = new FormData();
-        form.append("params", JSON.stringify([{name: "edited", type: "EditedDeclaration[]", value: edited}]));
+        form.append("params", JSON.stringify(params));
         var xhr = new XMLHttpRequest();
         xhr.upload.addEventListener('load', function(success) { commitSuccessful(success); });
         xhr.addEventListener('error', function(failure) { commitFailed(failure); });
-        xhr.open('POST', '/ws/run/storeDeclarations', true);
+        xhr.open('POST', '/ws/run/storeEdited', true);
         xhr.send(form);
     }
 }
