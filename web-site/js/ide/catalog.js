@@ -2,27 +2,13 @@ function makeValidId(name) {
     return name.replace(/[ ]/g, "_").replace(/[\"\'\(\),]/g,"");
 }
 
-function sortBy(a, f) {
-    return a.sort(function(i1,i2) {
-        return (i1[f]>i2[f]) ? 1 : ((i1[f]<i2[f]) ? -1 : 0);
-    });
-}
-
-function findBy(a, f, v) {
-    for(var i=0;i<a.length;i++) {
-        if(a[i][f] === v)
-            return i;
-    }
-    return -1;
-}
-
 function Catalog() {
     this.attributes = [];
     this.methods = [];
     this.categories = [];
     this.enumerations = [];
     this.tests = [];
-    this.resources = { html: [], javascript: [], jsx: [], css: [], json: [], xml: [], text: [], media: [], bin: [], statuses: {}};
+    this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], txt: [], media: [], bin: [], statuses: {}};
     this.showLibraries = false;
     // for performance reasons, we only receive a delta from the ace worker
     // so can't rely on just React virtual DOM
@@ -62,7 +48,7 @@ function Catalog() {
     };
     this.removeStuffByName = function(current, removed) {
         removed.map(name => {
-            const idx = findBy(current, 'name', name);
+            const idx = current.findIndex(function(a) { return a.name === name; });
             if (idx >= 0)
                 current.splice(idx, 1);
         });
@@ -71,18 +57,19 @@ function Catalog() {
         const added = toAdd.map(name => {
             return { name: name, core: core };
         });
-        return sortBy(current.concat(added), 'name');
+        current = current.concat(added);
+        return current.sort(function(a,b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
     };
     this.removeMethods = function(methods) {
         methods.map(method => {
-            const idx1 = findBy(this.methods, 'name', method.name);
+            const idx1 = this.methods.findIndex(function(a) { return a.name === method.name; } );
             if (idx1 >= 0) {
                 const map = this.methods[idx1];
                 if (map.protos.length === method.protos.length)
                     this.methods.splice(idx1, 1);
                 else
                     method.protos.map(proto => {
-                        const idx2 = findBy(map.protos, 'proto', proto.proto);
+                        const idx2 = map.protos.findIndex(function(a) { return a.proto === proto.proto; });
                         if (idx2 >= 0)
                             map.protos.splice(idx2, 1);
                     });
@@ -94,15 +81,28 @@ function Catalog() {
             method.core = core;
         });
         const added = this.methods.concat(toAdd);
-        this.methods = sortBy(added, 'name');
+        this.methods = added.sort(function(a,b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
+    };
+    this.listFromResource = function(res) {
+        var mimeType = res.value.mimeType;
+        if(mimeType.startsWith("text/")) {
+            var type = mimeType.substring("text/".length).toLowerCase();
+            return this.resources[type];
+        } else {
+            var prefix = mimeType.substring(0, mimeType.indexOf("/"));
+            if (["image", "audio", "video"].indexOf(prefix) >= 0)
+                return this.resources.media;
+            else
+                return this.resources.bin;
+        }
     };
     this.removeResources = function(removed) {
         removed.map(res => {
-            const list = this.resources[res.type.toLowerCase()] || this.resources.bin;
-            const idx = findBy(list, 'path', res.path);
+            const list = this.listFromResource(res);
+            const idx = list.findIndex( function(a) { return a.value.name === res.value.name; });
             if (idx >= 0)
                 list.splice(idx, 1);
-            var id = makeValidId(res.path);
+            var id = makeValidId(res.value.name);
             let status = this.resources.statuses[id];
             if(status && status.editStatus==="CREATED")
                 delete this.resources.statuses[id];
@@ -112,32 +112,37 @@ function Catalog() {
     };
     this.addResources = function(toAdd) {
         toAdd.forEach(res => {
-            const list = this.resources[res.type.toLowerCase()] || this.resources.bin;
+            const list = this.listFromResource(res);
             list.push(res);
-            sortBy(list, 'path');
+            list.sort(function(a,b) { return a.value.name < b.value.name ? -1 : a.value.name > b.value.name ? 1 : 0; });
             // create status
-            var id = makeValidId(res.path);
+            var id = makeValidId(res.value.name);
             this.resources.statuses[id] = {editStatus: "CREATED", stuff: res };
         });
     };
-    this.getResourceBody = function(res) {
-        const list = this.resources[res.type.toLowerCase()] || this.resources.bin;
-        const item = findBy(list, 'path', res.path);
-        return list[item].body;
+    this.resourceFromContent = function(content) {
+        const list = this.resources[content.type.toLowerCase()];
+        const item = list.findIndex(function(a) { return a.value.name === content.name; });
+        return list[item];
     };
-    this.setResourceBody = function(res) {
-        const list = this.resources[res.type.toLowerCase()] || this.resources.bin;
-        const item = findBy(list, 'path', res.path);
-        list[item].body = res.body;
+    this.getResourceBody = function(content) {
+        const res = this.resourceFromContent(content);
+        return res.value.body;
+    };
+    this.setResourceBody = function(content) {
+        const res = this.resourceFromContent(content);
+        if(res.value.body === content.body)
+            return;
+        res.value.body = content.body;
         // update status
-        var id = makeValidId(res.path);
+        var id = makeValidId(res.value.name);
         let status = this.resources.statuses[id];
         if(!status)
             this.resources.statuses[id] = {editStatus: "DIRTY", stuff: res };
         else {
             if(status.editStatus!=="CREATED")
                 status.editStatus = "DIRTY";
-            status.stuff.value = res;
+            status.stuff = res;
         }
     };
     this.prepareCommit = function() {

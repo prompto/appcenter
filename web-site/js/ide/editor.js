@@ -39,7 +39,7 @@ function setContentHtml(editor, content) {
     setContentResource(editor, content);
 }
 
-function setContentJavascript(editor, content) {
+function setContentJs(editor, content) {
     setContentResource(editor, content);
 }
 

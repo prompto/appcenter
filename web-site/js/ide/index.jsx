@@ -8,7 +8,7 @@ function getParam(name) {
 
 
 function makeTreeId(content) {
-    return (content.subType || content.type) + "_" + makeValidId(content.name || content.path);
+    return (content.subType || content.type) + "_" + makeValidId(content.name || content.value.name);
 }
 
 function saveBlob() {
@@ -128,16 +128,16 @@ class ResourceTree extends GroupTree {
     }
 
     renderItem(item) {
-        const key = item.type + "_" + makeValidId(item.path);
+        const key = item.value.mimeType + "_" + makeValidId(item.value.name);
         return <li id={key} key={key} className='list-group-item' onClick={this.itemClicked}>
-            <a>{item.path}</a>
+            <a>{item.value.name}</a>
         </li>;
     }
 
     itemClicked(e) {
         e.stopPropagation();
         const a = $(e.target);
-        let content = { type: this.props.type, path: a.text() };
+        let content = { type: this.props.type, name: a.text() };
         content.body = catalog.getResourceBody(content);
         setEditorContent(content);
     }
@@ -168,13 +168,13 @@ class ProjectTree extends React.Component {
                 <div>
                     <ul className="list-group">
                         <ResourceTree title="Web pages" items={catalog.resources.html} type="Html" showLibraries="true"/>
-                        <ResourceTree title="Javascripts" items={catalog.resources.javascript} type="Javascript" showLibraries="true"/>
+                        <ResourceTree title="Javascripts" items={catalog.resources.js} type="Js" showLibraries="true"/>
                         <ResourceTree title="Jsx" items={catalog.resources.jsx} type="Jsx" showLibraries="true"/>
                         <ResourceTree title="Stylesheets" items={catalog.resources.css} type="Css" showLibraries="true"/>
                         <ResourceTree title="Json" items={catalog.resources.json} type="Json" showLibraries="true"/>
                         <ResourceTree title="Xml" items={catalog.resources.xml} type="Xml" showLibraries="true"/>
-                        <ResourceTree title="Text" items={catalog.resources.text} type="Text" showLibraries="true"/>
-                        <ResourceTree title="Pictures" items={[]} type="media" showLibraries="true"/>
+                        <ResourceTree title="Text" items={catalog.resources.txt} type="Txt" showLibraries="true"/>
+                        <ResourceTree title="Medias" items={[]} type="media" showLibraries="true"/>
                         <ResourceTree title="Other" items={[]} type="bin" showLibraries="true"/>
                     </ul>
                 </div>
@@ -219,20 +219,14 @@ function installDialectDropdownHandler() {
 function installNewDropdownHandler() {
     $('#nav-new').click(function (e) {
         if(e.target.id.indexOf('new-')===0) {
-            const text = $(e.target).text();
+            const label = $(e.target).text();
             const type = e.target.id.substring('new-'.length);
-            switch(type) {
-                case 'Picture':
-                case 'Other':
-                    newBinaryResource(type, text);
-                    break;
-                case 'Prompto':
-                    setEditorContent({ type: "Prompto" });
-                    break;
-                default:
-                    newTextResource(type, text);
-                    break;
-            }
+            if(type==='Prompto')
+                setEditorContent({ type: "Prompto" });
+            else if(type==='Media' || type==='Other')
+                newFileResource(type);
+            else
+                newTextResource(type, label);
         }
     });
 }
@@ -268,7 +262,7 @@ function setEditorContent(content) {
 }
 
 
-class NewResource extends React.Component {
+class NewTextResource extends React.Component {
 
     constructor(props) {
         super(props);
@@ -279,12 +273,12 @@ class NewResource extends React.Component {
 
     render() {
         const projectName = getParam("name");
-        const placeholder = projectName + "/" + this.props.text + "." + this.props.type.toLowerCase().replace(" ", "-");
+        const placeholder = projectName + "/" + this.props.label + "." + this.props.type.toLowerCase().replace(" ", "-");
         return <div className="modal-dialog">
             <div className="modal-content">
                 <div className="modal-header">
                     <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 className="modal-title">New {this.props.text}</h4>
+                    <h4 className="modal-title">New {this.props.label}</h4>
                 </div>
                 <div className="modal-body">
                     <form className="form" role="form" >
@@ -315,75 +309,123 @@ class NewResource extends React.Component {
 
 }
 
-function newTextResource(type, text) {
-    ReactDOM.render(<NewResource type={type} text={text} submit={createResource}/>, document.getElementById('new-resource'));
+function newTextResource(type, label) {
+    ReactDOM.render(<NewTextResource type={type} label={label} submit={createResource}/>, document.getElementById('new-resource'));
     $("#new-resource").modal();
 }
 
-function createResource(mode, path) {
-    const id = createResourceInCatalog(mode, path, () => selectContentInProjectTree(id));
+function createResource(type, path) {
+    const id = createResourceInCatalog(type, path, () => selectContentInProjectTree(id));
     $('#new-resource').modal('toggle');
 }
 
-function createResourceInCatalog(mode, path, callback) {
-    const methodName = "createContent" + mode;
+function createResourceInCatalog(type, path, callback) {
+    const methodName = "createResource" + type;
     if(!window[methodName])
-        alert(methodName);
-    const body = window[methodName]();
-    const content = { path: path, type: mode, body: body };
+        alert("No such method:" + methodName);
+    const content = window[methodName](path);
     const delta = { added: { resources: [content]}};
     catalogUpdated(delta, callback);
     return content;
 }
 
 
-function createContentHtml() {
-    return "<!DOCTYPE html>\n" +
-        "<html>\n" +
-        "\t<head>\n" +
-        "\t</head>\n" +
-        "\t<body>\n" +
-        "\t\tHello!\n" +
-        "\t</body>\n" +
-        "</html>";
+function createResourceHtml(path) {
+    return {
+        type: "TextResource",
+        value: {
+            name: path,
+            mimeType: "text/html",
+            body: "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "\t<head>\n" +
+                "\t</head>\n" +
+                "\t<body>\n" +
+                "\t\tHello!\n" +
+                "\t</body>\n" +
+                "</html>"
+        }
+    };
 }
 
-function createContentJavascript() {
-    return "function hello() {\n" +
-        "\talert('Hello');\n" +
-        "}";
-}
-
-
-function createContentJsx() {
-    return "function hello() {\n" +
-        "\talert('Hello');\n" +
-        "}";
-}
-
-
-function createContentCss() {
-    return "body {\n" +
-        "\tbackground-color: white;\n" +
-        "}";
-}
-
-
-function createContentJson() {
-    return '{ "field": 123 }';
+function createResourceJs(path) {
+    return {
+        type: "TextResource",
+        value: {
+            name: path,
+            mimeType: "text/javascript",
+            body: "function hello() {\n" +
+                "\talert('Hello');\n" +
+                "}"
+        }
+    };
 }
 
 
-function createContentXml() {
-    return '<?xml version="1.0" encoding="UTF-8"?>\n' +
+function createResourceJsx(path) {
+    return {
+        type: "TextResource",
+        value: {
+            name: path,
+            mimeType: "text/babel",
+            body: "function hello() {\n" +
+                "\talert('Hello');\n" +
+                "}"
+        }
+    };
+}
+
+
+function createResourceCss(path) {
+    return {
+        type: "TextResource",
+        value: {
+            name: path,
+            mimeType: "text/css",
+            body: "body {\n" +
+            "\tbackground-color: white;\n" +
+            "}"
+        }
+    };
+}
+
+
+function createResourceJson(path) {
+    return {
+        type: "TextResource",
+        value: {
+            name: path,
+            mimeType: "text/json",
+            body: '{ "field": 123 }'
+        }
+    };
+}
+
+
+function createResourceXml(path) {
+    return {
+        type: "TextResource",
+        value: {
+            name: path,
+            mimeType: "text/xml",
+            body: '<?xml version="1.0" encoding="UTF-8"?>\n' +
             '<document>\n' +
             '\tdata\n' +
-            '</document>\n';
+            '</document>\n'
+        }
+    };
 }
 
 
-function createContentText() {
-    return 'Hello there!';
+function createResourceText(path) {
+    return {
+        type: "TextResource",
+        value: {
+            name: path,
+            mimeType: "text/plain",
+            body: 'Hello there!'
+        }
+    };
 }
 
 
