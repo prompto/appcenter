@@ -155,10 +155,11 @@ function Catalog() {
         }
     };
     this.prepareCommit = function() {
+        var statuses = this.resources.statuses;
         var edited = [];
-        for (var id in this.resources.statuses) {
-            if (this.statuses.hasOwnProperty(id) && this.statuses[id].editStatus !== "CLEAN")
-                edited.push({type: "EditedStuff", value: this.statuses[id]});
+        for (var id in statuses) {
+            if (statuses.hasOwnProperty(id) && statuses[id].editStatus !== "CLEAN")
+                edited.push({type: "EditedStuff", value: statuses[id]});
         }
         if (edited.length)
             return edited;
