@@ -515,8 +515,7 @@ function run() {
         alert(msg);
     else {
         switchUIToRunMode();
-        const name = currentContent.test || currentContent.method;
-        print("Running " + name + "...");
+        print("Running " + currentContent.name + "...");
         const runMode = getRunMode();
         const frame = document.getElementById("editor");
         frame.contentWindow.runMethod(currentContent, runMode);
@@ -531,10 +530,12 @@ function done(data) {
 function getRunnableAlert(id) {
     if (!id)
         return "Nothing to run!";
-    else if(!id.test && !id.main)
-        return "Can only run tests or main methods!";
-    else
+    else if(id.subType==="test")
         return null;
+    else if(id.subType==="method" && id.main)
+        return null;
+    else
+        return "Can only run tests or main methods!";
 }
 
 function stop() {

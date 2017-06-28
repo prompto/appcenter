@@ -74,8 +74,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     PromptoWorker.prototype.runRemotely = function(id, mode) {
         var worker = this;
         this.getDataExplorerURL(function(url) {
-            var name = id.method || id.test;
-            var fullUrl = url + "/ws/run/" + mode + "/" + name;
+            var fullUrl = url + "/ws/run/" + mode + "/" + id.name;
             worker.loadJSON(fullUrl, function(response) {
                 if(response.error)
                     console.log(response.error);
@@ -95,11 +94,11 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     PromptoWorker.prototype.interpretLocally = function(id) {
         var context = this.$repo.projectContext;
         safe_require(function () {
-            if(id.test)
-                prompto.runtime.Interpreter.interpretTest(context, id.test);
-            else if(id.method) {
-                prompto.runtime.Interpreter.interpret(context, id.method, "");
-                console.log("Finished running " + id.method);
+            if(id.subType==="test")
+                prompto.runtime.Interpreter.interpretTest(context, id.name);
+            else  {
+                prompto.runtime.Interpreter.interpret(context, id.name, "");
+                console.log("Finished running " + id.name);
             }
         });
         this.sender.emit("done");
