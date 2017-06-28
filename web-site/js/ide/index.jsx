@@ -169,10 +169,10 @@ class ProjectTree extends React.Component {
                 <label className='nav-header' onClick={this.toggleTreeNode}>Resources</label>
                 <div>
                     <ul className="list-group">
-                        <ResourceTree title="Web pages" items={catalog.resources.html} type="Html" showLibraries="true"/>
-                        <ResourceTree title="Javascripts" items={catalog.resources.js} type="Js" showLibraries="true"/>
+                        <ResourceTree title="Html" items={catalog.resources.html} type="Html" showLibraries="true"/>
+                        <ResourceTree title="Javascript" items={catalog.resources.js} type="Js" showLibraries="true"/>
                         <ResourceTree title="Jsx" items={catalog.resources.jsx} type="Jsx" showLibraries="true"/>
-                        <ResourceTree title="Stylesheets" items={catalog.resources.css} type="Css" showLibraries="true"/>
+                        <ResourceTree title="Css" items={catalog.resources.css} type="Css" showLibraries="true"/>
                         <ResourceTree title="Json" items={catalog.resources.json} type="Json" showLibraries="true"/>
                         <ResourceTree title="Xml" items={catalog.resources.xml} type="Xml" showLibraries="true"/>
                         <ResourceTree title="Text" items={catalog.resources.text} type="Txt" showLibraries="true"/>
@@ -268,7 +268,7 @@ class NewTextResource extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {folder: '', name: '', extension: ''};
+        this.state = {folder: getParam("name"), name: '', extension: this.props.type.toLowerCase().replace(" ", "-")};
         this.handleFolder = this.handleFolder.bind(this);
         this.handleName = this.handleName.bind(this);
         this.handleExtension = this.handleExtension.bind(this);
@@ -276,9 +276,6 @@ class NewTextResource extends React.Component {
     }
 
     render() {
-        const folder = getParam("name");
-        const extension = this.props.type.toLowerCase().replace(" ", "-");
-        this.state = {folder: folder, name: '', extension: extension};
         const placeholder = this.props.label;
         return <div className="modal-dialog" style={{width:680}}>
                     <div className="modal-content">
@@ -310,15 +307,15 @@ class NewTextResource extends React.Component {
     }
 
     handleFolder(event) {
-        this.setState({folder: event.target.value});
+        this.state.folder = event.target.value;
     }
 
     handleName(event) {
-        this.setState({name: event.target.value});
+        this.state.name = event.target.value;
     }
 
     handleExtension(event) {
-        this.setState({extension: event.target.value});
+        this.state.extension = event.target.value;
     }
 
     handleSubmit(event) {
