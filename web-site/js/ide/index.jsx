@@ -18,10 +18,67 @@ function saveBlob() {
     saveAs(blob,'test.txt');
 }
 
-function editorReady() {
+function getEditorWindow() {
     const frame = document.getElementById("editor");
-    frame.contentWindow.setDialect("E");
-    frame.contentWindow.setProject(getParam("dbId"), true);
+    return frame.contentWindow;
+}
+
+function editorReady() {
+    setEditorDefaults();
+    loadProject(true);
+}
+
+function setEditorDefaults() {
+    const window = getEditorWindow();
+    window.setDialect("E");
+}
+
+function loadProject(loadDependencies) {
+    const dbId = getParam("dbId");
+    loadCodeInWorker(dbId, loadDependencies);
+    loadResources(dbId);
+}
+
+function loadResources(dbId) {
+    const params = [ {name:"dbId", value:dbId} ];
+    const url = '/ws/run/getModuleResources?params=' + JSON.stringify(params);
+    loadJSON(url, function(response) {
+        if (response.error)
+            alert(response.error);
+        else {
+            const resources = response.data.value;
+            const delta = { added: { resources: resources}};
+            catalogUpdated(delta, () => {});
+        }
+    });
+}
+
+function loadJSON(url, success) {
+    loadText(url, function (text) {
+        const json = JSON.parse(text);
+        success(json);
+    });
+}
+
+function loadText(url, success) {
+    const xhr = new XMLHttpRequest();
+    xhr.onerror = function(e) {
+        self.console.log("Error " + e.target.status + " occurred while receiving the document.");
+        return null;
+    };
+    xhr.onload = function(e) {
+        success(xhr.responseText);
+    };
+    xhr.open('GET', url);
+    //noinspection EqualityComparisonWithCoercionJS
+    if(url[0]!="/" && url[0]!=".")
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    xhr.send(null);
+}
+
+function loadCodeInWorker(dbId, loadDependencies) {
+    const window = getEditorWindow();
+    window.setProject(dbId, loadDependencies);
 }
 
 class GroupTree extends React.Component {
@@ -212,8 +269,8 @@ function installDialectDropdownHandler() {
             $('li').removeClass('active');
             $(e.target).parent().addClass('active');
             const dialect = e.target.id.substring('dialect-'.length, 'dialect-'.length + 1);
-            const frame = document.getElementById("editor");
-            frame.contentWindow.setDialect(dialect);
+            const window = getEditorWindow();
+            window.setDialect(dialect);
         }
     });
 }
@@ -254,13 +311,13 @@ function selectContentInProjectTree(content) {
 function setEditorContent(content) {
     if(content && content===currentContent)
         return;
-    const frame = document.getElementById("editor");
+    const window = getEditorWindow();
     if(currentContent && currentContent.type !== "Prompto") {
-        currentContent.body = frame.contentWindow.getResourceBody();
+        currentContent.body = window.getResourceBody();
         catalog.setResourceBody(currentContent);
     }
     currentContent = content;
-    frame.contentWindow.setContent(content);
+    window.setContent(content);
 }
 
 
@@ -342,6 +399,7 @@ function createResourceInCatalog(type, path, callback) {
     if(!window[methodName])
         alert("No such method:" + methodName);
     const content = window[methodName](path);
+    content.value.module =  { type: "Module", value: { dbId: getParam("dbId") } };
     const delta = { added: { resources: [content]}};
     catalogUpdated(delta, callback);
     return content;
@@ -453,23 +511,22 @@ function destroy() {
     else {
         const id = currentContent;
         currentContent = null;
-        const frame = document.getElementById("editor");
-        frame.contentWindow.destroy(id);
+        const window = getEditorWindow();
+        window.destroy(id);
     }
 }
 
 function revert() {
     // TODO confirm
     setEditorContent({ type: "Prompto" });
-    const frame = document.getElementById("editor");
-    frame.contentWindow.setProject(getParam("dbId"), false); // TODO move to codebase.js
+    loadProject(false);
 }
 
 function commit() {
     // TODO confirm
     setEditorContent({ type: "Prompto" });
-    const frame = document.getElementById("editor");
-    frame.contentWindow.prepareCommit();
+    const window = getEditorWindow();
+    window.prepareCommit();
 }
 
 function commitPrepared(declarations) {
@@ -494,8 +551,8 @@ function commitFailed(failure) {
 
 function commitSuccessful(success) {
     alert("Commit ok!");
-    const frame = document.getElementById("editor");
-    frame.contentWindow.commitSuccessful();
+    const window = getEditorWindow();
+    window.commitSuccessful();
 }
 
 function setRunMode(label) {
@@ -517,8 +574,8 @@ function run() {
         switchUIToRunMode();
         print("Running " + currentContent.name + "...");
         const runMode = getRunMode();
-        const frame = document.getElementById("editor");
-        frame.contentWindow.runMethod(currentContent, runMode);
+        const window = getEditorWindow();
+        window.runMethod(currentContent, runMode);
     }
 }
 
@@ -571,8 +628,8 @@ function print(msg) {
 
 // a utility method to inspect worker data in Firefox/Safari
 function inspect(name) {
-    const frame = document.getElementById("editor");
-    frame.contentWindow.inspect(name);
+    const window = getEditorWindow();
+    window.inspect(name);
 }
 
 // a utility method to inspect worker data in Firefox/Safari
