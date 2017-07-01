@@ -8,7 +8,7 @@ function Catalog() {
     this.categories = [];
     this.enumerations = [];
     this.tests = [];
-    this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], text: [], media: [], bin: [], statuses: {}};
+    this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], text: [], image: [], audio: [], video: [], bin: [], statuses: {}};
     this.textMimeTypeToList = {
         "text/html": this.resources.html,
         "text/javascript": this.resources.js,
@@ -18,7 +18,6 @@ function Catalog() {
         "text/xml": this.resources.xml,
         "text/plain": this.resources.text
     };
-    this.mediaMimeTypePrefixes = ["image", "audio", "video"];
     this.showLibraries = false;
     // for performance reasons, we only receive a delta from the ace worker
     // so can't rely on just React virtual DOM
@@ -97,12 +96,14 @@ function Catalog() {
         var mimeType = res.value.mimeType;
         if(mimeType.startsWith("text/")) {
             return this.textMimeTypeToList[mimeType];
+        } else if(mimeType.startsWith("image/")) {
+            return this.resources.image;
+        } else if(mimeType.startsWith("audio/")) {
+            return this.resources.audio;
+        } else if(mimeType.startsWith("video/")) {
+            return this.resources.video;
         } else {
-            var prefix = mimeType.substring(0, mimeType.indexOf("/"));
-            if (this.mediaMimeTypePrefixes.indexOf(prefix) >= 0)
-                return this.resources.media;
-            else
-                return this.resources.bin;
+            return this.resources.bin;
         }
     };
     this.removeResources = function(removed) {

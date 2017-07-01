@@ -233,7 +233,9 @@ class ProjectTree extends React.Component {
                         <ResourceTree title="Json" items={catalog.resources.json} type="Json" showLibraries="true"/>
                         <ResourceTree title="Xml" items={catalog.resources.xml} type="Xml" showLibraries="true"/>
                         <ResourceTree title="Text" items={catalog.resources.text} type="Txt" showLibraries="true"/>
-                        <ResourceTree title="Medias" items={[]} type="media" showLibraries="true"/>
+                        <ResourceTree title="Image" items={catalog.resources.image} type="image" showLibraries="true"/>
+                        <ResourceTree title="Audio" items={catalog.resources.audio} type="image" showLibraries="true"/>
+                        <ResourceTree title="Video" items={catalog.resources.video} type="image" showLibraries="true"/>
                         <ResourceTree title="Other" items={[]} type="bin" showLibraries="true"/>
                     </ul>
                 </div>
@@ -282,7 +284,7 @@ function installNewDropdownHandler() {
             const type = e.target.id.substring('new-'.length);
             if(type==='Prompto')
                 setEditorContent({ type: "Prompto" });
-            else if(type==='Media' || type==='Other')
+            else if(type==='Image' || type==='Audio' || type==='Video' || type==='Other')
                 newFileResource(type);
             else
                 newTextResource(type, label);
@@ -383,15 +385,78 @@ class NewTextResource extends React.Component {
 }
 
 function newTextResource(type, label) {
-    ReactDOM.render(<NewTextResource type={type} label={label} submit={createResource}/>, document.getElementById('new-text-resource'));
-    const dialog = $("#new-text-resource");
+    ReactDOM.render(<NewTextResource type={type} label={label} submit={createResource}/>, document.getElementById('new-resource'));
+    const dialog = $("#new-resource");
     dialog.on('shown.bs.modal', () => $("#nameInput").focus());
     dialog.modal();
 }
 
+class NewFileResource extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {folder: getParam("name"), file: null, name: null};
+        this.handleFolder = this.handleFolder.bind(this);
+        this.handleName = this.handleName.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    render() {
+        const placeholder = this.props.label;
+        return <div className="modal-dialog" style={{width:680}}>
+            <div className="modal-content">
+                <div className="modal-header">
+                    <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 className="modal-title">New {this.props.label}</h4>
+                </div>
+                <div className="modal-body">
+                    <form className="form" role="form">
+                        <div className="form-group">
+                            <label className="control-label" htmlFor="resourcePath">Enter the unique path for this resource:</label>
+                            <div className="input-group input-group-lg">
+                                <input type="text" className="form-control input-lg" id="folderInput" value={this.state.folder} style={{width:245}} onChange={this.handleFolder}/>
+                                <span className="input-group-addon" id="basic-addon1">/</span>
+                                <input type="text" className="form-control input-lg" id="nameInput" placeholder={placeholder} style={{width:365}} onChange={this.handleName}/>
+                            </div>
+                        </div>
+                    </form>
+                    <FileViewer/>
+                </div>
+                <div className="modal-footer">
+                    <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" className="btn btn-primary" onClick={this.handleSubmit}>OK</button>
+                </div>
+
+            </div>
+        </div>;
+    }
+
+    handleFolder(event) {
+        this.state.folder = event.target.value;
+    }
+
+    handleName(event) {
+        this.state.name = event.target.value;
+    }
+
+    handleSubmit(event) {
+        const path = this.state.folder + "/" + this.state.name + "." + this.state.extension;
+        this.props.submit(this.props.type, path);
+    }
+
+}
+
+function newFileResource(type, label) {
+    ReactDOM.render(<NewFileResource type={type} label={label} submit={createResource}/>, document.getElementById('new-resource'));
+    const dialog = $("#new-resource");
+    dialog.on('shown.bs.modal', () => $("#nameInput").focus());
+    dialog.modal();
+}
+
+
 function createResource(type, path) {
     const id = createResourceInCatalog(type, path, () => selectContentInProjectTree(id));
-    $('#new-text-resource').modal('toggle');
+    $('#new-resource').modal('toggle');
 }
 
 function createResourceInCatalog(type, path, callback) {
