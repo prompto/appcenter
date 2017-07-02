@@ -5201,7 +5201,7 @@ var TargetBox = (_dec = (0, _reactDnd.DropTarget)(function (props) {
             return connectDropTarget(_react2.default.createElement(
                 'div',
                 { style: this.props.style },
-                state === "PREVIEW" && _react2.default.createElement('img', { src: droppedPreview, style: { "max-width": "98%", "max-height": "98%", width: "auto", height: "auto" } }),
+                state === "PREVIEW" && _react2.default.createElement('img', { src: droppedPreview, style: { maxWidth: "98%", maxHeight: "98%", width: "auto", height: "auto" } }),
                 state === "ACTIVE" && 'Release to drop',
                 state === "READY" && 'Drag file here'
             ));

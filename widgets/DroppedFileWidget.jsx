@@ -37,7 +37,7 @@ class TargetBox extends Component {
         const state = droppedPreview ? "PREVIEW" : (canDrop && isOver) ? "ACTIVE" : "READY";
         return connectDropTarget(
             <div style={this.props.style}>
-                { state==="PREVIEW" && <img src={droppedPreview} style={{ "max-width": "98%", "max-height": "98%", width: "auto", height: "auto" }}/> }
+                { state==="PREVIEW" && <img src={droppedPreview} style={{ maxWidth: "98%", maxHeight: "98%", width: "auto", height: "auto" }}/> }
                 { state==="ACTIVE" && 'Release to drop' }
                 { state==="READY" && 'Drag file here' }
             </div>,

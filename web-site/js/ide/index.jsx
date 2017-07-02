@@ -285,7 +285,7 @@ function installNewDropdownHandler() {
             if(type==='Prompto')
                 setEditorContent({ type: "Prompto" });
             else if(type==='Image' || type==='Audio' || type==='Video' || type==='Other')
-                newFileResource(type);
+                newFileResource(type, label);
             else
                 newTextResource(type, label);
         }
@@ -323,7 +323,7 @@ function setEditorContent(content) {
 }
 
 
-class NewTextResource extends React.Component {
+class NewTextResourceDialog extends React.Component {
 
     constructor(props) {
         super(props);
@@ -385,81 +385,18 @@ class NewTextResource extends React.Component {
 }
 
 function newTextResource(type, label) {
-    ReactDOM.render(<NewTextResource type={type} label={label} submit={createResource}/>, document.getElementById('new-resource'));
+    ReactDOM.render(<NewTextResourceDialog type={type} label={label} submit={createTextResource}/>, document.getElementById('new-resource'));
     const dialog = $("#new-resource");
     dialog.on('shown.bs.modal', () => $("#nameInput").focus());
     dialog.modal();
 }
 
-class NewFileResource extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {folder: getParam("name"), file: null, name: null};
-        this.handleFolder = this.handleFolder.bind(this);
-        this.handleName = this.handleName.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    render() {
-        const placeholder = this.props.label;
-        return <div className="modal-dialog" style={{width:680}}>
-            <div className="modal-content">
-                <div className="modal-header">
-                    <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 className="modal-title">New {this.props.label}</h4>
-                </div>
-                <div className="modal-body">
-                    <form className="form" role="form">
-                        <div className="form-group">
-                            <label className="control-label" htmlFor="resourcePath">Enter the unique path for this resource:</label>
-                            <div className="input-group input-group-lg">
-                                <input type="text" className="form-control input-lg" id="folderInput" value={this.state.folder} style={{width:245}} onChange={this.handleFolder}/>
-                                <span className="input-group-addon" id="basic-addon1">/</span>
-                                <input type="text" className="form-control input-lg" id="nameInput" placeholder={placeholder} style={{width:365}} onChange={this.handleName}/>
-                            </div>
-                        </div>
-                    </form>
-                    <FileViewer/>
-                </div>
-                <div className="modal-footer">
-                    <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="button" className="btn btn-primary" onClick={this.handleSubmit}>OK</button>
-                </div>
-
-            </div>
-        </div>;
-    }
-
-    handleFolder(event) {
-        this.state.folder = event.target.value;
-    }
-
-    handleName(event) {
-        this.state.name = event.target.value;
-    }
-
-    handleSubmit(event) {
-        const path = this.state.folder + "/" + this.state.name + "." + this.state.extension;
-        this.props.submit(this.props.type, path);
-    }
-
-}
-
-function newFileResource(type, label) {
-    ReactDOM.render(<NewFileResource type={type} label={label} submit={createResource}/>, document.getElementById('new-resource'));
-    const dialog = $("#new-resource");
-    dialog.on('shown.bs.modal', () => $("#nameInput").focus());
-    dialog.modal();
-}
-
-
-function createResource(type, path) {
-    const id = createResourceInCatalog(type, path, () => selectContentInProjectTree(id));
+function createTextResource(type, path) {
+    const id = createTextResourceInCatalog(type, path, () => selectContentInProjectTree(id));
     $('#new-resource').modal('toggle');
 }
 
-function createResourceInCatalog(type, path, callback) {
+function createTextResourceInCatalog(type, path, callback) {
     const methodName = "createResource" + type;
     if(!window[methodName])
         alert("No such method:" + methodName);
@@ -567,6 +504,105 @@ function createResourceTxt(path) {
             body: 'Hello there!'
         }
     };
+}
+
+const DroppedFileWidget = widgets.DroppedFileWidget.default;
+const DroppedWidgetStyle = {
+    display: 'inline-flex',
+    border: '1px solid lightgray',
+    height: '300px',
+    width: '650px',
+    padding: '20px',
+    alignItems: 'center',
+    justifyContent: 'center'
+};
+
+class NewFileResourceDialog extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {folder: getParam("name"), file: null};
+        this.handleFolder = this.handleFolder.bind(this);
+        this.handleName = this.handleName.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleDrop = this.handleDrop.bind(this);
+    }
+
+    render() {
+        return <div className="modal-dialog" style={{width:680}}>
+            <div className="modal-content">
+                <div className="modal-header">
+                    <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 className="modal-title">New {this.props.label}</h4>
+                </div>
+                <div className="modal-body">
+                    <form className="form" role="form">
+                        <div className="form-group">
+                            <label className="control-label" htmlFor="resourcePath">Enter the unique path for this resource:</label>
+                            <div className="input-group input-group-lg">
+                                <input type="text" className="form-control input-lg" id="folderInput" value={this.state.folder} style={{width:245}} onChange={this.handleFolder}/>
+                                <span className="input-group-addon" id="basic-addon1">/</span>
+                                {this.state.name && <input type="text" className="form-control input-lg" id="nameInput" value={this.state.name} style={{width:365}} onChange={this.handleName}/>}
+                                {!this.state.name && <input type="text" className="form-control input-lg" id="nameInput" placeholder={this.props.label} style={{width:365}} onChange={this.handleName}/>}
+                            </div>
+                        </div>
+                    </form>
+                    <DroppedFileWidget onDrop={this.handleDrop} style={DroppedWidgetStyle}/>
+                </div>
+                <div className="modal-footer">
+                    <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" className="btn btn-primary" onClick={this.handleSubmit}>OK</button>
+                </div>
+
+            </div>
+        </div>;
+    }
+
+    handleDrop(file) {
+        this.setState({ file: file, name: file.name });
+    }
+
+    handleFolder(event) {
+        this.setState({ folder: event.target.value });
+    }
+
+    handleName(event) {
+        this.setState({ name: event.target.value });
+    }
+
+    handleSubmit(event) {
+        const path = this.state.folder + "/" + this.state.name;
+        this.props.submit(this.props.type, path, this.state.file);
+    }
+
+}
+
+function newFileResource(type, label) {
+    ReactDOM.render(<NewFileResourceDialog type={type} label={label} submit={createFileResource}/>, document.getElementById('new-resource'));
+    const dialog = $("#new-resource");
+    dialog.on('shown.bs.modal', () => $("#nameInput").focus());
+    dialog.modal();
+}
+
+
+function createFileResource(type, path, file) {
+    const id = createFileResourceInCatalog(type, path, file, () => selectContentInProjectTree(id));
+    $('#new-resource').modal('toggle');
+}
+
+function createFileResourceInCatalog(type, path, file, callback) {
+    const content = {
+        type: "TextResource",
+        value: {
+        name: path,
+            mimeType: file.type,
+            file: file
+        }
+    };
+    content.value.module =  { type: "Module", value: { dbId: getParam("dbId") } };
+    const delta = { added: { resources: [content]}};
+    catalogUpdated(delta, callback);
+    return content;
 }
 
 
