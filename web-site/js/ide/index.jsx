@@ -671,17 +671,14 @@ class ImageDisplayer extends React.Component {
     constructor(props) {
         super(props);
         this.loadPreview = this.loadPreview.bind(this);
-        this.state = { preview: null, file: null };
+        this.state = { preview: null};
         this.loadPreview(this.props.file);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        if(this.state.file === nextProps.file) {
-            return this.state.preview !== nextState.preview;
-        } else {
-            this.setState({ preview: null, file: null });
+    componentWillReceiveProps(nextProps) {
+        if(this.props.file !== nextProps.file) {
+            this.setState({preview: null});
             this.loadPreview(nextProps.file);
-            return true;
         }
     }
 
@@ -689,11 +686,10 @@ class ImageDisplayer extends React.Component {
         if(file && file.type.startsWith("image/")) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                this.setState({ preview: e.target.result, file: file });
+                this.setState({ preview: e.target.result });
             };
             reader.readAsDataURL(file);
         }
-
     }
 
     render() {
