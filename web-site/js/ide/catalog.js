@@ -9,16 +9,6 @@ function Catalog() {
     this.enumerations = [];
     this.tests = [];
     this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], yaml: [], text: [], image: [], audio: [], video: [], bin: [], statuses: {}};
-    this.textMimeTypeToList = {
-        "text/html": this.resources.html,
-        "text/javascript": this.resources.js,
-        "text/babel": this.resources.jsx,
-        "text/css": this.resources.css,
-        "text/json": this.resources.json,
-        "text/xml": this.resources.xml,
-        "text/yaml": this.resources.yaml,
-        "text/plain": this.resources.text
-    };
     this.showLibraries = false;
     // for performance reasons, we only receive a delta from the ace worker
     // so can't rely on just React virtual DOM
@@ -92,6 +82,16 @@ function Catalog() {
         });
         const added = this.methods.concat(toAdd);
         this.methods = added.sort(function(a,b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
+    };
+    this.textMimeTypeToList = {
+        "text/html": this.resources.html,
+        "text/javascript": this.resources.js,
+        "text/babel": this.resources.jsx,
+        "text/css": this.resources.css,
+        "text/json": this.resources.json,
+        "text/xml": this.resources.xml,
+        "text/yaml": this.resources.yaml,
+        "text/plain": this.resources.text
     };
     this.listFromResource = function(res) {
         var mimeType = res.value.mimeType;

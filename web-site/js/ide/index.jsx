@@ -178,7 +178,7 @@ class MethodTree extends GroupTree {
 
 }
 
-class ResourceTree extends GroupTree {
+class TextResourceTree extends GroupTree {
 
     constructor(props) {
         super(props);
@@ -198,6 +198,33 @@ class ResourceTree extends GroupTree {
         const a = $(e.target);
         let content = { type: this.props.type, name: a.text() };
         content.body = catalog.getResourceBody(content);
+        setEditorContent(content);
+    }
+}
+
+
+
+class BinaryResourceTree extends GroupTree {
+
+    constructor(props) {
+        super(props);
+        this.renderItem = this.renderItem.bind(this);
+        this.itemClicked = this.itemClicked.bind(this);
+    }
+
+    renderItem(item) {
+        const key = item.value.mimeType.replace("/", "_") + "_" + makeValidId(item.value.name);
+        return <li id={key} key={key} className='list-group-item' onClick={this.itemClicked}>
+            <a>{item.value.name}</a>
+        </li>;
+    }
+
+    itemClicked(e) {
+        e.stopPropagation();
+        const a = $(e.target);
+        let content = { type: this.props.type, name: a.text() };
+        let resource = catalog.resourceFromContent(content);
+        content.file = resource.value.file;
         setEditorContent(content);
     }
 }
@@ -226,18 +253,18 @@ class ProjectTree extends React.Component {
                 <label className='nav-header' onClick={this.toggleTreeNode}>Resources</label>
                 <div>
                     <ul className="list-group">
-                        <ResourceTree title="Html" items={catalog.resources.html} type="Html" showLibraries="true"/>
-                        <ResourceTree title="Javascript" items={catalog.resources.js} type="Js" showLibraries="true"/>
-                        <ResourceTree title="Jsx" items={catalog.resources.jsx} type="Jsx" showLibraries="true"/>
-                        <ResourceTree title="Css" items={catalog.resources.css} type="Css" showLibraries="true"/>
-                        <ResourceTree title="Json" items={catalog.resources.json} type="Json" showLibraries="true"/>
-                        <ResourceTree title="Xml" items={catalog.resources.xml} type="Xml" showLibraries="true"/>
-                        <ResourceTree title="Yaml" items={catalog.resources.yaml} type="Yaml" showLibraries="true"/>
-                        <ResourceTree title="Text" items={catalog.resources.text} type="Txt" showLibraries="true"/>
-                        <ResourceTree title="Image" items={catalog.resources.image} type="image" showLibraries="true"/>
-                        <ResourceTree title="Audio" items={catalog.resources.audio} type="image" showLibraries="true"/>
-                        <ResourceTree title="Video" items={catalog.resources.video} type="image" showLibraries="true"/>
-                        <ResourceTree title="Other" items={[]} type="bin" showLibraries="true"/>
+                        <TextResourceTree title="Html" items={catalog.resources.html} type="Html" showLibraries="true"/>
+                        <TextResourceTree title="Javascript" items={catalog.resources.js} type="Js" showLibraries="true"/>
+                        <TextResourceTree title="Jsx" items={catalog.resources.jsx} type="Jsx" showLibraries="true"/>
+                        <TextResourceTree title="Css" items={catalog.resources.css} type="Css" showLibraries="true"/>
+                        <TextResourceTree title="Json" items={catalog.resources.json} type="Json" showLibraries="true"/>
+                        <TextResourceTree title="Xml" items={catalog.resources.xml} type="Xml" showLibraries="true"/>
+                        <TextResourceTree title="Yaml" items={catalog.resources.yaml} type="Yaml" showLibraries="true"/>
+                        <TextResourceTree title="Text" items={catalog.resources.text} type="Txt" showLibraries="true"/>
+                        <BinaryResourceTree title="Image" items={catalog.resources.image} type="Image" showLibraries="true"/>
+                        <BinaryResourceTree title="Audio" items={catalog.resources.audio} type="Audio" showLibraries="true"/>
+                        <BinaryResourceTree title="Video" items={catalog.resources.video} type="Video" showLibraries="true"/>
+                        <BinaryResourceTree title="Other" items={[]} type="Binary" showLibraries="true"/>
                     </ul>
                 </div>
             </li>
@@ -311,11 +338,21 @@ function selectContentInProjectTree(content) {
     leaf.trigger("click");
 }
 
+
+function isTextResourceContent() {
+    return currentContent &&
+        currentContent.type !== "Prompto" &&
+        currentContent.type !== "Image" &&
+        currentContent.type !== "Audio" &&
+        currentContent.type !== "Video" &&
+        currentContent.type !== "Other";
+}
+
 function setEditorContent(content) {
     if(content && content===currentContent)
         return;
     const window = getEditorWindow();
-    if(currentContent && currentContent.type !== "Prompto") {
+    if(isTextResourceContent()) {
         currentContent.body = window.getResourceBody();
         catalog.setResourceBody(currentContent);
     }
@@ -615,7 +652,7 @@ function createFileResource(type, path, file) {
 
 function createFileResourceInCatalog(type, path, file, callback) {
     const content = {
-        type: "TextResource",
+        type: "BinaryResource",
         value: {
         name: path,
             mimeType: file.type,
@@ -628,6 +665,50 @@ function createFileResourceInCatalog(type, path, file, callback) {
     return content;
 }
 
+
+class ImageDisplayer extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.loadPreview = this.loadPreview.bind(this);
+        this.state = { preview: null, file: null };
+        this.loadPreview(this.props.file);
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(this.state.file === nextProps.file) {
+            return this.state.preview !== nextState.preview;
+        } else {
+            this.setState({ preview: null, file: null });
+            this.loadPreview(nextProps.file);
+            return true;
+        }
+    }
+
+    loadPreview(file) {
+        if(file && file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.setState({ preview: e.target.result, file: file });
+            };
+            reader.readAsDataURL(file);
+        }
+
+    }
+
+    render() {
+        const state = this.state.preview ? "PREVIEW" : "LOADING";
+        return <div>
+                { state==="PREVIEW" && <img src={this.state.preview} style={{ maxWidth: "98%", maxHeight: "98%", width: "auto", height: "auto" }}/> }
+                { state==="LOADING" && 'Loading...' }
+                </div>
+    }
+}
+
+
+function setContentImage(element, content) {
+    ReactDOM.render(<ImageDisplayer file={content.file}/>, element);
+}
 
 function destroy() {
     if(currentContent===null)

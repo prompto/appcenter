@@ -16,6 +16,8 @@ function setProject(dbId, loadDependencies) {
 function setContent(content) {
     setMode(content.type, editor => {
         var methodName = "setContent" + content.type;
+        if (!window[methodName])
+            throw methodName;
         window[methodName](editor, content);
     })
 }
@@ -65,6 +67,11 @@ function setContentYaml(editor, content) {
 
 function setContentText(editor, content) {
     setContentResource(editor, content);
+}
+
+function setContentImage(editor, content) {
+    var elem = document.getElementById('file-container');
+    parent.setContentImage(elem, content);
 }
 
 function getResourceBody() {
@@ -124,13 +131,15 @@ function setMode(mode, callback) {
     }
     $("#prompto-container").hide();
     $("#resource-container").hide();
+    $("#file-container").hide();
     modeId = null; // so we know mode is stale
     var methodName = "setMode" + mode;
     if (!window[methodName])
         throw methodName;
     window[methodName](editor => {
         modeId = mode;
-        editor.setValue("", -1);
+        if(editor)
+            editor.setValue("", -1);
         callback(editor);
     });
 }
@@ -194,6 +203,11 @@ function setModeTxt(callback) {
     resourceEditor.getSession().setMode("ace/mode/text", () => {
         callback(resourceEditor);
     });
+}
+
+function setModeImage(callback) {
+    $("#file-container").show();
+    callback(null);
 }
 
 function initPromptoEditor(callback) {
