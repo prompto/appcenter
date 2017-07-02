@@ -49,6 +49,7 @@ function loadResources(dbId) {
             const resources = response.data.value;
             const delta = { added: { resources: resources}};
             catalogUpdated(delta, () => {});
+            catalog.markResources(resources, "CLEAN");
         }
     });
 }
@@ -224,7 +225,10 @@ class BinaryResourceTree extends GroupTree {
         const a = $(e.target);
         let content = { type: this.props.type, name: a.text() };
         let resource = catalog.resourceFromContent(content);
-        content.file = resource.value.file;
+        if(resource.value.data)
+            content.data = resource.value.data;
+        else if(resource.value.file)
+            content.file = resource.value.file;
         setEditorContent(content);
     }
 }
@@ -693,9 +697,10 @@ class ImageDisplayer extends React.Component {
     }
 
     render() {
-        const state = this.state.preview ? "PREVIEW" : "LOADING";
+        const source = this.props.source || this.state.preview;
+        const state = source ? "PREVIEW" : "LOADING";
         return <div>
-                { state==="PREVIEW" && <img src={this.state.preview} style={{ maxWidth: "98%", maxHeight: "98%", width: "auto", height: "auto" }}/> }
+                { state==="PREVIEW" && <img src={source} style={{ maxWidth: "98%", maxHeight: "98%", width: "auto", height: "auto" }}/> }
                 { state==="LOADING" && 'Loading...' }
                 </div>
     }
@@ -703,7 +708,7 @@ class ImageDisplayer extends React.Component {
 
 
 function setContentImage(element, content) {
-    ReactDOM.render(<ImageDisplayer file={content.file}/>, element);
+    ReactDOM.render(<ImageDisplayer file={content.file} source={content.data} />, element);
 }
 
 function destroy() {
@@ -731,18 +736,34 @@ function commit() {
 }
 
 function commitPrepared(declarations) {
-    var resources = catalog.prepareCommit();
-    var stuff = (declarations || []).concat(resources || []);
-    if(stuff.length > 0) {
-        var params = [{name: "edited", type: "EditedStuff[]", value: stuff}];
-        var form = new FormData();
-        form.append("params", JSON.stringify(params));
-        var xhr = new XMLHttpRequest();
+    let resources = catalog.prepareCommit();
+    if((declarations && declarations.length) || (resources && resources.length)) {
+        const form = new FormData();
+        if(resources && resources.length)
+            resources = prepareResourceFiles(form, resources);
+        const stuff = (declarations || []).concat(resources || []);
+        const params = JSON.stringify([{name: "edited", type: "EditedStuff[]", value: stuff}]);
+        form.append("params", params);
+        const xhr = new XMLHttpRequest();
         xhr.upload.addEventListener('load', function(success) { commitSuccessful(success); });
         xhr.addEventListener('error', function(failure) { commitFailed(failure); });
         xhr.open('POST', '/ws/run/storeEdited', true);
         xhr.send(form);
     }
+}
+
+function prepareResourceFiles(formData, resources) {
+    return resources.map(res => {
+        let stuff = res.value.stuff;
+        if(stuff.type==="BinaryResource" && stuff.value.file) {
+            stuff = Object.assign({}, stuff);
+            stuff.value.data = { mimeType: stuff.value.file.type, partName: "@" + stuff.value.file.name };
+            formData.append(stuff.value.data.partName, stuff.value.file);
+            delete stuff.value.file;
+            res.value.stuff = stuff;
+        }
+        return res;
+    });
 }
 
 
