@@ -131,6 +131,12 @@ function Catalog() {
             this.resources.statuses[id] = {editStatus: "CREATED", stuff: res };
         });
     };
+    this.markResources = function(toMark, status) {
+        toMark.forEach(res => {
+            var id = makeValidId(res.value.name);
+            this.resources.statuses[id].editStatus = status;
+        });
+    };
     this.resourceFromContent = function(content) {
         const list = this.resources[content.type.toLowerCase()];
         const item = list.findIndex(function(a) { return a.value.name === content.name; });
