@@ -14,14 +14,19 @@ class DropZone extends React.Component {
 
     constructor(props) {
         super(props);
+        this.onDrop = this.onDrop.bind(this);
     }
 
     render() {
-        return <DroppedFileWidget style={style}/>;
+        return <DroppedFileWidget onDrop={this.onDrop} style={style}/>;
+    }
+
+    onDrop(file) {
+        alert(file.name);
     }
 
 }
 
 $(document).ready(function() {
-    ReactDOM.render(<DropZone  />, document.getElementById('root'));
+    ReactDOM.render(<DropZone />, document.getElementById('root'));
 });

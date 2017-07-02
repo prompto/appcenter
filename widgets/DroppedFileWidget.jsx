@@ -37,7 +37,7 @@ class TargetBox extends Component {
         const state = droppedPreview ? "PREVIEW" : (canDrop && isOver) ? "ACTIVE" : "READY";
         return connectDropTarget(
             <div style={this.props.style}>
-                { state==="PREVIEW" && <img src={droppedPreview} style={{ "width": "98%" }}/> }
+                { state==="PREVIEW" && <img src={droppedPreview} style={{ "max-width": "98%", "max-height": "98%", width: "auto", height: "auto" }}/> }
                 { state==="ACTIVE" && 'Release to drop' }
                 { state==="READY" && 'Drag file here' }
             </div>,
@@ -53,7 +53,7 @@ export default class DroppedFileWidget extends Component {
         super(props);
         this.handleFileDrop = this.handleFileDrop.bind(this);
         this.readDroppedContent = this.readDroppedContent.bind(this);
-        this.state = { droppedFile: null, droppedPreview: null };
+        this.state = { droppedFile: this.props.droppedFile || null, droppedPreview: null };
     }
 
     handleFileDrop(item, monitor) {
@@ -61,6 +61,8 @@ export default class DroppedFileWidget extends Component {
             const droppedFiles = monitor.getItem().files;
             const droppedFile = droppedFiles.length ? droppedFiles[0] : 0;
             this.readDroppedContent(droppedFile);
+            if(this.props.onDrop)
+                this.props.onDrop(droppedFile);
         }
     }
 
