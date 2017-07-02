@@ -232,6 +232,7 @@ class ProjectTree extends React.Component {
                         <ResourceTree title="Css" items={catalog.resources.css} type="Css" showLibraries="true"/>
                         <ResourceTree title="Json" items={catalog.resources.json} type="Json" showLibraries="true"/>
                         <ResourceTree title="Xml" items={catalog.resources.xml} type="Xml" showLibraries="true"/>
+                        <ResourceTree title="Yaml" items={catalog.resources.yaml} type="Yaml" showLibraries="true"/>
                         <ResourceTree title="Text" items={catalog.resources.text} type="Txt" showLibraries="true"/>
                         <ResourceTree title="Image" items={catalog.resources.image} type="image" showLibraries="true"/>
                         <ResourceTree title="Audio" items={catalog.resources.audio} type="image" showLibraries="true"/>
@@ -490,6 +491,28 @@ function createResourceXml(path) {
             '<document>\n' +
             '\tdata\n' +
             '</document>\n'
+        }
+    };
+}
+
+function createResourceYaml(path) {
+    return {
+        type: "TextResource",
+        value: {
+            name: path,
+            mimeType: "text/yaml",
+            body: 'invoice: 34843\n' +
+            'date   : 2001-01-23\n' +
+            'bill-to: &id001\n' +
+            '\tgiven  : Chris\n' +
+            '\tfamily : Dumars\n' +
+            '\taddress:\n' +
+            '\t\tlines: |\n' +
+            '\t\t\t458 Walkman Dr.\n' +
+            '\t\t\tSuite #292\n' +
+            '\t\tcity    : Royal Oak\n' +
+            '\t\tstate   : MI\n' +
+            '\t\tpostal  : 48046\n'
         }
     };
 }

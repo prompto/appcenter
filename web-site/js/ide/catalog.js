@@ -8,7 +8,7 @@ function Catalog() {
     this.categories = [];
     this.enumerations = [];
     this.tests = [];
-    this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], text: [], image: [], audio: [], video: [], bin: [], statuses: {}};
+    this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], yaml: [], text: [], image: [], audio: [], video: [], bin: [], statuses: {}};
     this.textMimeTypeToList = {
         "text/html": this.resources.html,
         "text/javascript": this.resources.js,
@@ -16,6 +16,7 @@ function Catalog() {
         "text/css": this.resources.css,
         "text/json": this.resources.json,
         "text/xml": this.resources.xml,
+        "text/yaml": this.resources.yaml,
         "text/plain": this.resources.text
     };
     this.showLibraries = false;

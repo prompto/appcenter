@@ -59,6 +59,10 @@ function setContentXml(editor, content) {
     setContentResource(editor, content);
 }
 
+function setContentYaml(editor, content) {
+    setContentResource(editor, content);
+}
+
 function setContentText(editor, content) {
     setContentResource(editor, content);
 }
@@ -174,6 +178,13 @@ function setModeJson(callback) {
 function setModeXml(callback) {
     $("#resource-container").show();
     resourceEditor.getSession().setMode("ace/mode/xml", () => {
+        callback(resourceEditor);
+    });
+}
+
+function setModeYaml(callback) {
+    $("#resource-container").show();
+    resourceEditor.getSession().setMode("ace/mode/yaml", () => {
         callback(resourceEditor);
     });
 }
