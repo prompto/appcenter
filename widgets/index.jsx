@@ -1,11 +1,13 @@
 const DroppedFileWidget = widgets.DroppedFileWidget.default;
 
 const style = {
+    display: 'inline-flex',
     border: '1px solid gray',
-    height: '300',
-    width: '300',
-    padding: '20',
-    textAlign: 'center',
+    height: '300px',
+    width: '300px',
+    padding: '20px',
+    alignItems: 'center',
+    justifyContent: 'center'
 };
 
 class DropZone extends React.Component {

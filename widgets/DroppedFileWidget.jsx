@@ -18,6 +18,7 @@ const boxTarget = {
 }))
 
 class TargetBox extends Component {
+
     static propTypes = {
         connectDropTarget: PropTypes.func.isRequired,
         isOver: PropTypes.bool.isRequired,
@@ -27,19 +28,22 @@ class TargetBox extends Component {
         style: PropTypes.object
     };
 
-    render() {
-        const { canDrop, isOver, connectDropTarget } = this.props;
-        const isActive = canDrop && isOver;
+    constructor(props) {
+        super(props);
+    }
 
+    render() {
+        const { canDrop, isOver, connectDropTarget, droppedFile, droppedPreview } = this.props;
+        const state = droppedPreview ? "PREVIEW" : (canDrop && isOver) ? "ACTIVE" : "READY";
         return connectDropTarget(
             <div style={this.props.style}>
-                {isActive ?
-                    'Release to drop' :
-                    'Drag file here'
-                }
+                { state==="PREVIEW" && <img src={droppedPreview} style={{ "width": "98%" }}/> }
+                { state==="ACTIVE" && 'Release to drop' }
+                { state==="READY" && 'Drag file here' }
             </div>,
         );
     }
+
 }
 
 @DragDropContext(HTML5Backend)
@@ -48,25 +52,41 @@ export default class DroppedFileWidget extends Component {
     constructor(props) {
         super(props);
         this.handleFileDrop = this.handleFileDrop.bind(this);
-        this.state = { droppedFiles: [] };
+        this.readDroppedContent = this.readDroppedContent.bind(this);
+        this.state = { droppedFile: null, droppedPreview: null };
     }
 
     handleFileDrop(item, monitor) {
         if (monitor) {
             const droppedFiles = monitor.getItem().files;
-            this.setState({ droppedFiles });
+            const droppedFile = droppedFiles.length ? droppedFiles[0] : 0;
+            this.readDroppedContent(droppedFile);
         }
     }
 
+    readDroppedContent(droppedFile) {
+        if(!droppedFile)
+            this.setState({ droppedFile: null, droppedPreview: null });
+        else {
+            this.setState({ droppedFile: droppedFile, droppedPreview: null });
+            if(droppedFile.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.setState({droppedFile: droppedFile, droppedPreview: e.target.result});
+                };
+                reader.readAsDataURL(droppedFile);
+            }
+        }
+    }
+
+
     render() {
         const { FILE } = NativeTypes;
-        const { droppedFiles } = this.state;
+        const { droppedFile, droppedPreview } = this.state;
 
         return (
             <DragDropContextProvider backend={HTML5Backend}>
-                <div>
-                    <TargetBox style={this.props.style} accepts={[FILE]} onDrop={this.handleFileDrop} />
-                </div>
+                <TargetBox style={this.props.style} accepts={[FILE]} onDrop={this.handleFileDrop} droppedPreview={droppedPreview}/>
             </DragDropContextProvider>
         );
     }
