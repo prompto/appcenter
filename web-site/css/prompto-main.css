@@ -97,10 +97,14 @@ body {
     margin-bottom: 0;
 }
 .placeholder {
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 }
 .placeholder img {
     display: inline-block;
     border-radius: 50%;
+}
+
+.thumbnail {
+    border: none;
 }
 

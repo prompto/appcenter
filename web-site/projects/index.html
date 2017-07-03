@@ -17,17 +17,20 @@
 <!-- Custom styles for this template -->
 <link href="../css/prompto-frame.css" rel="stylesheet">
 
-<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-<!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
 
 <script src="../js/lib/jquery.min.js"></script>
 <script src="../js/lib/bootstrap.min.js"></script>
-<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="../js/lib/ie10-viewport-bug-workaround.js"></script>
-<!-- install event handlers -->
+<script src="../js/lib/FileSaver.js"></script>
+<script src="../js/lib/react.js"></script>
+<script src="../js/lib/react-dom.js"></script>
+<script src="../js/lib/dev-center-widgets.js"></script>
+<script src="../js/lib/babel.min.js"></script>
+<script type="text/babel" src="../js/projects/index.jsx"></script>
+
+<!--
 <script type="text/javascript">
 
     $(document).ready(function() {
@@ -49,23 +52,6 @@
         });
     }
 
-    function prepareNewProjectDialog() {
-        // install project type handlers
-        $('[id^=new-module-type-]').on('click',function() {
-            // install radio button behavior
-            $('[id^=new-module-type-]').removeClass('active');
-            $(this).addClass('active');
-            // enable/disable entry point items
-            $('[id^=new-module-entry-point]').attr('disabled', this.id.indexOf('batch')<0);
-            var isCreate = document.getElementById('new-module-entry-point-create').checked;
-            document.getElementById('new-module-entry-point-text').disabled = this.id.indexOf('batch')<0 || isCreate;
-        });
-        // enable/disable entry point text box
-        $('[name=radio-entry-point]').on('click',function() {
-            var isCreate = document.getElementById('new-module-entry-point-create').checked;
-            document.getElementById('new-module-entry-point-text').disabled = isCreate;
-        });
-    }
 
     function deleteProject(dbId) {
         var url = '/ws/run/deleteModule?params=[{"name":"dbId", "value":"' + dbId.toString() + '"}]';
@@ -73,21 +59,6 @@
             getRecentModules();
             getAllModules();
         });
-    }
-    function getAllModules() {
-        $.getJSON('/ws/run/getAllModules', null, displayAll);
-    }
-
-    function getRecentModules() {
-        $.getJSON('/ws/run/getRecentModules?params=[{"name":"count", "type":"Integer", "value":8}]', null, displayRecent);
-    }
-
-    function displayRecent(response) {
-        display('recent', response);
-    }
-
-    function displayAll(response) {
-        display('all', response);
     }
 
     function createNewModule() {
@@ -129,197 +100,15 @@
         });
     };
 
-    function display(id, response) {
-        if(response.error)
-            alert(response.error);
-        else {
-            var html = [];
-            response.data.value.map( function(item) {
-                var module = item.value;
-                $.merge(html, [
-                        '<div class="col-xs-4 col-sm-2 placeholder project" width="120px">',
-                        '<h4>',
-                        '<a id="',
-                        module.dbId.value,
-                        '" href="../ide/index.html?dbId=',
-                        module.dbId.value,
-                        '&name=',
-                        module.name,
-                        '" target="_blank" class="thumbnail">',
-                        '<img src="',
-                        module.image ? module.image : "/img/library.jpg",
-                        '" max-width="90%">',
-                        '<strong>',
-                        module.name,
-                        '</strong>',
-                        '<br/>',
-                        '<span class="text-muted">',
-                        module.description,
-                        '</span>',
-                        '</a>',
-                        '</h4>',
-                        '</div>'
-                ]);
-            });
-            if(id=="recent") {
-                $.merge(html, [
-                    '<div class="col-xs-4 col-sm-2 placeholder" width="120px"><h4><a ',
-                    'id = "data-explorer" class="thumbnail" href="" target="_blank">',
-                    '<img src="/img/explorer.png" max-width="90%">',
-                    '<br/><strong>Data explorer</strong>',
-                    '</a></h4></div>',
-                    '<div class="col-xs-4 col-sm-2 placeholder" width="120px"><h4><a ',
-                    'class="thumbnail" onClick="$(\x27#new-project-dialog\x27).modal(\x27show\x27);">',
-                    '<img src="/img/wizard.jpg" max-width="90%">',
-                    '<strong>New project</strong>',
-                    '</a></h4></div>',
-                    '<div class="col-xs-4 col-sm-2 placeholder" width="120px"><h4><a ',
-                    'class="thumbnail" onClick="import();">',
-                    '<img src="/img/import.jpg" max-width="90%">',
-                    '<strong>Import project</strong>',
-                    '</a></h4></div>'
-                ]);
-                $.getJSON('/ws/run/getDataPort', null, function(response) {
-                    if(response.error)
-                        ;
-                    else {
-                        var href = $(location).attr('protocol')
-                            + "//"
-                            + $(location).attr('hostname')
-                            + ":"
-                            + response.data
-                            + "/";
-                        $("#data-explorer").attr("href", href);
-                    }
-                });
-            }
-            $("#" + id + "-items").html(html.join(""));
-            $("#" + id).show();
-            $(".project").on("contextmenu", function(e) {
-                var thumbnail = $(e.target).closest("a")[0];
-                var url = '/ws/run/exportModule?params=[{"name":"dbId", "value":"' + thumbnail.id.toString() + '"}]';
-                $("#export-link").attr("href", url);
-                $("#delete-link").click(function(e) {
-                    e.preventDefault();
-                    deleteProject(thumbnail.id);
-                });
-                e.preventDefault();
-                projectContextMenu.css({
-                    display: "block",
-                    left: e.pageX,
-                    top: e.pageY
-                });
-                return false;
-            });
-        }
-    }
+
 
 </script>
+-->
 
 </head>
 
 <body>
-	<div class="container-fluid">
-		<div class="row">
-			<div id="recent" class="col-sm-9 col-md-10 main">
-				<h1 class="page-header">Recent projects</h1>
-				<div id="recent-items" class="row placeholders">
-				</div>
-			</div>
-            <div id="all" class="col-sm-9 col-md-10 main">
-                <h1 class="page-header">All projects</h1>
-                <div id="all-items" class="row placeholders">
-               </div>
-            </div>
-		</div>
-        <div id="new-project-dialog" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title">New project</h4>
-                    </div>
-                    <div class="modal-body row">
-                        <form id="new-module-form" role="form">
-                            <div class="col-md-12">
-                                <div id="new-module-type" class="form-group">
-                                    <label for="new-module-type">Type</label>
-                                    <div id="new-module-type placeholders btn-group" data-toggle="buttons">
-                                        <div class="col-md-2 placeholder" style="margin-left: 5px; margin-right: 0px">
-                                            <h5>
-                                                <a id="new-module-type-batch" class="thumbnail active" style="text-align: center">
-                                                    <img src="/img/batch.jpg" max-width="90%">
-                                                    <strong>Batch</strong>
-                                                </a>
-                                            </h5>
-                                        </div>
-                                        <div class="col-md-2 placeholder" style="margin-left: 5px; margin-right: 0px">
-                                            <h5>
-                                                <a id="new-module-type-script" class="thumbnail" style="text-align: center">
-                                                    <img src="/img/script.jpg" max-width="90%">
-                                                    <strong>Script</strong>
-                                                </a>
-                                            </h5>
-                                        </div>
-                                        <div class="col-md-2 placeholder" style="margin-left: 5px; margin-right: 0px">
-                                            <h5>
-                                                <a id="new-module-type-service" class="thumbnail" style="text-align: center">
-                                                    <img src="/img/service.jpg" max-width="90%">
-                                                    <strong>Web service</strong>
-                                                </a>
-                                            </h5>
-                                        </div>
-                                        <div class="col-md-2 placeholder" style="margin-left: 5px; margin-right: 0px">
-                                            <h5>
-                                                <a id="new-module-type-website" class="thumbnail" style="text-align: center">
-                                                    <img src="/img/website.jpg" max-width="90%">
-                                                    <strong>Web site</strong>
-                                                </a>
-                                            </h5>
-                                        </div>
-                                        <div class="col-md-2 placeholder" style="margin-left: 0px; margin-right: 0px">
-                                            <h5>
-                                                <a id="new-module-type-library" class="thumbnail" style="text-align: center">
-                                                    <img src="/img/library.jpg" max-width="90%">
-                                                    <strong>Library</strong>
-                                                </a>
-                                            </h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div id="new-module-name" class="form-group">
-                                    <label for="new-module-name-input">Name</label>
-                                    <input type="text" class="form-control" id="new-module-name-text" placeholder="Enter module name"/>
-                                </div>
-                                <div id="new-module-description" class="form-group">
-                                    <label for="new-module-description-input" >Description</label>
-                                    <input type="text" class="form-control" id="new-module-description-text" placeholder="Enter module description"/>
-                                </div>
-                                <div id="new-module-icon" class="form-group">
-                                    <label for="new-module-icon" >Image</label>
-                                    <input type="file" accept="image/*" class="form-control" id="new-module-icon-file" placeholder="Icon file"/>
-                                </div>
-                                <div id="new-module-entry-point" class="form-group buttons">
-                                    <label for="">Entry point</label>&nbsp;
-                                    <label class="radio-inline">
-                                        <input id="new-module-entry-point-create" type="radio" name="radio-entry-point" checked>Create</label>
-                                    <label class="radio-inline">
-                                        <input id="new-module-entry-point-existing" type="radio" name="radio-entry-point">Use existing</label>
-                                    <input type="text" class="form-control" id="new-module-entry-point-text" disabled placeholder="Enter existing entry point"/>
-                                </div>
-                           </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createNewModule();">Create</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="projects-viewer"/>
     <div id="project-context-menu" class="dropdown clearfix" style="position: absolute; display: none">
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
             <li><a id="export-link" tabindex="-1" href="#" target="_blank">Export</a></li>
