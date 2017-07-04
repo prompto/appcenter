@@ -1,25 +1,4 @@
 /*
-        if(id=="recent") {
-            $.merge(html, [
-                '<div class="col-xs-4 col-sm-2 placeholder" width="120px"><h4><a ',
-                'id = "data-explorer" class="thumbnail" href="" target="_blank">',
-                '<img src="/img/explorer.png" max-width="90%">',
-                '<br/><strong>Data explorer</strong>',
-                '</a></h4></div>',
-                '<div class="col-xs-4 col-sm-2 placeholder" width="120px"><h4><a ',
-                'class="thumbnail" onClick="$(\x27#new-project-dialog\x27).modal(\x27show\x27);">',
-                '<img src="/img/wizard.jpg" max-width="90%">',
-                '<strong>New project</strong>',
-                '</a></h4></div>',
-                '<div class="col-xs-4 col-sm-2 placeholder" width="120px"><h4><a ',
-                'class="thumbnail" onClick="import();">',
-                '<img src="/img/import.jpg" max-width="90%">',
-                '<strong>Import project</strong>',
-                '</a></h4></div>'
-            ]);
-         }
-        $("#" + id + "-items").html(html.join(""));
-        $("#" + id).show();
         $(".project").on("contextmenu", function(e) {
             var thumbnail = $(e.target).closest("a")[0];
             var url = '/ws/run/exportModule?params=[{"name":"dbId", "value":"' + thumbnail.id.toString() + '"}]';
@@ -64,10 +43,55 @@ class NewProjectDialog extends React.Component {
 
     constructor(props) {
         super(props);
-        this.handleCreate = this.handleCreate.bind(this);
         this.handleModuleType = this.handleModuleType.bind(this);
+        this.handleName = this.handleName.bind(this);
+        this.handleDescription = this.handleDescription.bind(this);
+        this.handleIcon = this.handleIcon.bind(this);
+        this.handleCreate = this.handleCreate.bind(this);
+        this.handleStartMethod = this.handleStartMethod.bind(this);
         this.createNewModule = this.createNewModule.bind(this);
-        this.state = { type: "batch", name: null, description: null, icon: null, hasStartMethod: true, create: true, startMethod: null};
+        this.state = { type: "batch", name: null, description: null, iconFile: null, hasStartMethod: true, create: true, startMethod: null};
+    }
+
+    createNewModule() {
+        const formData = new FormData();
+        let image = null;
+        if(this.state.iconFile) {
+            image = { mimeType: this.state.iconFile.type, partName: "@" + this.state.iconFile.name };
+            formData.append(image.partName, this.state.iconFile);
+        }
+        const params = [
+            {name: "type", type: "Text", value: this.state.type},
+            {name: "name", type: "Text", value: this.state.name},
+            {name: "description", type: "Text", value: this.state.description},
+            {name: "createEntryPoint", type: "Boolean", value: this.state.hasStartMethod},
+            {name: "entryPoint", type: "Text", value: this.state.startMethod},
+            {name: "image", type: "Image", value: image}
+        ];
+        formData.append("params", JSON.stringify(params));
+        $.ajax({
+            url: "/ws/run/createModule",
+            type: 'POST',
+            data: formData,
+            async: true,
+            cache: false,
+            contentType: false,
+            processData: false,
+            error: function (xhr, status, thrown) {
+                alert(thrown);
+            },
+            success: function (returndata) {
+                getAllModules(response => viewer.all.modulesReceived(response));
+            }
+        });
+        $("#new-project-dialog").modal("hide");
+    }
+
+
+    handleModuleType(e) {
+        const id = e.currentTarget.id;
+        const hasStartMethod = ["batch", "service", "website"].indexOf(id) >= 0;
+        this.setState( { type: id, hasStartMethod: hasStartMethod } );
     }
 
     handleName(e) {
@@ -80,10 +104,10 @@ class NewProjectDialog extends React.Component {
         this.setState( { description: description } );
     }
 
-    handleModuleType(e) {
-        const id = e.currentTarget.id;
-        const hasStartMethod = ["batch", "service", "website"].indexOf(id) >= 0;
-        this.setState( { type: id, hasStartMethod: hasStartMethod } );
+    handleIcon(e) {
+        const files = e.currentTarget.files;
+        const iconFile = files.length ? files[0] : null;
+        this.setState( { iconFile: iconFile } );
     }
 
     handleCreate(e) {
@@ -129,7 +153,7 @@ class NewProjectDialog extends React.Component {
                                 </div>
                                 <div id="icon" className="form-group">
                                     <label htmlFor="icon">Icon</label>
-                                    <input type="file" accept="image/*" className="form-control" id="icon" placeholder="Icon file"/>
+                                    <input type="file" accept="image/*" className="form-control" id="icon" placeholder="Icon file" onChange={this.handleIcon}/>
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="entry-point">Start method&nbsp;&nbsp;</label>
@@ -152,9 +176,6 @@ class NewProjectDialog extends React.Component {
             </div>;
     }
 
-    createNewModule() {
-
-    }
 }
 
 
@@ -224,8 +245,8 @@ class ProjectsViewer extends React.Component {
     render() {
         return <div className="container-fluid">
                     <div className="row">
-                        <ProjectsSection id="recent-projects" itemsId="recent-items" getModules={getRecentModules} title="Recent projects"/>
-                        <ProjectsSection id="all-projects" itemsId="all-items" getModules={getAllModules} title="All projects"/>
+                        <ProjectsSection ref={r=>this.recent=r} id="recent-projects" itemsId="recent-items" getModules={getRecentModules} title="Recent projects"/>
+                        <ProjectsSection ref={r=>this.all=r} id="all-projects" itemsId="all-items" getModules={getAllModules} title="All projects"/>
                     </div>
                 </div>;
     }
@@ -251,7 +272,9 @@ function installDataViewerHref() {
     });
 }
 
+let viewer = null;
+
 $(document).ready(function() {
-    ReactDOM.render(<ProjectsViewer/>, document.getElementById('projects-viewer'));
+    viewer = ReactDOM.render(<ProjectsViewer/>, document.getElementById('projects-viewer'));
     installDataViewerHref();
 });
