@@ -291,22 +291,8 @@ function newProject() {
 }
 
 
-function installDataViewerHref() {
-    $.getJSON('/ws/run/getDataPort', null, response => {
-        if (response.error)
-            ;
-        else {
-            const href = $(location).attr('protocol')
-                + "//" + $(location).attr('hostname')
-                + ":" + response.data + "/";
-            $("#data-explorer").attr("href", href);
-        }
-    });
-}
-
 let viewer = null;
 
 $(document).ready(function() {
     viewer = ReactDOM.render(<ProjectsViewer/>, document.getElementById('projects-viewer'));
-    installDataViewerHref();
 });
