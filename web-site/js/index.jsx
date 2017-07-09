@@ -1,25 +1,3 @@
-/*
-        $(".project").on("contextmenu", function(e) {
-            var thumbnail = $(e.target).closest("a")[0];
-            var url = '/ws/run/exportModule?params=[{"name":"dbId", "value":"' + thumbnail.id.toString() + '"}]';
-            $("#export-link").attr("href", url);
-            $("#delete-link").click(function(e) {
-                e.preventDefault();
-                deleteProject(thumbnail.id);
-            });
-            e.preventDefault();
-            projectContextMenu.css({
-                display: "block",
-                left: e.pageX,
-                top: e.pageY
-            });
-            return false;
-        });
-    }
-
-
-*/
-
 class NewModuleTypeButton extends React.Component {
 
     render() {
@@ -163,7 +141,7 @@ class NewProjectDialog extends React.Component {
                                         <label className="radio-inline" htmlFor="existing">
                                             <input id="existing" type="radio" name="entry-point" disabled={!this.state.hasStartMethod} checked={!this.state.create} onChange={this.handleCreate}/>Use existing</label>
                                     </div>
-                                    <input type="text" className="form-control" placeholder="Enter existing entry point" readOnly={!this.state.create || !this.state.hasStartMethod} onChange={this.handleStartMethod} />
+                                    <input type="text" className="form-control" placeholder="Enter existing entry point" readOnly={this.state.create || !this.state.hasStartMethod} onChange={this.handleStartMethod} />
                                 </div>
                             </div>
                         </form>
@@ -179,7 +157,43 @@ class NewProjectDialog extends React.Component {
 }
 
 
+class ProjectMenu extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.deleteProject = this.deleteProject.bind(this);
+        this.state = { active: false, left: null, top: null };
+    }
+
+    render() {
+        const id = "project-menu-" + this.props.module.dbId.value.toString();
+        const exportUrl = '/ws/run/exportModule?params=[{"name":"dbId", "value":"' + this.props.module.dbId.value.toString() + '"}]';
+        return this.state.active && <div id={id} className="dropdown clearfix" style={{ position: "fixed", display: "block", left: this.state.left, top: this.state.top, zIndex: 999999 }}>
+            <ul className="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style={{ display: "block", position: "static", marginBottom: "5px"}} >
+                <li><a tabIndex="-1" href={exportUrl} target="_blank">Export</a></li>
+                <li><a tabIndex="-1" href="#" onClick={this.deleteProject} >Delete</a></li>
+            </ul>
+        </div>
+
+    }
+
+    deleteProject() {
+        const deleteUrl = '/ws/run/deleteModule?params=[{"name":"dbId", "value":"' + this.props.module.dbId.value.toString() + '"}]';
+        $.getJSON(deleteUrl, null, () => {
+            getRecentModules(response => viewer.recent.modulesReceived(response));
+            getAllModules(response => viewer.all.modulesReceived(response));
+        });
+    }
+
+}
+
 class Project extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.handleContextMenu = this.handleContextMenu.bind(this);
+        this.handleDocumentClick = this.handleDocumentClick.bind(this);
+    }
 
     render() {
         const module = this.props.module;
@@ -187,14 +201,32 @@ class Project extends React.Component {
         const href = "../ide/index.html?dbId=" + module.dbId.value + "&name=" + module.name;
         const imageSrc = module.image || "/img/library.jpg";
         return <div className="col-xs-4 col-sm-2 placeholder project" style={{width: "170px", boxSizing: "content-box" }}>
-                    <a id={id} href={href} target="_blank" className="thumbnail">
+                    <a id={id} href={href} target="_blank" className="thumbnail" onContextMenu={this.handleContextMenu}>
                         <div style={{width: "160px", height: "160px" }}>
                             <img src={imageSrc} style={{ maxWidth: "90%", maxHeight: "90%", width: "auto", height: "auto" }}/>
                         </div>
                         <strong>{module.name}</strong><br/>
                         <span className="text-muted">{module.description}</span>
                     </a>
+                    <ProjectMenu module={this.props.module} ref={ m => this.menu = m} />
                 </div>;
+    }
+
+    handleContextMenu(e) {
+        e.preventDefault();
+        this.menu.setState( { active: true, left: "" + e.pageX + "px",  top: "" + e.pageY + "px" } );
+        document.addEventListener("click", this.handleDocumentClick );
+        document.addEventListener("contextmenu", this.handleDocumentClick );
+    }
+
+    handleDocumentClick(e) {
+        const menu = $("#" + "project-menu-" + this.props.module.dbId.value.toString())[0];
+        const inside = menu==e.target || $.contains(menu, e.target);
+        if(!inside || e.target.href==="#")
+            e.preventDefault();
+        this.menu.setState( { active: false } );
+        document.removeEventListener("contextmenu", this.handleDocumentClick );
+        document.removeEventListener("click", this.handleDocumentClick );
     }
 }
 
