@@ -17,6 +17,118 @@ class NewModuleTypeButton extends React.Component {
     }
 }
 
+class LibraryParameters extends React.Component {
+
+    render() {
+        return null;
+    }
+}
+
+class ScriptParameters extends React.Component {
+
+    render() {
+        return null;
+    }
+}
+
+class OptionalInput extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = { create: this.props.create, name: null };
+        this.handleCreate = this.handleCreate.bind(this);
+        this.handleName = this.handleName.bind(this);
+    }
+
+    handleCreate(e) {
+        const create = e.currentTarget.id === this.props.id + "-create";
+        this.setState( { create: create });
+        this.props.handleCreateMethod(create);
+    }
+
+    handleName(e) {
+        const name = e.currentTarget.value;
+        this.setState( { name: name });
+        this.props.handleMethodName(name);
+    }
+
+
+    render() {
+        return <div className="form-group">
+                    <label htmlFor={ this.props.id + "-create-method" }>{this.props.label}&nbsp;&nbsp;</label>
+                    <div id={ this.props.id + "-create-method" } className="btn-group">
+                        <label className="radio-inline" htmlFor={ this.props.id + "-create" }>
+                            <input id={ this.props.id + "-create" } type="radio" name={ this.props.id + "-start-method" } checked={this.state.create} onChange={this.handleCreate}/>Create new</label>
+                        <label className="radio-inline" htmlFor={ this.props.id + "-existing" }>
+                            <input id={ this.props.id + "-existing" } type="radio" name={ this.props.id + "-start-method" } checked={!this.state.create} onChange={this.handleCreate}/>Use existing</label>
+                    </div>
+                    <input type="text" className="form-control" placeholder={this.props.placeHolder} readOnly={this.state.create} onChange={this.handleName} />
+                </div>
+    }
+
+}
+
+class BatchParameters extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.dialog = this.props.dialog;
+        this.startMethodLabel = "Start method:";
+        this.handleCreateMethod = this.handleCreateMethod.bind(this);
+        this.handleMethodName = this.handleMethodName.bind(this);
+    }
+
+    handleCreateMethod(create) {
+        this.dialog.setState( { createMethod: create } );
+    }
+
+    handleMethodName(name) {
+        this.dialog.setState( { startMethod: name } );
+    }
+
+    render() {
+        return <OptionalInput id="method" label={this.startMethodLabel} create={this.dialog.state.createMethod} placeHolder={ "main_" + this.dialog.state.name }
+                              handleCreateMethod={this.handleCreateMethod} handleMethodName={this.handleMethodName} />
+    }
+
+}
+
+class ServiceParameters extends BatchParameters {
+
+    constructor(props) {
+        super(props);
+        this.startMethodLabel = "Server about to start method:";
+    }
+
+}
+
+class WebSiteParameters extends ServiceParameters {
+
+    constructor(props) {
+        super(props);
+        this.handleCreateHome = this.handleCreateHome.bind(this);
+        this.handleHomeName = this.handleHomeName.bind(this);
+    }
+
+    handleCreateHome(create) {
+        this.dialog.setState( { createHome: create } );
+    }
+
+    handleHomeName(name) {
+        this.dialog.setState( { homePage: name } );
+    }
+
+    render() {
+        return <div>
+                <OptionalInput id="method" label={this.startMethodLabel} create={this.dialog.state.createMethod} placeHolder={ "main_" + this.dialog.state.name }
+                               handleCreateMethod={this.handleCreateMethod} handleMethodName={this.handleMethodName} />
+                <OptionalInput id="home" label="Home page:" create={this.dialog.state.createHome} placeHolder={ this.dialog.state.name + "/index.html" }
+                               handleCreateMethod={this.handleCreateHome} handleMethodName={this.handleHomeName} />
+               </div>;
+    }
+
+}
+
 class NewProjectDialog extends React.Component {
 
     constructor(props) {
@@ -25,10 +137,8 @@ class NewProjectDialog extends React.Component {
         this.handleName = this.handleName.bind(this);
         this.handleDescription = this.handleDescription.bind(this);
         this.handleIcon = this.handleIcon.bind(this);
-        this.handleCreate = this.handleCreate.bind(this);
-        this.handleStartMethod = this.handleStartMethod.bind(this);
         this.createNewModule = this.createNewModule.bind(this);
-        this.state = { type: "batch", name: null, description: null, iconFile: null, hasStartMethod: true, create: true, startMethod: null};
+        this.state = { type: "batch", name: null, description: null, iconFile: null, createMethod: true, startMethod: null, createHome: true, homePage: null };
     }
 
     createNewModule() {
@@ -42,9 +152,10 @@ class NewProjectDialog extends React.Component {
             {name: "type", type: "Text", value: this.state.type},
             {name: "name", type: "Text", value: this.state.name},
             {name: "description", type: "Text", value: this.state.description},
-            {name: "createEntryPoint", type: "Boolean", value: this.state.hasStartMethod},
-            {name: "entryPoint", type: "Text", value: this.state.startMethod},
-            {name: "image", type: "Image", value: image}
+            {name: "image", type: "Image", value: image},
+            {name: "createMethod", type: "Boolean", value: this.state.createMethod},
+            {name: "startMethod", type: "Text", value: this.state.startMethod},
+            {name: "homePage", type: "Text", value: this.state.homePage}
         ];
         formData.append("params", JSON.stringify(params));
         $.ajax({
@@ -67,9 +178,8 @@ class NewProjectDialog extends React.Component {
 
 
     handleModuleType(e) {
-        const id = e.currentTarget.id;
-        const hasStartMethod = ["batch", "service", "website"].indexOf(id) >= 0;
-        this.setState( { type: id, hasStartMethod: hasStartMethod } );
+        const type = e.currentTarget.id;
+        this.setState( { type: type } );
     }
 
     handleName(e) {
@@ -88,16 +198,6 @@ class NewProjectDialog extends React.Component {
         this.setState( { iconFile: iconFile } );
     }
 
-    handleCreate(e) {
-        const id = e.currentTarget.id;
-        this.setState( { create: id==="create" } );
-    }
-
-    handleStartMethod(e) {
-        const startMethod = e.currentTarget.value;
-        this.setState( { startMethod: startMethod } );
-    }
-
     render() {
         const type = this.state.type;
         return <div className="modal-dialog" style={{width: "640px"}}>
@@ -112,11 +212,11 @@ class NewProjectDialog extends React.Component {
                                 <div className="form-group" style={{marginBottom: "0px"}}>
                                     <label htmlFor="module-type">Type</label>
                                     <div id="module-type" className="placeholders btn-group" data-toggle="buttons" style={{marginBottom: "0px"}}>
-                                        <NewModuleTypeButton id="batch" image="/img/batch.jpg" title="Batch" click={this.handleModuleType} active={type==="batch"}/>
                                         <NewModuleTypeButton id="script" image="/img/script.jpg" title="Script" click={this.handleModuleType} active={type==="script"}/>
+                                        <NewModuleTypeButton id="library" image="/img/library.jpg" title="Library" click={this.handleModuleType} active={type==="library"}/>
+                                        <NewModuleTypeButton id="batch" image="/img/batch.jpg" title="Batch" click={this.handleModuleType} active={type==="batch"}/>
                                         <NewModuleTypeButton id="service" image="/img/service.jpg" title="Web service" click={this.handleModuleType} active={type==="service"}/>
                                         <NewModuleTypeButton id="website" image="/img/website.jpg" title="Web site" click={this.handleModuleType} active={type==="website"}/>
-                                        <NewModuleTypeButton id="library" image="/img/library.jpg" title="Library" click={this.handleModuleType} active={type==="library"}/>
                                     </div>
                                 </div>
                             </div>
@@ -133,16 +233,11 @@ class NewProjectDialog extends React.Component {
                                     <label htmlFor="icon">Icon</label>
                                     <input type="file" accept="image/*" className="form-control" id="icon" placeholder="Icon file" onChange={this.handleIcon}/>
                                 </div>
-                                <div className="form-group">
-                                    <label htmlFor="entry-point">Start method&nbsp;&nbsp;</label>
-                                    <div id="has-start-method" className="btn-group">
-                                        <label className="radio-inline" htmlFor="create">
-                                            <input id="create" type="radio" name="entry-point" disabled={!this.state.hasStartMethod} checked={this.state.create} onChange={this.handleCreate}/>Create</label>
-                                        <label className="radio-inline" htmlFor="existing">
-                                            <input id="existing" type="radio" name="entry-point" disabled={!this.state.hasStartMethod} checked={!this.state.create} onChange={this.handleCreate}/>Use existing</label>
-                                    </div>
-                                    <input type="text" className="form-control" placeholder="Enter existing entry point" readOnly={this.state.create || !this.state.hasStartMethod} onChange={this.handleStartMethod} />
-                                </div>
+                                { this.state.type==="script" && <ScriptParameters dialog={this}/> }
+                                { this.state.type==="library" && <LibraryParameters  dialog={this}/> }
+                                { this.state.type==="batch" && <BatchParameters  dialog={this}/> }
+                                { this.state.type==="service" && <ServiceParameters  dialog={this}/> }
+                                { this.state.type==="website" && <WebSiteParameters  dialog={this}/> }
                             </div>
                         </form>
                     </div>
