@@ -129,6 +129,18 @@ class WebSiteParameters extends ServiceParameters {
 
 }
 
+const DroppedFileWidget = widgets.DroppedFileWidget.default;
+
+const DroppedWidgetStyle = {
+    display: 'inline-flex',
+    border: '1px solid lightgray',
+    height: '160px',
+    width: '160px',
+    padding: '20px',
+    alignItems: 'center',
+    justifyContent: 'center'
+};
+
 class NewProjectDialog extends React.Component {
 
     constructor(props) {
@@ -136,7 +148,7 @@ class NewProjectDialog extends React.Component {
         this.handleModuleType = this.handleModuleType.bind(this);
         this.handleName = this.handleName.bind(this);
         this.handleDescription = this.handleDescription.bind(this);
-        this.handleIcon = this.handleIcon.bind(this);
+        this.handleDropIcon = this.handleDropIcon.bind(this);
         this.createNewModule = this.createNewModule.bind(this);
         this.state = { type: "batch", name: null, description: null, iconFile: null, createMethod: true, startMethod: null, createHome: true, homePage: null };
     }
@@ -192,10 +204,8 @@ class NewProjectDialog extends React.Component {
         this.setState( { description: description } );
     }
 
-    handleIcon(e) {
-        const files = e.currentTarget.files;
-        const iconFile = files.length ? files[0] : null;
-        this.setState( { iconFile: iconFile } );
+    handleDropIcon(file) {
+        this.setState( { iconFile: file } );
     }
 
     render() {
@@ -230,8 +240,8 @@ class NewProjectDialog extends React.Component {
                                     <input type="text" className="form-control" id="description" placeholder="Enter module description" onChange={this.handleDescription}/>
                                 </div>
                                 <div id="icon" className="form-group">
-                                    <label htmlFor="icon">Icon</label>
-                                    <input type="file" accept="image/*" className="form-control" id="icon" placeholder="Icon file" onChange={this.handleIcon}/>
+                                    <label htmlFor="icon">Icon</label><br/>
+                                    <DroppedFileWidget onDrop={this.handleDropIcon} style={DroppedWidgetStyle}/>
                                 </div>
                                 { this.state.type==="script" && <ScriptParameters dialog={this}/> }
                                 { this.state.type==="library" && <LibraryParameters  dialog={this}/> }
