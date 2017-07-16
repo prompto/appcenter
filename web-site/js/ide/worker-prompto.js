@@ -9,6 +9,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         Mirror.call(this, sender);
         this.setTimeout(200);
         this.$projectId = null;
+        this.$project = null;
         this.$dialect = null;
         this.$value = this.doc.getValue();
         this.$core = false;
@@ -73,22 +74,19 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
 
     PromptoWorker.prototype.runRemotely = function(id, mode) {
         var worker = this;
-        this.getDataExplorerURL(function(url) {
-            var fullUrl = url + "/ws/run/" + mode + "/" + id.name;
-            worker.loadJSON(fullUrl, function(response) {
-                if(response.error)
+        this.fetchModuleURL(worker.$projectId, function(url) {
+            var fullUrl = url + "ws/run/" + id.name +
+                "?mode=" + mode;
+            worker.loadJSON(fullUrl, function (response) {
+                if (response.error)
                     console.log(response.error);
+                else if(response.data instanceof Array)
+                    response.data.map(console.log);
                 else
                     console.log(response.data);
                 worker.sender.emit("done");
             });
         });
-    };
-
-    PromptoWorker.prototype.executeRemotely = function(id) {
-        var name = id.method || id.test;
-        console.log("Execute remotely " + name + " not implemented yet!");
-        this.sender.emit("done");
     };
 
     PromptoWorker.prototype.interpretLocally = function(id) {
@@ -132,9 +130,9 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
             if(response.error)
                 ; // TODO something
             else {
-                var project = response.data.value;
-                if(loadDependencies && project.dependencies) {
-                    project.dependencies.value.map(function(dep) {
+                worker.$project = response.data.value;
+                if(loadDependencies && worker.$project.dependencies) {
+                    worker.$project.dependencies.value.map(function(dep) {
                         worker.loadDependency(dep.value);
                     });
                 }
@@ -150,21 +148,6 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
                     worker.$repo.registerProjectDeclarations(projectId, declarations);
                     worker.markLoaded("Project");
                 });
-            }
-        });
-    };
-
-    PromptoWorker.prototype.getDataExplorerURL = function(success) {
-        var url = '/ws/run/getDataPort';
-        this.loadJSON(url, function(response) {
-            if (response.error)
-                ; // TODO something
-            else {
-                var href = self.location.substring(0, self.location.indexOf("/js/"))
-                    + "/"
-                    + response.data
-                    + "/";
-                success(href);
             }
         });
     };
@@ -185,6 +168,21 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         var params = [ {name:"dbId", value:projectId.toString()}];
         var url = '/ws/run/getModuleDeclarations?params=' + JSON.stringify(params);
         this.loadJSON(url, success);
+    };
+
+    PromptoWorker.prototype.fetchModuleURL = function(projectId, success) {
+        var params = [ {name:"dbId", value:projectId.toString()}];
+        var url = '/ws/run/getModulePort?params=' + JSON.stringify(params);
+        this.loadJSON(url, function(response) {
+                if (response.error)
+                    ; // TODO something
+                else {
+                    var href = self.location.protocol +
+                        "//" + self.location.hostname +
+                        ":" + response.data + "/";
+                    success(href);
+                }
+        });
     };
 
     PromptoWorker.prototype.prepareCommit = function() {
