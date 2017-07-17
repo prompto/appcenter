@@ -43,13 +43,13 @@ class OptionalInput extends React.Component {
     handleCreate(e) {
         const create = e.currentTarget.id === this.props.id + "-create";
         this.setState( { create: create });
-        this.props.handleCreateMethod(create);
+        this.props.handleCreate(create);
     }
 
     handleName(e) {
         const name = e.currentTarget.value;
         this.setState( { name: name });
-        this.props.handleMethodName(name);
+        this.props.handleName(name);
     }
 
 
@@ -74,21 +74,21 @@ class BatchParameters extends React.Component {
         super(props);
         this.dialog = this.props.dialog;
         this.startMethodLabel = "Start method:";
-        this.handleCreateMethod = this.handleCreateMethod.bind(this);
-        this.handleMethodName = this.handleMethodName.bind(this);
+        this.handleCreateStart = this.handleCreateStart.bind(this);
+        this.handleStartMethod = this.handleStartMethod.bind(this);
     }
 
-    handleCreateMethod(create) {
-        this.dialog.setState( { createMethod: create } );
+    handleCreateStart(create) {
+        this.dialog.setState( { createStart: create } );
     }
 
-    handleMethodName(name) {
+    handleStartMethod(name) {
         this.dialog.setState( { startMethod: name } );
     }
 
     render() {
-        return <OptionalInput id="method" label={this.startMethodLabel} create={this.dialog.state.createMethod} placeHolder={ "main_" + this.dialog.state.name }
-                              handleCreateMethod={this.handleCreateMethod} handleMethodName={this.handleMethodName} />
+        return <OptionalInput id="method" label={this.startMethodLabel} create={this.dialog.state.createStart} placeHolder={ "main_" + this.dialog.state.name }
+                              handleCreate={this.handleCreateStart} handleName={this.handleStartMethod} />
     }
 
 }
@@ -107,23 +107,23 @@ class WebSiteParameters extends ServiceParameters {
     constructor(props) {
         super(props);
         this.handleCreateHome = this.handleCreateHome.bind(this);
-        this.handleHomeName = this.handleHomeName.bind(this);
+        this.handleHomePage = this.handleHomePage.bind(this);
     }
 
     handleCreateHome(create) {
         this.dialog.setState( { createHome: create } );
     }
 
-    handleHomeName(name) {
+    handleHomePage(name) {
         this.dialog.setState( { homePage: name } );
     }
 
     render() {
         return <div>
-                <OptionalInput id="method" label={this.startMethodLabel} create={this.dialog.state.createMethod} placeHolder={ "main_" + this.dialog.state.name }
-                               handleCreateMethod={this.handleCreateMethod} handleMethodName={this.handleMethodName} />
+                <OptionalInput id="method" label={this.startMethodLabel} create={this.dialog.state.createStart} placeHolder={ "main_" + this.dialog.state.name }
+                               handleCreate={this.handleCreateStart} handleName={this.handleStartMethod} />
                 <OptionalInput id="home" label="Home page:" create={this.dialog.state.createHome} placeHolder={ this.dialog.state.name + "/index.html" }
-                               handleCreateMethod={this.handleCreateHome} handleMethodName={this.handleHomeName} />
+                               handleCreate={this.handleCreateHome} handleName={this.handleHomePage} />
                </div>;
     }
 
@@ -150,7 +150,7 @@ class NewProjectDialog extends React.Component {
         this.handleDescription = this.handleDescription.bind(this);
         this.handleDropIcon = this.handleDropIcon.bind(this);
         this.createNewModule = this.createNewModule.bind(this);
-        this.state = { type: "batch", name: null, description: null, iconFile: null, createMethod: true, startMethod: null, createHome: true, homePage: null };
+        this.state = { type: "batch", name: null, description: null, iconFile: null, createStart: true, startMethod: null, createHome: true, homePage: null };
     }
 
     createNewModule() {
@@ -165,8 +165,9 @@ class NewProjectDialog extends React.Component {
             {name: "name", type: "Text", value: this.state.name},
             {name: "description", type: "Text", value: this.state.description},
             {name: "image", type: "Image", value: image},
-            {name: "createMethod", type: "Boolean", value: this.state.createMethod},
+            {name: "createStart", type: "Boolean", value: this.state.createStart},
             {name: "startMethod", type: "Text", value: this.state.startMethod},
+            {name: "createHome", type: "Boolean", value: this.state.createHome},
             {name: "homePage", type: "Text", value: this.state.homePage}
         ];
         formData.append("params", JSON.stringify(params));
