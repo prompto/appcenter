@@ -1,4 +1,5 @@
 const catalog = new Catalog();
+let project = null;
 let currentContent = null;
 
 function getParam(name) {
@@ -36,7 +37,19 @@ function setEditorDefaults() {
 function loadProject(loadDependencies) {
     const dbId = getParam("dbId");
     loadCodeInWorker(dbId, loadDependencies);
+    loadDescription(dbId);
     loadResources(dbId);
+}
+
+function loadDescription(dbId) {
+    var params = [{name: "dbId", value: dbId.toString()}, {name: "register", type: "Boolean", value: false}];
+    var url = '/ws/run/getModuleDescription?params=' + JSON.stringify(params);
+    loadJSON(url, function (response) {
+        if (response.error)
+            alert(response.error);
+        else
+            project = response.data;
+    });
 }
 
 function loadResources(dbId) {
@@ -790,15 +803,45 @@ function getRunMode() {
 
 function run() {
     const msg = getRunnableAlert(currentContent);
-    if(msg)
+    if (msg)
         alert(msg);
-    else {
-        switchUIToRunMode();
-        print("Running " + currentContent.name + "...");
-        const runMode = getRunMode();
-        const window = getEditorWindow();
-        window.runMethod(currentContent, runMode);
-    }
+    else if (currentContent.type === "Html")
+        openWebPage(currentContent);
+    else
+        runPromptoCode();
+}
+
+function openWebPage(id) {
+    const tab = window.open(window.location.href, '_blank', '');
+    fetchModuleURL((url)=>{
+        tab.location = url + id.name;
+        tab.focus();
+    });
+}
+
+function fetchModuleURL(success) {
+    const dbId = getParam("dbId");
+    const params = [ {name:"dbId", value:dbId.toString()}];
+    const url = '/ws/run/getModulePort?params=' + JSON.stringify(params);
+    loadJSON(url, function(response) {
+        if (response.error)
+            ; // TODO something
+        else {
+            const href = self.location.protocol +
+                "//" + self.location.hostname +
+                ":" + response.data + "/";
+            success(href);
+        }
+    });
+}
+
+
+function runPromptoCode() {
+    switchUIToRunMode();
+    print("Running " + currentContent.name + "...");
+    const runMode = getRunMode();
+    const window = getEditorWindow();
+    window.runMethod(currentContent, runMode);
 }
 
 function done(data) {
@@ -813,8 +856,10 @@ function getRunnableAlert(id) {
         return null;
     else if(id.subType==="method" && id.main)
         return null;
+    else if(id.type=="Html" && project.type==="WebSite")
+        return null;
     else
-        return "Can only run tests or main methods!";
+        return "Can only run tests methods, main methods or web pages!";
 }
 
 function stop() {
