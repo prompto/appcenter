@@ -81,7 +81,8 @@ function loadText(url, success) {
         return null;
     };
     xhr.onload = function(e) {
-        success(xhr.responseText);
+        if(success)
+            success(xhr.responseText);
     };
     xhr.open('GET', url);
     //noinspection EqualityComparisonWithCoercionJS
@@ -809,6 +810,20 @@ function run() {
         openWebPage(currentContent);
     else
         runPromptoCode();
+}
+
+function stopServer() {
+    fetchModuleURL((url)=>{
+        var fullUrl = url + "ws/control/exit";
+        loadText(fullUrl);
+    });
+}
+
+function resetServer() {
+    fetchModuleURL((url)=>{
+        var fullUrl = url + "ws/control/clear-context";
+        loadText(fullUrl);
+    });
 }
 
 function openWebPage(id) {

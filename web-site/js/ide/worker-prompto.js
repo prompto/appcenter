@@ -77,6 +77,8 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         this.fetchModuleURL(worker.$projectId, function(url) {
             var fullUrl = url + "ws/run/" + id.name +
                 "?mode=" + mode;
+            if(id.subType==="method")
+                fullUrl = fullUrl + "&main=true";
             worker.loadJSON(fullUrl, function (response) {
                 if (response.error)
                     console.log(response.error);

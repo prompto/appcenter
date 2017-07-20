@@ -64,12 +64,16 @@
                     </div>
                 </form>
                 <form class="navbar-form navbar-right">
+                    <button id="stop-button" type="button" class="btn btn-default" onclick="stopServer();" value="">Stop</button>
+                    <button id="clear-button" type="button" class="btn btn-default" onclick="resetServer();" value="">Reset</button>
+                </form>
+                <form class="navbar-form navbar-right">
                     <div id="run-button-group" class="btn-group">
                         <button id="run-button" type="button" class="btn btn-default" onclick="run();" value="">Run</button>
                         <button id="run-mode" type="button" class="btn btn-default dropdown-toggle"
-                                data-toggle="dropdown"> Local <span class="caret"></span></button>
+                                data-toggle="dropdown"> Local interpreted <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a id="run-local-interpreted" onclick="setRunMode('Local');">Local</a></li>
+                            <li><a id="run-local-interpreted" onclick="setRunMode('Local interpreted');">Local interpreted</a></li>
                             <li><a id="run-server-commpiled" onclick="setRunMode('Server compiled');">Server compiled</a></li>
                             <li><a id="run-server-interpreted" onclick="setRunMode('Server interpreted');">Server interpreted</a></li>
                         </ul>
