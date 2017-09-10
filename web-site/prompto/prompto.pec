@@ -321,9 +321,9 @@ define Url as native resource with attributes path and encoding, and bindings:
 
 define "reads from www.html5rocks.com" as test method doing:
 	// need a cross-domain enabled page for browser testing
-	content = read all from Url with "https://www.html5rocks.com/en/" as path
+	content = read all from Url with "https://www.google.com/" as path
 and verifying: 
-	content contains "HTML5 Rocks"
+	content contains "doctype"
 
 define readJson as native method receiving text returning Any doing:
 	Java: return prompto.reader.JSONReader.read(text);
