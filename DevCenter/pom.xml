@@ -7,7 +7,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
-		<prompto.version>0.0.7</prompto.version>
+		<prompto.version>0.0.8</prompto.version>
 	</properties>
 	
 	<build>
