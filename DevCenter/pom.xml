@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.prompto</groupId>
 	<artifactId>DevCenter</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.4</version>
 
 	<properties>
-		<prompto.version>0.0.8</prompto.version>
+		<prompto.version>0.0.9</prompto.version>
 	</properties>
 	
 	<build>
