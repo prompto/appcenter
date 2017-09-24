@@ -1,0 +1,11 @@
+codeStore: 
+  factory: prompto.memstore.MemStoreFactory
+  dbName: SEED
+  
+dataStore: 
+  factory: prompto.memstore.MemStoreFactory
+  dbName: ROOT
+
+http:
+  protocol: http
+  port: 8080
