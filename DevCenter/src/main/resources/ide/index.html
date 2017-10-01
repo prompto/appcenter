@@ -41,6 +41,24 @@
         .glyphicon {
             float: right;
         }
+
+        .responsive-iframe-container {
+            position: relative;
+            display: block;
+            height: 0;
+            padding: 0;
+            padding-bottom: 100%;
+            overflow: hidden;
+        }
+        .responsive-iframe-container iframe  {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
     </style>
 
 </head>
@@ -115,12 +133,11 @@
     <div class="container-fluid edit-mode">
         <div class="row">
             <div class="col-md-3 sidebar">
-                <div id = "project-tree">
-                </div>
+                <div id = "project-tree"></div>
             </div>
             <div class="col-md-9 col-md-offset-3 main" style="padding: 0">
-               <div class="embed-responsive embed-responsive-4by3 collapse in">
-                    <iframe id="editor" class="embed-responsive-item" src="editor.html"></iframe>
+               <div class="responsive-iframe-container collapse in">
+                    <iframe id="editor" src="editor.html"></iframe>
                </div>
             </div>
         </div>
