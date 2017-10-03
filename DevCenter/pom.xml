@@ -43,11 +43,6 @@
 			<artifactId>CodeServer</artifactId>
 			<version>${prompto.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.prompto</groupId>
-			<artifactId>AwsClient</artifactId>
-			<version>${prompto.version}</version>
-		</dependency>
 	</dependencies>
 
 	<name>Prompto Development Center</name>
