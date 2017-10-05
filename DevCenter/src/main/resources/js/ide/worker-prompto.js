@@ -15,6 +15,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         this.$core = false;
         this.$repo = new codebase.Repository();
         this.$loading = {};
+        this.$authorization = null;
         this.onInit();
     };
 
@@ -259,17 +260,26 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     };
 
     PromptoWorker.prototype.loadText = function(url, success) {
+    	var worker = this;
         var xhr = new XMLHttpRequest();
         xhr.onerror = function(e) {
             self.console.log("Error " + e.target.status + " occurred while receiving the document.");
             return null;
         };
         xhr.onload = function(e) {
+            if(url[0]=="/" || url[0]==".") {
+            	// can't read unsafe header
+            	worker.$authorization = xhr.getResponseHeader("X-Authorization") || null;
+            }
             success(xhr.responseText);
         };
         xhr.open('GET', url);
-        if(url[0]!="/" && url[0]!=".")
+        if(url[0]!="/" && url[0]!=".") {
+        	if(worker.$authorization!=null) 
+                xhr.setRequestHeader("X-Authorization", worker.$authorization);
             xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            xhr.withCredentials = true;
+        }
         xhr.send(null);
     };
 
