@@ -6,6 +6,10 @@ dataStore:
   factory: prompto.memstore.MemStoreFactory
   dbName: TOOLS
 
+targetDataStore: 
+  factory: prompto.memstore.MemStoreFactory
+  dbName: TOOLS
+
 http:
   protocol: http
   port: 8080

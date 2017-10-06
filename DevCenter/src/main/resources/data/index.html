@@ -65,7 +65,7 @@
                 alert("Internal error");
                 return;
             }
-            var url = "/ws/data?first=" + first + "&last=" + last + "&query=" + encodeURIComponent(query);
+            var url = "/ws/data?format=raw&first=" + first + "&last=" + last + "&query=" + encodeURIComponent(query);
             var xhr = $.get(url, null, displayResults, "JSON")
                     .fail(function (xhr) {
                         alert(xhr.statusText);
