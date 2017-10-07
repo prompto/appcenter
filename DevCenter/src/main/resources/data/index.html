@@ -65,7 +65,7 @@
                 alert("Internal error");
                 return;
             }
-            var url = "/ws/data?format=raw&first=" + first + "&last=" + last + "&query=" + encodeURIComponent(query);
+            var url = "/ws/data/fetch?format=list&first=" + first + "&last=" + last + "&query=" + encodeURIComponent(query);
             var xhr = $.get(url, null, displayResults, "JSON")
                     .fail(function (xhr) {
                         alert(xhr.statusText);
@@ -79,7 +79,11 @@
         }
 
         function displayRowsXtoY(response) {
-            var totalLength = response.data.totalLength;
+        	if(response.error) {
+                $("#rowsXtoY").html("No matching data");
+        		return;
+        	}
+        	var totalLength = response.data.totalLength;
             if(totalLength==0)
                 $("#rowsXtoY").html("No matching data");
             else {
@@ -93,7 +97,11 @@
 
 
         function displayPagination(response) {
-            var totalLength = response.data.totalLength;
+        	if(response.error) {
+                $("#pagination").hide();
+            	return;
+        	}
+        	var totalLength = response.data.totalLength;
             if(totalLength<=$rows)
                 $("#pagination").hide();
             else {
@@ -142,7 +150,11 @@
         }
 
         function displayTable(response) {
-            var rows = response.data.value;
+        	if(response.error) {
+                $("#rowsXtoY").html(response.error);
+        		return;
+        	}
+           var rows = response.data.value;
             if(rows.length>0) {
                 var headers = {Category: "Text", dbId: extractType(rows[0].value["dbId"])};
                 rows = extractRows(headers, rows)
