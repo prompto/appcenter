@@ -122,11 +122,11 @@ class WebSiteParameters extends ServiceParameters {
 
     render() {
         let moduleName = this.dialog.state.name || "";
-        let methodName = "main_" + moduleName.replace(/ /g, "_");
+        let cleanName = moduleName.replace(/ /g, "_");
         return <div>
-                <OptionalInput id="method" label={this.startMethodLabel} create={this.dialog.state.createStart} placeHolder={ methodName }
+                <OptionalInput id="method" label={this.startMethodLabel} create={this.dialog.state.createStart} placeHolder={ "main_" + cleanName }
                                handleCreate={this.handleCreateStart} handleName={this.handleStartMethod} />
-                <OptionalInput id="home" label="Home page:" create={this.dialog.state.createHome} placeHolder={ this.dialog.state.name + "/index.html" }
+                <OptionalInput id="home" label="Home page:" create={this.dialog.state.createHome} placeHolder={ cleanName + "/index.html" }
                                handleCreate={this.handleCreateHome} handleName={this.handleHomePage} />
                </div>;
     }
