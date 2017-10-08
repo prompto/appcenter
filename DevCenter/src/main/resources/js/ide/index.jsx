@@ -388,7 +388,8 @@ class NewTextResourceDialog extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {folder: getParam("name"), name: '', extension: this.props.type.toLowerCase().replace(" ", "-")};
+        let cleanName = getParam("name").replace(/ /g, "_");
+        this.state = {folder: cleanName, name: '', extension: this.props.type.toLowerCase().replace(" ", "-")};
         this.handleFolder = this.handleFolder.bind(this);
         this.handleName = this.handleName.bind(this);
         this.handleExtension = this.handleExtension.bind(this);
@@ -604,7 +605,8 @@ class NewFileResourceDialog extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {folder: getParam("name"), file: null};
+        let cleanName = getParam("name").replace(/ /g, "_");
+        this.state = {folder: cleanName, file: null};
         this.handleFolder = this.handleFolder.bind(this);
         this.handleName = this.handleName.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -784,8 +786,8 @@ function prepareResourceFiles(formData, resources) {
         let module = stuff.value.module;
         if(module) {
             // avoid sending back large objects
-            delete obj.value.module.value.dependencies;
-            delete obj.value.module.value.image;
+            delete module.value.dependencies;
+            delete module.value.image;
         }
         return res;
     });
