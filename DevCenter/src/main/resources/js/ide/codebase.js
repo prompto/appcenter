@@ -112,8 +112,12 @@ Repository.prototype.registerProjectDeclarations = function(moduleId, declaratio
         var decl = parse(obj.value.body, obj.value.dialect);
         decl.register(worker.projectContext);
         // prepare for commit
-        if(obj.value.module)
-            delete obj.value.module.value.image; // to avoid sending it back
+        var module = obj.value.module;
+        if(module) {
+            // avoid sending back large objects
+            delete obj.value.module.value.dependencies;
+            delete obj.value.module.value.image;
+        }
         worker.registerClean(obj);
     });
 };
@@ -198,7 +202,7 @@ Repository.prototype.registerDirty = function(decls, dialect) {
         } else {
             decl_obj = {
                 name: decl.name,
-                version: "0.0.0.1",
+                version: "0.0.1",
                 dialect: dialect,
                 body: unparse(this.projectContext, decl, dialect),
                 module: {

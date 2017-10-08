@@ -338,12 +338,17 @@ function installNewDropdownHandler() {
     });
 }
 
+function renderTitle() {
+    document.title = "Code Editor for: " + getParam("name");
+}
+
 function renderNavbar() {
     const projectName = getParam("name");
     ReactDOM.render(<a className="navbar-brand">Prompto Code Editor for: <b>{projectName}</b></a>, document.getElementById('project-name'));
 }
 
 $(document).ready(function () {
+    renderTitle();
     renderNavbar();
     installDialectDropdownHandler();
     installNewDropdownHandler();
@@ -775,6 +780,12 @@ function prepareResourceFiles(formData, resources) {
             formData.append(stuff.value.data.partName, stuff.value.file);
             delete stuff.value.file;
             res.value.stuff = stuff;
+        }
+        let module = stuff.value.module;
+        if(module) {
+            // avoid sending back large objects
+            delete obj.value.module.value.dependencies;
+            delete obj.value.module.value.image;
         }
         return res;
     });
