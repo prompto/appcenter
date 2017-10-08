@@ -162,7 +162,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     };
 
     PromptoWorker.prototype.fetchLibraryDeclarations = function(name, version, success) {
-        var params = [ {name:"name", type:"Text", value:name}, {name:"version", type:"Version", value:version}];
+        var params = [ {name:"name", type:"Text", value:name}, {name:"version", type:version.type, value:version.value} ];
         var url = '/ws/run/getModuleDeclarations?params=' + JSON.stringify(params);
         this.loadJSON(url, success);
     };
