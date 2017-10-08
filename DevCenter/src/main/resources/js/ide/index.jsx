@@ -3,8 +3,8 @@ let project = null;
 let currentContent = null;
 
 function getParam(name) {
-    // return new URL(window.location.href).searchParams.get(name);
-    return new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href)[1];
+    let value = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href)[1];
+    return decodeURIComponent(value);
 }
 
 
