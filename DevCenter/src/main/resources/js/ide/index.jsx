@@ -1,6 +1,8 @@
 const catalog = new Catalog();
 let project = null;
 let currentContent = null;
+let activeContent = null;
+
 
 function getParam(name) {
     let value = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href)[1];
@@ -407,7 +409,7 @@ class NewTextResourceDialog extends React.Component {
                         <div className="modal-body">
                             <form className="form" role="form">
                                 <div className="form-group">
-                                    <label className="control-label" htmlFor="resourcePath">Enter the unique path for this resource:</label>
+                                    <label className="control-label" htmlFor="folderInput">Enter the unique path for this resource:</label>
                                     <div className="input-group input-group-lg">
                                         <input type="text" className="form-control input-lg" id="folderInput" value={this.state.folder} style={{width:245}} onChange={this.handleFolder}/>
                                         <span className="input-group-addon" id="basic-addon1">/</span>
@@ -623,7 +625,7 @@ class NewFileResourceDialog extends React.Component {
                 <div className="modal-body">
                     <form className="form" role="form">
                         <div className="form-group">
-                            <label className="control-label" htmlFor="resourcePath">Enter the unique path for this resource:</label>
+                            <label className="control-label" htmlFor="folderInput">Enter the unique path for this resource:</label>
                             <div className="input-group input-group-lg">
                                 <input type="text" className="form-control input-lg" id="folderInput" value={this.state.folder} style={{width:245}} onChange={this.handleFolder}/>
                                 <span className="input-group-addon" id="basic-addon1">/</span>
@@ -751,6 +753,7 @@ function revert() {
 
 function commit() {
     // TODO confirm
+    activeContent = currentContent;
     setEditorContent({ type: "Prompto" });
     const window = getEditorWindow();
     window.prepareCommit();
@@ -770,7 +773,11 @@ function commitPrepared(declarations) {
         xhr.addEventListener('error', function(failure) { commitFailed(failure); });
         xhr.open('POST', '/ws/run/storeEdited', true);
         xhr.send(form);
+    } else {
+        setEditorContent(activeContent);
+        activeContent = null;
     }
+
 }
 
 function prepareResourceFiles(formData, resources) {
@@ -802,6 +809,8 @@ function commitSuccessful(success) {
     alert("Commit ok!");
     const window = getEditorWindow();
     window.commitSuccessful();
+    setEditorContent(activeContent);
+    activeContent = null;
 }
 
 function setRunMode(label) {
