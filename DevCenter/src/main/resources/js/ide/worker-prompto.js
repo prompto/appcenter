@@ -95,9 +95,15 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     PromptoWorker.prototype.interpretLocally = function(id) {
         var context = this.$repo.projectContext;
         safe_require(function () {
-            if(id.subType==="test")
-                prompto.runtime.Interpreter.interpretTest(context, id.name);
-            else  {
+            if(id.subType==="test") {
+                var store = prompto.store.DataStore.instance;
+                prompto.store.DataStore.instance = new prompto.memstore.MemStore();
+                try {
+                    prompto.runtime.Interpreter.interpretTest(context, id.name);
+                } finally {
+                    prompto.store.DataStore.instance = store;
+                }
+            } else  {
                 prompto.runtime.Interpreter.interpret(context, id.name, "");
                 console.log("Finished running " + id.name);
             }
