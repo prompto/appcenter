@@ -28,7 +28,7 @@ function Catalog() {
         if (delta.categories)
             this.removeStuffByName(this.categories, delta.categories);
         if (delta.enumerations)
-            this.removeStuffByName(this.enumerations, delta.enumerations);
+            this.removeEnums(this.enumerations, delta.enumerations);
         if (delta.tests)
             this.removeStuffByName(this.tests, delta.tests);
     };
@@ -40,7 +40,7 @@ function Catalog() {
         if (delta.categories)
             this.categories = this.addStuffByName(this.categories, delta.categories, core);
         if (delta.enumerations)
-            this.enumerations = this.addStuffByName(this.enumerations, delta.enumerations, core);
+            this.enumerations = this.addEnumsByName(this.enumerations, delta.enumerations, core);
         if (delta.tests)
             this.tests = this.addStuffByName(this.tests, delta.tests, core);
         if (delta.resources)
@@ -48,7 +48,9 @@ function Catalog() {
     };
     this.removeStuffByName = function(current, removed) {
         removed.map(name => {
-            const idx = current.findIndex(function(a) { return a.name === name; });
+            const idx = current.findIndex(function(a) {
+                return a.name === name;
+            });
             if (idx >= 0)
                 current.splice(idx, 1);
         });
@@ -60,9 +62,27 @@ function Catalog() {
         current = current.concat(added);
         return current.sort(function(a,b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
     };
+    this.removeEnums = function(current, removed) {
+        removed.map(e => {
+            const idx = current.findIndex(function(a) {
+                return a.name === e.name;
+            });
+        if (idx >= 0)
+            current.splice(idx, 1);
+    });
+    };
+    this.addEnumsByName = function(current, toAdd, core) {
+        toAdd.forEach(value => {
+            value.core = core;
+        });
+        current = current.concat(toAdd);
+        return current.sort(function(a,b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
+    };
     this.removeMethods = function(methods) {
         methods.map(method => {
-            const idx1 = this.methods.findIndex(function(a) { return a.name === method.name; } );
+            const idx1 = this.methods.findIndex(function(a) {
+                return a.name === method.name;
+            } );
             if (idx1 >= 0) {
                 const map = this.methods[idx1];
                 if (map.protos.length === method.protos.length)

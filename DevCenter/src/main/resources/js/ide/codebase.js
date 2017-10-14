@@ -198,6 +198,8 @@ Repository.prototype.registerDirty = function(decls, dialect) {
                     decl_obj.prototype = decl.getProto();
                 if(decl.storable!==undefined)
                     decl_obj.storable = decl.storable;
+                if(decl.symbols!==undefined)
+                    decl_obj.symbols = decl.symbols.map(function(s) { return s.name; });
             }
         } else {
             decl_obj = {
@@ -216,6 +218,8 @@ Repository.prototype.registerDirty = function(decls, dialect) {
                 decl_obj.prototype = decl.getProto();
             if(decl.storable!==undefined)
                 decl_obj.storable = decl.storable;
+            if(decl.symbols!==undefined)
+                decl_obj.symbols = decl.symbols.map(function(s) { return s.name; });
             this.statuses[id] = {
                 editStatus: "CREATED",
                 stuff : {
@@ -483,7 +487,11 @@ Delta.prototype.filterOutDuplicates = function() {
 };
 
 Delta.prototype.filterOutDuplicatesInField = function(field) {
-    var fn = field==="methods" ? this.filterOutDuplicatesInMethods : this.filterOutDuplicatesInLists;
+    var fn = this.filterOutDuplicatesInLists;
+    if(field==="methods")
+        fn = this.filterOutDuplicatesInMethods;
+    else if(field==="enumerations")
+        fn = (a, b) => this.filterOutDuplicatesInLists(a, b, "name");
     var length = fn.bind(this)(this.removed[field], this.added[field]);
     if(this.removed[field] && !this.removed[field].length)
         delete this.removed[field];
@@ -525,6 +533,7 @@ Delta.prototype.filterOutDuplicatesInLists = function(a, b, field) {
     else
         return 0;
 };
+
 
 Delta.prototype.filterOutDuplicatesInMethods = function(a, b) {
     if(a && b) {
