@@ -141,6 +141,10 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
             this.$worker && this.$worker.send("prepareCommit", [ dbId ] );
         };
 
+        this.commitFailed = function(dbId) {
+            this.$worker && this.$worker.send("commitFailed", [ dbId ] );
+        };
+
         this.commitSuccessful = function(dbId) {
             this.$worker && this.$worker.send("commitSuccessful", [ dbId ] );
         };

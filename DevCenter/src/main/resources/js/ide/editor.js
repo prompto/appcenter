@@ -100,6 +100,14 @@ function commitPrepared(declarations) {
     parent.commitPrepared(declarations);
 }
 
+
+function commitFailed() {
+    var session = promptoEditor.getSession();
+    var mode = session.getMode();
+    mode.commitFailed();
+}
+
+
 function commitSuccessful() {
     var session = promptoEditor.getSession();
     var mode = session.getMode();

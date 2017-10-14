@@ -311,6 +311,9 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         this.sender.emit("commitPrepared", edited);
     };
 
+    PromptoWorker.prototype.commitFailed = function() {
+    };
+
     PromptoWorker.prototype.commitSuccessful = function() {
         var worker = this;
         var declarations = this.fetchProjectDeclarations(this.$projectId, function(response) {

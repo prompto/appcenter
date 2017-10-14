@@ -774,6 +774,7 @@ function commitPrepared(declarations) {
         xhr.open('POST', '/ws/run/storeEdited', true);
         xhr.send(form);
     } else {
+        alert("Nothing to commit!");
         setEditorContent(activeContent);
         activeContent = null;
     }
@@ -803,6 +804,10 @@ function prepareResourceFiles(formData, resources) {
 
 function commitFailed(failure) {
     alert("Commit failed!"); // TODO send to UI
+    const window = getEditorWindow();
+    window.commitFailed();
+    setEditorContent(activeContent);
+    activeContent = null;
 }
 
 function commitSuccessful(success) {
