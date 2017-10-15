@@ -843,7 +843,7 @@ function stopServer() {
     fetchModuleURL((url)=>{
         var fullUrl = url + "ws/control/exit";
         loadText(fullUrl);
-    });
+    }, true); // optional  = true, don't launch server only to stop it
 }
 
 function resetServer() {
@@ -861,13 +861,15 @@ function openWebPage(id) {
     });
 }
 
-function fetchModuleURL(success) {
+function fetchModuleURL(success, optional) {
     const dbId = getParam("dbId");
-    const params = [ {name:"dbId", value:dbId.toString()}];
+    const params = [ {name:"dbId", value:dbId.toString()}, {name: "optional", type: "Boolean", value: optional || false}];
     const url = '/ws/run/getModulePort?params=' + JSON.stringify(params);
     loadJSON(url, function(response) {
         if (response.error)
             ; // TODO something
+        else if(response.data == -1)
+            alert("Module not running!");
         else {
             const href = self.location.protocol +
                 "//" + self.location.hostname +

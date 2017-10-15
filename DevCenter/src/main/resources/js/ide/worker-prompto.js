@@ -180,7 +180,7 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     };
 
     PromptoWorker.prototype.fetchModuleURL = function(projectId, success) {
-        var params = [ {name:"dbId", value:projectId.toString()}];
+        var params = [ {name:"dbId", value:projectId.toString()}, {name:"optional", type:"Boolean", value: false}];
         var url = '/ws/run/getModulePort?params=' + JSON.stringify(params);
         this.loadJSON(url, function(response) {
                 if (response.error)
