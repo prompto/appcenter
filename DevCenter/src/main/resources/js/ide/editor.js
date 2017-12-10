@@ -78,11 +78,6 @@ function getResourceBody() {
     return resourceEditor.getValue();
 }
 
-function destroy(content) {
-    var methodName = "destroy" + content.type;
-    window[methodName](content);
-}
-
 function destroyPrompto(content) {
     var session = promptoEditor.getSession();
     var mode = session.getMode();

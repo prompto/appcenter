@@ -54,7 +54,7 @@ function loadDescription(dbId) {
     });
 }
 
-function loadResources(dbId) {
+function loadResources(dbId, success) {
     const params = [ {name:"dbId", value:dbId} ];
     const url = '/ws/run/getModuleResources?params=' + JSON.stringify(params);
     loadJSON(url, function(response) {
@@ -65,6 +65,8 @@ function loadResources(dbId) {
             const delta = { added: { resources: resources}};
             catalogUpdated(delta, () => {});
             catalog.markResources(resources, "CLEAN");
+            if(success)
+                success();
         }
     });
 }
@@ -738,10 +740,18 @@ function destroy() {
     if(currentContent===null)
         window.alert("Nothing to destroy!");
     else {
-        const id = currentContent;
+        const content = currentContent;
         currentContent = null;
-        const window = getEditorWindow();
-        window.destroy(id);
+        if(content.type==="Prompto") {
+            const window = getEditorWindow();
+            window.destroy(content);
+        } else {
+            var res = catalog.resourceFromContent(content);
+            catalog.removeResources([res]);
+            catalogUpdated({}, ()=>{
+                setEditorContent({ type: "Prompto" });
+            });
+        }
     }
 }
 
@@ -814,8 +824,11 @@ function commitSuccessful(success) {
     alert("Commit ok!");
     const window = getEditorWindow();
     window.commitSuccessful();
-    setEditorContent(activeContent);
-    activeContent = null;
+    const dbId = getParam("dbId");
+    loadResources(dbId, ()=>{
+        setEditorContent(activeContent);
+        activeContent = null;
+    });
 }
 
 function setRunMode(label) {
