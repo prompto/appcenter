@@ -744,7 +744,7 @@ function destroy() {
         currentContent = null;
         if(content.type==="Prompto") {
             const window = getEditorWindow();
-            window.destroy(content);
+            window.destroyPrompto(content);
         } else {
             var res = catalog.resourceFromContent(content);
             catalog.removeResources([res]);
