@@ -5,6 +5,7 @@ class Project extends React.Component {
     constructor(props) {
         super(props);
         this.state = {contextMenu: false};
+        this.handleClick = this.handleClick.bind(this);
         this.handleContextMenu = this.handleContextMenu.bind(this);
         this.handleDocumentClick = this.handleDocumentClick.bind(this);
     }
@@ -12,11 +13,10 @@ class Project extends React.Component {
     render() {
         const module = this.props.module;
         const id = module.dbId.value;
-        const href = "../ide/index.html?dbId=" + module.dbId.value + "&name=" + module.name;
         const imageSrc = module.image || "/img/library.jpg";
         const menuStyle = { position: "fixed", display: "block", left: this.state.menuLeft, top: this.state.menuTop, zIndex: 999999 };
         return <Col xs={4} sm={2} style={{width: "170px", boxSizing: "content-box" }} onContextMenu={this.handleContextMenu}>
-                    <Thumbnail src={imageSrc}>
+                    <Thumbnail src={imageSrc} onClick={this.handleClick}>
                         <p><strong>{module.name}</strong></p>
                         <span className="text-muted">{module.description}</span>
                     </Thumbnail>
@@ -27,6 +27,12 @@ class Project extends React.Component {
                         </ul>
                     </Clearfix>}
                 </Col>;
+    }
+
+    handleClick() {
+        const module = this.props.module;
+        const href = "../ide/index.html?dbId=" + module.dbId.value + "&name=" + module.name;
+        window.open(href, "_blank");
     }
 
     handleContextMenu(e) {

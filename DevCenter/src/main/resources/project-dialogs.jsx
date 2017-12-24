@@ -209,7 +209,7 @@ class NewProjectDialog extends React.Component {
                 </Modal.Header>
 
                 <Modal.Body style={{padding: "8px"}}>
-                    <form>
+                    <form style={{margin: "8px"}}>
                         <FormGroup style={{marginBottom: "0px"}}>
                             <ControlLabel>Type</ControlLabel><br/>
                             <ToggleButtonGroup name={"project-type"}>
