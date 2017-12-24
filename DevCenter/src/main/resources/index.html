@@ -10,57 +10,29 @@
     <link rel="icon" href="../../favicon.ico">
 
     <title>Prompto Development Center</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.css">
     <link href="css/prompto-main.css" rel="stylesheet">
-
-    <script src="js/lib/jquery-3.2.1.min.js"></script>
-    <script src="js/lib/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="js/lib/ie10-viewport-bug-workaround.js"></script>
-    <script src="js/lib/FileSaver.js"></script>
-    <script src="js/lib/react.js"></script>
-    <script src="js/lib/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.31.5/react-bootstrap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
     <script src="js/lib/dev-center-widgets.js"></script>
-    <script src="js/lib/babel.min.js"></script>
-    <script type="text/babel" src="/js/index.jsx"></script>
-
+    <script id="script" type="text/babel" src="index.jsx"></script>
+    <script id="script" type="text/babel" src="project-dialogs.jsx"></script>
+    <script type="text/babel">
+        // can't use onload because it gets called before jsx script is loaded by babel, but making this the last script is sufficient
+        ReactDOM.render( <HomePage />, document.getElementById('content'));
+    </script>
 </head>
 
 <body>
-
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Prompto Development Center</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <li><a id="data-explorer" href="/data/index.html" target="_blank">Data</a></li>
-                <li><a href="#">Tutorials</a></li>
-                <li><a href="http://www.prompto.org" target="_blank">Reference</a></li>
-            </ul>
-            <form class="navbar-form navbar-right edit-mode">
-                <button id="btnNew" type="button" class="form-control" onclick="newProject();">New</button>
-                <button id="btnImport" type="button" class="form-control" onclick="importProject();">Import</button>
-            </form>
-        </div>
+<body>
+    <div id="content">
     </div>
-</nav>
+</body>
 
-<div class="container-fluid">
-    <div id="projects-viewer"></div>
-</div>
-<div id="new-project-dialog" class="modal fade" />
 
 </body>
 </html>
