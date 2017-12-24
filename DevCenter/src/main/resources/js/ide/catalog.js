@@ -103,16 +103,19 @@ function Catalog() {
         const added = this.methods.concat(toAdd);
         this.methods = added.sort(function(a,b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
     };
-    this.textMimeTypeToList = {
-        "text/html": this.resources.html,
-        "text/javascript": this.resources.js,
-        "text/babel": this.resources.jsx,
-        "text/css": this.resources.css,
-        "text/json": this.resources.json,
-        "text/xml": this.resources.xml,
-        "text/yaml": this.resources.yaml,
-        "text/plain": this.resources.text
+    this.mapTextMimeTypeToList = function() {
+        return {
+            "text/html": this.resources.html,
+            "text/javascript": this.resources.js,
+            "text/babel": this.resources.jsx,
+            "text/css": this.resources.css,
+            "text/json": this.resources.json,
+            "text/xml": this.resources.xml,
+            "text/yaml": this.resources.yaml,
+            "text/plain": this.resources.text
+        };
     };
+    this.textMimeTypeToList = this.mapTextMimeTypeToList();
     this.listFromResource = function(res) {
         var mimeType = res.value.mimeType;
         if(mimeType.startsWith("text/")) {
@@ -126,6 +129,10 @@ function Catalog() {
         } else {
             return this.resources.bin;
         }
+    };
+    this.clearResources = function() {
+        this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], yaml: [], text: [], image: [], audio: [], video: [], bin: [], statuses: {}};
+        this.textMimeTypeToList = this.mapTextMimeTypeToList();
     };
     this.removeResources = function(removed) {
         removed.map(res => {

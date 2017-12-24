@@ -61,6 +61,7 @@ function loadResources(dbId, success) {
         if (response.error)
             alert(response.error);
         else {
+            catalog.clearResources();
             const resources = response.data.value;
             const delta = { added: { resources: resources}};
             catalogUpdated(delta, () => {});
