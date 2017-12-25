@@ -36,7 +36,7 @@ class Project extends React.Component {
     }
 
     handleContextMenu(e) {
-        e.preventDefault();
+        e.stopPropagation();
         this.setState( { contextMenu: true, menuLeft: e.pageX,  menuTop: e.pageY } );
         document.addEventListener("click", this.handleDocumentClick );
         document.addEventListener("contextmenu", this.handleDocumentClick );
@@ -56,7 +56,7 @@ class Project extends React.Component {
         const inside = this.contains(menu, e.target);
         // only bubble up useful clicks
         if(!inside || e.target.href==="#")
-            e.preventDefault();
+            e.stopPropagation();
         this.setState( { contextMenu: false } );
         document.removeEventListener("contextmenu", this.handleDocumentClick );
         document.removeEventListener("click", this.handleDocumentClick );

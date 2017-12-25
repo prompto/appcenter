@@ -9,7 +9,6 @@ function Catalog() {
     this.enumerations = [];
     this.tests = [];
     this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], yaml: [], text: [], image: [], audio: [], video: [], bin: [], statuses: {}};
-    this.showLibraries = false;
     // for performance reasons, we only receive a delta from the ace worker
     // so can't rely on just React virtual DOM
     this.applyDelta = function(delta) {

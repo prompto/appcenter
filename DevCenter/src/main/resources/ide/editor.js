@@ -69,11 +69,6 @@ function setContentText(editor, content) {
     setContentResource(editor, content);
 }
 
-function setContentImage(editor, content) {
-    var elem = document.getElementById('file-container');
-    parent.setContentImage(elem, content);
-}
-
 function getResourceBody() {
     return resourceEditor.getValue();
 }
@@ -126,15 +121,23 @@ function done(data) {
     parent.done(data);
 }
 
+function show(id) {
+    document.getElementById(id).style.display = "block";    
+}
+
+function hide(id) {
+    document.getElementById(id).style.display = "none";
+}
+
 function setMode(mode, callback) {
     if (mode === modeId) {
         var editor = mode === "Prompto" ? promptoEditor : resourceEditor;
         callback(editor);
         return;
     }
-    $("#prompto-container").hide();
-    $("#resource-container").hide();
-    $("#file-container").hide();
+    hide("prompto-container");
+    hide("resource-container");
+    hide("file-container");
     modeId = null; // so we know mode is stale
     var methodName = "setMode" + mode;
     if (!window[methodName])
@@ -148,68 +151,68 @@ function setMode(mode, callback) {
 }
 
 function setModePrompto(callback) {
-    $("#prompto-container").show();
+    show("prompto-container");
     callback(promptoEditor);
 }
 
 function setModeHtml(callback) {
-    $("#resource-container").show();
+    show("resource-container");
     resourceEditor.getSession().setMode("ace/mode/html", () => {
         callback(resourceEditor);
     });
 }
 
 function setModeJs(callback) {
-    $("#resource-container").show();
+    show("resource-container");
     resourceEditor.getSession().setMode("ace/mode/javascript", () => {
         callback(resourceEditor);
     });
 }
 
 function setModeJsx(callback) {
-    $("#resource-container").show();
+    show("resource-container");
     resourceEditor.getSession().setMode("ace/mode/jsx", () => {
         callback(resourceEditor);
     });
 }
 
 function setModeCss(callback) {
-    $("#resource-container").show();
+    show("resource-container");
     resourceEditor.getSession().setMode("ace/mode/css", () => {
         callback(resourceEditor);
     });
 }
 
 function setModeJson(callback) {
-    $("#resource-container").show();
+    show("resource-container");
     resourceEditor.getSession().setMode("ace/mode/json", () => {
         callback(resourceEditor);
     });
 }
 
 function setModeXml(callback) {
-    $("#resource-container").show();
+    show("resource-container");
     resourceEditor.getSession().setMode("ace/mode/xml", () => {
         callback(resourceEditor);
     });
 }
 
 function setModeYaml(callback) {
-    $("#resource-container").show();
+    show("resource-container");
     resourceEditor.getSession().setMode("ace/mode/yaml", () => {
         callback(resourceEditor);
     });
 }
 
 function setModeTxt(callback) {
-    $("#resource-container").show();
+    show("resource-container");
     resourceEditor.getSession().setMode("ace/mode/text", () => {
         callback(resourceEditor);
     });
 }
 
 function setModeImage(callback) {
-    $("#file-container").show();
+    show("file-container");
     callback(null);
 }
 
@@ -235,13 +238,12 @@ function initResourceEditor(callback) {
     });
 }
 
-$(document).ready(function () {
+function documentLoaded() {
     initResourceEditor(editor => {
         resourceEditor = editor;
     });
     initPromptoEditor(editor => {
         promptoEditor = editor;
-        parent.editorReady();
+        parent.editorMounted();
     });
-});
-
+}

@@ -1,0 +1,11 @@
+.navbar-fixed-top {
+    border: 0;
+}
+
+.btn-group > .btn-default {
+    background-image: none;
+}
+
+.navbar-form > .btn-default {
+    background-image: none;
+}

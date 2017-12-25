@@ -65,9 +65,9 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     };
 
     PromptoWorker.prototype.runMethod = function(id, mode) {
-        if (mode.indexOf("LOCAL")>=0)
+        if (mode==="LI")
             this.interpretLocally(id);
-        else if(mode.indexOf("INTERPRET")>=0)
+        else if(mode==="SI")
             this.runRemotely(id,"interpret");
         else // compiled
             this.runRemotely(id, "execute");
