@@ -12,13 +12,12 @@ class Project extends React.Component {
 
     render() {
         const module = this.props.module;
-        const id = module.dbId.value;
-        const imageSrc = module.image || "/img/library.jpg";
+        const imageSrc = module.value.image || "/img/" + module.type.toLowerCase() + ".jpg";
         const menuStyle = { position: "fixed", display: "block", left: this.state.menuLeft, top: this.state.menuTop, zIndex: 999999 };
         return <Col xs={4} sm={2} style={{width: "170px", boxSizing: "content-box" }} onContextMenu={this.handleContextMenu}>
                     <Thumbnail src={imageSrc} onClick={this.handleClick}>
-                        <p><strong>{module.name}</strong></p>
-                        <span className="text-muted">{module.description}</span>
+                        <p><strong>{module.value.name}</strong></p>
+                        <span className="text-muted">{module.value.description}</span>
                     </Thumbnail>
                     {this.state.contextMenu && <Clearfix id="project-menu" style={menuStyle}>
                         <ul className="dropdown-menu" style={{display: "block"}}>
@@ -31,7 +30,7 @@ class Project extends React.Component {
 
     handleClick() {
         const module = this.props.module;
-        const href = "../ide/index.html?dbId=" + module.dbId.value + "&name=" + module.name;
+        const href = "../ide/index.html?dbId=" + module.value.dbId.value + "&name=" + module.value.name;
         window.open(href, "_blank");
     }
 
@@ -69,7 +68,7 @@ class ProjectsSection extends React.Component {
 
     render() {
         return <Row>
-            {this.props.modules.map( module => <Project key={module.dbId.value} root={this.props.root} module={module} />)}
+            {this.props.modules.map( module => <Project key={module.value.dbId.value} root={this.props.root} module={module} />)}
         </Row>;
     }
 }
@@ -135,17 +134,19 @@ class HomePage extends React.Component {
             alert(response.error);
             return [];
         } else
-            return response.data.value.map(item => item.value);
+            return response.data.value;
     }
 
     exportProject(module) {
-        const exportUrl = '/ws/run/exportModule?params=[{"name":"dbId", "value":"' + module.dbId.value.toString() + '"}]';
+        const dbId = module.value.dbId.value.toString()
+        const exportUrl = '/ws/run/exportModule?params=[{"name":"dbId", "value":"' + dbId + '"}]';
         window.open(exportUrl, "Download");
 
     }
 
     deleteProject(module) {
-        const params = { params: JSON.stringify([{"name": "dbId", "value": module.dbId.value.toString()}]) };
+        const dbId = module.value.dbId.value.toString()
+        const params = { params: JSON.stringify([{"name": "dbId", "value": dbId}]) };
         axios.get('/ws/run/deleteModule',  { params: params }).then(resp => {
             this.fetchRecentModules();
             this.fetchAllModules();
