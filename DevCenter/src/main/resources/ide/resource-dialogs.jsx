@@ -109,7 +109,7 @@ class NewTextResourceDialog extends React.Component {
                                     <FormControl type="text" value={this.state.folder} style={{width: 245}} onChange={this.handleFolder}/>
                                     <InputGroup.Addon>/</InputGroup.Addon>
                                     <FormControl type="text" value={this.state.name} style={{width: 245}} onChange={this.handleName} placeholder={this.props.type.placeholder}/>
-                                    <InputGroup.Addon>/</InputGroup.Addon>
+                                    <InputGroup.Addon>.</InputGroup.Addon>
                                     <FormControl type="text" value={this.state.extension} style={{width: 80}} onChange={this.handleExtension} placeholder={this.props.type.id}/>
                                 </InputGroup>
                             </FormGroup>
