@@ -5,7 +5,14 @@ class GroupTree extends React.Component {
     constructor(props) {
         super(props);
         this.state = { showItems: false };
+        this.children = [];
+        this.addChild = this.addChild.bind(this);
         this.toggleTreeNode = this.toggleTreeNode.bind(this);
+    }
+
+    addChild(ref) {
+        if(ref)
+            this.children.push(ref);
     }
 
     render() {
@@ -16,8 +23,7 @@ class GroupTree extends React.Component {
             <label className="nav-header" onClick={this.toggleTreeNode}>{this.title}</label>
             <Collapse in={this.state.showItems}>
                 <ListGroup>
-                    {items.length===0 && <ListGroupItem><i>Empty</i></ListGroupItem>}
-                    {items.map(item => this.renderItem(item))}
+                    {items.length===0 ? <ListGroupItem><i>Empty</i></ListGroupItem> : items.map(item => this.renderItem(item))}
                 </ListGroup>
             </Collapse>
         </ListGroupItem>;
@@ -28,6 +34,17 @@ class GroupTree extends React.Component {
         this.setState({showItems: !this.state.showItems});
     }
 
+    selectContent(content) {
+        for(var i=0; i<this.children.length; i++) {
+            const child = this.children[i];
+            if(child.selectContent(content)) {
+                this.setState({showItems: true});
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 
 class PromptoItem extends React.Component {
@@ -35,6 +52,7 @@ class PromptoItem extends React.Component {
     constructor(props) {
         super(props);
         this.itemClicked = this.itemClicked.bind(this);
+        this.selectContent = this.selectContent.bind(this);
     }
 
     render() {
@@ -49,6 +67,10 @@ class PromptoItem extends React.Component {
         const content = { type: "Prompto", subType: this.props.subType, name: this.props.item.name, core: this.props.item.core };
         this.props.root.setEditorContent(content);
     }
+
+    selectContent(content) {
+        return false; // TODO
+    }
 }
 
 class PromptoTree extends GroupTree {
@@ -61,7 +83,7 @@ class PromptoTree extends GroupTree {
 
     renderItem(item) {
         const key = this.props.type + "_" + makeValidId(item.name);
-        return <PromptoItem key={key} subType={this.props.subType} item={item} root={this.props.root}/>;
+        return <PromptoItem  ref={this.addChild} title key={key} subType={this.props.subType} item={item} root={this.props.root}/>;
     }
 
 
@@ -72,6 +94,7 @@ class SingleProtoMethodItem extends React.Component {
     constructor(props) {
         super(props);
         this.itemClicked = this.itemClicked.bind(this);
+        this.selectContent = this.selectContent.bind(this);
     }
 
     render() {
@@ -88,6 +111,10 @@ class SingleProtoMethodItem extends React.Component {
         this.props.root.setEditorContent(content);
     }
 
+    selectContent(content) {
+        return false; // TODO
+    }
+
 }
 
 class MethodProtoItem extends React.Component {
@@ -95,6 +122,7 @@ class MethodProtoItem extends React.Component {
     constructor(props) {
         super(props);
         this.itemClicked = this.itemClicked.bind(this);
+        this.selectContent = this.selectContent.bind(this);
     }
 
     render() {
@@ -115,6 +143,10 @@ class MethodProtoItem extends React.Component {
         this.props.root.setEditorContent(content);
     }
 
+    selectContent(content) {
+        return false; // TODO
+    }
+
 }
 
 class MultiProtoMethodItem extends React.Component {
@@ -123,6 +155,14 @@ class MultiProtoMethodItem extends React.Component {
         super(props);
         this.state = { showProtos: true };
         this.toggleTreeNode = this.toggleTreeNode.bind(this);
+        this.selectContent = this.selectContent.bind(this);
+        this.children = [];
+        this.addChild = this.addChild.bind(this);
+    }
+
+    addChild(ref) {
+        if(ref)
+            this.children.push(ref);
     }
 
     render() {
@@ -134,7 +174,7 @@ class MultiProtoMethodItem extends React.Component {
                     {
                         method.protos.map(proto => {
                             const key = "method_" + makeValidId(proto.proto);
-                            return <MethodProtoItem key={key} method={method} proto={proto} root={this.props.root}/>;
+                            return <MethodProtoItem ref={this.addChild} title key={key} method={method} proto={proto} root={this.props.root}/>;
                         })
                     }
                 </ListGroup>
@@ -147,6 +187,19 @@ class MultiProtoMethodItem extends React.Component {
     toggleTreeNode(e) {
         this.setState({showProtos: !this.state.showProtos});
     }
+
+    selectContent(content) {
+        for(var i=0; i<this.children.length; i++) {
+            const child = this.children[i];
+            if(child.selectContent(content)) {
+                this.setState({showItems: true});
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
 }
 
@@ -162,17 +215,35 @@ class MethodTree extends GroupTree {
     renderItem(method) {
         const key = this.props.type + "_" + makeValidId(method.name);
         if(method.protos.length>1)
-            return <MultiProtoMethodItem key={key} method={method} root={this.props.root}/>;
+            return <MultiProtoMethodItem  ref={this.addChild} title key={key} method={method} root={this.props.root}/>;
         else
-            return <SingleProtoMethodItem key={key} method={method} root={this.props.root}/>;
+            return <SingleProtoMethodItem  ref={this.addChild} title key={key} method={method} root={this.props.root}/>;
     }
 }
 
-class TextResourceItem extends React.Component {
+
+class ResourceItem extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.selectContent = this.selectContent.bind(this);
+    }
+
+    selectContent(content) {
+        if(content.type===this.props.resource.type && content.value.name===this.props.resource.value.name){
+            this.select();
+            return true;
+        } else
+            return false;
+    }
+}
+
+class TextResourceItem extends ResourceItem {
 
     constructor(props) {
         super(props);
         this.itemClicked = this.itemClicked.bind(this);
+        this.select = this.select.bind(this);
     }
 
     render() {
@@ -183,6 +254,10 @@ class TextResourceItem extends React.Component {
 
     itemClicked(e) {
         e.stopPropagation();
+        this.select();
+    }
+
+    select() {
         let content = { type: this.props.type.id, name: this.props.resource.value.name };
         content.body = this.props.root.catalog.getResourceBody(content);
         this.props.root.setEditorContent(content);
@@ -199,16 +274,17 @@ class TextResourceTree extends GroupTree {
 
     renderItem(item) {
         const key = item.value.mimeType.replace("/", "_") + "_" + makeValidId(item.value.name);
-        return <TextResourceItem key={key} type={this.props.type} resource={item} root={this.props.root}/>
+        return <TextResourceItem  ref={this.addChild} title key={key} type={this.props.type} resource={item} root={this.props.root}/>
     }
 
 }
 
-class BinaryResourceItem extends React.Component {
+class BinaryResourceItem extends ResourceItem {
 
     constructor(props) {
         super(props);
         this.itemClicked = this.itemClicked.bind(this);
+        this.select = this.select.bind(this);
     }
 
     render() {
@@ -219,6 +295,10 @@ class BinaryResourceItem extends React.Component {
 
     itemClicked(e) {
         e.stopPropagation();
+        this.select();
+    }
+
+    select() {
         let content = { type: this.props.type.id, name: this.props.resource.value.name };
         let resource = this.props.root.catalog.resourceFromContent(content);
         if(resource.value.data)
@@ -240,7 +320,7 @@ class BinaryResourceTree extends GroupTree {
 
     renderItem(item) {
         const key = item.value.mimeType.replace("/", "_") + "_" + makeValidId(item.value.name);
-        return <BinaryResourceItem key={key} type={this.props.type} resource={item} root={this.props.root}/>
+        return <BinaryResourceItem  ref={this.addChild} title key={key} type={this.props.type} resource={item} root={this.props.root}/>
     }
 
 
@@ -313,19 +393,19 @@ class ProjectTree extends React.Component {
     }
 
     selectContent(content) {
-        /*
-        for(var i=0;i<this.roots.length;i++) {
-            const root = this.roots[i];
-            if(root)
-        }
-        this.roots.forEach(root=>{
-            if()
-        })
-        if(this.resourceItems.selectContent(content))
+        if (this.selectContentInRoots(this.resourceRoots, content))
             this.setState({showResourceItems: true});
-        else if(this.codeItems.selectContent(content))
+        else if(this.selectContentInRoots(this.codeRoots, content))
             this.setState({showCodeItems: true});
-            */
+    }
+
+    selectContentInRoots(roots, content) {
+        for (var i = 0; i < roots.length; i++) {
+            const root = roots[i];
+            if (root.selectContent(content))
+                return true;
+        }
+        return false;
     }
 
 }
