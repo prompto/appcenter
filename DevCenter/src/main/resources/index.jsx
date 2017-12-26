@@ -36,7 +36,7 @@ class Project extends React.Component {
     }
 
     handleContextMenu(e) {
-        e.stopPropagation();
+        e.preventDefault();
         this.setState( { contextMenu: true, menuLeft: e.pageX,  menuTop: e.pageY } );
         document.addEventListener("click", this.handleDocumentClick );
         document.addEventListener("contextmenu", this.handleDocumentClick );

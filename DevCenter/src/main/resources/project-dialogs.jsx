@@ -1,29 +1,145 @@
 const { Modal, Button, FormGroup, ControlLabel, ToggleButtonGroup, FormControl, Radio } = ReactBootstrap;
 const DroppedFileWidget = widgets.DroppedFileWidget.default;
 
+class ProjectType {
+
+    constructor(id, title, image, createMethod) {
+        this.id = id;
+        this.title = title;
+        this.image = image;
+        this.createMethod = createMethod;
+    }
+
+    renderParameters(dialog) {
+        return null;
+    }
+
+    appendFormParameters(formData) {
+    }
+
+    appendPromptoParameters(list) {
+        return list;
+    }
+}
+
+class ScriptType extends ProjectType {
+
+    constructor() {
+        super("script", "Script", "/img/script.jpg", "createScript");
+    }
+}
+
+class LibraryType extends ProjectType {
+
+    constructor() {
+        super("library", "Library", "/img/library.jpg", "createLibrary");
+    }
+}
+
+class BatchType extends ProjectType {
+
+    constructor() {
+        super("batch", "Batch", "/img/batch.jpg", "createBatch");
+        this.renderParameters = this.renderParameters.bind(this);
+        this.appendPromptoParameters = this.appendPromptoParameters.bind(this);
+    }
+
+    renderParameters(dialog) {
+        return <BatchParameters ref={ref=>this.params=ref} dialog={dialog}/>;
+    }
+
+    appendPromptoParameters(list) {
+        const state = this.params.state;
+        const params = [
+            {name: "createStart", type: "Boolean", value: state.createStart},
+            {name: "startMethod", type: "Text", value: state.startMethod}
+        ];
+        return list.concat(params);
+    }
+
+}
+
+
+class WebServiceType extends ProjectType {
+
+    constructor() {
+        super("service", "Web service", "/img/service.jpg", "createService");
+        this.renderParameters = this.renderParameters.bind(this);
+        this.appendPromptoParameters = this.appendPromptoParameters.bind(this);
+    }
+
+    renderParameters(dialog) {
+        return <ServiceParameters ref={ref=>this.params=ref} dialog={dialog}/>;
+    }
+
+    appendPromptoParameters(list) {
+        const state = this.params.state;
+        const params = [
+            {name: "createStart", type: "Boolean", value: state.createStart},
+            {name: "serverAboutToStartMethod", type: "Text", value: state.startMethod}
+        ];
+        return list.concat(params);
+    }
+
+}
+
+
+
+class WebSiteType extends ProjectType {
+
+    constructor() {
+        super("website", "Web site", "/img/website.jpg", "createWebSite");
+        this.renderParameters = this.renderParameters.bind(this);
+        this.appendPromptoParameters = this.appendPromptoParameters.bind(this);
+        this.appendFormParameters = this.appendFormParameters.bind(this);
+    }
+
+    renderParameters(dialog) {
+        return <WebSiteParameters ref={ref=>this.params=ref} dialog={dialog} />;
+    }
+
+    appendFormParameters(formData) {
+        const state = this.params.state;
+        if (state.iconFile) {
+            const partName = "@" + state.iconFile.name;
+            formData.append(partName, state.iconFile);
+        }
+    }
+
+    appendPromptoParameters(list) {
+        super.appendPromptoParameters(list);
+        const state = this.params.state;
+        let image = null;
+        if(state.iconFile) {
+            const partName = "@" + state.iconFile.name;
+            image = { mimeType: state.iconFile.type, partName: partName };
+        };
+        const params = [
+            {name: "image", type: "Image", value: image},
+            {name: "createStart", type: "Boolean", value: state.createStart},
+            {name: "serverAboutToStartMethod", type: "Text", value: state.startMethod},
+            {name: "createHome", type: "Boolean", value: state.createHome},
+            {name: "homePage", type: "Text", value: state.homePage}
+        ];
+        return list.concat(params);
+
+    }
+}
+
+
+
+const ALL_PROJECT_TYPES = [new WebSiteType(), new WebServiceType(), new LibraryType(), new BatchType(), new ScriptType()];
+
 class NewModuleTypeButton extends React.Component {
 
     render() {
         let style = { width: "100px", height: "130px", boxSizing: "content-box", textAlign: "center", marginLeft: "4px", marginRight: "4px", marginTop: "2px", marginBottom: "10px", float: "left"};
         if(this.props.active)
             style = { ...style, borderStyle: "solid",  borderRadius: "10%", borderColor: "lightsteelblue", borderWidth: "medium", marginTop: "0px", marginLeft: "2px", marginRight: "2px"};
-        return <Thumbnail id={this.props.id} src={this.props.image} onClick={this.props.click} style={style}>
-                    <p><strong>{this.props.title}</strong></p>
+        const projectType = this.props.projectType;
+        return <Thumbnail src={projectType.image} onClick={()=>this.props.onClick(projectType)} style={style}>
+                    <p><strong>{projectType.title}</strong></p>
                </Thumbnail>;
-    }
-}
-
-class LibraryParameters extends React.Component {
-
-    render() {
-        return null;
-    }
-}
-
-class ScriptParameters extends React.Component {
-
-    render() {
-        return null;
     }
 }
 
@@ -65,23 +181,21 @@ class BatchParameters extends React.Component {
         this.startMethodLabel = "Start method:";
         this.handleCreateStart = this.handleCreateStart.bind(this);
         this.handleStartMethod = this.handleStartMethod.bind(this);
+        this.state = { createStart: true, startMethod: ""}
     }
 
     handleCreateStart(create) {
-        this.props.dialog.setState( { createStart: create } );
+        this.setState( { createStart: create } );
     }
 
     handleStartMethod(name) {
-        this.props.dialog.setState( { startMethod: name } );
+        this.setState( { startMethod: name } );
     }
 
     render() {
-        const dialog = this.props.dialog;
-        const moduleName = dialog.state.name || "";
-        const cleanName = moduleName.replace(/ /g, "_");
-        const placeHolderName = "main_" + cleanName;
-        const methodName = dialog.state.startMethod;
-        return <OptionalInput name="method" label={this.startMethodLabel} create={dialog.state.createStart} placeHolder={placeHolderName} value={methodName}
+        const cleanName = (this.props.dialog.state.name || "").replace(/ /g, "_");
+        const placeHolder = "main_" + cleanName;
+        return <OptionalInput name="method" label={this.startMethodLabel} create={this.state.createStart} placeHolder={placeHolder} value={this.state.startMethod}
                               handleCreate={this.handleCreateStart} handleName={this.handleStartMethod} />
     }
 
@@ -96,34 +210,50 @@ class ServiceParameters extends BatchParameters {
 
 }
 
+const widgetStyle = {
+    display: 'inline-flex',
+    border: '1px solid lightgray',
+    height: '160px',
+    width: '160px',
+    padding: '20px',
+    alignItems: 'center',
+    justifyContent: 'center'
+};
+
 class WebSiteParameters extends ServiceParameters {
 
     constructor(props) {
         super(props);
+        this.handleDropIcon = this.handleDropIcon.bind(this);
         this.handleCreateHome = this.handleCreateHome.bind(this);
         this.handleHomePage = this.handleHomePage.bind(this);
+        this.state = { ...this.state, iconFile: null, createHome: true, homePage: "" };
+    }
+
+    handleDropIcon(file) {
+        this.setState( { iconFile: file } );
     }
 
     handleCreateHome(create) {
-        this.props.dialog.setState( { createHome: create } );
+        this.setState( { createHome: create } );
     }
 
     handleHomePage(name) {
-        this.props.dialog.setState( { homePage: name } );
+        this.setState( { homePage: name } );
     }
 
     render() {
-        const dialog = this.props.dialog;
-        const moduleName = dialog.state.name || "";
-        const cleanName = moduleName.replace(/ /g, "_");
-        const placeHolderName = "main_" + cleanName;
-        const methodName = dialog.state.startMethod;
+        const cleanName = (this.props.dialog.state.name || "").replace(/ /g, "_");
+        const placeHolder = cleanName + "/index.html";
         return <div>
-                <OptionalInput name="method" label={this.startMethodLabel} create={dialog.state.createStart} placeHolder={placeHolderName} value={methodName}
-                              handleCreate={this.handleCreateStart} handleName={this.handleStartMethod} />
-                <OptionalInput name="home" label="Home page:" create={dialog.state.createHome} placeHolder={ cleanName + "/index.html" }
+                <FormGroup>
+                    <ControlLabel>Icon</ControlLabel><br/>
+                    <DroppedFileWidget onDrop={this.handleDropIcon} style={widgetStyle}/>
+                </FormGroup>
+                { super.render() }
+                <OptionalInput name="home" label="Home page:" create={this.state.createHome} placeHolder={ cleanName }
                                handleCreate={this.handleCreateHome} handleName={this.handleHomePage} />
-                </div>;
+            </div>;
     }
 
 }
@@ -134,32 +264,21 @@ class NewProjectDialog extends React.Component {
         super(props);
         this.handleClose = this.handleClose.bind(this);
         this.handleCreate = this.handleCreate.bind(this);
-        this.handleModuleType = this.handleModuleType.bind(this);
+        this.handleType = this.handleType.bind(this);
         this.handleName = this.handleName.bind(this);
         this.handleDescription = this.handleDescription.bind(this);
-        this.handleDropIcon = this.handleDropIcon.bind(this);
-        this.state = { show: true, type: "website", name: null, description: null, iconFile: null, createStart: true, startMethod: null, createHome: true, homePage: null };
+        this.state = { show: true, type: ALL_PROJECT_TYPES[0], name:"", description: "" };
     }
 
     handleCreate() {
         const formData = new FormData();
-        let image = null;
-        if(this.state.iconFile) {
-            image = { mimeType: this.state.iconFile.type, partName: "@" + this.state.iconFile.name };
-            formData.append(image.partName, this.state.iconFile);
-        }
-        const params = [
-            {name: "type", type: "Text", value: this.state.type},
+        this.state.type.appendFormParameters(formData);
+        let params = [
             {name: "name", type: "Text", value: this.state.name},
-            {name: "description", type: "Text", value: this.state.description},
-            {name: "image", type: "Image", value: image},
-            {name: "createStart", type: "Boolean", value: this.state.createStart},
-            {name: "startMethod", type: "Text", value: this.state.startMethod},
-            {name: "createHome", type: "Boolean", value: this.state.createHome},
-            {name: "homePage", type: "Text", value: this.state.homePage}
-        ];
+            {name: "description", type: "Text", value: this.state.description} ];
+        params = this.state.type.appendPromptoParameters(params);
         formData.append("params", JSON.stringify(params));
-        axios.post("/ws/run/createModule", formData).then(response=>{
+        axios.post("/ws/run/" + this.state.type.createMethod, formData).then(response=>{
             this.props.viewer.fetchRecentModules();
             this.props.viewer.fetchAllModules();
         }).catch(error=>alert(error));
@@ -167,8 +286,7 @@ class NewProjectDialog extends React.Component {
     }
 
 
-    handleModuleType(e) {
-        const type = e.currentTarget.id;
+    handleType(type) {
         this.setState( { type: type } );
     }
 
@@ -182,27 +300,12 @@ class NewProjectDialog extends React.Component {
         this.setState( { description: description } );
     }
 
-    handleDropIcon(file) {
-        this.setState( { iconFile: file } );
-    }
-
     handleClose() {
         this.setState({show: false});
         this.props.onClose();
     }
 
     render() {
-        const type = this.state.type;
-        const widgetStyle = {
-            display: 'inline-flex',
-            border: '1px solid lightgray',
-            height: '160px',
-            width: '160px',
-            padding: '20px',
-            alignItems: 'center',
-            justifyContent: 'center'
-        };
-
         return <Modal show={this.state.show} onHide={this.handleClose} bsSize="large" dialogClassName="new-project-dialog">
                 <Modal.Header closeButton={true}>
                     <Modal.Title>New project</Modal.Title>
@@ -213,11 +316,7 @@ class NewProjectDialog extends React.Component {
                         <FormGroup style={{marginBottom: "0px"}}>
                             <ControlLabel>Type</ControlLabel><br/>
                             <ToggleButtonGroup name={"project-type"}>
-                                <NewModuleTypeButton id="website" image="/img/website.jpg" title="Web site" click={this.handleModuleType} active={type==="website"}/>
-                                <NewModuleTypeButton id="service" image="/img/service.jpg" title="Web service" click={this.handleModuleType} active={type==="service"}/>
-                                <NewModuleTypeButton id="library" image="/img/library.jpg" title="Library" click={this.handleModuleType} active={type==="library"}/>
-                                <NewModuleTypeButton id="batch" image="/img/batch.jpg" title="Batch" click={this.handleModuleType} active={type==="batch"}/>
-                                <NewModuleTypeButton id="script" image="/img/script.jpg" title="Script" click={this.handleModuleType} active={type==="script"}/>
+                                {ALL_PROJECT_TYPES.map(type=><NewModuleTypeButton key={type.id} projectType={type} onClick={this.handleType} active={type===this.state.type}/>)}
                             </ToggleButtonGroup>
                         </FormGroup>
                         <FormGroup>
@@ -228,15 +327,7 @@ class NewProjectDialog extends React.Component {
                             <ControlLabel>Description</ControlLabel><br/>
                             <FormControl type="text" id="description" placeholder="Enter project description" onChange={this.handleDescription}/>
                         </FormGroup>
-                        <FormGroup>
-                            <ControlLabel>Icon</ControlLabel><br/>
-                            <DroppedFileWidget onDrop={this.handleDropIcon} style={widgetStyle}/>
-                        </FormGroup>
-                        { type==="script" && <ScriptParameters dialog={this}/> }
-                        { type==="library" && <LibraryParameters  dialog={this}/> }
-                        { type==="batch" && <BatchParameters  dialog={this}/> }
-                        { type==="service" && <ServiceParameters  dialog={this}/> }
-                        { type==="website" && <WebSiteParameters  dialog={this}/> }
+                        { this.state.type.renderParameters(this) }
                     </form>
                 </Modal.Body>
 
