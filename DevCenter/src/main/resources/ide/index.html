@@ -23,6 +23,8 @@
     <script src="/js/ide/catalog.js"></script>
     <script id="script" type="text/babel" src="navigation-bar.jsx"></script>
     <script id="script" type="text/babel" src="project-tree.jsx"></script>
+    <script id="script" type="text/babel" src="resource-types.jsx"></script>
+    <script id="script" type="text/babel" src="resource-dialogs.jsx"></script>
     <script id="script" type="text/babel" src="index.jsx"></script>
     <script type="text/babel">
         window.root = null;
@@ -36,123 +38,4 @@
 </body>
 </html>
 
-
-<!--
-<head>
-    <script src="/js/ide/catalog.js"></script>
-
-    <style type="text/css" media="screen">
-        .glyphicon {
-            float: right;
-        }
-
-        .responsive-iframe-container {
-            position: relative;
-            display: block;
-            height: 0;
-            padding: 0;
-            padding-bottom: 100%;
-            overflow: hidden;
-        }
-        .responsive-iframe-container iframe  {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-    </style>
-
-</head>
-
-<body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container-fluid">
-            <div id="project-name" class="navbar-header"> </div>
-            <div id="navbar" class="navbar-collapse">
-                <form class="navbar-form navbar-right">
-                    <div id="nav-dialect" class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownDialect" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            Dialect
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownDialect">
-                            <li class="active"><a id="dialect-Engly">Engly</a></li>
-                            <li><a id="dialect-Objy">Objy</a></li>
-                            <li><a id="dialect-Monty">Monty</a></li>
-                        </ul>
-                    </div>
-                </form>
-                <form class="navbar-form navbar-right">
-                    <button id="stop-button" type="button" class="btn btn-default" onclick="stopServer();" value="">Stop</button>
-                    <button id="clear-button" type="button" class="btn btn-default" onclick="resetServer();" value="">Reset</button>
-                </form>
-                <form class="navbar-form navbar-right">
-                    <div id="run-button-group" class="btn-group">
-                        <button id="run-button" type="button" class="btn btn-default" onclick="run();" value="">Run</button>
-                        <button id="run-mode" type="button" class="btn btn-default dropdown-toggle"
-                                data-toggle="dropdown"> Local interpreted <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li><a id="run-local-interpreted" onclick="setRunMode('Local interpreted');">Local interpreted</a></li>
-                            <li><a id="run-server-commpiled" onclick="setRunMode('Server compiled');">Server compiled</a></li>
-                            <li><a id="run-server-interpreted" onclick="setRunMode('Server interpreted');">Server interpreted</a></li>
-                        </ul>
-                    </div>
-                </form>
-                <form class="navbar-form navbar-right edit-mode">
-                    <button id="btnDelete" type="button" class="form-control" onclick="destroy();">Delete</button>
-                    <button id="btnRevert" type="button" class="form-control" onclick="revert();">Revert</button>
-                    <button id="btnCommit" type="button" class="form-control" onclick="commit();">Commit</button>
-                    <!--<input id="search" type="text" class="form-control" placeholder="Search...">-->
-                <!--
-                </form>
-                <form class="navbar-form navbar-right edit-mode">
-                    <div id="nav-new" class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownNew" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            New
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownNew">
-                            <li><a id="new-Prompto">Prompto code</a></li>
-                            <li><a id="new-Html">Html</a></li>
-                            <li><a id="new-Js">Javascript</a></li>
-                            <li><a id="new-Jsx">Jsx</a></li>
-                            <li><a id="new-Css">Css</a></li>
-                            <li><a id="new-Json">Json</a></li>
-                            <li><a id="new-Xml">Xml</a></li>
-                            <li><a id="new-Yaml">Yaml</a></li>
-                            <li><a id="new-Txt">Text</a></li>
-                            <li><a id="new-Image">Image</a></li>
-                            <li><a id="new-Audio">Audio</a></li>
-                            <li><a id="new-Video">Video</a></li>
-                            <li><a id="new-Other">Other</a></li>
-                        </ul>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container-fluid edit-mode">
-        <div class="row">
-            <div class="col-md-3 sidebar">
-                <div id = "project-tree"></div>
-            </div>
-            <div class="col-md-9 col-md-offset-3 main" style="padding: 0">
-               <div class="responsive-iframe-container collapse in">
-                    <iframe id="editor" src="editor.html"></iframe>
-               </div>
-            </div>
-        </div>
-    </div>
-    <div id="output" class="container-fluid run-mode">
-    </div>
-    <div id="new-resource" class="modal fade">
-    </div>
-
-
-</body>
-</html>
 

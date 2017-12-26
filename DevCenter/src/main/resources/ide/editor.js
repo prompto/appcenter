@@ -15,11 +15,14 @@ function setProject(dbId, loadDependencies) {
 
 function setContent(content) {
     setMode(content.type, editor => {
-        var methodName = "setContent" + content.type;
-        if (!window[methodName])
-            throw methodName;
-        window[methodName](editor, content);
-    })
+        if(content.type.toLowerCase()==="prompto")
+            setContentPrompto(editor, content);
+        else {
+            var type = ID_TO_TYPE_MAP[content.type];
+            if (type instanceof TextResourceType)
+                setContentResource(editor, content);
+        }
+    });
 }
 
 function setContentPrompto(editor, content) {
@@ -35,38 +38,6 @@ function setContentResource(editor, content) {
     editor.setValue(content.body, -1);
     editor.setReadOnly(false);
     editor.getSession().setScrollTop(0);
-}
-
-function setContentHtml(editor, content) {
-    setContentResource(editor, content);
-}
-
-function setContentJs(editor, content) {
-    setContentResource(editor, content);
-}
-
-function setContentJsx(editor, content) {
-    setContentResource(editor, content);
-}
-
-function setContentCss(editor, content) {
-    setContentResource(editor, content);
-}
-
-function setContentJson(editor, content) {
-    setContentResource(editor, content);
-}
-
-function setContentXml(editor, content) {
-    setContentResource(editor, content);
-}
-
-function setContentYaml(editor, content) {
-    setContentResource(editor, content);
-}
-
-function setContentText(editor, content) {
-    setContentResource(editor, content);
 }
 
 function getResourceBody() {
@@ -131,7 +102,7 @@ function hide(id) {
 
 function setMode(mode, callback) {
     if (mode === modeId) {
-        var editor = mode === "Prompto" ? promptoEditor : resourceEditor;
+        var editor = mode.toLowerCase() === "prompto" ? promptoEditor : resourceEditor;
         callback(editor);
         return;
     }
@@ -139,10 +110,17 @@ function setMode(mode, callback) {
     hide("resource-container");
     hide("file-container");
     modeId = null; // so we know mode is stale
-    var methodName = "setMode" + mode;
-    if (!window[methodName])
-        throw methodName;
-    window[methodName](editor => {
+    var method = null;
+    if(mode.toLowerCase()==="prompto")
+        method = setModePrompto;
+    else {
+        var type = ID_TO_TYPE_MAP[mode];
+        if(type instanceof TextResourceType)
+            method = setModeResource;
+        else
+            method = setModeFile;
+    }
+    method(mode, editor => {
         modeId = mode;
         if(editor)
             editor.setValue("", -1);
@@ -150,68 +128,19 @@ function setMode(mode, callback) {
     });
 }
 
-function setModePrompto(callback) {
+function setModePrompto(mode, callback) {
     show("prompto-container");
     callback(promptoEditor);
 }
 
-function setModeHtml(callback) {
+function setModeResource(mode, callback) {
     show("resource-container");
-    resourceEditor.getSession().setMode("ace/mode/html", () => {
+    resourceEditor.getSession().setMode("ace/mode/" + mode, () => {
         callback(resourceEditor);
     });
 }
 
-function setModeJs(callback) {
-    show("resource-container");
-    resourceEditor.getSession().setMode("ace/mode/javascript", () => {
-        callback(resourceEditor);
-    });
-}
-
-function setModeJsx(callback) {
-    show("resource-container");
-    resourceEditor.getSession().setMode("ace/mode/jsx", () => {
-        callback(resourceEditor);
-    });
-}
-
-function setModeCss(callback) {
-    show("resource-container");
-    resourceEditor.getSession().setMode("ace/mode/css", () => {
-        callback(resourceEditor);
-    });
-}
-
-function setModeJson(callback) {
-    show("resource-container");
-    resourceEditor.getSession().setMode("ace/mode/json", () => {
-        callback(resourceEditor);
-    });
-}
-
-function setModeXml(callback) {
-    show("resource-container");
-    resourceEditor.getSession().setMode("ace/mode/xml", () => {
-        callback(resourceEditor);
-    });
-}
-
-function setModeYaml(callback) {
-    show("resource-container");
-    resourceEditor.getSession().setMode("ace/mode/yaml", () => {
-        callback(resourceEditor);
-    });
-}
-
-function setModeTxt(callback) {
-    show("resource-container");
-    resourceEditor.getSession().setMode("ace/mode/text", () => {
-        callback(resourceEditor);
-    });
-}
-
-function setModeImage(callback) {
+function setModeFile(mode, callback) {
     show("file-container");
     callback(null);
 }

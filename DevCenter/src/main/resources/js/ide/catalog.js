@@ -8,7 +8,7 @@ function Catalog() {
     this.categories = [];
     this.enumerations = [];
     this.tests = [];
-    this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], yaml: [], text: [], image: [], audio: [], video: [], bin: [], statuses: {}};
+    this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], yaml: [], text: [], image: [], audio: [], video: [], binary: [], statuses: {}};
     // for performance reasons, we only receive a delta from the ace worker
     // so can't rely on just React virtual DOM
     this.applyDelta = function(delta) {
@@ -126,11 +126,11 @@ function Catalog() {
         } else if(mimeType.startsWith("video/")) {
             return this.resources.video;
         } else {
-            return this.resources.bin;
+            return this.resources.binary;
         }
     };
     this.clearResources = function() {
-        this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], yaml: [], text: [], image: [], audio: [], video: [], bin: [], statuses: {}};
+        this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], yaml: [], text: [], image: [], audio: [], video: [], binary: [], statuses: {}};
         this.textMimeTypeToList = this.mapTextMimeTypeToList();
     };
     this.removeResources = function(removed) {

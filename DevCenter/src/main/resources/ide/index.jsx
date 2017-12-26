@@ -21,7 +21,7 @@ class ContentNavigator extends React.Component {
                     <div className="checkbox">
                         <label><input type="checkbox" checked={this.state.showLibraries} onChange={this.toggleShowLibraries} />&nbsp;Show libraries</label>
                     </div>
-                    <ProjectTree catalog={this.props.catalog} showLibraries={this.state.showLibraries} root={this.props.root}/>
+                    <ProjectTree ref={ref=>this.projectTree=ref} catalog={this.props.catalog} showLibraries={this.state.showLibraries} root={this.props.root}/>
                 </div>;
     }
 
@@ -78,7 +78,7 @@ class EditorPage extends React.Component {
 
     constructor(props) {
         super(props);
-        this.specialTypes = new Set(["Prompto", "Image", "Audio", "Video", "Other"]);
+        this.specialTypes = new Set(["prompto", "image", "audio", "video", "other"]);
         this.project = null;
         this.navBar = null;
         this.elementsNavigator = null;
@@ -96,9 +96,10 @@ class EditorPage extends React.Component {
         this.commitPrepared = this.commitPrepared.bind(this);
         this.commitFailed = this.commitFailed.bind(this);
         this.commitSuccessful = this.commitSuccessful.bind(this);
+        this.addResource = this.addResource.bind(this);
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
-        this.state = { editMode: "EDIT", contentType: "Prompto" };
+        this.state = { editMode: "EDIT", contentType: "Prompto", newFileResourceType: null };
         this.catalog = new Catalog();
         this.currentContent = null;
     }
@@ -231,7 +232,7 @@ class EditorPage extends React.Component {
     render() {
         const editorStyle = { display: this.state.editMode==="EDIT" ? "block" : "none"};
         const outputStyle = { display: this.state.editMode==="EDIT" ? "none" : "block"};
-        const showImage = this.state.contentType==="Image";
+        const showImage = this.state.contentType==="image";
         return <div>
             <EditorNavBar ref={ref=>this.navBar=ref} root={this}/>
             <div style={editorStyle}>
@@ -239,6 +240,7 @@ class EditorPage extends React.Component {
                 /* always render editor otherwise iframe, ace editor and prompto worker are destroyed */
                 <EditorFrame ref={ref=>this.editorFrame=ref} root={this}/>
                 { showImage && <ImageDisplayer file={this.currentContent.file} source={this.currentContent.data}/> }
+                { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }
             </div>
             <div id="output" style={outputStyle}>
             </div>
@@ -250,11 +252,11 @@ class EditorPage extends React.Component {
             return;
         this.saveEditedTextResource();
         this.currentContent = content;
-        const contentType = (content || {}).type || "Prompto";
+        const contentType = ((content || {}).type || "prompto").toLowerCase();
         this.setState({contentType: contentType}, ()=> {
             // need to adjust visibility in callback otherwise it is always 'block'
             const editor = document.getElementById("editor");
-            if (contentType === "Image")
+            if (contentType === "image")
                 editor.style.display = "none";
             else {
                 editor.style.display = "block";
@@ -264,7 +266,7 @@ class EditorPage extends React.Component {
     }
 
     saveEditedTextResource() {
-        if(this.currentContent===null || this.specialTypes.has(this.currentContent.type))
+        if(this.currentContent===null || this.specialTypes.has(this.currentContent.type.toLowerCase()))
             return;
         this.currentContent.body = this.editorWindow.getResourceBody();
         this.catalog.setResourceBody(this.currentContent);
@@ -276,17 +278,25 @@ class EditorPage extends React.Component {
         else {
             const content = this.currentContent;
             this.currentContent = null;
-            if(content.type==="Prompto") {
+            if(content.type.toLowerCase()==="prompto") {
                 this.editorWindow.destroyPrompto(content);
             } else {
                 var res = this.catalog.resourceFromContent(content);
                 this.catalog.removeResources([res]);
                 this.catalogUpdated({}, ()=>{
-                    this.setEditorContent({ type: "Prompto" });
+                    this.setEditorContent({ type: "prompto" });
                 });
             }
         }
     }
+
+    addResource(content) {
+        content.value.module =  { type: "Module", value: { dbId: this.props.projectId.toString() } };
+        const delta = { added: { resources: [content]}};
+        const projectTree = this.elementsNavigator.projectTree;
+        this.catalogUpdated(delta, () => projectTree.selectContent(content));
+    }
+
 
 }
 

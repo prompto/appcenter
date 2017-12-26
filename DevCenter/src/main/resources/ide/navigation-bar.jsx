@@ -1,7 +1,10 @@
 const { Navbar, Nav, NavItem, NavDropdown, MenuItem, DropdownButton, ButtonGroup, Button } = ReactBootstrap;
 
 const dialectLabels = { "E": "Engly", "O": "Objy", "M": "Monty"};
+const ALL_DIALECTS = ["E", "O", "M"];
 const runModeLabels = { "LI": "Local interpreted", "SI": "Server interpreted", "SE": "Server compiled"};
+const ALL_RUN_MODES = ["LI", "SI", "SE"];
+
 
 class EditorNavBar extends React.Component {
 
@@ -105,7 +108,6 @@ class EditorNavBar extends React.Component {
         }
     }
 
-
     render() {
         const projectName = getParam("name");
         const editStyle = {display: this.props.root.state.editMode==="EDIT" ? "block" : "none"};
@@ -119,14 +121,14 @@ class EditorNavBar extends React.Component {
             </Navbar.Header>
             <Navbar.Form pullRight style={editStyle}>
                 <DropdownButton id="dialect" title="Dialect">
-                    { ["E", "O", "M"].map(d => <MenuItem key={d} active={this.state.dialect===d} onClick={()=>this.setDialect(d)}>{dialectLabels[d]}</MenuItem>) }
+                    { ALL_DIALECTS.map(d => <MenuItem key={d} active={this.state.dialect===d} onClick={()=>this.setDialect(d)}>{dialectLabels[d]}</MenuItem>) }
                 </DropdownButton>
             </Navbar.Form>
             <Navbar.Form pullRight style={editStyle}>
                 <ButtonGroup>
                     <Button type="button" onClick={this.tryRun} >Run</Button>
                     <DropdownButton id="mode" title={runModeLabels[this.state.runMode]}>
-                        { ["LI", "SI", "SE"].map(m=><MenuItem key={m} active={this.state.runMode===m} onClick={()=>this.setRunMode(m)}>{runModeLabels[m]}</MenuItem>) }
+                        { ALL_RUN_MODES.map(m=><MenuItem key={m} active={this.state.runMode===m} onClick={()=>this.setRunMode(m)}>{runModeLabels[m]}</MenuItem>) }
                     </DropdownButton>
                 </ButtonGroup>
                 &nbsp;
@@ -140,6 +142,11 @@ class EditorNavBar extends React.Component {
                 <Button type="button" onClick={()=>this.props.root.revert()}>Revert</Button>
                 &nbsp;
                 <Button type="button" onClick={()=>this.props.root.commit()}>Commit</Button>
+            </Navbar.Form>
+            <Navbar.Form pullRight style={editStyle}>
+                <DropdownButton id="mode" title="New">
+                    { ALL_ELEMENT_TYPES.map(t=><MenuItem key={t.id} onClick={()=>t.newResource(this.props.root)}>{t.label}</MenuItem>) }
+                </DropdownButton>
             </Navbar.Form>
             <Navbar.Form style={runningStyle}>
                 <Button type="button" onClick={()=>this.stopPromptoCode()}>{runningLabel}</Button>

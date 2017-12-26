@@ -1,6 +1,36 @@
 const { ListGroup, ListGroupItem, Collapse, Glyphicon } = ReactBootstrap;
 
-class GenericItem extends React.Component {
+class GroupTree extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = { showItems: false };
+        this.toggleTreeNode = this.toggleTreeNode.bind(this);
+    }
+
+    render() {
+        let items = this.props.items;
+        if(!this.props.showLibraries)
+            items = items.filter(item => !item.core);
+        return <ListGroupItem>
+            <label className="nav-header" onClick={this.toggleTreeNode}>{this.title}</label>
+            <Collapse in={this.state.showItems}>
+                <ListGroup>
+                    {items.length===0 && <ListGroupItem><i>Empty</i></ListGroupItem>}
+                    {items.map(item => this.renderItem(item))}
+                </ListGroup>
+            </Collapse>
+        </ListGroupItem>;
+    }
+
+
+    toggleTreeNode(e) {
+        this.setState({showItems: !this.state.showItems});
+    }
+
+}
+
+class PromptoItem extends React.Component {
 
     constructor(props) {
         super(props);
@@ -16,44 +46,24 @@ class GenericItem extends React.Component {
 
     itemClicked(e) {
         e.stopPropagation();
-        const content = { type: "Prompto", subType: this.props.type, name: this.props.item.name, core: this.props.item.core };
+        const content = { type: "Prompto", subType: this.props.subType, name: this.props.item.name, core: this.props.item.core };
         this.props.root.setEditorContent(content);
     }
 }
 
-class GroupTree extends React.Component {
+class PromptoTree extends GroupTree {
 
     constructor(props) {
         super(props);
-        this.state = { showItems: false };
+        this.title = this.props.subType.items.substring(0,1).toUpperCase() + this.props.subType.items.substring(1);
         this.renderItem = this.renderItem.bind(this);
-        this.toggleTreeNode = this.toggleTreeNode.bind(this);
     }
-
-    render() {
-        let items = this.props.items;
-        if(!this.props.showLibraries)
-            items = items.filter(item => !item.core);
-        return <ListGroupItem>
-            <label className="nav-header" onClick={this.toggleTreeNode}>{this.props.title}</label>
-            <Collapse in={this.state.showItems}>
-                <ListGroup>
-                    {items.length===0 && <ListGroupItem><i>Empty</i></ListGroupItem>}
-                    {items.map(item => this.renderItem(item))}
-                </ListGroup>
-            </Collapse>
-        </ListGroupItem>;
-    }
-
 
     renderItem(item) {
         const key = this.props.type + "_" + makeValidId(item.name);
-        return <GenericItem key={key} type={this.props.type} item={item} root={this.props.root}/>;
+        return <PromptoItem key={key} subType={this.props.subType} item={item} root={this.props.root}/>;
     }
 
-    toggleTreeNode(e) {
-        this.setState({showItems: !this.state.showItems});
-    }
 
 }
 
@@ -74,7 +84,7 @@ class SingleProtoMethodItem extends React.Component {
     itemClicked(e) {
         e.stopPropagation();
         const method = this.props.method;
-        const content = { type: "Prompto", subType: this.props.type, name: method.name, proto: method.proto, core: method.core, main: method.main };
+        const content = { type: "Prompto", subType: "method", name: method.name, proto: method.proto, core: method.core, main: method.main };
         this.props.root.setEditorContent(content);
     }
 
@@ -145,15 +155,16 @@ class MethodTree extends GroupTree {
 
     constructor(props) {
         super(props);
+        this.title = "Methods";
         this.renderItem = this.renderItem.bind(this);
     }
 
     renderItem(method) {
         const key = this.props.type + "_" + makeValidId(method.name);
         if(method.protos.length>1)
-            return <MultiProtoMethodItem key={key} method={method} type={this.props.type} root={this.props.root}/>;
+            return <MultiProtoMethodItem key={key} method={method} root={this.props.root}/>;
         else
-            return <SingleProtoMethodItem key={key} method={method} type={this.props.type} root={this.props.root}/>;
+            return <SingleProtoMethodItem key={key} method={method} root={this.props.root}/>;
     }
 }
 
@@ -172,7 +183,7 @@ class TextResourceItem extends React.Component {
 
     itemClicked(e) {
         e.stopPropagation();
-        let content = { type: this.props.type, name: this.props.resource.value.name };
+        let content = { type: this.props.type.id, name: this.props.resource.value.name };
         content.body = this.props.root.catalog.getResourceBody(content);
         this.props.root.setEditorContent(content);
     }
@@ -182,6 +193,7 @@ class TextResourceTree extends GroupTree {
 
     constructor(props) {
         super(props);
+        this.title = this.props.type.label;
         this.renderItem = this.renderItem.bind(this);
     }
 
@@ -207,7 +219,7 @@ class BinaryResourceItem extends React.Component {
 
     itemClicked(e) {
         e.stopPropagation();
-        let content = { type: this.props.type, name: this.props.resource.value.name };
+        let content = { type: this.props.type.id, name: this.props.resource.value.name };
         let resource = this.props.root.catalog.resourceFromContent(content);
         if(resource.value.data)
             content.data = resource.value.data;
@@ -222,6 +234,7 @@ class BinaryResourceTree extends GroupTree {
 
     constructor(props) {
         super(props);
+        this.title = this.props.type.label;
         this.renderItem = this.renderItem.bind(this);
     }
 
@@ -233,6 +246,8 @@ class BinaryResourceTree extends GroupTree {
 
 }
 
+const ALL_PROMPTO_SUBTYPES = [{id:"attribute", items:"attributes"}, {id:"method", items: "methods"}, {id:"category", items: "categories"}, {id:"enumeration", items: "enumerations" }, {id:"test", items: "tests"}];
+
 class ProjectTree extends React.Component {
 
     constructor(props) {
@@ -240,6 +255,9 @@ class ProjectTree extends React.Component {
         this.state = { showCodeItems: true, showResourceItems: true };
         this.toggleCodeItems = this.toggleCodeItems.bind(this);
         this.toggleResourceItems = this.toggleResourceItems.bind(this);
+        this.selectContent = this.selectContent.bind(this);
+        this.codeRoots = [];
+        this.resourceRoots = [];
     }
 
     render() {
@@ -249,31 +267,36 @@ class ProjectTree extends React.Component {
             <ListGroupItem>
                 <label onClick={this.toggleCodeItems}>Code</label>
                 <Collapse in={this.state.showCodeItems}>
-                    <ListGroup ref={ref=>this.codeItems=ref}>
-                        <GroupTree title="Attributes" items={catalog.attributes} type="attribute" showLibraries={showLibs} root={this.props.root}/>
-                        <MethodTree title="Methods" items={catalog.methods} type="method" showLibraries={showLibs} root={this.props.root}/>
-                        <GroupTree title="Categories" items={catalog.categories} type="category" showLibraries={showLibs} root={this.props.root}/>
-                        <GroupTree title="Enumerations" items={catalog.enumerations} type="enumeration" showLibraries={showLibs} root={this.props.root}/>
-                        <GroupTree title="Tests" items={catalog.tests} type="test" showLibraries={showLibs} root={this.props.root}/>
+                    <ListGroup>
+                        {
+                            ALL_PROMPTO_SUBTYPES.map(subType=>{
+                                    if(subType.id==="method")
+                                        return <MethodTree key={subType.id} ref={ref=>this.codeRoots.push(ref)} items={catalog.methods} subType={subType} showLibraries={showLibs} root={this.props.root}/>;
+                                    else
+                                        return <PromptoTree key={subType.id} ref={ref=>this.codeRoots.push(ref)} items={catalog[subType.items]} subType={subType} showLibraries={showLibs} root={this.props.root}/>
+                                }
+                            )
+                        }
                     </ListGroup>
                 </Collapse>
             </ListGroupItem>
             <ListGroupItem>
                 <label onClick={this.toggleResourceItems}>Resources</label>
                 <Collapse in={this.state.showResourceItems}>
-                    <ListGroup ref={ref=>this.resourceItems=ref}>
-                        <TextResourceTree title="Html" items={catalog.resources.html} type="Html" showLibraries={showLibs} root={this.props.root}/>
-                        <TextResourceTree title="Javascript" items={catalog.resources.js} type="Js" showLibraries={showLibs} root={this.props.root}/>
-                        <TextResourceTree title="Jsx" items={catalog.resources.jsx} type="Jsx" showLibraries={showLibs} root={this.props.root}/>
-                        <TextResourceTree title="Css" items={catalog.resources.css} type="Css" showLibraries={showLibs} root={this.props.root}/>
-                        <TextResourceTree title="Json" items={catalog.resources.json} type="Json" showLibraries={showLibs} root={this.props.root}/>
-                        <TextResourceTree title="Xml" items={catalog.resources.xml} type="Xml" showLibraries={showLibs} root={this.props.root}/>
-                        <TextResourceTree title="Yaml" items={catalog.resources.yaml} type="Yaml" showLibraries={showLibs} root={this.props.root}/>
-                        <TextResourceTree title="Text" items={catalog.resources.text} type="Txt" showLibraries={showLibs} root={this.props.root}/>
-                        <BinaryResourceTree title="Image" items={catalog.resources.image} type="Image" showLibraries={showLibs} root={this.props.root}/>
-                        <BinaryResourceTree title="Audio" items={catalog.resources.audio} type="Audio" showLibraries={showLibs} root={this.props.root}/>
-                        <BinaryResourceTree title="Video" items={catalog.resources.video} type="Video" showLibraries={showLibs} root={this.props.root}/>
-                        <BinaryResourceTree title="Other" items={[]} type="Binary" showLibraries={showLibs} root={this.props.root}/>
+                    <ListGroup>
+                        {
+                            ALL_RESOURCE_TYPES.map((t => {
+                                const items = catalog.resources[t.id];
+                                if (t instanceof TextResourceType)
+                                    return <TextResourceTree key={t.id} ref={ref => this.resourceRoots.push(ref)} type={t}
+                                                             items={items} type={t} showLibraries={showLibs}
+                                                             root={this.props.root}/>;
+                                else
+                                    return <BinaryResourceTree key={t.id} ref={ref => this.resourceRoots.push(ref)} type={t}
+                                                               items={items} type={t}
+                                                               showLibraries={showLibs} root={this.props.root}/>;
+                        }), this)
+                        }
                     </ListGroup>
                 </Collapse>
             </ListGroupItem>
@@ -287,6 +310,22 @@ class ProjectTree extends React.Component {
 
     toggleResourceItems(e) {
         this.setState({showResourceItems: !this.state.showResourceItems});
+    }
+
+    selectContent(content) {
+        /*
+        for(var i=0;i<this.roots.length;i++) {
+            const root = this.roots[i];
+            if(root)
+        }
+        this.roots.forEach(root=>{
+            if()
+        })
+        if(this.resourceItems.selectContent(content))
+            this.setState({showResourceItems: true});
+        else if(this.codeItems.selectContent(content))
+            this.setState({showCodeItems: true});
+            */
     }
 
 }
