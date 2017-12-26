@@ -241,6 +241,7 @@ class EditorPage extends React.Component {
                 <EditorFrame ref={ref=>this.editorFrame=ref} root={this}/>
                 { showImage && <ImageDisplayer file={this.currentContent.file} source={this.currentContent.data}/> }
                 { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }
+                { this.state.newTextResourceType!=null && <NewTextResourceDialog type={this.state.newTextResourceType} root={this} onClose={()=>this.setState({newTextResourceType: null})}/> }
             </div>
             <div id="output" style={outputStyle}>
             </div>
@@ -319,4 +320,14 @@ function destroy() {
 
 function commitPrepared(declarations) {
     root.commitPrepared(declarations);
+}
+
+// a utility method to inspect worker data in Firefox/Safari
+function inspect(name) {
+    root.editorWindow.inspect(name);
+}
+
+// a utility method to inspect worker data in Firefox/Safari
+function inspected(data) {
+    console.log(data);
 }

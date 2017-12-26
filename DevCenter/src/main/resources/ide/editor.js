@@ -1,7 +1,7 @@
 console.log = parent.print;
 var promptoEditor = null;
 var resourceEditor = null;
-var modeId = null;
+var currentMode = null;
 
 function setDialect(dialect) {
     var mode = promptoEditor.getSession().getMode();
@@ -101,7 +101,7 @@ function hide(id) {
 }
 
 function setMode(mode, callback) {
-    if (mode === modeId) {
+    if (mode === currentMode) {
         var editor = mode.toLowerCase() === "prompto" ? promptoEditor : resourceEditor;
         callback(editor);
         return;
@@ -109,19 +109,20 @@ function setMode(mode, callback) {
     hide("prompto-container");
     hide("resource-container");
     hide("file-container");
-    modeId = null; // so we know mode is stale
+    currentMode = null; // so we know mode is stale
     var method = null;
     if(mode.toLowerCase()==="prompto")
         method = setModePrompto;
     else {
         var type = ID_TO_TYPE_MAP[mode];
-        if(type instanceof TextResourceType)
+        if(type instanceof TextResourceType) {
             method = setModeResource;
-        else
+            mode = type.aceMode;
+        } else
             method = setModeFile;
     }
     method(mode, editor => {
-        modeId = mode;
+        currentMode = mode;
         if(editor)
             editor.setValue("", -1);
         callback(editor);
