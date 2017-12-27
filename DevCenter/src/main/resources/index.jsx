@@ -22,6 +22,7 @@ class Project extends React.Component {
                     {this.state.contextMenu && <Clearfix id="project-menu" style={menuStyle}>
                         <ul className="dropdown-menu" style={{display: "block"}}>
                             <MenuItem href={"#"} onSelect={()=>this.props.root.exportProject(module)}>Export</MenuItem>
+                            <MenuItem href={"#"} onSelect={()=>this.props.root.renameProject(module)}>Rename</MenuItem>
                             <MenuItem href={"#"} onSelect={()=>this.props.root.deleteProject(module)}>Delete</MenuItem>
                         </ul>
                     </Clearfix>}
@@ -102,11 +103,12 @@ class HomePage extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { dialog: null, recent: [], all: [] };
+        this.state = { dialog: null, module: null, recent: [], all: [] };
         this.newProject = this.newProject.bind(this);
         this.fetchRecentModules = this.fetchRecentModules.bind(this);
         this.fetchAllModules = this.fetchAllModules.bind(this);
         this.modulesReceived = this.modulesReceived.bind(this);
+        this.renameProject = this.renameProject.bind(this);
     }
 
     componentDidMount() {
@@ -144,6 +146,10 @@ class HomePage extends React.Component {
 
     }
 
+    renameProject(module) {
+        this.setState({dialog: "RenameProject", module: module});
+    }
+
     deleteProject(module) {
         const dbId = module.value.dbId.value.toString()
         const params = { params: JSON.stringify([{"name": "dbId", "value": dbId}]) };
@@ -161,6 +167,7 @@ class HomePage extends React.Component {
         return <div>
             <ProjectsNavBar root={this}/>
             {this.state.dialog==="NewProject" && <NewProjectDialog onClose={()=>this.setState({dialog: null})} viewer={this}/>}
+            {this.state.dialog==="RenameProject" && <RenameProjectDialog onClose={()=>this.setState({dialog: null})} viewer={this} module={this.state.module}/>}
             <Grid fluid style={{paddingTop: 16}}>
                 <PageHeader>Recent projects</PageHeader>
                 <ProjectsSection root={this} id="recent" modules={this.state.recent}/>

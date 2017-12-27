@@ -25,33 +25,32 @@ class ProjectType {
 class ScriptType extends ProjectType {
 
     constructor() {
-        super("script", "Script", "/img/script.jpg", "createScript");
+        super("Script", "Script", "/img/script.jpg", "createScript");
     }
 }
 
 class LibraryType extends ProjectType {
 
     constructor() {
-        super("library", "Library", "/img/library.jpg", "createLibrary");
+        super("Library", "Library", "/img/library.jpg", "createLibrary");
     }
 }
 
 class BatchType extends ProjectType {
 
     constructor() {
-        super("batch", "Batch", "/img/batch.jpg", "createBatch");
+        super("Batch", "Batch", "/img/batch.jpg", "createBatch");
         this.renderParameters = this.renderParameters.bind(this);
         this.appendPromptoParameters = this.appendPromptoParameters.bind(this);
     }
 
-    renderParameters(dialog) {
-        return <BatchParameters ref={ref=>this.params=ref} dialog={dialog}/>;
+    renderParameters(dialog, forRename) {
+        return <BatchParameters ref={ref=>this.params=ref} dialog={dialog} forRename={forRename || false}/>;
     }
 
     appendPromptoParameters(list) {
         const state = this.params.state;
         const params = [
-            {name: "createStart", type: "Boolean", value: state.createStart},
             {name: "startMethod", type: "Text", value: state.startMethod}
         ];
         return list.concat(params);
@@ -63,19 +62,18 @@ class BatchType extends ProjectType {
 class WebServiceType extends ProjectType {
 
     constructor() {
-        super("service", "Web service", "/img/service.jpg", "createService");
+        super("Service", "Web service", "/img/service.jpg", "createService");
         this.renderParameters = this.renderParameters.bind(this);
         this.appendPromptoParameters = this.appendPromptoParameters.bind(this);
     }
 
-    renderParameters(dialog) {
-        return <ServiceParameters ref={ref=>this.params=ref} dialog={dialog}/>;
+    renderParameters(dialog, forRename) {
+        return <ServiceParameters ref={ref=>this.params=ref} dialog={dialog} forRename={forRename || false}/>;
     }
 
     appendPromptoParameters(list) {
         const state = this.params.state;
         const params = [
-            {name: "createStart", type: "Boolean", value: state.createStart},
             {name: "serverAboutToStartMethod", type: "Text", value: state.startMethod}
         ];
         return list.concat(params);
@@ -88,14 +86,14 @@ class WebServiceType extends ProjectType {
 class WebSiteType extends ProjectType {
 
     constructor() {
-        super("website", "Web site", "/img/website.jpg", "createWebSite");
+        super("WebSite", "Web site", "/img/website.jpg", "createWebSite");
         this.renderParameters = this.renderParameters.bind(this);
         this.appendPromptoParameters = this.appendPromptoParameters.bind(this);
         this.appendFormParameters = this.appendFormParameters.bind(this);
     }
 
-    renderParameters(dialog) {
-        return <WebSiteParameters ref={ref=>this.params=ref} dialog={dialog} />;
+    renderParameters(dialog, forRename) {
+        return <WebSiteParameters ref={ref=>this.params=ref} dialog={dialog} forRename={forRename || false}/>;
     }
 
     appendFormParameters(formData) {
@@ -116,9 +114,7 @@ class WebSiteType extends ProjectType {
         };
         const params = [
             {name: "image", type: "Image", value: image},
-            {name: "createStart", type: "Boolean", value: state.createStart},
             {name: "serverAboutToStartMethod", type: "Text", value: state.startMethod},
-            {name: "createHome", type: "Boolean", value: state.createHome},
             {name: "homePage", type: "Text", value: state.homePage}
         ];
         return list.concat(params);
@@ -129,6 +125,10 @@ class WebSiteType extends ProjectType {
 
 
 const ALL_PROJECT_TYPES = [new WebSiteType(), new WebServiceType(), new LibraryType(), new BatchType(), new ScriptType()];
+const ID_TO_TYPE_MAP = {};
+
+ALL_PROJECT_TYPES.forEach(t => ID_TO_TYPE_MAP[t.id] = t);
+
 
 class NewModuleTypeButton extends React.Component {
 
@@ -147,12 +147,12 @@ class OptionalInput extends React.Component {
 
     constructor(props) {
         super(props);
-        this.handleCreate = this.handleCreate.bind(this);
+        this.handleCustom = this.handleCustom.bind(this);
         this.handleName = this.handleName.bind(this);
     }
 
-    handleCreate(create) {
-        this.props.handleCreate(create);
+    handleCustom(create) {
+        this.props.handleCustom(create);
     }
 
     handleName(e) {
@@ -165,10 +165,10 @@ class OptionalInput extends React.Component {
         return <FormGroup>
             <ControlLabel>{this.props.label}</ControlLabel>
             <div style={{marginBottom: 5}}>
-                <Radio inline name={this.props.name + "-radio"} checked={this.props.create} onChange={()=>this.handleCreate(true)}>Create new</Radio>
-                <Radio inline name={this.props.name + "-radio"} checked={!this.props.create} onChange={()=>this.handleCreate(false)}>Use existing</Radio>
+                <Radio inline name={this.props.name + "-radio"} checked={!this.props.customize} onChange={()=>this.handleCustom(false)}>Use default</Radio>
+                <Radio inline name={this.props.name + "-radio"} checked={this.props.customize} onChange={()=>this.handleCustom(true)}>Customize</Radio>
             </div>
-            <FormControl type="text" placeholder={this.props.placeHolder} readOnly={this.props.create} onChange={this.handleName} value={this.props.value || ""}/>
+            <FormControl type="text" placeholder={this.props.placeHolder} readOnly={!this.props.customize} onChange={this.handleName} value={this.props.value || ""}/>
         </FormGroup>;
     }
 
@@ -179,13 +179,14 @@ class BatchParameters extends React.Component {
     constructor(props) {
         super(props);
         this.startMethodLabel = "Start method:";
-        this.handleCreateStart = this.handleCreateStart.bind(this);
+        this.startMethodPrefix = "main_";
+        this.handleCustomStart = this.handleCustomStart.bind(this);
         this.handleStartMethod = this.handleStartMethod.bind(this);
-        this.state = { createStart: true, startMethod: ""}
+        this.state = { customStart: false, startMethod: ""}
     }
 
-    handleCreateStart(create) {
-        this.setState( { createStart: create } );
+    handleCustomStart(custom) {
+        this.setState( { customStart: custom } );
     }
 
     handleStartMethod(name) {
@@ -193,10 +194,15 @@ class BatchParameters extends React.Component {
     }
 
     render() {
-        const cleanName = (this.props.dialog.state.name || "").replace(/ /g, "_");
-        const placeHolder = "main_" + cleanName;
-        return <OptionalInput name="method" label={this.startMethodLabel} create={this.state.createStart} placeHolder={placeHolder} value={this.state.startMethod}
-                              handleCreate={this.handleCreateStart} handleName={this.handleStartMethod} />
+        if(this.props.forRename)
+            return null;
+        else {
+            const cleanName = (this.props.dialog.state.name || "").replace(/ /g, "_");
+            const placeHolder = this.startMethodPrefix + cleanName;
+            return <OptionalInput name="method" label={this.startMethodLabel} customize={this.state.customStart}
+                                  placeHolder={placeHolder} value={this.state.startMethod}
+                                  handleCustom={this.handleCustomStart} handleName={this.handleStartMethod}/>
+        }
     }
 
 }
@@ -205,6 +211,7 @@ class ServiceParameters extends BatchParameters {
 
     constructor(props) {
         super(props);
+        this.startMethodPrefix = "start_";
         this.startMethodLabel = "Server about to start method:";
     }
 
@@ -225,17 +232,18 @@ class WebSiteParameters extends ServiceParameters {
     constructor(props) {
         super(props);
         this.handleDropIcon = this.handleDropIcon.bind(this);
-        this.handleCreateHome = this.handleCreateHome.bind(this);
+        this.handleCustomHome = this.handleCustomHome.bind(this);
         this.handleHomePage = this.handleHomePage.bind(this);
-        this.state = { ...this.state, iconFile: null, createHome: true, homePage: "" };
+        this.image = this.props.forRename ? this.props.dialog.props.module.value.image : null;
+        this.state = { ...this.state, iconFile: null, customHome: false, homePage: "" };
     }
 
     handleDropIcon(file) {
         this.setState( { iconFile: file } );
     }
 
-    handleCreateHome(create) {
-        this.setState( { createHome: create } );
+    handleCustomHome(custom) {
+        this.setState( { customHome: custom } );
     }
 
     handleHomePage(name) {
@@ -248,11 +256,11 @@ class WebSiteParameters extends ServiceParameters {
         return <div>
                 <FormGroup>
                     <ControlLabel>Icon</ControlLabel><br/>
-                    <DroppedFileWidget onDrop={this.handleDropIcon} style={widgetStyle}/>
+                    <DroppedFileWidget onDrop={this.handleDropIcon} style={widgetStyle} image={this.image}/>
                 </FormGroup>
                 { super.render() }
-                <OptionalInput name="home" label="Home page:" create={this.state.createHome} placeHolder={ cleanName }
-                               handleCreate={this.handleCreateHome} handleName={this.handleHomePage} />
+                { !this.props.forRename && <OptionalInput name="home" label="Home page:" customize={this.state.customHome} placeHolder={placeHolder} value={this.state.homePage}
+                               handleCustom={this.handleCustomHome} handleName={this.handleHomePage} /> }
             </div>;
     }
 
@@ -336,6 +344,98 @@ class NewProjectDialog extends React.Component {
                     <Button bsStyle="primary" onClick={this.handleCreate}>Create</Button>
                 </Modal.Footer>
             </Modal>;
+    }
+
+}
+
+class RenameProjectDialog extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.type = ID_TO_TYPE_MAP[this.props.module.type];
+        this.handleClose = this.handleClose.bind(this);
+        this.handleSave = this.handleSave.bind(this);
+        this.saveModule = this.saveModule.bind(this);
+        this.handleName = this.handleName.bind(this);
+        this.handleDescription = this.handleDescription.bind(this);
+        this.state = {show: true, name: this.props.module.value.name, description: this.props.module.value.description};
+    }
+
+    handleSave() {
+        // load latest full description before updating
+        const dbId = this.props.module.value.dbId.value.toString();
+        const params = {
+            params: JSON.stringify([{name: "dbId", value: dbId}, {
+                name: "register",
+                type: "Boolean",
+                value: false
+            }])
+        };
+        axios.get('/ws/run/getModuleDescription', {params: params}).then(resp => {
+            const response = resp.data;
+            if (response.error)
+                alert(response.error);
+            else
+                this.saveModule(response.data);
+        });
+    }
+
+    saveModule(module) {
+        module.value.name = this.state.name;
+        module.value.description = this.state.description;
+        this.type.updateModule(module);
+        const formData = new FormData();
+        const params = [ {name: "module", type: module.type, value: module.value} ];
+        formData.append("params", JSON.stringify(params));
+        this.type.appendFormParameters(formData, true);
+        axios.post("/ws/run/storeModule", formData).then(response=>{
+            this.props.viewer.fetchRecentModules();
+            this.props.viewer.fetchAllModules();
+        }).catch(error=>alert(error));
+        this.handleClose();
+    }
+
+
+    handleName(e) {
+        const name = e.currentTarget.value;
+        this.setState( { name: name } );
+    }
+
+    handleDescription(e) {
+        const description = e.currentTarget.value;
+        this.setState( { description: description } );
+    }
+
+    handleClose() {
+        this.setState({show: false});
+        this.props.onClose();
+    }
+
+    render() {
+        return <Modal show={this.state.show} onHide={this.handleClose} dialogClassName="rename-project-dialog">
+            <Modal.Header closeButton={true}>
+                <Modal.Title>Rename project</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body style={{padding: "8px"}}>
+                <form style={{margin: "8px"}}>
+                    <FormGroup>
+                        <ControlLabel>Name</ControlLabel><br/>
+                        <FormControl type="text" id="name" value={this.state.name} onChange={this.handleName}/>
+                    </FormGroup>
+                    <FormGroup>
+                        <ControlLabel>Description</ControlLabel><br/>
+                        <FormControl type="text" id="description" value={this.state.description} onChange={this.handleDescription}/>
+                    </FormGroup>
+                    { this.type.renderParameters(this, true) }
+                </form>
+            </Modal.Body>
+
+            <Modal.Footer>
+                <Button onClick={this.handleClose}>Cancel</Button>
+                <Button bsStyle="primary" onClick={this.handleSave}>Save</Button>
+            </Modal.Footer>
+        </Modal>;
     }
 
 }
