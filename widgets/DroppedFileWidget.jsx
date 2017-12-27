@@ -53,7 +53,7 @@ export default class DroppedFileWidget extends Component {
         super(props);
         this.handleFileDrop = this.handleFileDrop.bind(this);
         this.readDroppedContent = this.readDroppedContent.bind(this);
-        this.state = { droppedFile: this.props.droppedFile || null, droppedPreview: null };
+        this.state = { droppedFile: this.props.droppedFile || null, droppedPreview: this.props.image || null };
     }
 
     handleFileDrop(item, monitor) {
@@ -68,7 +68,7 @@ export default class DroppedFileWidget extends Component {
 
     readDroppedContent(droppedFile) {
         if(!droppedFile)
-            this.setState({ droppedFile: null, droppedPreview: null });
+            this.setState({ droppedFile: null, droppedPreview: this.props.image || null });
         else {
             this.setState({ droppedFile: droppedFile, droppedPreview: null });
             if(droppedFile.type.startsWith("image/")) {

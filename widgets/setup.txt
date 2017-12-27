@@ -1,5 +1,9 @@
 brew update
+mkdir /usr/local/Cellar
+sudo chown -R $(whoami) $(brew --prefix)/*
 brew install yarn
 yarn add webpack webpack-dev-server path
 yarn add babel-loader babel-core babel-preset-es2015 babel-preset-stage-0 babel-preset-react --dev
 yarn add babel-plugin-transform-decorators-legacy --dev
+yarn add react react-dnd react-dnd-html5-backend
+webpack
