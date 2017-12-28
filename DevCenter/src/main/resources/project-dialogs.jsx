@@ -10,11 +10,15 @@ class ProjectType {
         this.createMethod = createMethod;
     }
 
+    updateModule(module) {
+
+    }
+
     renderParameters(dialog) {
         return null;
     }
 
-    appendFormParameters(formData) {
+    appendFormParameters(formData, forRename) {
     }
 
     appendPromptoParameters(list) {
@@ -96,7 +100,15 @@ class WebSiteType extends ProjectType {
         return <WebSiteParameters ref={ref=>this.params=ref} dialog={dialog} forRename={forRename || false}/>;
     }
 
-    appendFormParameters(formData) {
+    updateModule(module) {
+        const state = this.params.state;
+        if (state.iconFile) {
+            const partName = "@" + state.iconFile.name;
+            module.value.image = { mimeType: state.iconFile.type, partName: partName };
+        }
+    }
+
+    appendFormParameters(formData, forRename) {
         const state = this.params.state;
         if (state.iconFile) {
             const partName = "@" + state.iconFile.name;
