@@ -160,7 +160,7 @@ class EditorNavBar extends React.Component {
                     <Button type="button" onClick={()=>this.stopPromptoCode()}>{runningLabel}</Button>
                 </Navbar.Form>
             </Navbar>
-            { this.state.dialog==="AuthenticationSettings" && <AuthenticationSettingsDialog onClose={()=>this.setState({dialog: null})}/>}
+            { this.state.dialog==="AuthenticationSettings" && <AuthenticationSettingsDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
         </div>;
     }
 
