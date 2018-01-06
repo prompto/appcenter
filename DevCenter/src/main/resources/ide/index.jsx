@@ -140,7 +140,7 @@ class EditorPage extends React.Component {
         if((declarations && declarations.length) || (resources && resources.length)) {
             const formData = new FormData();
             if(resources && resources.length)
-                resources = prepareResourceFiles(formData, resources);
+                resources = this.prepareResourceFiles(formData, resources);
             const stuff = (declarations || []).concat(resources || []);
             formData.append("params", JSON.stringify([{name: "edited", type: "EditedStuff[]", value: stuff}]));
             axios.post('/ws/run/storeEdited', formData).

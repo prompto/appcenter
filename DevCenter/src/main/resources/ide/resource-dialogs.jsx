@@ -123,15 +123,15 @@ class NewTextResourceDialog extends React.Component {
     }
 
     handleFolder(event) {
-        this.state.folder = event.target.value;
+        this.setState({ folder: event.target.value });
     }
 
     handleName(event) {
-        this.state.name = event.target.value;
+        this.setState({ name: event.target.value });
     }
 
     handleExtension(event) {
-        this.state.extension = event.target.value;
+        this.setState({ extension: event.target.value });
     }
 
     handleCreate(event) {
