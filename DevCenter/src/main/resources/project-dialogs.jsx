@@ -53,11 +53,7 @@ class BatchType extends ProjectType {
     }
 
     appendPromptoParameters(list) {
-        const state = this.params.state;
-        const params = [
-            {name: "startMethod", type: "Text", value: state.startMethod}
-        ];
-        return list.concat(params);
+        return list.concat([{name: "startMethod", type: "Text", value: this.params.startMethod()}]);
     }
 
 }
@@ -76,11 +72,7 @@ class WebServiceType extends ProjectType {
     }
 
     appendPromptoParameters(list) {
-        const state = this.params.state;
-        const params = [
-            {name: "serverAboutToStartMethod", type: "Text", value: state.startMethod}
-        ];
-        return list.concat(params);
+        return list.concat([{name: "serverAboutToStartMethod", type: "Text", value: this.params.startMethod()}]);
     }
 
 }
@@ -117,7 +109,6 @@ class WebSiteType extends ProjectType {
     }
 
     appendPromptoParameters(list) {
-        super.appendPromptoParameters(list);
         const state = this.params.state;
         let image = null;
         if(state.iconFile) {
@@ -126,8 +117,8 @@ class WebSiteType extends ProjectType {
         };
         const params = [
             {name: "image", type: "Image", value: image},
-            {name: "serverAboutToStartMethod", type: "Text", value: state.startMethod},
-            {name: "homePage", type: "Text", value: state.homePage}
+            {name: "serverAboutToStartMethod", type: "Text", value: this.params.startMethod()},
+            {name: "homePage", type: "Text", value: this.params.homePage()}
         ];
         return list.concat(params);
 
@@ -205,16 +196,23 @@ class BatchParameters extends React.Component {
         this.setState( { startMethod: name } );
     }
 
+    startMethod() {
+        return this.state.customStart ? this.state.startMethod : this.startMethodPlaceHolder();
+    }
+
+    startMethodPlaceHolder() {
+        const cleanName = (this.props.dialog.state.name || "").replace(/ /g, "_");
+        return this.startMethodPrefix + cleanName;
+    }
+
+
     render() {
         if(this.props.forRename)
             return null;
-        else {
-            const cleanName = (this.props.dialog.state.name || "").replace(/ /g, "_");
-            const placeHolder = this.startMethodPrefix + cleanName;
+        else
             return <OptionalInput name="method" label={this.startMethodLabel} customize={this.state.customStart}
-                                  placeHolder={placeHolder} value={this.state.startMethod}
-                                  handleCustom={this.handleCustomStart} handleName={this.handleStartMethod}/>
-        }
+                                  placeHolder={this.startMethodPlaceHolder()} value={this.state.startMethod}
+                                  handleCustom={this.handleCustomStart} handleName={this.handleStartMethod}/>;
     }
 
 }
@@ -262,16 +260,25 @@ class WebSiteParameters extends ServiceParameters {
         this.setState( { homePage: name } );
     }
 
-    render() {
+    homePage() {
+        return this.state.customHome ? this.state.homePage : this.homePagePlaceHolder();
+    }
+
+    homePagePlaceHolder() {
         const cleanName = (this.props.dialog.state.name || "").replace(/ /g, "_");
-        const placeHolder = cleanName + "/index.html";
+        return cleanName + "/index.html";
+    }
+
+
+
+    render() {
         return <div>
                 <FormGroup>
                     <ControlLabel>Icon</ControlLabel><br/>
                     <DroppedFileWidget onDrop={this.handleDropIcon} style={widgetStyle} image={this.image}/>
                 </FormGroup>
                 { super.render() }
-                { !this.props.forRename && <OptionalInput name="home" label="Home page:" customize={this.state.customHome} placeHolder={placeHolder} value={this.state.homePage}
+                { !this.props.forRename && <OptionalInput name="home" label="Home page:" customize={this.state.customHome} placeHolder={this.homePagePlaceHolder()} value={this.state.homePage}
                                handleCustom={this.handleCustomHome} handleName={this.handleHomePage} /> }
             </div>;
     }
