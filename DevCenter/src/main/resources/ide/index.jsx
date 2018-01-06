@@ -108,7 +108,7 @@ class EditorPage extends React.Component {
         this.editorWindow = document.getElementById("editor").contentWindow;
         this.loadDescription();
         this.loadResources();
-        document.title = "Code Editor for: " + getParam("name");
+        document.title = "Project: " + getParam("name");
     }
 
     editorDidMount() {

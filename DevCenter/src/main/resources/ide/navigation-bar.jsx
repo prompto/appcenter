@@ -116,7 +116,7 @@ class EditorNavBar extends React.Component {
                 <Navbar inverse fluid fixedTop>
                 <Navbar.Header>
                     <Navbar.Brand pullLeft>
-                        <a href="#">Prompto Code Editor for: <b>{projectName}</b></a>
+                        <a href="#">Project: <b>{projectName}</b></a>
                     </Navbar.Brand>
                 </Navbar.Header>
                 <Navbar.Form pullRight style={editStyle}>

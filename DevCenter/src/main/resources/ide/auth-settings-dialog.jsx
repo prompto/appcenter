@@ -151,7 +151,7 @@ class NoAuthenticationMethod extends AuthenticationMethod {
 class BasicAuthenticationMethod extends AuthenticationMethod {
 
     constructor() {
-        super("BASIC", "Browser basic (BASIC)");
+        super("BASIC", "Browser built-in method (BASIC)");
     }
 };
 
@@ -281,18 +281,21 @@ class AuthenticationSettingsDialog extends React.Component {
 
     constructor(props) {
         super(props);
+        this.project = this.props.root.project.value;
         this.state = {show: true};
         this.setStateFromSettings();
         this.handleClose = this.handleClose.bind(this);
         this.handleMethod = this.handleMethod.bind(this);
         this.handleSource = this.handleSource.bind(this);
         this.handleSkipAuthInDev = this.handleSkipAuthInDev.bind(this);
+        this.handleWhiteList = this.handleWhiteList.bind(this);
+        this.handleUseDefaultWhiteList = this.handleUseDefaultWhiteList.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.saveSettings = this.saveSettings.bind(this);
     }
 
     setStateFromSettings() {
-        const settings = (this.props.root.project.value.authenticationSettings || {}).value || {};
+        const settings = (this.project.authenticationSettings || {}).value || {};
         if(settings.authenticationMethod && settings.authenticationMethod.type) {
             this.state.method = new (eval(settings.authenticationMethod.type))();
             this.state.method.setStateFromValue(settings.authenticationMethod.value, this.state);
@@ -305,6 +308,8 @@ class AuthenticationSettingsDialog extends React.Component {
         } else
             this.state.source = ID_TO_AUTH_SOURCE_MAP["STORE"];
         this.state.useTestSourceInDev = settings.useTestSourceInDev || false;
+        this.state.useDefaultWhiteList = settings.useDefaultWhiteList || false;
+        this.state.whiteList = (settings.whiteList || {}).value || [];
     }
 
     setSettingsFromState(settings) {
@@ -331,6 +336,8 @@ class AuthenticationSettingsDialog extends React.Component {
         }
         settings.skipAuthInDev = this.state.skipAuthInDev;
         settings.useTestSourceInDev = this.state.useTestSourceInDev;
+        settings.useDefaultWhiteList = this.state.useDefaultWhiteList;
+        settings.whiteList = { type: "Text[]", value: this.state.whiteList };
     }
 
     componentDidMount() {
@@ -351,9 +358,18 @@ class AuthenticationSettingsDialog extends React.Component {
     }
 
     handleSkipAuthInDev(e) {
-        const checked = e.currentTarget.checked;
-        this.setState({skipAuthInDev: checked});
+        this.setState({skipAuthInDev: e.currentTarget.checked});
     }
+
+    handleWhiteList(e) {
+        const whiteList = e.target.value.split("\n");
+        this.setState({whiteList: whiteList});
+    }
+
+    handleUseDefaultWhiteList(e) {
+        this.setState({useDefaultWhiteList: e.currentTarget.checked});
+    }
+
 
     handleSource(e) {
         const id = e.currentTarget.value;
@@ -397,6 +413,8 @@ class AuthenticationSettingsDialog extends React.Component {
 
 
     render() {
+        const cleanName = this.project.name.replace(/ /g, "_");
+        const showWhiteList = this.state.method.id!=="NONE";
         return <Modal show={this.state.show} onHide={this.handleClose} >
             <Modal.Header closeButton={true}>
                 <Modal.Title>Authentication settings</Modal.Title>
@@ -416,6 +434,20 @@ class AuthenticationSettingsDialog extends React.Component {
                     </FormGroup>
                     }
                     { this.state.method.renderItems(this, false) }
+                    { showWhiteList &&
+                        <FormGroup>
+                            <ControlLabel>List resources to <i>NOT</i> protect (white list) in this application:</ControlLabel><br/>
+                            <FormControl componentClass="textarea" value={this.state.whiteList.join("\n")} onChange={this.handleWhiteList}>
+                            </FormControl>
+                            <HelpBlock>
+                                List 1 resource per line.&nbsp;Valid resources are of the form:<br/>
+                                &nbsp;-&nbsp;Exact resource name<br/>
+                                &nbsp;-&nbsp;Path pattern such as: {cleanName}/auth/*<br/>
+                                &nbsp;-&nbsp;Extension pattern such as: *.jpeg
+                            </HelpBlock>
+                            <Checkbox inline checked={this.state.useDefaultWhiteList} onChange={this.handleUseDefaultWhiteList}>Also use default white list</Checkbox>
+                        </FormGroup>
+                    }
                  </form>
             </Modal.Body>
             <Modal.Footer>
