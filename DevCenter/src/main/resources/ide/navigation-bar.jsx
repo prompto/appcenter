@@ -40,9 +40,8 @@ class EditorNavBar extends React.Component {
     }
 
     openWebPage(content) {
-        const tab = window.open(window.location.href, '_blank', '');
         this.fetchModuleURL((url)=>{
-            tab.location = url + content.name;
+            const tab = window.open(url + content.name, '_blank', '');
             tab.focus();
         });
     }
