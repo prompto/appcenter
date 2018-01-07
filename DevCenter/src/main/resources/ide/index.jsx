@@ -1,3 +1,5 @@
+const { Overlay } = ReactBootstrap;
+
 function getParam(name) {
     let value = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href)[1];
     return decodeURIComponent(value);
@@ -6,6 +8,35 @@ function getParam(name) {
 function print(msg) {
     const doc = document.getElementById("output");
     doc.innerHTML += msg + "<br/>";
+}
+
+class MessageContent extends React.Component {
+
+    render() {
+        return <div id="message-content">{this.props.message}</div>;
+    }
+
+}
+
+
+class MessageArea extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {show: false, message: "<init>"};
+        this.setMessage = this.setMessage.bind(this);
+    }
+
+    setMessage(message) {
+        this.setState({show: true, message: message});
+        setTimeout(()=>this.setState({show: false}), 2000);
+    }
+
+    render() {
+        return <Overlay show={this.state.show}>
+            <MessageContent message={this.state.message} />
+        </Overlay>;
+    }
 }
 
 class ContentNavigator extends React.Component {
@@ -147,7 +178,7 @@ class EditorPage extends React.Component {
                 then(response=>this.commitSuccessful(response)).
                 catch(error=>this.commitFailed(error));
         } else {
-            alert("Nothing to commit!");
+            this.messageArea.setMessage("Nothing to commit!");
             this.setEditorContent(this.activeContent);
             this.activeContent = null;
         }
@@ -155,14 +186,14 @@ class EditorPage extends React.Component {
     }
 
     commitFailed(failure) {
-        alert("Commit failed!");
+        this.messageArea.setMessage("Commit failed!");
         this.editorWindow.commitFailed();
         this.setEditorContent(this.activeContent);
         this.activeContent = null;
     }
 
     commitSuccessful(success) {
-        alert("Commit ok!");
+        this.messageArea.setMessage("Commit ok!");
         this.editorWindow.commitSuccessful();
         this.loadResources(()=>{
             this.setEditorContent(this.activeContent);
@@ -235,6 +266,7 @@ class EditorPage extends React.Component {
         const showImage = this.state.contentType==="image";
         return <div>
             <EditorNavBar ref={ref=>this.navBar=ref} root={this}/>
+            <MessageArea ref={ref=>this.messageArea=ref}/>
             <div style={editorStyle}>
                 <ContentNavigator ref={ref=>this.elementsNavigator=ref} root={this} catalog={this.catalog}/>
                 /* always render editor otherwise iframe, ace editor and prompto worker are destroyed */
@@ -249,7 +281,9 @@ class EditorPage extends React.Component {
     }
 
     setEditorContent(content) {
-        if (content && content === this.currentContent)
+        if(!content)
+            content = { type: "Prompto" };
+        if (content === this.currentContent)
             return;
         this.saveEditedTextResource();
         this.currentContent = content;
