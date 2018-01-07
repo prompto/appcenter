@@ -164,7 +164,7 @@ class EditorPage extends React.Component {
     commitSuccessful(success) {
         alert("Commit ok!");
         this.editorWindow.commitSuccessful();
-        this.loadResources(this.projectId, ()=>{
+        this.loadResources(()=>{
             this.setEditorContent(this.activeContent);
             this.activeContent = null;
         });
