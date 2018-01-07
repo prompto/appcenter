@@ -26,6 +26,24 @@
     bottom: 0;
 }
 
+#resource-editor {
+    bottom: 30px;
+}
+
+#resource-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 25px;
+    bottom: 0;
+    border-top: 1px solid #aaa;
+    padding-top: 4px;
+    padding-left: 6px;
+    background-color: floralwhite;
+    font-family: monospace;
+    font-style: italic;
+}
+
 .ace_error-word {
     position: absolute;
     border-bottom: 2px dotted red;

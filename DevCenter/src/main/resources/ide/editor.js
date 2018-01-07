@@ -1,6 +1,7 @@
 console.log = parent.print;
 var promptoEditor = null;
 var resourceEditor = null;
+var resourceContent = null;
 var modeId = null;
 
 function setDialect(dialect) {
@@ -38,6 +39,7 @@ function setContentResource(editor, content) {
     editor.setValue(content.body, -1);
     editor.setReadOnly(false);
     editor.getSession().setScrollTop(0);
+    resourceContent.innerText = content.name;
 }
 
 function getResourceBody() {
@@ -170,6 +172,7 @@ function initResourceEditor(callback) {
 function documentLoaded() {
     initResourceEditor(editor => {
         resourceEditor = editor;
+        resourceContent = document.getElementById("resource-content");
     });
     initPromptoEditor(editor => {
         promptoEditor = editor;
