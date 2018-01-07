@@ -133,6 +133,7 @@ class EditorPage extends React.Component {
         this.state = { editMode: "EDIT", contentType: "Prompto", newFileResourceType: null };
         this.catalog = new Catalog();
         this.currentContent = null;
+        Mousetrap.bind('command+s', this.commit);
     }
 
     componentDidMount() {
@@ -164,6 +165,7 @@ class EditorPage extends React.Component {
         this.activeContent = this.currentContent;
         this.setEditorContent({ type: "Prompto" });
         this.editorWindow.prepareCommit();
+        return false;
     }
 
     commitPrepared(declarations) {
@@ -350,6 +352,10 @@ function catalogUpdated(delta) {
 
 function destroy() {
     root.destroy();
+}
+
+function commit() {
+    root.commit();
 }
 
 function commitPrepared(declarations) {

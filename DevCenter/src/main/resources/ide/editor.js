@@ -147,23 +147,34 @@ function setModeFile(mode, callback) {
     callback(null);
 }
 
+
+function bindCommitKey(editor) {
+    editor.commands.addCommand({
+        name: "commit",
+        bindKey: { win: "Ctrl-S", mac: "Command-S" },
+        exec: parent.commit
+    });
+}
+
+
 function initPromptoEditor(callback) {
     var editor = ace.edit("prompto-editor");
     editor.$blockScrolling = Infinity;
     editor.setTheme("ace/theme/eclipse");
+    bindCommitKey(editor);
     editor.getSession().$editor = editor;
     editor.getSession().setMode("ace/mode/prompto", () => {
         editor.getSession().getMode().setDialect("E"); // start with something
         editor.getSession().setUseWorker(true);
         callback(editor);
     });
-
 }
 
 function initResourceEditor(callback) {
     var editor = ace.edit("resource-editor");
     editor.$blockScrolling = Infinity;
     editor.setTheme("ace/theme/eclipse");
+    bindCommitKey(editor);
     editor.getSession().setMode("ace/mode/text", () => {
         callback(editor);
     });
