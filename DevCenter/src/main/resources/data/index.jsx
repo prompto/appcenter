@@ -11,7 +11,7 @@ class DataPage extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { query: "", store: "APPS", headers: null, rows: null, totalRows: 0, page: 1, rowsPerPage: 10, showDbId: false, error: "No data" };
+        this.state = { query: "", store: "APPS", headers: null, rows: null, totalRows: 0, page: 1, rowsPerPage: 25, showDbId: false, error: "No data" };
         this.fetchPage = this.fetchPage.bind(this);
         this.fetchFailed = this.fetchFailed.bind(this);
         this.dataFetched = this.dataFetched.bind(this);
