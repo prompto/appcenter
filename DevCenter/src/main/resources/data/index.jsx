@@ -11,7 +11,7 @@ class DataPage extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { query: "", headers: null, rows: null, totalRows: 0, page: 1, rowsPerPage: 10, showDbId: false, error: "No data" };
+        this.state = { query: "", store: "APPS", headers: null, rows: null, totalRows: 0, page: 1, rowsPerPage: 10, showDbId: false, error: "No data" };
         this.fetchPage = this.fetchPage.bind(this);
         this.fetchFailed = this.fetchFailed.bind(this);
         this.dataFetched = this.dataFetched.bind(this);
@@ -28,6 +28,7 @@ class DataPage extends React.Component {
         }
         const params = new URLSearchParams();
         params.append("format", "list");
+        params.append("store", this.state.store);
         params.append("first", first);
         params.append("last", last);
         params.append("query", this.state.query);

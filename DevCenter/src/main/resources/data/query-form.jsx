@@ -5,7 +5,9 @@ class QueryArea extends React.Component {
     render() {
         const state = this.props.root.state;
         const first = 1 + (state.page - 1) * state.rowsPerPage;
-        const last = first + state.rowsPerPage - 1;
+        let last = first + state.rowsPerPage - 1;
+        if(last > state.totalRows)
+            last  = state.totalRows;
         const numPages = 1 + Math.trunc( (state.totalRows - 1) / state.rowsPerPage);
         const maxButtons = 7;
         const showFirst = numPages>maxButtons && state.page>4;
@@ -18,7 +20,7 @@ class QueryArea extends React.Component {
                 <Navbar.Form pullLeft>
                     <Button onClick={()=>this.props.root.fetchPage(1)}>Fetch</Button>
                 </Navbar.Form>
-            { state.totalRows > 0 &&
+            { numPages > 1 &&
                 <Navbar.Form pullLeft>
                 <Pagination style={{margin: 0}} activePage={state.page} items={numPages} maxButtons={maxButtons} first={showFirst} last={showLast} ellipsis={false} onSelect={p=>this.props.root.fetchPage(p)}/>
                 </Navbar.Form>
