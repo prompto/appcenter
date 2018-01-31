@@ -94,7 +94,7 @@ define login as storable Text attribute with key and value index
 // many systems require a password
 define password as Text attribute
 // checked email  
-define email as Text attribute with value index
+define email as storable Text attribute with value index
 define Error as enumerated category with attributes name and text, and symbols:
 	DIVIDE_BY_ZERO with "Divide by zero!" as text
 	INDEX_OUT_OF_RANGE with "Index out of range!" as text
@@ -147,6 +147,19 @@ define "now is a DateTime" as test method doing:
 	a = now
 and verifying: 
 	a is a DateTime 
+// TODO: JavaScript
+define randomUUID as native method returning UUID doing:
+	Java: return java.util.UUID.randomUUID();
+	C#: return System.Guid.NewGuid();
+	Python2: return uuid4() from module: uuid
+	Python3: return uuid4() from module: uuid
+	JavaScript: return null;
+
+
+define "randomUUID is not null" as test method doing:
+	uuid = randomUUID
+and verifying: 
+	uuid is a UUID or uuid is Nothing
 define Buffer as native resource with attribute text, and bindings:
 	
 	define category bindings as:
