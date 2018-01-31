@@ -130,7 +130,9 @@ class MethodProtoItem extends React.Component {
         const proto = this.props.proto;
         const key = "method_" + makeValidId(proto.proto);
         return <ListGroupItem key={key} onClick={this.itemClicked}>
-            <a>{proto.proto}</a> {method.core && <Glyphicon glyph="lock"/>}
+            {proto.proto.length===0 && <a><i>{"<no parameter>"}</i></a>}
+            {proto.proto.length>0 && <a>{proto.proto}</a>}
+            {method.core && <Glyphicon glyph="lock"/>}
         </ListGroupItem>;
     }
 
