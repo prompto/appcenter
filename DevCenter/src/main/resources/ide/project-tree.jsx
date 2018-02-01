@@ -64,7 +64,7 @@ class PromptoItem extends React.Component {
 
     itemClicked(e) {
         e.stopPropagation();
-        const content = { type: "Prompto", subType: this.props.subType, name: this.props.item.name, core: this.props.item.core };
+        const content = { type: "Prompto", subType: this.props.subType.id, name: this.props.item.name, core: this.props.item.core };
         this.props.root.setEditorContent(content);
     }
 
