@@ -130,6 +130,7 @@ class EditorPage extends React.Component {
         this.addResource = this.addResource.bind(this);
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
+        this.done = this.done.bind(this);
         this.state = { editMode: "EDIT", contentType: "Prompto", newFileResourceType: null };
         this.catalog = new Catalog();
         this.currentContent = null;
@@ -334,6 +335,9 @@ class EditorPage extends React.Component {
         this.catalogUpdated(delta, () => projectTree.selectContent(content));
     }
 
+    done(data) {
+        this.setState({editMode: "IDLE"});
+    }
 
 }
 
@@ -360,6 +364,10 @@ function commit() {
 
 function commitPrepared(declarations) {
     root.commitPrepared(declarations);
+}
+
+function done(data) {
+    root.done(data);
 }
 
 // a utility method to inspect worker data in Firefox/Safari
