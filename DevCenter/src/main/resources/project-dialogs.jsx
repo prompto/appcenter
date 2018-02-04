@@ -36,7 +36,7 @@ class ScriptType extends ProjectType {
 class LibraryType extends ProjectType {
 
     constructor() {
-        super("Library", "Library", "/img/library.jpg", "createLibrary");
+        super("Library", "Library", "/img/library.png", "createLibrary");
     }
 }
 

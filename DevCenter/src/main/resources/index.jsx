@@ -1,5 +1,13 @@
 const { Navbar, Nav, NavItem, NavDropdown, MenuItem, Button, Grid, Row, Col, PageHeader, Thumbnail, Clearfix } = ReactBootstrap;
 
+const moduleImage = {
+    library : "img/library.png",
+    script : "img/script.jpg",
+    website : "img/website.jpg",
+    batch : "img/batch.jpg",
+    service : "img/service.jpg",
+};
+
 class Project extends React.Component {
 
     constructor(props) {
@@ -12,7 +20,7 @@ class Project extends React.Component {
 
     render() {
         const module = this.props.module;
-        const imageSrc = module.value.image || "/img/" + module.type.toLowerCase() + ".jpg";
+        const imageSrc = module.value.image || moduleImage[module.type.toLowerCase()];
         const menuStyle = { position: "fixed", display: "block", left: this.state.menuLeft, top: this.state.menuTop, zIndex: 999999 };
         return <Col xs={4} sm={2} style={{width: "170px", boxSizing: "content-box" }} onContextMenu={this.handleContextMenu}>
                     <Thumbnail src={imageSrc} onClick={this.handleClick}>
