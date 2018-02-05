@@ -1,2 +1,2 @@
-# appcenter
-web site for development and management of prompto applications
+# dev center
+web site for development of prompto applications
