@@ -367,7 +367,7 @@ class NewProjectDialog extends React.Component {
 
 }
 
-class RenameProjectDialog extends React.Component {
+class ModifyProjectDialog extends React.Component {
 
     constructor(props) {
         super(props);
@@ -433,7 +433,7 @@ class RenameProjectDialog extends React.Component {
     render() {
         return <Modal show={this.state.show} onHide={this.handleClose} dialogClassName="rename-project-dialog">
             <Modal.Header closeButton={true}>
-                <Modal.Title>Rename project</Modal.Title>
+                <Modal.Title>Modify project</Modal.Title>
             </Modal.Header>
 
             <Modal.Body style={{padding: "8px"}}>
