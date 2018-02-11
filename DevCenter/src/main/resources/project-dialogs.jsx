@@ -265,7 +265,7 @@ class WebSiteParameters extends ServiceParameters {
     }
 
     homePagePlaceHolder() {
-        const cleanName = (this.props.dialog.state.name || "").replace(/ /g, "_");
+        const cleanName = (this.props.dialog.state.name || "").toLowerCase().replace(/ /g, "-");
         return cleanName + "/index.html";
     }
 

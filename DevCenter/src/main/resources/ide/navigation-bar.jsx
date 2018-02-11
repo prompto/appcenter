@@ -126,7 +126,7 @@ class EditorNavBar extends React.Component {
                 </Navbar.Form>
                 <Navbar.Form pullRight style={editStyle}>
                     <DropdownButton id="dialect" title="Settings">
-                        <MenuItem onClick={()=>this.setState({dialog: "AuthenticationSettings"})}>Authentication</MenuItem>
+                        <MenuItem onClick={()=>this.setState({dialog: "Authentication"})}>Authentication</MenuItem>
                         <MenuItem onClick={()=>this.setState({dialog: "Dependencies"})}>Dependencies</MenuItem>
                     </DropdownButton>
                 </Navbar.Form>
@@ -160,7 +160,7 @@ class EditorNavBar extends React.Component {
                     <Button type="button" onClick={()=>this.stopPromptoCode()}>{runningLabel}</Button>
                 </Navbar.Form>
             </Navbar>
-            { this.state.dialog==="AuthenticationSettings" && <AuthenticationSettingsDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
+            { this.state.dialog==="Authentication" && <AuthenticationSettingsDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
             { this.state.dialog==="Dependencies" && <DependenciesDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
         </div>;
     }

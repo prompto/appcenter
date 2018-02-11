@@ -139,13 +139,28 @@ function Catalog() {
             const idx = list.findIndex( function(a) { return a.value.name === res.value.name; });
             if (idx >= 0)
                 list.splice(idx, 1);
-            var id = makeValidId(res.value.name);
-            let status = this.resources.statuses[id];
+            const id = makeValidId(res.value.name);
+            const status = this.resources.statuses[id];
             if(status && status.editStatus==="CREATED")
                 delete this.resources.statuses[id];
             else
                 this.resources.statuses[id] = {editStatus: "DELETED", stuff: res };
         });
+    };
+    this.renameResource = function(res, newName) {
+        const oldName = res.value.name;
+        const oldid = makeValidId(oldName);
+        const oldstatus = this.resources.statuses[oldid];
+        res.value.name = newName;
+        const newid = makeValidId(newName);
+        delete this.resources.statuses[oldid];
+        if(oldstatus && oldstatus.editStatus==="CREATED")
+            this.resources.statuses[newid] = {editStatus: "CREATED", stuff: res};
+        else
+            this.resources.statuses[newid] = {editStatus: "DIRTY", stuff: res };
+        const list = this.listFromResource(res);
+        list.sort(function(a,b) { return a.value.name < b.value.name ? -1 : a.value.name > b.value.name ? 1 : 0; });
+        return res;
     };
     this.addResources = function(toAdd) {
         toAdd.forEach(res => {

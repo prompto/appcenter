@@ -127,11 +127,12 @@ class EditorPage extends React.Component {
         this.commitPrepared = this.commitPrepared.bind(this);
         this.commitFailed = this.commitFailed.bind(this);
         this.commitSuccessful = this.commitSuccessful.bind(this);
+        this.renameResource = this.renameResource.bind(this);
         this.addResource = this.addResource.bind(this);
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
         this.done = this.done.bind(this);
-        this.state = { editMode: "EDIT", contentType: "Prompto", newFileResourceType: null };
+        this.state = { editMode: "EDIT", contentType: "Prompto", resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
         this.catalog = new Catalog();
         this.currentContent = null;
         Mousetrap.bind('command+s', this.commit);
@@ -277,6 +278,7 @@ class EditorPage extends React.Component {
                 { showImage && <ImageDisplayer file={this.currentContent.file} source={this.currentContent.data}/> }
                 { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }
                 { this.state.newTextResourceType!=null && <NewTextResourceDialog type={this.state.newTextResourceType} root={this} onClose={()=>this.setState({newTextResourceType: null})}/> }
+                { this.state.resourceToRename!=null && <RenameResourceDialog resource={this.state.resourceToRename} root={this} onClose={()=>this.setState({resourceToRename: null})}/>}
             </div>
             <div id="output" style={outputStyle}>
             </div>
@@ -334,6 +336,15 @@ class EditorPage extends React.Component {
         const projectTree = this.elementsNavigator.projectTree;
         this.catalogUpdated(delta, () => projectTree.selectContent(content));
     }
+
+    renameResource(current, newName) {
+        this.saveEditedTextResource();
+        this.currentContent = null;
+        const renamed = this.catalog.renameResource(current, newName);
+        const projectTree = this.elementsNavigator.projectTree;
+        this.elementsNavigator.setState({catalog: this.catalog}, () => projectTree.selectContent(renamed));
+    }
+
 
     done(data) {
         this.setState({editMode: "IDLE"});

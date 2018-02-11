@@ -1,4 +1,4 @@
-const { ListGroup, ListGroupItem, Collapse, Glyphicon } = ReactBootstrap;
+const { ListGroup, ListGroupItem, Collapse, Glyphicon, Clearfix, MenuItem } = ReactBootstrap;
 
 class GroupTree extends React.Component {
 
@@ -228,7 +228,10 @@ class ResourceItem extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = { contextMenu: null };
         this.selectContent = this.selectContent.bind(this);
+        this.handleContextMenu = this.handleContextMenu.bind(this);
+        this.handleDocumentClick = this.handleDocumentClick.bind(this);
     }
 
     selectContent(content) {
@@ -238,6 +241,36 @@ class ResourceItem extends React.Component {
         } else
             return false;
     }
+
+    handleContextMenu(e) {
+        e.preventDefault();
+        this.setState( { contextMenu: true, menuLeft: e.pageX,  menuTop: e.pageY } );
+        document.addEventListener("click", this.handleDocumentClick );
+        document.addEventListener("contextmenu", this.handleDocumentClick );
+    }
+
+    contains(elem, child) {
+        while(child!=null) {
+            if(child==elem)
+                return true;
+            child = child.parentElement;
+        }
+        return false;
+    }
+
+    handleDocumentClick(e) {
+        const menu = document.getElementById("item-menu");
+        const inside = this.contains(menu, e.target);
+        // only bubble up useful clicks
+        if(!inside || e.target.href==="#")
+            e.stopPropagation();
+        this.setState( { contextMenu: false } );
+        document.removeEventListener("contextmenu", this.handleDocumentClick );
+        document.removeEventListener("click", this.handleDocumentClick );
+    }
+
+
+
 }
 
 class TextResourceItem extends ResourceItem {
@@ -249,9 +282,17 @@ class TextResourceItem extends ResourceItem {
     }
 
     render() {
-        return <ListGroupItem onClick={this.itemClicked}>
+        const menuStyle = { position: "fixed", display: "block", left: this.state.menuLeft, top: this.state.menuTop, zIndex: 999999 };
+        return <ListGroupItem onClick={this.itemClicked} onContextMenu={this.handleContextMenu}>
             <a>{this.props.resource.value.name}</a>
-        </ListGroupItem>;
+            {this.state.contextMenu &&
+                <Clearfix id="item-menu" style={menuStyle}>
+                    <ul className="dropdown-menu" style={{display: "block"}}>
+                        <MenuItem href={"#"} onSelect={()=>this.props.root.setState({ resourceToRename: this.props.resource })}>Rename</MenuItem>
+                    </ul>
+                </Clearfix>
+            }
+            </ListGroupItem>;
     }
 
     itemClicked(e) {
@@ -290,8 +331,15 @@ class BinaryResourceItem extends ResourceItem {
     }
 
     render() {
-        return <ListGroupItem onClick={this.itemClicked}>
+        return <ListGroupItem onClick={this.itemClicked} onContextMenu={this.handleContextMenu}>
             <a>{this.props.resource.value.name}</a>
+            {this.state.contextMenu &&
+            <Clearfix id="item-menu" style={menuStyle}>
+                <ul className="dropdown-menu" style={{display: "block"}}>
+                    <MenuItem href={"#"} onSelect={()=>this.props.root.setState({ resourceToRename: this.props.resource })}>Rename</MenuItem>
+                </ul>
+            </Clearfix>
+            }
         </ListGroupItem>;
     }
 
