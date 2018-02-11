@@ -179,7 +179,7 @@ class FormAuthenticationMethod extends AuthenticationMethod {
 
     createDefaults(dialog) {
         super.createDefaults(dialog);
-        const cleanName = getParam("name").replace(/ /g, "_");
+        const cleanName = getParam("name").toLowerCase().replace(/ /g, "-");
         let { loginFolder, errorFolder } = dialog.state;
         loginFolder = loginFolder || cleanName;
         errorFolder = errorFolder || cleanName;
@@ -281,9 +281,8 @@ class AuthenticationSettingsDialog extends React.Component {
 
     constructor(props) {
         super(props);
-        this.project = this.props.root.project.value;
+        this.getProject = ()=>this.props.root.getProject().value;
         this.state = {show: true};
-        this.setStateFromSettings();
         this.handleClose = this.handleClose.bind(this);
         this.handleMethod = this.handleMethod.bind(this);
         this.handleSource = this.handleSource.bind(this);
@@ -292,10 +291,11 @@ class AuthenticationSettingsDialog extends React.Component {
         this.handleUseDefaultWhiteList = this.handleUseDefaultWhiteList.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.saveSettings = this.saveSettings.bind(this);
+        this.setStateFromSettings();
     }
 
     setStateFromSettings() {
-        const settings = (this.project.authenticationSettings || {}).value || {};
+        const settings = (this.getProject().authenticationSettings || {}).value || {};
         if(settings.authenticationMethod && settings.authenticationMethod.type) {
             this.state.method = new (eval(settings.authenticationMethod.type))();
             this.state.method.setStateFromValue(settings.authenticationMethod.value, this.state);
@@ -380,7 +380,7 @@ class AuthenticationSettingsDialog extends React.Component {
 
     handleSave() {
         // load latest full description before updating it
-        const dbId = this.props.root.project.value.dbId.value.toString();
+        const dbId = this.getProject().dbId.value.toString();
         const params = {
             params: JSON.stringify([{name: "dbId", value: dbId}, {
                 name: "register",
@@ -413,7 +413,7 @@ class AuthenticationSettingsDialog extends React.Component {
 
 
     render() {
-        const cleanName = this.project.name.replace(/ /g, "_");
+        const cleanName = this.getProject().name.toLowerCase().replace(/ /g, "-");
         const showWhiteList = this.state.method.id!=="NONE";
         return <Modal show={this.state.show} onHide={this.handleClose} >
             <Modal.Header closeButton={true}>

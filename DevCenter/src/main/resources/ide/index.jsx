@@ -110,7 +110,6 @@ class EditorPage extends React.Component {
     constructor(props) {
         super(props);
         this.specialTypes = new Set(["prompto", "image", "audio", "video", "other"]);
-        this.project = null;
         this.navBar = null;
         this.elementsNavigator = null;
         this.editorFrame = null;
@@ -129,13 +128,18 @@ class EditorPage extends React.Component {
         this.commitSuccessful = this.commitSuccessful.bind(this);
         this.renameResource = this.renameResource.bind(this);
         this.addResource = this.addResource.bind(this);
+        this.getProject = this.getProject.bind(this);
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
         this.done = this.done.bind(this);
-        this.state = { editMode: "EDIT", contentType: "Prompto", resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
+        this.state = { project: null, editMode: "EDIT", contentType: "Prompto", resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
         this.catalog = new Catalog();
         this.currentContent = null;
         Mousetrap.bind('command+s', this.commit);
+    }
+
+    getProject() {
+        return this.state.project;
     }
 
     componentDidMount() {
@@ -260,7 +264,7 @@ class EditorPage extends React.Component {
             if (response.error)
                 alert(response.error);
             else
-                this.project = response.data;
+                this.setState({project: response.data});
         });
     }
 

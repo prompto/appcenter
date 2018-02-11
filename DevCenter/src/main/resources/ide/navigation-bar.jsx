@@ -112,6 +112,11 @@ class EditorNavBar extends React.Component {
         const editStyle = {display: this.props.root.state.editMode==="EDIT" ? "block" : "none"};
         const runningStyle = {display: this.props.root.state.editMode!=="EDIT" ? "block" : "none"};
         const runningLabel = this.props.root.state.editMode==="RUNNING" ? "Stop" : "Done";
+        const project = this.props.root.getProject();
+        const hasStartMethod = project && project.type==="Batch";
+        const hasServerStartMethod = project && (project.type==="Service" || project.type==="WebSite");
+        const hasHomePage = project && project.type==="WebSite";
+        const hasConfiguration = hasStartMethod || hasServerStartMethod || hasHomePage;
         return <div>
                 <Navbar inverse fluid fixedTop>
                 <Navbar.Header>
@@ -126,8 +131,9 @@ class EditorNavBar extends React.Component {
                 </Navbar.Form>
                 <Navbar.Form pullRight style={editStyle}>
                     <DropdownButton id="dialect" title="Settings">
-                        <MenuItem onClick={()=>this.setState({dialog: "Authentication"})}>Authentication</MenuItem>
+                        { hasConfiguration && <MenuItem onClick={()=>this.setState({dialog: "Configuration"})}>Configuration</MenuItem> }
                         <MenuItem onClick={()=>this.setState({dialog: "Dependencies"})}>Dependencies</MenuItem>
+                        { hasServerStartMethod && <MenuItem onClick={()=>this.setState({dialog: "Authentication"})}>Authentication</MenuItem> }
                     </DropdownButton>
                 </Navbar.Form>
                 <Navbar.Form pullRight style={editStyle}>
@@ -162,6 +168,7 @@ class EditorNavBar extends React.Component {
             </Navbar>
             { this.state.dialog==="Authentication" && <AuthenticationSettingsDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
             { this.state.dialog==="Dependencies" && <DependenciesDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
+            { this.state.dialog==="Configuration" && <ConfigurationDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
         </div>;
     }
 
