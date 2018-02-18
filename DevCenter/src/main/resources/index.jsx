@@ -1,111 +1,4 @@
-const { Navbar, Nav, NavItem, NavDropdown, MenuItem, Button, Grid, Row, Col, PageHeader, Thumbnail, Clearfix } = ReactBootstrap;
-
-const moduleImage = {
-    library : "img/library.png",
-    script : "img/script.jpg",
-    website : "img/website.jpg",
-    batch : "img/batch.jpg",
-    service : "img/service.jpg",
-};
-
-class Project extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {contextMenu: false};
-        this.handleClick = this.handleClick.bind(this);
-        this.handleContextMenu = this.handleContextMenu.bind(this);
-        this.handleDocumentClick = this.handleDocumentClick.bind(this);
-    }
-
-    render() {
-        const module = this.props.module;
-        const imageSrc = module.value.image || moduleImage[module.type.toLowerCase()];
-        const menuStyle = { position: "fixed", display: "block", left: this.state.menuLeft, top: this.state.menuTop, zIndex: 999999 };
-        return <Col xs={4} sm={2} style={{width: "170px", boxSizing: "content-box" }} onContextMenu={this.handleContextMenu}>
-                    <Thumbnail src={imageSrc} onClick={this.handleClick}>
-                        <p><strong>{module.value.name}</strong></p>
-                        <span className="text-muted">{module.value.description}</span>
-                    </Thumbnail>
-                    {this.state.contextMenu && <Clearfix id="project-menu" style={menuStyle}>
-                        <ul className="dropdown-menu" style={{display: "block"}}>
-                            <MenuItem href={"#"} onSelect={()=>this.props.root.exportProject(module)}>Export</MenuItem>
-                            <MenuItem href={"#"} onSelect={()=>this.props.root.modifyProject(module)}>Modify</MenuItem>
-                            <MenuItem href={"#"} onSelect={()=>this.props.root.deleteProject(module)}>Delete</MenuItem>
-                        </ul>
-                    </Clearfix>}
-                </Col>;
-    }
-
-    handleClick() {
-        const module = this.props.module;
-        const href = "../ide/index.html?dbId=" + module.value.dbId.value + "&name=" + module.value.name;
-        window.open(href, "_blank");
-    }
-
-    handleContextMenu(e) {
-        e.preventDefault();
-        this.setState( { contextMenu: true, menuLeft: e.pageX,  menuTop: e.pageY } );
-        document.addEventListener("click", this.handleDocumentClick );
-        document.addEventListener("contextmenu", this.handleDocumentClick );
-    }
-
-    contains(elem, child) {
-        while(child!=null) {
-            if(child==elem)
-                return true;
-            child = child.parentElement;
-        }
-        return false;
-    }
-
-    handleDocumentClick(e) {
-        const menu = document.getElementById("project-menu");
-        const inside = this.contains(menu, e.target);
-        // only bubble up useful clicks
-        if(!inside || e.target.href==="#")
-            e.stopPropagation();
-        this.setState( { contextMenu: false } );
-        document.removeEventListener("contextmenu", this.handleDocumentClick );
-        document.removeEventListener("click", this.handleDocumentClick );
-    }
-
-}
-
-
-class ProjectsSection extends React.Component {
-
-    render() {
-        return <Row>
-            {this.props.modules.map( module => <Project key={module.value.dbId.value} root={this.props.root} module={module} />)}
-        </Row>;
-    }
-}
-
-class ProjectsNavBar extends React.Component {
-
-    render() {
-        const btnStyle = {backgroundImage: "none"};
-        return <Navbar inverse fluid fixedTop>
-            <Navbar.Header>
-                <Navbar.Brand pullLeft>
-                    <a href="#">Prompto Development Center</a>
-                </Navbar.Brand>
-            </Navbar.Header>
-            <Nav pullRight>
-                <NavItem href="/data/index.html" target="_blank">Data</NavItem>
-                <NavItem href="#" target="_blank">Tutorials</NavItem>
-                <NavItem href="http://www.prompto.org" target="_blank">Reference</NavItem>
-            </Nav>
-            <Navbar.Form pullRight>
-                <Button type="button" onClick={this.props.root.newProject} style={btnStyle}>New</Button>
-                &nbsp;
-                <Button type="button" style={btnStyle}>Import</Button>
-            </Navbar.Form>
-        </Navbar>;
-    }
-
-}
+const { Grid, PageHeader } = ReactBootstrap;
 
 class HomePage extends React.Component {
 
@@ -178,9 +71,9 @@ class HomePage extends React.Component {
             {this.state.dialog==="ModifyProject" && <ModifyProjectDialog onClose={()=>this.setState({dialog: null})} viewer={this} module={this.state.module}/>}
             <Grid fluid style={{paddingTop: 16}}>
                 <PageHeader>Recent projects</PageHeader>
-                <ProjectsSection root={this} id="recent" modules={this.state.recent}/>
+                <ProjectsBrowser root={this} id="recent" modules={this.state.recent}/>
                 <PageHeader>All projects</PageHeader>
-                <ProjectsSection root={this} id="all" modules={this.state.all}/>
+                <ProjectsBrowser root={this} id="all" modules={this.state.all}/>
             </Grid>
         </div>
     }
