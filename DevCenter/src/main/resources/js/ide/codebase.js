@@ -133,7 +133,7 @@ Repository.prototype.getDeclaration = function(content) {
         return this.projectContext.getRegisteredTest(content.name);
     else if(content.subType==="method") {
         var methodsMap = this.projectContext.getRegisteredDeclaration(content.name);
-        if(content.proto) {
+        if(content.proto!==null && content.proto!==undefined) {
             return methodsMap.protos[content.proto];
         } else {
             // simply return the first proto
