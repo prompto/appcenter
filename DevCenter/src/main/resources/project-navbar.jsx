@@ -1,9 +1,10 @@
 const { Navbar, Nav, NavItem, Button } = ReactBootstrap;
 
+const btnStyle = {backgroundImage: "none"};
+
 class ProjectsNavBar extends React.Component {
 
     render() {
-        const btnStyle = {backgroundImage: "none"};
         return <Navbar inverse fluid fixedTop>
             <Navbar.Header>
                 <Navbar.Brand pullLeft>
