@@ -1,3 +1,5 @@
+var workerConsole = self.console;
+
 importScripts("worker-base.js");
 ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace/worker/mirror"], function(require, exports, module) {
     "use strict";
@@ -7,13 +9,13 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
 
     var PromptoWorker = function(sender) {
         Mirror.call(this, sender);
-        this.setTimeout(200);
+        // this.setTimeout(200);
         this.$projectId = null;
         this.$project = null;
         this.$dialect = null;
         this.$value = this.doc.getValue();
         this.$core = false;
-        this.$repo = new codebase.Repository();
+        this.$repo = new Repository();
         this.$loading = {};
         this.$authorization = null;
         this.onInit();
@@ -353,7 +355,7 @@ function safe_require(method) {
 }
 
 // load antlr4, prompto and codebase
-importScripts("../lib/prompto.core.bundle.js", "codebase.js");
+importScripts("../lib/prompto.core.bundle.js", "codeutils.js", "codebase.js", "delta.js", "repository.js" );
 
 // class for gathering errors and posting them to editor
 var AnnotatingErrorListener = function(problems) {

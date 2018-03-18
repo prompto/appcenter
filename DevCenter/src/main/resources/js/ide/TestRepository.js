@@ -1,241 +1,33 @@
-var codebase = require("./codebase");
-var prompto = codebase.prompto;
-var Repository = codebase.Repository;
-var Catalog = codebase.Catalog;
-var Delta = codebase.Delta;
+var isNodeJs = typeof window === 'undefined' && typeof importScripts === 'undefined';
+var prompto = prompto;
+
+if(typeof prompto === 'undefined') {
+    prompto = isNodeJs ?
+        require("../../../../../../../prompto-javascript/JavaScript-Core/src/test/prompto/parser/PromptoLoader").prompto :
+        require('prompto/index');
+}
+
+
 //noinspection NodeJsCodingAssistanceForCoreModules
 var path = require("path");
 //noinspection NodeJsCodingAssistanceForCoreModules
 var fs = require("fs");
 
-exports.testEmptyCatalog = function (test) {
-    var catalog = new Catalog();
-    test.ok(catalog);
-    test.done();
-};
-
-exports.testDuplicates1ProtoAdded = function (test) {
-    var delta = new Delta();
-    delta.removed = new Catalog();
-    delta.added = new Catalog();
-    delta.added.methods = [{
-        name: "test", protos: [{proto: "simple", main: true}]
-    }];
-    test.equal(delta.filterOutDuplicates(), 1);
-    test.done();
-};
-
-exports.testDuplicates1ProtoRemoved = function (test) {
-    var delta = new Delta();
-    delta.removed = new Catalog();
-    delta.removed.methods = [{
-        name: "test", protos: [{proto: "simple", main: true}]
-    }];
-    delta.added = new Catalog();
-    test.equal(delta.filterOutDuplicates(), 1);
-    test.done();
-};
-
-exports.testDuplicates1ProtoAddedAndRemoved = function (test) {
-    var delta = new Delta();
-    delta.removed = new Catalog();
-    delta.removed.methods = [{
-        name: "test", protos: [
-            {proto: "simple", main: true}
-        ]
-    }];
-    delta.added = new Catalog();
-    delta.added.methods = [{
-        name: "test", protos: [
-            {proto: "simple", main: true}
-        ]
-    }];
-    test.equal(delta.filterOutDuplicates(), 0);
-    test.done();
-};
-
-exports.testDuplicates1ProtoAddedAnd1Removed = function (test) {
-    var delta = new Delta();
-    delta.removed = new Catalog();
-    delta.removed.methods = [{
-        name: "test", protos: [
-            {proto: "simple1", main: true}
-        ]
-    }];
-    delta.added = new Catalog();
-    delta.added.methods = [{
-        name: "test", protos: [
-            {proto: "simple2", main: true}
-        ]
-    }];
-    test.equal(delta.filterOutDuplicates(), 2);
-    test.done();
-};
-
-exports.testDuplicates2ProtosAddedAnd1Removed = function (test) {
-    var delta = new Delta();
-    delta.removed = new Catalog();
-    delta.removed.methods = [{
-        name: "test", protos: [
-            {proto: "simple2", main: true}
-        ]
-    }];
-    delta.added = new Catalog();
-    delta.added.methods = [{
-        name: "test", protos: [
-            {proto: "simple1", main: true},
-            {proto: "simple2", main: true}
-        ]
-    }];
-    test.equal(delta.filterOutDuplicates(), 1);
-    test.done();
-};
-
-exports.testDuplicates1ProtoAddedAnd2Removed = function (test) {
-    var delta = new Delta();
-    delta.removed = new Catalog();
-    delta.removed.methods = [{
-        name: "test", protos: [
-            {proto: "simple1", main: true},
-            {proto: "simple2", main: true}
-        ]
-    }];
-    delta.added = new Catalog();
-    delta.added.methods = [{
-        name: "test", protos: [
-            {proto: "simple2", main: true}
-        ]
-    }];
-    test.equal(delta.filterOutDuplicates(), 1);
-    test.done();
-};
-
-function createContextWithMethods(methods) {
-    var context = prompto.runtime.Context.newGlobalContext();
-    methods.map(function (method) {
-        var args = new prompto.grammar.ArgumentList();
-        method.args.map(function (name) {
-            var id = new prompto.grammar.Identifier(name);
-            var arg = new prompto.argument.AttributeArgument(id);
-            args.push(arg);
-        });
-        var id = new prompto.grammar.Identifier(method.name);
-        var decl = new prompto.declaration.ConcreteMethodDeclaration(id, args);
-        decl.register(context);
-    });
-    return context;
-}
-exports.testMoving1ProtoAdded = function (test) {
-    var context = createContextWithMethods([{name: "test", args: ["simple"]}]);
-    var delta = new Delta();
-    delta.removed = new Catalog();
-    delta.added = new Catalog();
-    delta.added.methods = [{
-        name: "test", protos: [
-            {proto: "(simple)", main: true}
-        ]
-    }];
-    test.ok(delta.filterOutDuplicates());
-    delta.adjustForMovingProtos(context);
-    test.equal(delta.length(), 1);
-    test.done();
-};
-
-exports.testMoving1ProtoRemoved = function (test) {
-    var context = createContextWithMethods([]);
-    var delta = new Delta();
-    delta.removed = new Catalog();
-    delta.removed.methods = [{
-        name: "test", protos: [
-            {proto: "(simple)", main: true}
-        ]
-    }];
-    delta.added = new Catalog();
-    test.ok(delta.filterOutDuplicates());
-    delta.adjustForMovingProtos(context);
-    test.equal(delta.length(), 1);
-    test.done();
-};
-
-exports.testMoving1ProtoChanged = function (test) {
-    var context = createContextWithMethods([{name: "test", args: ["simple2"]}]);
-    var delta = new Delta();
-    delta.removed = new Catalog();
-    delta.removed.methods = [{
-        name: "test", protos: [
-            {proto: "(simple1)", main: true}
-        ]
-    }];
-    delta.added = new Catalog();
-    delta.added.methods = [{
-        name: "test", protos: [
-            {proto: "(simple2)", main: true}
-        ]
-    }];
-    test.ok(delta.filterOutDuplicates());
-    delta.adjustForMovingProtos(context);
-    test.equal(delta.length(), 2);
-    test.done();
-};
-
-exports.testMoving2ndProtoAdded = function (test) {
-    var context = createContextWithMethods([{name: "test", args: ["(simple1)"]},
-        {name: "test", args: ["(simple2)"]}]);
-    var delta = new Delta();
-    delta.added = new Catalog();
-    delta.added.methods = [{
-        name: "test", protos: [
-            {proto: "(simple2)", main: true}
-        ]
-    }];
-    test.ok(delta.filterOutDuplicates());
-    delta.adjustForMovingProtos(context);
-    test.equal(delta.length(), 2);
-    test.equal(delta.removed.methods.length, 1);
-    var method = delta.removed.methods[0];
-    test.equal(method.name, "test");
-    test.equal(method.protos[0].proto, "(simple1)");
-    test.equal(delta.added.methods.length, 1);
-    method = delta.added.methods[0];
-    test.equal(method.protos[0].proto, "(simple1)");
-    test.equal(method.protos[1].proto, "(simple2)");
-    test.done();
-};
-
-exports.testMoving2ndProtoRemoved = function (test) {
-    var context = createContextWithMethods([{name: "test", args: ["(simple2)"]}]);
-    var delta = new Delta();
-    delta.removed = new Catalog();
-    delta.removed.methods = [{
-        name: "test", protos: [
-            {proto: "(simple1)", main: true}
-        ]
-    }];
-    test.ok(delta.filterOutDuplicates());
-    delta.adjustForMovingProtos(context);
-    test.equal(delta.length(), 2);
-    test.equal(delta.removed.methods.length, 1);
-    var method = delta.removed.methods[0];
-    test.equal(method.name, "test");
-    test.equal(method.protos[0].proto, "(simple1)");
-    test.equal(method.protos[1].proto, "(simple2)");
-    test.equal(delta.added.methods.length, 1);
-    method = delta.added.methods[0];
-    test.equal(method.protos[0].proto, "(simple2)");
-    test.done();
-};
+var Delta = require("./delta").Delta;
+var Codebase = require("./codebase").Codebase;
+var Repository = require("./repository").Repository;
 
 
 function fixPath(filePath) {
-    return path.normalize(path.dirname(path.dirname(module.filename)) + filePath);
+    return path.normalize(path.dirname(path.dirname(module.filename)) + "/" + filePath);
 }
 
 function loadText(filePath) {
     return fs.readFileSync(fixPath(filePath), {encoding: 'utf8'});
 }
 
-exports.testLoadCore = function (test) {
-    var code = loadText("../../prompto/prompto.pec");
+exports.codeIsLoaded = function (test) {
+    var code = loadText("../prompto/prompto.pec");
     var repo = new Repository();
     repo.registerLibraryCode(code, "E");
     test.ok(repo.librariesContext);
@@ -244,7 +36,7 @@ exports.testLoadCore = function (test) {
 };
 
 
-exports.testCreateAttribute = function (test) {
+exports.creatingAttributeSetsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -253,7 +45,7 @@ exports.testCreateAttribute = function (test) {
     test.done();
 };
 
-exports.testUpdateCreatedAttribute = function (test) {
+exports.updatingNewAttributeKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -261,11 +53,11 @@ exports.testUpdateCreatedAttribute = function (test) {
     var delta = repo.handleEditContent("define name as Integer attribute", "E", listener);
     test.ok(delta === null);
     test.ok(repo.statuses["name"].editStatus === "CREATED");
-    test.ok(repo.statuses["name"].declaration.value.body === "define name as Integer attribute");
+    test.ok(repo.statuses["name"].stuff.value.body === "define name as Integer attribute");
     test.done();
 };
 
-exports.testUpdateSelectedAttribute = function (test) {
+exports.selectingThenUpdatingNewAttributeKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -275,11 +67,11 @@ exports.testUpdateSelectedAttribute = function (test) {
     var delta = repo.handleEditContent("define name as Integer attribute", "E", listener);
     test.ok(delta === null);
     test.ok(repo.statuses["name"].editStatus === "CREATED");
-    test.ok(repo.statuses["name"].declaration.value.body === "define name as Integer attribute");
+    test.ok(repo.statuses["name"].stuff.value.body === "define name as Integer attribute");
     test.done();
 };
 
-exports.testUpdateCreatedAttributeName = function (test) {
+exports.renamingNewAttributeKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -293,7 +85,7 @@ exports.testUpdateCreatedAttributeName = function (test) {
 };
 
 
-exports.testUpdateSelectedAttributeName = function (test) {
+exports.selectingThenRenamingNewAttributeKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -308,7 +100,7 @@ exports.testUpdateSelectedAttributeName = function (test) {
     test.done();
 };
 
-exports.testDestroyCreatedAttribute = function (test) {
+exports.destroyingNewAttributeSetsStatusToDELETED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -320,7 +112,7 @@ exports.testDestroyCreatedAttribute = function (test) {
 };
 
 
-exports.testDestroySelectedAttribute = function (test) {
+exports.selectingThenDestroyingNewAttributeSetsStatusToDELETED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -333,7 +125,7 @@ exports.testDestroySelectedAttribute = function (test) {
 };
 
 
-exports.testCreateCategory = function (test) {
+exports.creatingCategorySetsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -343,7 +135,7 @@ exports.testCreateCategory = function (test) {
 };
 
 
-exports.testUpdateCreatedCategory = function (test) {
+exports.updatingNewCategoryKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -351,11 +143,11 @@ exports.testUpdateCreatedCategory = function (test) {
     var delta = repo.handleEditContent("define Xyz as category with attribute other", "E", listener);
     test.ok(delta === null);
     test.ok(repo.statuses["Xyz"].editStatus === "CREATED");
-    test.ok(repo.statuses["Xyz"].declaration.value.body === "define Xyz as category with attribute other\n");
+    test.ok(repo.statuses["Xyz"].stuff.value.body === "define Xyz as category with attribute other\n");
     test.done();
 };
 
-exports.testUpdateSelectedCategory = function (test) {
+exports.selectingThenUpdatingNewCategoryKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -365,11 +157,11 @@ exports.testUpdateSelectedCategory = function (test) {
     var delta = repo.handleEditContent("define Xyz as category with attribute other", "E", listener);
     test.ok(delta === null);
     test.ok(repo.statuses["Xyz"].editStatus === "CREATED");
-    test.ok(repo.statuses["Xyz"].declaration.value.body === "define Xyz as category with attribute other\n");
+    test.ok(repo.statuses["Xyz"].stuff.value.body === "define Xyz as category with attribute other\n");
     test.done();
 };
 
-exports.testUpdateCreatedCategoryName = function (test) {
+exports.renamingNewCategoryKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -383,7 +175,7 @@ exports.testUpdateCreatedCategoryName = function (test) {
 };
 
 
-exports.testUpdateSelectedCategoryName = function (test) {
+exports.selectingThenRenamingNewCategoryKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -399,7 +191,7 @@ exports.testUpdateSelectedCategoryName = function (test) {
 };
 
 
-exports.testDestroyCreatedCategory = function (test) {
+exports.destroyingNewCategorySetsStatusToDELETED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -411,7 +203,7 @@ exports.testDestroyCreatedCategory = function (test) {
 };
 
 
-exports.testDestroySelectedCategory = function (test) {
+exports.selectingThenDestroyingNewCategorySetsStatusToDELETED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -435,7 +227,7 @@ exports.testCreateTest = function (test) {
 };
 
 
-exports.testUpdateCreatedTest = function (test) {
+exports.creatingTestSetsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
@@ -443,12 +235,12 @@ exports.testUpdateCreatedTest = function (test) {
     var delta = repo.handleEditContent('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2', "E", listener);
     test.ok(delta === null);
     test.ok(repo.statuses['"simple test"'].editStatus === "CREATED");
-    test.ok(repo.statuses['"simple test"'].declaration.value.body === 'define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n');
+    test.ok(repo.statuses['"simple test"'].stuff.value.body === 'define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n');
     test.done();
 };
 
 
-exports.testUpdateSelectedTest = function (test) {
+exports.selectingThenUpdatingNewTestKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
@@ -458,12 +250,12 @@ exports.testUpdateSelectedTest = function (test) {
     var delta = repo.handleEditContent('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2', "E", listener);
     test.ok(delta === null);
     test.ok(repo.statuses['"simple test"'].editStatus === "CREATED");
-    test.ok(repo.statuses['"simple test"'].declaration.value.body === 'define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n');
+    test.ok(repo.statuses['"simple test"'].stuff.value.body === 'define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n');
     test.done();
 };
 
 
-exports.testUpdateCreatedTestName = function (test) {
+exports.renamingNewTestKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
@@ -477,7 +269,7 @@ exports.testUpdateCreatedTestName = function (test) {
 };
 
 
-exports.testUpdateSelectedTestName = function (test) {
+exports.selectingThenRenamingNewTestKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
@@ -493,7 +285,7 @@ exports.testUpdateSelectedTestName = function (test) {
 };
 
 
-exports.testDestroyCreatedTest = function (test) {
+exports.destroyNewTestSetsStatusToDELETED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
@@ -505,7 +297,7 @@ exports.testDestroyCreatedTest = function (test) {
 };
 
 
-exports.testDestroySelectedTest = function (test) {
+exports.selectingThenDestroyingNewTestSetsStatusToDELETED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
@@ -518,7 +310,7 @@ exports.testDestroySelectedTest = function (test) {
 };
 
 
-exports.testCreateMethod = function (test) {
+exports.creatingMethodSetsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -529,7 +321,7 @@ exports.testCreateMethod = function (test) {
 };
 
 
-exports.testUpdateCreatedMethod = function (test) {
+exports.updatingNewMethodKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -537,12 +329,12 @@ exports.testUpdateCreatedMethod = function (test) {
     var delta = repo.handleEditContent("define main as method doing:\n\ta = 3\n", "E", listener);
     test.ok(delta === null);
     test.ok(repo.statuses["main/"].editStatus === "CREATED");
-    test.ok(repo.statuses["main/"].declaration.value.body === "define main as method doing:\n\ta = 3\n");
+    test.ok(repo.statuses["main/"].stuff.value.body === "define main as method doing:\n\ta = 3\n");
     test.done();
 };
 
 
-exports.testUpdateSelectedMethod = function (test) {
+exports.selectingThenUpdatingNewMethodKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -552,12 +344,12 @@ exports.testUpdateSelectedMethod = function (test) {
     var delta = repo.handleEditContent("define main as method doing:\n\ta = 3\n", "E", listener);
     test.ok(delta === null);
     test.ok(repo.statuses["main/"].editStatus === "CREATED");
-    test.ok(repo.statuses["main/"].declaration.value.body === "define main as method doing:\n\ta = 3\n");
+    test.ok(repo.statuses["main/"].stuff.value.body === "define main as method doing:\n\ta = 3\n");
     test.done();
 };
 
 
-exports.testUpdateCreatedMethodName1Proto = function (test) {
+exports.renamingNewMethodWith1ProtoKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -571,7 +363,7 @@ exports.testUpdateCreatedMethodName1Proto = function (test) {
 };
 
 
-exports.testUpdateSelectedTestName1Proto = function (test) {
+exports.selectingThenRenamingNewMethodWith1ProtoKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -586,7 +378,7 @@ exports.testUpdateSelectedTestName1Proto = function (test) {
     test.done();
 };
 
-exports.testUpdateCreatedMethodProto1Proto = function (test) {
+exports.updatingProtoOfNewMethodWith1ProtoKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -601,7 +393,7 @@ exports.testUpdateCreatedMethodProto1Proto = function (test) {
     test.done();
 };
 
-exports.testUpdateSelectedMethodProto1Proto = function (test) {
+exports.selectingThenUpdatingProtoOfNewMethodWith1ProtoKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -619,7 +411,7 @@ exports.testUpdateSelectedMethodProto1Proto = function (test) {
 };
 
 
-exports.testUpdateCreatedMethodName2Protos = function (test) {
+exports.renamingNewMethodWith2ProtosKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -640,7 +432,7 @@ exports.testUpdateCreatedMethodName2Protos = function (test) {
 };
 
 
-exports.testUpdateSelectedTestName2Protos = function (test) {
+exports.selectingThenRenamingNewMethodWith2ProtosKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -663,7 +455,7 @@ exports.testUpdateSelectedTestName2Protos = function (test) {
 };
 
 
-exports.testUpdateCreatedMethodProto2Protos = function (test) {
+exports.updatingProtoOfNewMethodWith2ProtosKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -684,7 +476,7 @@ exports.testUpdateCreatedMethodProto2Protos = function (test) {
 };
 
 
-exports.testUpdateSelectedMethodProto2Protos = function (test) {
+exports.selectingThenUpdatingProtoOfNewMethodWith2ProtosKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -707,7 +499,7 @@ exports.testUpdateSelectedMethodProto2Protos = function (test) {
 };
 
 
-exports.testDestroyCreatedMethod1Proto = function (test) {
+exports.destroyingNewMethodWith1ProtoSetsStatusToDELETED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -720,7 +512,7 @@ exports.testDestroyCreatedMethod1Proto = function (test) {
 };
 
 
-exports.testDestroySelectedMethod1Proto = function (test) {
+exports.selectingThenDestroyingNewMethodWith1ProtoSetsStatusToDELETED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -735,7 +527,7 @@ exports.testDestroySelectedMethod1Proto = function (test) {
 };
 
 
-exports.testDestroyCreatedMethod2Protos = function (test) {
+exports.destroyingNewMethodWith2ProtosSetsStatusToDELETED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
