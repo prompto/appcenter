@@ -273,41 +273,55 @@ Repository.prototype.updateCodebase = function (old_decls, new_decls, dialect, l
     delta.added = new Codebase(new_decls, this.librariesContext);
     var changedIdsCount = delta.filterOutDuplicates();
     var handled = false;
-    // special case when changing id of a single declaration
-    if (changedIdsCount !== 0 && old_decls.length === 1 && new_decls.length === 1) {
-        // assume the old_decl changed id/nature
-        // check for existing old decl
-        var old_id = this.idFromDecl(old_decls[0]);
-        var old_status = this.statuses[old_id];
-        // check for non existing new decl
-        var new_id = this.idFromDecl(new_decls[0]);
-        var new_status = this.statuses[new_id];
-        // all ok, move the object
-        if (old_status && !new_status) {
-            // update statuses
-            this.statuses[new_id] = this.statuses[old_id];
-            delete this.statuses[old_id];
-            // update status obj
-            new_status = old_status;
-            if (new_status.editStatus !== "CREATED") // don't overwrite
-                new_status.editStatus = "DIRTY";
-            // update declaration obj
-            var new_decl = new_decls[0];
-            new_status.stuff.type = new_decl.getDeclarationType() + "Declaration";
-            var decl_obj = new_status.stuff.value;
-            decl_obj.name = new_decl.name;
-            decl_obj.dialect = dialect;
-            decl_obj.body = codeutils.unparse(this.projectContext, new_decl, dialect);
-            if(new_decl.getProto!==undefined)
-                decl_obj.prototype = new_decl.getProto();
-            if(new_decl.storable!==undefined)
-                decl_obj.storable = new_decl.storable;
-            handled = true;
-        } else
-            handled = false; // fallback to conservative strategy
+    // special case when changing id of a declaration, try connect to the previous version
+    if (changedIdsCount === 2 && old_decls.length > 0 && new_decls.length == old_decls.length) {
+        // locate new declaration, for which there is no existing status entry
+        var decls_with_status = new_decls.filter(function(decl) {
+            var id = this.idFromDecl(decl);
+            var status = this.statuses[id] || null;
+            return status == null;
+        }, this);
+        if(decls_with_status.length === 1) {
+            var new_decl = decls_with_status[0];
+            var new_id = this.idFromDecl(new_decl);
+            var new_status = this.statuses[new_id];
+           // locate corresponding old declaration
+            var orphan_decls = old_decls.filter(function(decl) {
+                var id = this.idFromDecl(decl);
+                return new_decls.filter(function(decl) {
+                    return id === this.idFromDecl(decl);
+                }, this).length === 0;
+            }, this);
+            if(orphan_decls.length === 1) {
+                var old_decl = orphan_decls[0];
+                var old_id = this.idFromDecl(old_decl);
+                var old_status = this.statuses[old_id];
+                // all ok, move the object
+                if (old_status && !new_status) {
+                    // update statuses
+                    this.statuses[new_id] = this.statuses[old_id];
+                    delete this.statuses[old_id];
+                    // update status obj
+                    new_status = old_status;
+                    if (new_status.editStatus !== "CREATED") // don't overwrite
+                        new_status.editStatus = "DIRTY";
+                    // update declaration obj
+                    new_status.stuff.type = new_decl.getDeclarationType() + "Declaration";
+                    var decl_obj = new_status.stuff.value;
+                    decl_obj.name = new_decl.name;
+                    decl_obj.dialect = dialect;
+                    decl_obj.body = codeutils.unparse(this.projectContext, new_decl, dialect);
+                    if(new_decl.getProto!==undefined)
+                        decl_obj.prototype = new_decl.getProto();
+                    if(new_decl.storable!==undefined)
+                        decl_obj.storable = new_decl.storable;
+                    handled = true;
+                }
+            }
+        }
     }
     if(!handled) {
-        // either no change in ids, or more than one decl
+        // either no change in ids, or more than one
         // simply mark new decls as dirty, don't destroy old ones, since this can
         // be achieved safely through an explicit action in the UI
         this.registerDirty(new_decls, dialect);
