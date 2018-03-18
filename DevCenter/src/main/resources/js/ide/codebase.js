@@ -86,5 +86,5 @@ Codebase.prototype.filterOutMethods = function(filterContext) {
 if(typeof exports === 'undefined')
     exports = {};
 exports.Codebase = Codebase;
-if(self)
+if(typeof self !== 'undefined')
     self.Codebase = Codebase

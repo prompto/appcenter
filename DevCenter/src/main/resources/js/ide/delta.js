@@ -246,5 +246,5 @@ Delta.prototype.findOrCreateMethod = function(catalog, name) {
 if(typeof exports === 'undefined')
     exports = {};
 exports.Delta = Delta;
-if(self)
+if(typeof self !== 'undefined')
     self.Delta = Delta;

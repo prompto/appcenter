@@ -55,5 +55,5 @@ exports.sortBy = function(a, f) {
     });
 }
 
-if(self)
+if(typeof self !== 'undefined')
     self.codeutils = exports;

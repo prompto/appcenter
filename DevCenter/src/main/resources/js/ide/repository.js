@@ -334,5 +334,5 @@ Repository.prototype.updateAppContext = function (old_decls, new_decls, listener
 if(typeof exports === 'undefined')
     exports = {};
 exports.Repository = Repository;
-if(self)
+if(typeof self !== 'undefined')
     self.Repository = Repository;
