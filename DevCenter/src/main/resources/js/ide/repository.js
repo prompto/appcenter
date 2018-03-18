@@ -26,6 +26,7 @@ function Repository() {
     this.projectContext.setParentContext(this.librariesContext);
     this.moduleId = null;
     this.lastSuccess = ""; // last piece of code successfully registered through handleUpdate
+    this.lastDialect = "E";
     this.statuses = {};
     return this;
 }
@@ -246,18 +247,20 @@ Repository.prototype.handleDestroyed = function (content) {
 Repository.prototype.handleSetContent = function (content, dialect, listener) {
     codeutils.parse(content, dialect, listener);
     this.lastSuccess = content; // assume registered content is always parsed successfully
+    this.lastDialect = dialect;
 };
 
 
 Repository.prototype.handleEditContent = function (content, dialect, listener) {
     // analyze what has changed, we'll ignore errors but let's catch them using a temporary listener
     var previousListener = Object.create(listener);
-    var old_decls = codeutils.parse(this.lastSuccess, dialect, previousListener);
+    var old_decls = codeutils.parse(this.lastSuccess, this.lastDialect, previousListener);
     // always annotate new content
     var new_decls = codeutils.parse(content, dialect, listener);
     // only update codebase if syntax is correct
     if (listener.problems.length === 0) {
         this.lastSuccess = content;
+        this.lastDialect = dialect;
         return this.updateCodebase(old_decls, new_decls, dialect, listener);
     } else
         return null;

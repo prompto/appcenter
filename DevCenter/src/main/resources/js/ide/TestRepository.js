@@ -73,6 +73,22 @@ exports.updatingExistingAttributePreservesDbIdAndSetsStatusToDIRTY = function (t
     test.done();
 };
 
+
+exports.changingDialectOfExistingAttributePreservesDbIdAndSetsStatusToDIRTY = function (test) {
+    var repo = new Repository();
+    var listener = new prompto.problem.ProblemCollector();
+    repo.handleEditContent("define name as Text attribute", "E", listener);
+    repo.statuses["name"].editStatus = "CLEAN";
+    repo.statuses["name"].stuff.value.dbId = "Some UUID";
+    listener = new prompto.problem.ProblemCollector();
+    var delta = repo.handleEditContent("attribute name: Text;", "O", listener);
+    test.equal(repo.statuses["name"].editStatus, "DIRTY");
+    test.equal(repo.statuses["name"].stuff.value.dbId, "Some UUID");
+    test.equal(repo.statuses["name"].stuff.value.dialect, "O");
+    test.equal(repo.statuses["name"].stuff.value.body, "attribute name : Text;");
+    test.done();
+};
+
 exports.selectingThenUpdatingNewAttributeKeepsStatusToCREATED = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
