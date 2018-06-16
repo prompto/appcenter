@@ -143,8 +143,11 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
             else {
                 worker.$project = response.data.value;
                 if(loadDependencies && worker.$project.dependencies) {
-                    worker.$project.dependencies.value.map(function(dep) {
-                        worker.loadDependency(dep.value);
+                    worker.$project.dependencies.value
+                        .filter(function(dep) {
+                            return dep!=null;
+                        }).map(function(dep) {
+                        worker.loadDependency(dep.value || dep);
                     });
                 }
                 worker.markLoaded("%Description%");

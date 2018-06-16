@@ -380,7 +380,7 @@ class AuthenticationSettingsDialog extends React.Component {
 
     handleSave() {
         // load latest full description before updating it
-        const dbId = this.getProject().dbId.value.toString();
+        const dbId = (this.getProject().dbId.value || module.value.dbId).toString();
         const params = {
             params: JSON.stringify([{name: "dbId", value: dbId}, {
                 name: "register",

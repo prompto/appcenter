@@ -61,7 +61,7 @@ class EditorNavBar extends React.Component {
     }
 
     fetchModuleURL(success, optional) {
-        const dbId = this.props.root.getProject().value.dbId.value;
+        const dbId = this.props.root.getProject().value.dbId.value || this.props.root.getProject().value.dbId;
         const params = { params: JSON.stringify([ {name:"dbId", value: dbId}, {name: "optional", type: "Boolean", value: optional || false}]) };
         axios.get('/ws/run/getModulePort', { params: params }).
             then(resp=>{

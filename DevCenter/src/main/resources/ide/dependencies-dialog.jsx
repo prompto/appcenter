@@ -49,7 +49,7 @@ class DependenciesDialog extends React.Component {
         super(props);
         this.allLibraries = [];
         const project = this.props.root.getProject();
-        const deps = project.value.dependencies.value.map(d => { return { instance: d.value, label: d.value.name + " - " + d.value.version.value }; } )
+        const deps = project.value.dependencies.value.filter(d => d!=null).map(d => { return { instance: d.value, label: d.value.name + " - " + d.value.version.value }; } )
         this.state = {show: true, dependencies: deps, libraries: []};
         this.handleClose = this.handleClose.bind(this);
         this.handleSave = this.handleSave.bind(this);
@@ -88,7 +88,7 @@ class DependenciesDialog extends React.Component {
     handleSave() {
         // load latest full description before updating
         const project = this.props.root.getProject();
-        const dbId = project.value.dbId.value.toString();
+        const dbId = (project.value.dbId.value || project.value.dbId.value).toString();
         const params = {
             params: JSON.stringify([{name: "dbId", value: dbId}, {
                 name: "register",

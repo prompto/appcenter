@@ -382,7 +382,7 @@ class ModifyProjectDialog extends React.Component {
 
     handleSave() {
         // load latest full description before updating
-        const dbId = this.props.module.value.dbId.value.toString();
+        const dbId = (this.props.module.value.dbId.value || this.props.module.value.dbId).toString();
         const params = {
             params: JSON.stringify([{name: "dbId", value: dbId}, {
                 name: "register",

@@ -224,7 +224,7 @@ Repository.prototype.prepareCommit = function () {
 
 
 Repository.prototype.translate = function (data, from, to) {
-    return translate(this.projectContext, data, from, to);
+    return codeutils.translate(this.projectContext, data, from, to);
 };
 
 

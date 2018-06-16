@@ -41,7 +41,7 @@ class HomePage extends React.Component {
     }
 
     exportProject(module) {
-        const dbId = module.value.dbId.value.toString()
+        const dbId = (module.value.dbId.value || module.value.dbId).toString()
         const exportUrl = '/ws/run/exportModule?params=[{"name":"dbId", "value":"' + dbId + '"}]';
         window.open(exportUrl, "Download");
 
@@ -52,7 +52,7 @@ class HomePage extends React.Component {
     }
 
     deleteProject(module) {
-        const dbId = module.value.dbId.value.toString()
+        const dbId = (module.value.dbId.value || module.value.dbId).toString()
         const params = { params: JSON.stringify([{"name": "dbId", "value": dbId}]) };
         axios.get('/ws/run/deleteModule',  { params: params }).then(resp => {
             this.fetchRecentModules();

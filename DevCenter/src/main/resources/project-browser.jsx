@@ -39,7 +39,8 @@ class Project extends React.Component {
 
     handleClick() {
         const module = this.props.module;
-        const href = "../ide/index.html?dbId=" + module.value.dbId.value + "&name=" + module.value.name;
+        // TODO find why dbId.value stopped working
+        const href = "../ide/index.html?dbId=" + (module.value.dbId.value || module.value.dbId) + "&name=" + module.value.name;
         window.open(href, "_blank");
     }
 
@@ -77,7 +78,10 @@ class ProjectsBrowser extends React.Component {
 
     render() {
         return <Row>
-            {this.props.modules.map( module => <Project key={module.value.dbId.value} root={this.props.root} module={module} />)}
+            {this.props.modules.map( module => {
+                const dbId = module.value.dbId.value || module.value.dbId;
+                return <Project key={dbId} root={this.props.root} module={module} />;
+            })}
         </Row>;
     }
 }

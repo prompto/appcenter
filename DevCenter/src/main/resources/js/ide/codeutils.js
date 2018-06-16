@@ -41,7 +41,7 @@ exports.unparse = function(context, decl, dialect) {
 
 /* a function for translating current input to other dialect */
 exports.translate = function(context, data, from, to) {
-    var decls = parse(data, from); // could be cached
+    var decls = exports.parse(data, from); // could be cached
     var dialect = prompto.parser.Dialect[to];
     var writer = new prompto.utils.CodeWriter(dialect, context.newChildContext());
     decls.toDialect(writer);
