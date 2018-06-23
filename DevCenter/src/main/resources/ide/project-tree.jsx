@@ -5,14 +5,14 @@ class GroupTree extends React.Component {
     constructor(props) {
         super(props);
         this.state = { showItems: false };
-        this.children = [];
+        this.children = new Set();
         this.addChild = this.addChild.bind(this);
         this.toggleTreeNode = this.toggleTreeNode.bind(this);
     }
 
     addChild(ref) {
         if(ref)
-            this.children.push(ref);
+            this.children.add(ref);
     }
 
     render() {
@@ -35,8 +35,7 @@ class GroupTree extends React.Component {
     }
 
     selectContent(content) {
-        for(var i=0; i<this.children.length; i++) {
-            const child = this.children[i];
+        for(const child of this.children) {
             if(child.selectContent(content)) {
                 this.setState({showItems: true});
                 return true;
@@ -158,13 +157,13 @@ class MultiProtoMethodItem extends React.Component {
         this.state = { showProtos: true };
         this.toggleTreeNode = this.toggleTreeNode.bind(this);
         this.selectContent = this.selectContent.bind(this);
-        this.children = [];
+        this.children = new Set();
         this.addChild = this.addChild.bind(this);
     }
 
     addChild(ref) {
         if(ref)
-            this.children.push(ref);
+            this.children.add(ref);
     }
 
     render() {
@@ -191,8 +190,7 @@ class MultiProtoMethodItem extends React.Component {
     }
 
     selectContent(content) {
-        for(var i=0; i<this.children.length; i++) {
-            const child = this.children[i];
+        for(const child of this.children) {
             if(child.selectContent(content)) {
                 this.setState({showItems: true});
                 return true;
@@ -302,7 +300,7 @@ class TextResourceItem extends ResourceItem {
 
     select() {
         let content = { type: this.props.type.id, name: this.props.resource.value.name };
-        content.body = this.props.root.catalog.getResourceBody(content);
+        this.props.root.catalog.loadResourceBody(content);
         this.props.root.setEditorContent(content);
     }
 }
@@ -386,8 +384,21 @@ class ProjectTree extends React.Component {
         this.toggleCodeItems = this.toggleCodeItems.bind(this);
         this.toggleResourceItems = this.toggleResourceItems.bind(this);
         this.selectContent = this.selectContent.bind(this);
-        this.codeRoots = [];
-        this.resourceRoots = [];
+        this.addCodeRoot = this.addCodeRoot.bind(this);
+        this.addResourceRoot = this.addResourceRoot.bind(this);
+        this.codeRoots = new Set();
+        this.resourceRoots = new Set();
+    }
+
+    addCodeRoot(ref) {
+        if(ref)
+            this.codeRoots.add(ref);
+    }
+
+
+    addResourceRoot(ref) {
+        if(ref)
+            this.resourceRoots.add(ref);
     }
 
     render() {
@@ -401,9 +412,9 @@ class ProjectTree extends React.Component {
                         {
                             ALL_PROMPTO_SUBTYPES.map(subType=>{
                                     if(subType.id==="method")
-                                        return <MethodTree key={subType.id} ref={ref=>this.codeRoots.push(ref)} items={catalog.methods} subType={subType} showLibraries={showLibs} root={this.props.root}/>;
+                                        return <MethodTree key={subType.id} ref={this.addCodeRoot} items={catalog.methods} subType={subType} showLibraries={showLibs} root={this.props.root}/>;
                                     else
-                                        return <PromptoTree key={subType.id} ref={ref=>this.codeRoots.push(ref)} items={catalog[subType.items]} subType={subType} showLibraries={showLibs} root={this.props.root}/>
+                                        return <PromptoTree key={subType.id} ref={this.addCodeRoot} items={catalog[subType.items]} subType={subType} showLibraries={showLibs} root={this.props.root}/>
                                 }
                             )
                         }
@@ -418,11 +429,11 @@ class ProjectTree extends React.Component {
                             ALL_RESOURCE_TYPES.map((t => {
                                 const items = catalog.resources[t.id];
                                 if (t instanceof TextResourceType)
-                                    return <TextResourceTree key={t.id} ref={ref => this.resourceRoots.push(ref)} type={t}
+                                    return <TextResourceTree key={t.id} ref={this.addResourceRoot} type={t}
                                                              items={items} type={t} showLibraries={showLibs}
                                                              root={this.props.root}/>;
                                 else
-                                    return <BinaryResourceTree key={t.id} ref={ref => this.resourceRoots.push(ref)} type={t}
+                                    return <BinaryResourceTree key={t.id} ref={this.addResourceRoot} type={t}
                                                                items={items} type={t}
                                                                showLibraries={showLibs} root={this.props.root}/>;
                         }), this)
@@ -450,8 +461,7 @@ class ProjectTree extends React.Component {
     }
 
     selectContentInRoots(roots, content) {
-        for (var i = 0; i < roots.length; i++) {
-            const root = roots[i];
+        for (const root of roots) {
             if (root.selectContent(content))
                 return true;
         }

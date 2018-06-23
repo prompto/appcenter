@@ -8,7 +8,6 @@ function Catalog() {
     this.categories = [];
     this.enumerations = [];
     this.tests = [];
-    this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], yaml: [], text: [], image: [], audio: [], video: [], binary: [], statuses: {}};
     // for performance reasons, we only receive a delta from the ace worker
     // so can't rely on just React virtual DOM
     this.applyDelta = function(delta) {
@@ -104,6 +103,7 @@ function Catalog() {
     };
     this.mapTextMimeTypeToList = function() {
         return {
+            "text/page": this.resources.page,
             "text/html": this.resources.html,
             "text/javascript": this.resources.js,
             "text/babel": this.resources.jsx,
@@ -114,7 +114,6 @@ function Catalog() {
             "text/plain": this.resources.text
         };
     };
-    this.textMimeTypeToList = this.mapTextMimeTypeToList();
     this.listFromResource = function(res) {
         var mimeType = res.value.mimeType;
         if(mimeType.startsWith("text/")) {
@@ -130,7 +129,8 @@ function Catalog() {
         }
     };
     this.clearResources = function() {
-        this.resources = { html: [], js: [], jsx: [], css: [], json: [], xml: [], yaml: [], text: [], image: [], audio: [], video: [], binary: [], statuses: {}};
+        this.resources = { page: [], html: [], js: [], jsx: [], css: [], json: [], xml: [], yaml: [], text: [], image: [], audio: [], video: [], binary: [], statuses: {}};
+        // refresh mapping from mime -> instance
         this.textMimeTypeToList = this.mapTextMimeTypeToList();
     };
     this.removeResources = function(removed) {
@@ -183,9 +183,11 @@ function Catalog() {
         const item = list.findIndex(function(a) { return a.value.name === content.name; });
         return list[item];
     };
-    this.getResourceBody = function(content) {
+    this.loadResourceBody = function(content) {
         const res = this.resourceFromContent(content);
-        return res.value.body;
+        content.body = res.value.body;
+        if(res.value.dialect)
+            content.dialect = res.value.dialect;
     };
     this.setResourceBody = function(content) {
         const res = this.resourceFromContent(content);
@@ -215,5 +217,8 @@ function Catalog() {
         else
             return null;
     };
+
+    // clear
+    this.clearResources();
     return this;
 }

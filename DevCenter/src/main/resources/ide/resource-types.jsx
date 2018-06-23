@@ -29,6 +29,7 @@ class ResourceType extends ElementType {
     }
 }
 
+
 class TextResourceType extends ResourceType {
 
     constructor(id, label, mimeType, placeholder) {
@@ -42,18 +43,106 @@ class TextResourceType extends ResourceType {
         root.setState({newTextResourceType: this});
     }
 
+    renderFormControls(dialog) {
+        return <div/>;
+    }
+
     createTextResource(path, file) {
         return {
             type: "TextResource",
             value: {
                 name: path,
                 mimeType: this.mimeType,
-                body: this.getSampleBody()
+                body: this.getSampleBody(file)
             }
         };
     }
 
 }
+
+
+class PageType extends TextResourceType {
+
+    constructor() {
+        super("page", "Web page", "text/page", "web_page");
+    }
+
+    createTextResource(path, file) {
+        const resource = super.createTextResource(path, file);
+        resource.value.dialect = "O";
+        return resource;
+    }
+
+    getSampleBody(file) {
+        let name = file.replace(/[ -]/g, "_");
+        name = name.charAt(0).toUpperCase() + name.substring(1);
+        return "category " + name + " extends WebPage {\n" +
+            "\n" +
+            "\tText method getTitle() {\n" +
+            '\t\treturn "' + file + '"\n' +
+            "\t}\n" +
+            "\n" +
+            "\tHtml method renderBody() {\n" +
+            '\t\treturn <div>Hello "' + file + '"!</div>;\n' +
+            "\t}\n" +
+            "\n" +
+            "}\n";
+    }
+
+    renderFormControls(dialog) {
+        const widgetLibrary = dialog.state.widgetLibrary || "react-bootstrap-3";
+        const htmlEngine = dialog.state.htmlEngine || "react-16";
+        const uiFramework = dialog.state.uiFramework || "bootstrap-3";
+        return <div>
+            <FormGroup>
+                <ControlLabel>Widget library:</ControlLabel><br/>
+                <FormControl componentClass="select" defaultValue={widgetLibrary} onChange={e=>this.handleWidgetLibrary(e, dialog)}>
+                    <option key="none" value="none">None</option>
+                    <option key="react-bootstrap-3" value="react-bootstrap-3" >React-bootstrap-3</option>
+                </FormControl>
+            </FormGroup>
+            <FormGroup>
+                <ControlLabel>Html engine:</ControlLabel><br/>
+                <FormControl componentClass="select" defaultValue={htmlEngine} onChange={e=>this.handleHtmlEngine(e, dialog)} disabled={widgetLibrary!=="none"}>
+                    <option key="react-16" value="react" >React</option>
+                    <option key="vue" value="vue" disabled>Vue (not supported yet)</option>
+                </FormControl>
+            </FormGroup>
+            <FormGroup>
+                <ControlLabel>UI framework:</ControlLabel><br/>
+                <FormControl componentClass="select" defaultValue={uiFramework} onChange={e=>this.handleUIFramework(e, dialog)} disabled={widgetLibrary!=="none"}>
+                    <option key="none" value="none" >None</option>
+                    <option key="bootstrap-3" value="bootstrap-3" >Bootstrap v3</option>
+                    <option key="bootstrap-4" value="bootstrap-4" disabled>Bootstrap v4 (not supported yet)</option>
+                    <option key="foundation-6" value="foundation-6" disabled>Foundation v6(not supported yet)</option>
+                    <option key="semantic-2" value="semantic-2" disabled>Semantic v2(not supported yet)</option>
+                    <option key="material-1" value="material-1" disabled>Material v1(not supported yet)</option>
+                </FormControl>
+            </FormGroup>
+        </div>;
+    }
+
+
+
+    handleWidgetLibrary(e, dialog) {
+        const widgetLibrary = e.currentTarget.value;
+        dialog.setState({widgetLibrary: widgetLibrary});
+    }
+
+    handleHtmlEngine(e, dialog) {
+        const htmlEngine = e.currentTarget.value;
+        dialog.setState({htmlEngine: htmlEngine});
+    }
+
+    thisHandleUIFramework(e, dialog) {
+        const uiFramework = e.currentTarget.value;
+        dialog.setState({uiFramework: uiFramework});
+    }
+
+
+}
+
+
 
 class HtmlType extends TextResourceType {
 
@@ -241,6 +330,7 @@ class OtherType extends BinaryResourceType {
 
 const ALL_ELEMENT_TYPES = [
         new PromptoType(),
+        new PageType(),
         new HtmlType(),
         new JavascriptType(),
         new BabelType(),

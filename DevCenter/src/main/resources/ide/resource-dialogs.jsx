@@ -113,6 +113,7 @@ class NewTextResourceDialog extends React.Component {
                                     <FormControl type="text" value={this.state.extension} style={{width: 80}} onChange={this.handleExtension} placeholder={this.props.type.id}/>
                                 </InputGroup>
                             </FormGroup>
+                            { this.props.type.renderFormControls(this) }
                         </form>
                     </Modal.Body>
                     <Modal.Footer>
@@ -136,7 +137,7 @@ class NewTextResourceDialog extends React.Component {
 
     handleCreate(event) {
         const path = this.state.folder + "/" + this.state.name + "." + this.state.extension;
-        const resource = this.props.type.createTextResource(path)
+        const resource = this.props.type.createTextResource(path, this.state.name)
         this.props.root.addResource(resource);
         this.handleClose();
     }

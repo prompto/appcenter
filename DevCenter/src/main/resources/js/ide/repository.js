@@ -96,6 +96,12 @@ Repository.prototype.getDeclarationBody = function(content, dialect) {
 };
 
 
+Repository.prototype.getResourceBody = function(content, dialect) {
+    var decl = codeutils.parse(content.body, content.dialect);
+    return codeutils.unparse(this.projectContext, decl, dialect);
+};
+
+
 Repository.prototype.getDeclaration = function(content) {
     if(content.subType==="test")
         return this.projectContext.getRegisteredTest(content.name);

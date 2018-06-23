@@ -15,11 +15,13 @@ function setProject(dbId, loadDependencies) {
 }
 
 function setContent(content) {
-    setMode(content.type, editor => {
-        if(content.type.toLowerCase()==="prompto")
+    var type = content.type.toLowerCase();
+    const mode = (type==="prompto" || type=="page" || type==="widget") ? "prompto" : type;
+    setMode(mode, editor => {
+        if(mode==="prompto")
             setContentPrompto(editor, content);
         else {
-            var type = ID_TO_TYPE_MAP[content.type];
+            var type = ID_TO_TYPE_MAP[type];
             if (type instanceof TextResourceType)
                 setContentResource(editor, content);
         }

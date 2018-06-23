@@ -296,7 +296,9 @@ class EditorPage extends React.Component {
             return;
         this.saveEditedTextResource();
         this.currentContent = content;
-        const contentType = ((content || {}).type || "prompto").toLowerCase();
+        let contentType = ((content || {}).type || "prompto").toLowerCase();
+        if(contentType === "page" || contentType === "widget")
+            contentType = "prompto";
         this.setState({contentType: contentType}, ()=> {
             // need to adjust visibility in callback otherwise it is always 'block'
             const editor = document.getElementById("editor");
