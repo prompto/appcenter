@@ -27,6 +27,8 @@ Codebase.prototype.length = function() {
         length += this.methods.length;
     if(this.tests)
         length += this.tests.length;
+    if(this.widgets)
+        length += this.widgets.length;
     return length;
 };
 
@@ -38,6 +40,7 @@ Codebase.prototype.readCatalog = function(decls) {
     this.enumerations = content.enumerations;
     this.methods = content.methods;
     this.tests = content.tests;
+    this.widgets = content.widgets;
 };
 
 Codebase.prototype.loadCatalog = function(decls) {
@@ -57,6 +60,7 @@ Codebase.prototype.filterOutDeclarations = function(filterContext) {
     this.filterOutObjects("categories", filterContext);
     this.filterOutObjects("enumerations", filterContext);
     this.filterOutObjects("tests", filterContext);
+    this.filterOutObjects("widgets", filterContext);
 };
 
 Codebase.prototype.filterOutObjects = function(type, filterContext) {

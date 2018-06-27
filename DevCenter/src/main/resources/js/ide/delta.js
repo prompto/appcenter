@@ -53,6 +53,7 @@ Delta.prototype.filterOutDuplicates = function() {
     length += this.filterOutDuplicatesInField("categories");
     length += this.filterOutDuplicatesInField("enumerations");
     length += this.filterOutDuplicatesInField("tests");
+    length += this.filterOutDuplicatesInField("widgets");
     return length;
 };
 

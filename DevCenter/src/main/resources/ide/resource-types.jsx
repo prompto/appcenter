@@ -27,6 +27,7 @@ class ResourceType extends ElementType {
     constructor(id, label) {
         super(id, label);
     }
+
 }
 
 
@@ -43,19 +44,24 @@ class TextResourceType extends ResourceType {
         root.setState({newTextResourceType: this});
     }
 
+    getInitialState() {
+        return {};
+    }
+
     renderFormControls(dialog) {
         return <div/>;
     }
 
-    createTextResource(path, file) {
-        return {
+    createResources(state, addResource, addCode) {
+        const resource = {
             type: "TextResource",
             value: {
-                name: path,
+                name: state.folder + "/" + state.name + "." + state.extension,
                 mimeType: this.mimeType,
-                body: this.getSampleBody(file)
+                body: this.getSampleBody(state)
             }
         };
+        addResource(resource);
     }
 
 }
@@ -67,26 +73,46 @@ class PageType extends TextResourceType {
         super("page", "Web page", "text/page", "web_page");
     }
 
-    createTextResource(path, file) {
-        const resource = super.createTextResource(path, file);
-        resource.value.dialect = "O";
-        return resource;
+    createResources(state, addResource, addCode) {
+        super.createResources(state, res => addResource(res, () => this.createWidget(state, addCode)), addCode);
     }
 
-    getSampleBody(file) {
-        let name = file.replace(/[ -]/g, "_");
-        name = name.charAt(0).toUpperCase() + name.substring(1);
-        return "category " + name + " extends WebPage {\n" +
+    computeWidgetName(name) {
+        const widgetName = name.replace(/[ -]/g, "_");
+        return widgetName.charAt(0).toUpperCase() + widgetName.substring(1) + "Page";
+    }
+
+    getSampleBody(state) {
+        const widgetName = this.computeWidgetName(state.name);
+        var sample = "header:\n" +
+            "\ttitle: "+ state.name + '\n' +
+            "\ticon: favicon.ico\n";
+        if(state.widgetLibrary!=="none")
+            sample = sample + "\twidgetLibrary: " + state.widgetLibrary + "\n";
+        else
+            sample = sample + "\thtmlEngine: " + state.htmlEngine + "\n" +
+            "\tuiFramework: " + state.uiFramework + "\n"
+        sample = sample + "\n" +
+            "body:\n" +
+            '\twidget: ' + widgetName + '\n';
+        return sample;
+    }
+
+
+    createWidget(state, addCode) {
+        const widgetName = this.computeWidgetName(state.name);
+        const widgetCode = "widget " + widgetName + " {\n" +
             "\n" +
-            "\tText method getTitle() {\n" +
-            '\t\treturn "' + file + '"\n' +
-            "\t}\n" +
-            "\n" +
-            "\tHtml method renderBody() {\n" +
-            '\t\treturn <div>Hello "' + file + '"!</div>;\n' +
+            "\tHtml method render() {\n" +
+            '\t\treturn <div>Hello "' + state.name + '"!</div>;\n' +
             "\t}\n" +
             "\n" +
             "}\n";
+        addCode(widgetCode, "O", widgetName);
+    }
+
+    getInitialState() {
+        return {widgetLibrary: "react-bootstrap-3", htmlEngine: "react-16", uiFramework: "bootstrap-3"};
     }
 
     renderFormControls(dialog) {
@@ -134,15 +160,12 @@ class PageType extends TextResourceType {
         dialog.setState({htmlEngine: htmlEngine});
     }
 
-    thisHandleUIFramework(e, dialog) {
+    handleUIFramework(e, dialog) {
         const uiFramework = e.currentTarget.value;
         dialog.setState({uiFramework: uiFramework});
     }
 
-
 }
-
-
 
 class HtmlType extends TextResourceType {
 

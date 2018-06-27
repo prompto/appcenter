@@ -68,7 +68,8 @@ class PromptoItem extends React.Component {
     }
 
     selectContent(content) {
-        return false; // TODO
+        // can only happen from editor -> tree so no action required
+        return content.type==="Prompto" && content.value.name===this.props.item.name;
     }
 }
 
@@ -374,7 +375,7 @@ class BinaryResourceTree extends GroupTree {
 
 }
 
-const ALL_PROMPTO_SUBTYPES = [{id:"attribute", items:"attributes"}, {id:"method", items: "methods"}, {id:"category", items: "categories"}, {id:"enumeration", items: "enumerations" }, {id:"test", items: "tests"}];
+const ALL_PROMPTO_SUBTYPES = [{id:"attribute", items:"attributes"}, {id:"method", items: "methods"}, {id:"category", items: "categories"}, {id:"enumeration", items: "enumerations" }, {id:"test", items: "tests"}, , {id:"widget", items: "widgets"}];
 
 class ProjectTree extends React.Component {
 
@@ -453,11 +454,11 @@ class ProjectTree extends React.Component {
         this.setState({showResourceItems: !this.state.showResourceItems});
     }
 
-    selectContent(content) {
+    selectContent(content, callback) {
         if (this.selectContentInRoots(this.resourceRoots, content))
-            this.setState({showResourceItems: true});
+            this.setState({showResourceItems: true}, callback);
         else if(this.selectContentInRoots(this.codeRoots, content))
-            this.setState({showCodeItems: true});
+            this.setState({showCodeItems: true}, callback);
     }
 
     selectContentInRoots(roots, content) {

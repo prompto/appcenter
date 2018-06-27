@@ -257,7 +257,7 @@ Repository.prototype.handleSetContent = function (content, dialect, listener) {
 };
 
 
-Repository.prototype.handleEditContent = function (content, dialect, listener) {
+Repository.prototype.handleEditContent = function (content, dialect, listener, select) {
     // analyze what has changed, we'll ignore errors but let's catch them using a temporary listener
     var previousListener = Object.create(listener);
     var old_decls = codeutils.parse(this.lastSuccess, this.lastDialect, previousListener);
@@ -267,7 +267,10 @@ Repository.prototype.handleEditContent = function (content, dialect, listener) {
     if (listener.problems.length === 0) {
         this.lastSuccess = content;
         this.lastDialect = dialect;
-        return this.updateCodebase(old_decls, new_decls, dialect, listener);
+        var catalog = this.updateCodebase(old_decls, new_decls, dialect, listener);
+        if(select && new_decls.length===1)
+            catalog.select = new_decls[0].name;
+        return catalog;
     } else
         return null;
 };

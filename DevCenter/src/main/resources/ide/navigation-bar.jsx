@@ -20,9 +20,9 @@ class EditorNavBar extends React.Component {
         this.openWebPage = this.openWebPage.bind(this);
     }
 
-    setDialect(dialect) {
+    setDialect(dialect, callback) {
         this.props.root.editorWindow.setDialect(dialect);
-        this.setState({ dialect: dialect});
+        this.setState({ dialect: dialect}, callback);
     }
 
     setRunMode(mode) {

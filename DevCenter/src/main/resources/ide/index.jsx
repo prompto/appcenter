@@ -128,6 +128,7 @@ class EditorPage extends React.Component {
         this.commitSuccessful = this.commitSuccessful.bind(this);
         this.renameResource = this.renameResource.bind(this);
         this.addResource = this.addResource.bind(this);
+        this.addCode = this.addCode.bind(this);
         this.getProject = this.getProject.bind(this);
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
@@ -250,7 +251,14 @@ class EditorPage extends React.Component {
 
     catalogUpdated(delta, callback) {
         this.catalog.applyDelta(delta);
-        this.elementsNavigator.setState({catalog: this.catalog}, callback);
+        var kallback = callback;
+        if(delta.select)
+            kallback = () => {
+                this.elementsNavigator.projectTree.selectContent({type: "Prompto", value: { name: delta.select }});
+                if (callback)
+                    callback();
+            };
+        this.elementsNavigator.setState({catalog: this.catalog}, kallback);
     }
 
     loadCodeInWorker(loadDependencies) {
@@ -276,7 +284,7 @@ class EditorPage extends React.Component {
             <EditorNavBar ref={ref=>this.navBar=ref} root={this}/>
             <MessageArea ref={ref=>this.messageArea=ref}/>
             <div style={editorStyle}>
-                <ContentNavigator ref={ref=>this.elementsNavigator=ref} root={this} catalog={this.catalog}/>
+                <ContentNavigator ref={ref=>{if(ref)this.elementsNavigator=ref;}} root={this} catalog={this.catalog}/>
                 /* always render editor otherwise iframe, ace editor and prompto worker are destroyed */
                 <EditorFrame ref={ref=>this.editorFrame=ref} root={this}/>
                 { showImage && <ImageDisplayer file={this.currentContent.file} source={this.currentContent.data}/> }
@@ -289,16 +297,14 @@ class EditorPage extends React.Component {
         </div>;
     }
 
-    setEditorContent(content) {
+    setEditorContent(content, callback) {
         if(!content)
             content = { type: "Prompto" };
         if (content === this.currentContent)
             return;
         this.saveEditedTextResource();
         this.currentContent = content;
-        let contentType = ((content || {}).type || "prompto").toLowerCase();
-        if(contentType === "page" || contentType === "widget")
-            contentType = "prompto";
+        const contentType = ((content || {}).type || "prompto").toLowerCase();
         this.setState({contentType: contentType}, ()=> {
             // need to adjust visibility in callback otherwise it is always 'block'
             const editor = document.getElementById("editor");
@@ -306,7 +312,7 @@ class EditorPage extends React.Component {
                 editor.style.display = "none";
             else {
                 editor.style.display = "block";
-                this.editorWindow.setContent(content);
+                this.editorWindow.setContent(content, callback);
             }
         });
     }
@@ -336,11 +342,11 @@ class EditorPage extends React.Component {
         }
     }
 
-    addResource(content) {
+    addResource(content, callback) {
         content.value.module =  { type: "Module", value: { dbId: this.props.projectId.toString() } };
         const delta = { added: { resources: [content]}};
         const projectTree = this.elementsNavigator.projectTree;
-        this.catalogUpdated(delta, () => projectTree.selectContent(content));
+        this.catalogUpdated(delta, () => projectTree.selectContent(content, callback));
     }
 
     renameResource(current, newName) {
@@ -349,6 +355,12 @@ class EditorPage extends React.Component {
         const renamed = this.catalog.renameResource(current, newName);
         const projectTree = this.elementsNavigator.projectTree;
         this.elementsNavigator.setState({catalog: this.catalog}, () => projectTree.selectContent(renamed));
+    }
+
+    addCode(code, dialect, name) {
+        this.setEditorContent({ type: "Prompto" },
+            () => this.navBar.setDialect(dialect,
+                () => this.editorWindow.setPromptoText(code)));
     }
 
 

@@ -81,7 +81,8 @@ class NewTextResourceDialog extends React.Component {
     constructor(props) {
         super(props);
         const cleanName = getParam("name").toLowerCase().replace(/ /g, "-");
-        this.state = {show: true, folder: cleanName, name: '', extension: this.props.type.id.toLowerCase()};
+        const typeState = this.props.type.getInitialState();
+        this.state = Object.assign(typeState, {show: true, folder: cleanName, name: '', extension: this.props.type.id.toLowerCase()});
         this.handleClose = this.handleClose.bind(this);
         this.handleFolder = this.handleFolder.bind(this);
         this.handleName = this.handleName.bind(this);
@@ -136,9 +137,7 @@ class NewTextResourceDialog extends React.Component {
     }
 
     handleCreate(event) {
-        const path = this.state.folder + "/" + this.state.name + "." + this.state.extension;
-        const resource = this.props.type.createTextResource(path, this.state.name)
-        this.props.root.addResource(resource);
+        this.props.type.createResources(this.state, this.props.root.addResource, this.props.root.addCode)
         this.handleClose();
     }
 

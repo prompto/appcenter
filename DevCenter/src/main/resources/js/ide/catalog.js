@@ -8,6 +8,7 @@ function Catalog() {
     this.categories = [];
     this.enumerations = [];
     this.tests = [];
+    this.widgets = [];
     // for performance reasons, we only receive a delta from the ace worker
     // so can't rely on just React virtual DOM
     this.applyDelta = function(delta) {
@@ -29,6 +30,8 @@ function Catalog() {
             this.removeEnums(this.enumerations, delta.enumerations);
         if (delta.tests)
             this.removeStuffByName(this.tests, delta.tests);
+        if (delta.widgets)
+            this.removeStuffByName(this.widgets, delta.widgets);
     };
     this.applyAdded = function(delta, core) {
         if (delta.attributes)
@@ -41,6 +44,8 @@ function Catalog() {
             this.enumerations = this.addEnumsByName(this.enumerations, delta.enumerations, core);
         if (delta.tests)
             this.tests = this.addStuffByName(this.tests, delta.tests, core);
+        if (delta.widgets)
+            this.widgets = this.addStuffByName(this.widgets, delta.widgets, core);
         if (delta.resources)
             this.addResources(delta.resources);
     };
@@ -186,8 +191,6 @@ function Catalog() {
     this.loadResourceBody = function(content) {
         const res = this.resourceFromContent(content);
         content.body = res.value.body;
-        if(res.value.dialect)
-            content.dialect = res.value.dialect;
     };
     this.setResourceBody = function(content) {
         const res = this.resourceFromContent(content);

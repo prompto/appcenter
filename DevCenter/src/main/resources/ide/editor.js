@@ -14,34 +14,45 @@ function setProject(dbId, loadDependencies) {
     mode.setProject(dbId, loadDependencies);
 }
 
-function setContent(content) {
-    var type = content.type.toLowerCase();
-    const mode = (type==="prompto" || type=="page" || type==="widget") ? "prompto" : type;
+function setContent(content, callback) {
+    var typeName = content.type.toLowerCase();
+    const mode = typeName=="page" ? "yaml" : typeName;
     setMode(mode, editor => {
         if(mode==="prompto")
-            setContentPrompto(editor, content);
+            setContentPrompto(editor, content, callback);
         else {
-            var type = ID_TO_TYPE_MAP[type];
+            var type = ID_TO_TYPE_MAP[typeName];
             if (type instanceof TextResourceType)
-                setContentResource(editor, content);
+                setContentResource(editor, content, callback);
         }
     });
 }
 
-function setContentPrompto(editor, content) {
+function setPromptoText(text, callback) {
+    const content = { type: "prompto", body: text };
+    setContentPrompto(promptoEditor, content, callback);
+}
+
+
+function setContentPrompto(editor, content, callback) {
     var session = editor.getSession();
     var mode = session.getMode();
     mode.setContent(content);
     var ro = content ? content.core : false;
     editor.setReadOnly(ro);
     session.setScrollTop(0);
+    if(callback)
+        callback();
 }
 
-function setContentResource(editor, content) {
+
+function setContentResource(editor, content, callback) {
     editor.setValue(content.body, -1);
     editor.setReadOnly(false);
     editor.getSession().setScrollTop(0);
     resourceContent.innerText = content.name;
+    if(callback)
+        callback();
 }
 
 function getResourceBody() {

@@ -43,14 +43,12 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         var worker = this;
         safe_require(function() {
             // remember value if it does not result from an edit
-            if(content.body) {
-                worker.$value = worker.$repo.getResourceBody(content, worker.$dialect);
-                worker.$core = false;
-            } else if(content.name) {
+            if(content.name) {
                 worker.$value = worker.$repo.getDeclarationBody(content, worker.$dialect);
                 worker.$core = content.core || false;
             } else {
-                worker.$value = "";
+                worker.$value = content.body || "";
+                worker.$select = (content.body || null) !== null;
                 worker.$core = false;
             }
             worker.sender.emit("value", worker.$value);
@@ -220,10 +218,11 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         var errorListener = new AnnotatingErrorListener();
         var worker = this;
         safe_require(function () {
-            if(value === worker.$value)
+            if(value === worker.$value && !worker.$select)
                 worker.$repo.handleSetContent(value, worker.$dialect, errorListener);
             else {
-                var catalog = worker.$repo.handleEditContent(value, worker.$dialect, errorListener);
+                var catalog = worker.$repo.handleEditContent(value, worker.$dialect, errorListener, worker.$select);
+                delete worker.$select;
                 if (catalog) {
                     worker.sender.emit("catalogUpdated", catalog);
                 }
