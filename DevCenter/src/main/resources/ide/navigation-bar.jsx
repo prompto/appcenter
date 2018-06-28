@@ -99,7 +99,7 @@ class EditorNavBar extends React.Component {
             return false;
         else if(content.subType==="method" && content.main)
             return false;
-        else if(content.type=="html" && this.props.root.getProject().type==="WebSite")
+        else if((content.type=="html" || content.type=="page") && this.props.root.getProject().type==="WebSite")
             return false;
         else {
             alert("Can only run tests methods, main methods or web pages!");
