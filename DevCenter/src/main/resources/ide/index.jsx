@@ -345,8 +345,12 @@ class EditorPage extends React.Component {
     addResource(content, callback) {
         content.value.module =  { type: "Module", value: { dbId: this.props.projectId.toString() } };
         const delta = { added: { resources: [content]}};
-        const projectTree = this.elementsNavigator.projectTree;
-        this.catalogUpdated(delta, () => projectTree.selectContent(content, callback));
+        if(callback)
+            this.catalogUpdated(delta, callback);
+        else {
+            const projectTree = this.elementsNavigator.projectTree;
+            this.catalogUpdated(delta, () => projectTree.selectContent(content));
+        }
     }
 
     renameResource(current, newName) {
