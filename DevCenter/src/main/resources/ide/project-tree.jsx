@@ -34,9 +34,9 @@ class GroupTree extends React.Component {
         this.setState({showItems: !this.state.showItems});
     }
 
-    selectContent(content) {
+    expandContent(content, simulateClick) {
         for(const child of this.children) {
-            if(child.selectContent(content)) {
+            if(child.expandContent(content, simulateClick)) {
                 this.setState({showItems: true});
                 return true;
             }
@@ -51,7 +51,7 @@ class PromptoItem extends React.Component {
     constructor(props) {
         super(props);
         this.itemClicked = this.itemClicked.bind(this);
-        this.selectContent = this.selectContent.bind(this);
+        this.expandContent = this.expandContent.bind(this);
     }
 
     render() {
@@ -67,7 +67,7 @@ class PromptoItem extends React.Component {
         this.props.root.setEditorContent(content);
     }
 
-    selectContent(content) {
+    expandContent(content, simulateClick) {
         // can only happen from editor -> tree so no action required
         return content.type==="Prompto" && content.value.name===this.props.item.name;
     }
@@ -94,7 +94,7 @@ class SingleProtoMethodItem extends React.Component {
     constructor(props) {
         super(props);
         this.itemClicked = this.itemClicked.bind(this);
-        this.selectContent = this.selectContent.bind(this);
+        this.expandContent = this.expandContent.bind(this);
     }
 
     render() {
@@ -111,7 +111,7 @@ class SingleProtoMethodItem extends React.Component {
         this.props.root.setEditorContent(content);
     }
 
-    selectContent(content) {
+    expandContent(content, simulateClick) {
         return false; // TODO
     }
 
@@ -122,7 +122,7 @@ class MethodProtoItem extends React.Component {
     constructor(props) {
         super(props);
         this.itemClicked = this.itemClicked.bind(this);
-        this.selectContent = this.selectContent.bind(this);
+        this.expandContent = this.expandContent.bind(this);
     }
 
     render() {
@@ -145,7 +145,7 @@ class MethodProtoItem extends React.Component {
         this.props.root.setEditorContent(content);
     }
 
-    selectContent(content) {
+    expandContent(content, simulateClick) {
         return false; // TODO
     }
 
@@ -157,7 +157,7 @@ class MultiProtoMethodItem extends React.Component {
         super(props);
         this.state = { showProtos: true };
         this.toggleTreeNode = this.toggleTreeNode.bind(this);
-        this.selectContent = this.selectContent.bind(this);
+        this.expandContent = this.expandContent.bind(this);
         this.children = new Set();
         this.addChild = this.addChild.bind(this);
     }
@@ -190,9 +190,9 @@ class MultiProtoMethodItem extends React.Component {
         this.setState({showProtos: !this.state.showProtos});
     }
 
-    selectContent(content) {
+    expandContent(content, simulateClick) {
         for(const child of this.children) {
-            if(child.selectContent(content)) {
+            if(child.expandContent(content, simulateClick)) {
                 this.setState({showItems: true});
                 return true;
             }
@@ -228,14 +228,15 @@ class ResourceItem extends React.Component {
     constructor(props) {
         super(props);
         this.state = { contextMenu: null };
-        this.selectContent = this.selectContent.bind(this);
+        this.expandContent = this.expandContent.bind(this);
         this.handleContextMenu = this.handleContextMenu.bind(this);
         this.handleDocumentClick = this.handleDocumentClick.bind(this);
     }
 
-    selectContent(content) {
+    expandContent(content, simulateClick) {
         if(content.type===this.props.resource.type && content.value.name===this.props.resource.value.name){
-            this.select();
+            if(simulateClick)
+                this.select();
             return true;
         } else
             return false;
@@ -385,6 +386,8 @@ class ProjectTree extends React.Component {
         this.toggleCodeItems = this.toggleCodeItems.bind(this);
         this.toggleResourceItems = this.toggleResourceItems.bind(this);
         this.selectContent = this.selectContent.bind(this);
+        this.showContent = this.showContent.bind(this);
+        this.expandContent = this.expandContent.bind(this);
         this.addCodeRoot = this.addCodeRoot.bind(this);
         this.addResourceRoot = this.addResourceRoot.bind(this);
         this.codeRoots = new Set();
@@ -454,16 +457,24 @@ class ProjectTree extends React.Component {
         this.setState({showResourceItems: !this.state.showResourceItems});
     }
 
+    showContent(content, callback) {
+        this.expandContent(content, callback, false);
+    }
+
     selectContent(content, callback) {
-        if (this.selectContentInRoots(this.resourceRoots, content))
+        this.expandContent(content, callback, false);
+    }
+
+    expandContent(content, callback, simulateClick) {
+        if (this.expandContentInRoots(this.resourceRoots, content, simulateClick))
             this.setState({showResourceItems: true}, callback);
-        else if(this.selectContentInRoots(this.codeRoots, content))
+        else if(this.expandContentInRoots(this.codeRoots, content, simulateClick))
             this.setState({showCodeItems: true}, callback);
     }
 
-    selectContentInRoots(roots, content) {
+    expandContentInRoots(roots, content, simulateClick) {
         for (const root of roots) {
-            if (root.selectContent(content))
+            if (root.expandContent(content, simulateClick))
                 return true;
         }
         return false;
