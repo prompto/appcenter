@@ -33,28 +33,28 @@ class EditorNavBar extends React.Component {
         const content = this.props.root.currentContent;
         if(this.alertIfNotRunnable(content))
             return;
-        if(content.type === "html")
+        if(content.type === "html" || content.type === "page")
             this.openWebPage(content);
         else
             this.runPromptoCode(content);
     }
 
     openWebPage(content) {
-        this.fetchModuleURL((url)=>{
+        this.fetchModuleURL(url => {
             const tab = window.open(url + content.name, '_blank', '');
             tab.focus();
         });
     }
 
     stopServer() {
-        this.fetchModuleURL((url)=>{
+        this.fetchModuleURL(url => {
             const fullUrl = url + "ws/control/exit";
             axios.get(fullUrl);
         }, true); // optional  = true, don't launch server only to stop it
     }
 
     resetServer() {
-        this.fetchModuleURL((url)=>{
+        this.fetchModuleURL(url => {
             const fullUrl = url + "ws/control/clear-context";
             axios.get(fullUrl);
         });
