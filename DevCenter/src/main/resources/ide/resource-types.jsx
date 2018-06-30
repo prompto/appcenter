@@ -85,16 +85,16 @@ class PageType extends TextResourceType {
     getSampleBody(state) {
         const widgetName = this.computeWidgetName(state.name);
         var sample = "header:\n" +
-            "\ttitle: "+ state.name + '\n' +
-            "\ticon: favicon.ico\n";
+            "  title: "+ state.name + '\n' +
+            "  icon: favicon.ico\n";
         if(state.widgetLibrary!=="none")
-            sample = sample + "\twidgetLibrary: " + state.widgetLibrary + "\n";
+            sample = sample + "  widgetLibrary: " + state.widgetLibrary + "\n";
         else
-            sample = sample + "\thtmlEngine: " + state.htmlEngine + "\n" +
-            "\tuiFramework: " + state.uiFramework + "\n"
+            sample = sample + "  htmlEngine: " + state.htmlEngine + "\n" +
+            "  uiFramework: " + state.uiFramework + "\n"
         sample = sample + "\n" +
             "body:\n" +
-            '\twidget: ' + widgetName + '\n';
+            '  widget: ' + widgetName + '\n';
         return sample;
     }
 
@@ -265,15 +265,15 @@ class YamlType extends TextResourceType {
         return 'invoice: 34843\n' +
          'date   : 2001-01-23\n' +
          'bill-to: &id001\n' +
-         '\tgiven  : Chris\n' +
-         '\tfamily : Dumars\n' +
-         '\taddress:\n' +
-         '\t\tlines: |\n' +
-         '\t\t\t458 Walkman Dr.\n' +
-         '\t\t\tSuite #292\n' +
-         '\t\tcity    : Royal Oak\n' +
-         '\t\tstate   : MI\n' +
-         '\t\tpostal  : 48046\n';
+         '  given  : Chris\n' +
+         '  family : Dumars\n' +
+         '  address:\n' +
+         '    lines: |\n' +
+         '      458 Walkman Dr.\n' +
+         '      Suite #292\n' +
+         '    city    : Royal Oak\n' +
+         '    state   : MI\n' +
+         '    postal  : 48046\n';
     }
 }
 
