@@ -206,11 +206,11 @@ Repository.prototype.registerDirty = function(decls, dialect) {
 };
 
 
-Repository.prototype.registerCommitted = function(declarations) {
+Repository.prototype.registerCommitted = function(storedDecls) {
     var repo = this;
-    declarations.map(function (decl) {
-        var id = repo.idFromDbDecl(decl);
-        repo.statuses[id].stuff.value.dbId = decl.dbId;
+    storedDecls.map(function (storedDecl) {
+        var id = repo.idFromDbDecl(storedDecl);
+        repo.statuses[id].stuff.value.dbId = storedDecl.value.dbId;
         repo.statuses[id].editStatus = "CLEAN";
     });
 };
