@@ -1,6 +1,6 @@
 var workerConsole = self.console;
 
-importScripts("worker-base.js");
+importScripts("worker-base.js","react-bootstrap-3.js");
 ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace/worker/mirror"], function(require, exports, module) {
     "use strict";
 
