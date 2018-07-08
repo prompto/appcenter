@@ -121,13 +121,35 @@ class WebSiteType extends ProjectType {
             {name: "homePage", type: "Text", value: this.params.homePage()}
         ];
         return list.concat(params);
-
     }
 }
 
+class WebLibraryType extends ProjectType {
 
+    constructor() {
+        super("WebLibrary", "Web library", "/img/weblibrary.jpg", "createWebLibrary");
+        this.renderParameters = this.renderParameters.bind(this);
+        this.appendPromptoParameters = this.appendPromptoParameters.bind(this);
+    }
 
-const ALL_PROJECT_TYPES = [new WebSiteType(), new WebServiceType(), new LibraryType(), new BatchType(), new ScriptType()];
+    renderParameters(dialog, forRename) {
+        return <WebLibraryParameters ref={ref => this.params = ref} dialog={dialog} forRename={forRename || false}/>;
+    }
+
+    appendPromptoParameters(list) {
+        const state = this.params.state;
+        const params = [
+            {name: "widgetLibrary", type: "Text", value: state.widgetLibrary},
+            {name: "htmlEngine", type: "Text", value: state.htmlEngine},
+            {name: "uiFramework", type: "Text", value: state.uiFramework}
+        ];
+        return list.concat(params);
+    }
+}
+
+const ALL_PROJECT_TYPES = [new WebSiteType(), new WebServiceType(), new WebLibraryType(), new LibraryType(), new BatchType(), new ScriptType()];
+const WEB_PROJECT_TYPES = ALL_PROJECT_TYPES.slice(0, 3);
+const CODE_PROJECT_TYPES = ALL_PROJECT_TYPES.slice(3, 6);
 const ID_TO_TYPE_MAP = {};
 
 ALL_PROJECT_TYPES.forEach(t => ID_TO_TYPE_MAP[t.id] = t);
@@ -136,9 +158,12 @@ ALL_PROJECT_TYPES.forEach(t => ID_TO_TYPE_MAP[t.id] = t);
 class NewModuleTypeButton extends React.Component {
 
     render() {
-        let style = { width: "100px", height: "130px", boxSizing: "content-box", textAlign: "center", marginLeft: "4px", marginRight: "4px", marginTop: "2px", marginBottom: "10px", float: "left"};
+        let style = { width: "120px", height: "130px", boxSizing: "content-box", textAlign: "center",
+            marginTop: "0px", marginLeft: "2px", marginRight: "2px", marginBottom: "10px", float: "left",
+            borderStyle: "solid",  borderRadius: "10%", borderColor: "white", borderWidth: "medium"
+            };
         if(this.props.active)
-            style = { ...style, borderStyle: "solid",  borderRadius: "10%", borderColor: "lightsteelblue", borderWidth: "medium", marginTop: "0px", marginLeft: "2px", marginRight: "2px"};
+            style = { ...style, borderColor: "lightsteelblue" };
         const projectType = this.props.projectType;
         return <Thumbnail src={projectType.image} onClick={()=>this.props.onClick(projectType)} style={style}>
                     <p><strong>{projectType.title}</strong></p>
@@ -285,6 +310,49 @@ class WebSiteParameters extends ServiceParameters {
 
 }
 
+
+class WebLibraryParameters extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = { widgetLibrary: "react-bootstrap-3", htmlEngine: "react-16", uiFramework: "bootstrap-3" };
+    }
+
+    render() {
+        const widgetLibrary = this.state.widgetLibrary;
+        const htmlEngine = this.state.htmlEngine;
+        const uiFramework = this.state.uiFramework;
+        return <div>
+            <FormGroup>
+                <ControlLabel>Widget library:</ControlLabel><br/>
+                <FormControl componentClass="select" defaultValue={widgetLibrary} onChange={e=>this.setState({widgetLibrary: e.currentTarget.value})}>
+                    <option key="none" value="none">None</option>
+                    <option key="react-bootstrap-3" value="react-bootstrap-3" >React-bootstrap-3</option>
+                </FormControl>
+            </FormGroup>
+            <FormGroup>
+                <ControlLabel>Html engine:</ControlLabel><br/>
+                <FormControl componentClass="select" defaultValue={htmlEngine} onChange={e=>this.setState({htmlEngine: e.currentTarget.value})} disabled={widgetLibrary!=="none"}>
+                    <option key="react-16" value="react" >React</option>
+                    <option key="vue" value="vue" disabled>Vue (not supported yet)</option>
+                </FormControl>
+            </FormGroup>
+            <FormGroup>
+                <ControlLabel>UI framework:</ControlLabel><br/>
+                <FormControl componentClass="select" defaultValue={uiFramework} onChange={e=>this.setState({uiFramework: e.currentTarget.value})} disabled={widgetLibrary!=="none"}>
+                    <option key="none" value="none" >None</option>
+                    <option key="bootstrap-3" value="bootstrap-3" >Bootstrap v3</option>
+                    <option key="bootstrap-4" value="bootstrap-4" disabled>Bootstrap v4 (not supported yet)</option>
+                    <option key="foundation-6" value="foundation-6" disabled>Foundation v6(not supported yet)</option>
+                    <option key="semantic-2" value="semantic-2" disabled>Semantic v2(not supported yet)</option>
+                    <option key="material-1" value="material-1" disabled>Material v1(not supported yet)</option>
+                </FormControl>
+            </FormGroup>
+        </div>;
+    }
+}
+
+
 class NewProjectDialog extends React.Component {
 
     constructor(props) {
@@ -294,7 +362,7 @@ class NewProjectDialog extends React.Component {
         this.handleType = this.handleType.bind(this);
         this.handleName = this.handleName.bind(this);
         this.handleDescription = this.handleDescription.bind(this);
-        this.state = { show: true, type: ALL_PROJECT_TYPES[0], name:"", description: "" };
+        this.state = { show: true, page: 1, type: ALL_PROJECT_TYPES[0], name:"", description: "" };
     }
 
     handleCreate() {
@@ -339,28 +407,41 @@ class NewProjectDialog extends React.Component {
                 </Modal.Header>
 
                 <Modal.Body style={{padding: "8px"}}>
-                    <form style={{margin: "8px"}}>
-                        <FormGroup style={{marginBottom: "0px"}}>
-                            <ControlLabel>Type</ControlLabel><br/>
-                            <ToggleButtonGroup name={"project-type"}>
-                                {ALL_PROJECT_TYPES.map(type=><NewModuleTypeButton key={type.id} projectType={type} onClick={this.handleType} active={type===this.state.type}/>)}
-                            </ToggleButtonGroup>
-                        </FormGroup>
-                        <FormGroup>
-                            <ControlLabel>Name</ControlLabel><br/>
-                            <FormControl type="text" id="name" placeholder="Enter project name" onChange={this.handleName}/>
-                        </FormGroup>
-                        <FormGroup>
-                            <ControlLabel>Description</ControlLabel><br/>
-                            <FormControl type="text" id="description" placeholder="Enter project description" onChange={this.handleDescription}/>
-                        </FormGroup>
-                        { this.state.type.renderParameters(this) }
-                    </form>
+                    { this.state.page===1 &&
+                        <form style={{margin: "8px"}}>
+                            <FormGroup style={{marginBottom: "0px"}}>
+                                <ControlLabel>Select type:</ControlLabel><br/>
+                                <ToggleButtonGroup name={"project-type"}>
+                                    {WEB_PROJECT_TYPES.map(type=><NewModuleTypeButton key={type.id} projectType={type} onClick={this.handleType} active={type===this.state.type}/>)}
+                                </ToggleButtonGroup><br/>
+                                <ToggleButtonGroup name={"project-type"}>
+                                    {CODE_PROJECT_TYPES.map(type=><NewModuleTypeButton key={type.id} projectType={type} onClick={this.handleType} active={type===this.state.type}/>)}
+                                </ToggleButtonGroup>
+                            </FormGroup>
+                        </form>
+                    }
+                    {this.state.page === 2 &&
+                        <form style={{margin: "8px"}}>
+                            <FormGroup>
+                                <ControlLabel>Name</ControlLabel><br/>
+                                <FormControl type="text" id="name" placeholder="Enter project name"
+                                             onChange={this.handleName}/>
+                            </FormGroup>
+                            <FormGroup>
+                                <ControlLabel>Description</ControlLabel><br/>
+                                <FormControl type="text" id="description" placeholder="Enter project description"
+                                             onChange={this.handleDescription}/>
+                            </FormGroup>
+                            {this.state.type.renderParameters(this)}
+                        </form>
+                    }
                 </Modal.Body>
 
                 <Modal.Footer>
                     <Button onClick={this.handleClose}>Cancel</Button>
-                    <Button bsStyle="primary" onClick={this.handleCreate}>Create</Button>
+                    { this.state.page===1 && <Button bsStyle="primary" onClick={()=>this.setState({page: 2})}>Next</Button> }
+                    { this.state.page===2 && <Button onClick={()=>this.setState({page: 1})}>Previous</Button> }
+                    { this.state.page===2 && <Button bsStyle="primary" onClick={this.handleCreate}>Create</Button> }
                 </Modal.Footer>
             </Modal>;
     }

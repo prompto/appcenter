@@ -4,6 +4,7 @@ const moduleImage = {
     library : "img/library.png",
     script : "img/script.jpg",
     website : "img/website.jpg",
+    weblibrary : "img/weblibrary.jpg",
     batch : "img/batch.jpg",
     service : "img/service.jpg",
 };
