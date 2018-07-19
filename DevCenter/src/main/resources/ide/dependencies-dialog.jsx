@@ -88,7 +88,7 @@ class DependenciesDialog extends React.Component {
     handleSave() {
         // load latest full description before updating
         const project = this.props.root.getProject();
-        const dbId = (project.value.dbId.value || project.value.dbId.value).toString();
+        const dbId = (project.value.dbId.value || project.value.dbId).toString();
         const params = {
             params: JSON.stringify([{name: "dbId", value: dbId}, {
                 name: "register",
