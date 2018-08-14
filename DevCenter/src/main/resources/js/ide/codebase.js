@@ -8,8 +8,8 @@ if(typeof prompto === 'undefined') {
 }
 
 /* an object which represents a catalog of declarations, classified by type */
-function Codebase(decls, filterContext) {
-    this.readCatalog(decls);
+function Codebase(decls, globalContext, filterContext) {
+    this.readCatalog(globalContext, decls);
     if(filterContext)
         this.filterOutDeclarations(filterContext);
     return this;
@@ -33,8 +33,8 @@ Codebase.prototype.length = function() {
 };
 
 
-Codebase.prototype.readCatalog = function(decls) {
-    var content = this.loadCatalog(decls);
+Codebase.prototype.readCatalog = function(globalContext, decls) {
+    var content = this.loadCatalog(globalContext, decls);
     this.attributes = content.attributes;
     this.categories = content.categories;
     this.enumerations = content.enumerations;
@@ -43,12 +43,13 @@ Codebase.prototype.readCatalog = function(decls) {
     this.widgets = content.widgets;
 };
 
-Codebase.prototype.loadCatalog = function(decls) {
+Codebase.prototype.loadCatalog = function(globalContext, decls) {
     if(prompto && decls) {
         var context = prompto.runtime.Context.newGlobalContext();
         // need a fresh context to ensure all get registered
         context.problemListener = new prompto.problem.ProblemCollector(); // we'll ignore these errors but let's catch them
         decls.register(context);
+        context.globals = globalContext;
         return context.getLocalCatalog();
     } else
         return {};

@@ -278,8 +278,8 @@ Repository.prototype.handleEditContent = function (content, dialect, listener, s
 
 Repository.prototype.updateCodebase = function (old_decls, new_decls, dialect, listener) {
     var delta = new Delta();
-    delta.removed = new Codebase(old_decls, this.librariesContext);
-    delta.added = new Codebase(new_decls, this.librariesContext);
+    delta.removed = new Codebase(old_decls, this.projectContext, this.librariesContext);
+    delta.added = new Codebase(new_decls, this.projectContext, this.librariesContext);
     var changedIdsCount = delta.filterOutDuplicates();
     var handled = false;
     // special case when changing id of a declaration, try connect to the previous version
