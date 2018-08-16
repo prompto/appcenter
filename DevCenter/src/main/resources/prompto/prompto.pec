@@ -421,7 +421,7 @@ and verifying:
 	define category bindings as:
 		JavaScript: Event
 
-@Inline
+@Inlined
 define TextEvent as native category with bindings:
 
 	define category bindings as:
