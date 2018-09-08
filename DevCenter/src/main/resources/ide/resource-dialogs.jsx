@@ -97,6 +97,7 @@ class NewTextResourceDialog extends React.Component {
 
 
     render() {
+        const canCreate = this.state.folder.length > 0 && this.state.name.length > 0 && this.state.extension.length > 0;
         return <Modal show={this.state.show} onHide={this.handleClose} bsSize="large"
                       dialogClassName="new-text-resource-dialog">
                     <Modal.Header closeButton={true}>
@@ -119,7 +120,7 @@ class NewTextResourceDialog extends React.Component {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button onClick={this.handleClose}>Cancel</Button>
-                        <Button bsStyle="primary" onClick={this.handleCreate}>Create</Button>
+                        <Button bsStyle="primary" disabled={!canCreate} onClick={this.handleCreate}>Create</Button>
                     </Modal.Footer>
                 </Modal>;
     }
