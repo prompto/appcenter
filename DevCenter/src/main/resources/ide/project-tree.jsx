@@ -19,7 +19,7 @@ class GroupTree extends React.Component {
         let items = this.props.items;
         if(!this.props.showLibraries)
             items = items.filter(item => !item.core);
-        return <ListGroupItem>
+        return <ListGroupItem id={this.id}>
             <label className="nav-header" onClick={this.toggleTreeNode}>{this.title}</label>
             <Collapse in={this.state.showItems}>
                 <ListGroup>
@@ -98,7 +98,8 @@ class SingleProtoMethodItem extends React.Component {
     }
 
     render() {
-        return <ListGroupItem onClick={this.itemClicked}>
+        const id = "method_" + this.props.method.name;
+        return <ListGroupItem id={id} onClick={this.itemClicked}>
             <a>{this.props.method.name}</a> {this.props.method.core && <Glyphicon glyph="lock"/>}
         </ListGroupItem>;
     }
@@ -200,8 +201,6 @@ class MultiProtoMethodItem extends React.Component {
         return false;
     }
 
-
-
 }
 
 
@@ -209,6 +208,7 @@ class MethodTree extends GroupTree {
 
     constructor(props) {
         super(props);
+        this.id = "methods";
         this.title = "Methods";
         this.renderItem = this.renderItem.bind(this);
     }

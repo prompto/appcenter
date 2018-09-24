@@ -50,7 +50,7 @@ class ContentNavigator extends React.Component {
     render() {
         return <div id="sidebar">
                     <div className="checkbox">
-                        <label><input type="checkbox" checked={this.state.showLibraries} onChange={this.toggleShowLibraries} />&nbsp;Show libraries</label>
+                        <label><input type="checkbox" id="show-libs" checked={this.state.showLibraries} onChange={this.toggleShowLibraries} />&nbsp;Show libraries</label>
                     </div>
                     <ProjectTree ref={ref=>this.projectTree=ref} catalog={this.props.catalog} showLibraries={this.state.showLibraries} root={this.props.root}/>
                 </div>;
