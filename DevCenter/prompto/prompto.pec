@@ -422,7 +422,19 @@ and verifying:
 		JavaScript: Event
 
 @Inlined
-define TextEvent as native category with bindings:
+define RadioChangedEvent as native category with bindings:
+
+	define category bindings as:
+		JavaScript: Event
+
+and methods:
+		
+	define getSelectedRadio as method returning Text doing:
+		JavaScript: return this.target.id;
+	
+
+@Inlined
+define InputChangedEvent as native category with bindings:
 
 	define category bindings as:
 		JavaScript: Event
