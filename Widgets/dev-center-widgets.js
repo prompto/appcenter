@@ -1,0 +1,1 @@
+/Users/ericvergnaud/Development/prompto/prompto-dev-center/DevCenter/js/lib/dev-center-widgets.js
