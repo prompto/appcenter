@@ -11,5 +11,5 @@ install:
 before_script:
   - cd CodeFactory
 script:
-  - mvn install -B -V -q # -DskipTests=true 
+  - mvn install -B -V -q # -DskipTests=true
   
