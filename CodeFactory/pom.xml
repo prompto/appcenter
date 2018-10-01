@@ -2,16 +2,17 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.prompto</groupId>
-		<artifactId>Parent-Platform</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+	<groupId>org.prompto</groupId>
 	<artifactId>CodeFactory</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<platform.version>0.0.17</platform.version>
+		<jackson-version>2.6.2</jackson-version>
+		<jetty-version>9.3.3.v20150827</jetty-version>
+		<solr-version>5.4.0</solr-version>
+		<mongo-version>3.4.2</mongo-version>
 	</properties>
 
 
@@ -29,7 +30,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<mainClass>prompto.codeserver.CodeServer</mainClass>
+					<mainClass>prompto.codefactory.Application</mainClass>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -89,7 +90,7 @@
 				<directory>src/main/resources</directory>
 			</resource>
 			<resource>
-				<directory>../prompto-dev-center/DevCenter</directory>
+				<directory>src/main/web</directory>
 			</resource>
 		</resources>
 	</build>
@@ -98,23 +99,23 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>Core</artifactId>
-			<version>${project.version}</version>
+			<version>${platform.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>CodeStore</artifactId>
-			<version>${project.version}</version>
+			<version>${platform.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>Server</artifactId>
-			<version>${project.version}</version>
+			<version>${platform.version}</version>
 		</dependency>
 		<!-- testing -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>Server</artifactId>
-			<version>${project.version}</version>
+			<version>${platform.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -139,20 +140,20 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>Core</artifactId>
-			<version>${project.version}</version>
+			<version>${platform.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>MongoStore</artifactId>
-			<version>${project.version}</version>
+			<version>${platform.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>MongoStore</artifactId>
-			<version>${project.version}</version>
+			<version>${platform.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -165,20 +166,20 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>SOLRStore</artifactId>
-			<version>${project.version}</version>
+			<version>${platform.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>SOLRStore</artifactId>
-			<version>${project.version}</version>
+			<version>${platform.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>SOLRFields</artifactId>
-			<version>${project.version}</version>
+			<version>${platform.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
