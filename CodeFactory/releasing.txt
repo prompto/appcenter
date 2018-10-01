@@ -1,0 +1,20 @@
+releasing requires pgp for code signing. Once and for all, you must:
+ - install gpg or gpg2
+ - create a key pair
+ - export it to ascii
+ - publish it to various servers
+ - specify <gpg.executable> in mvn Settings.xml
+ - specify <gpg.passphrase> in mvn Settings.xml
+releasing require authenticating to Nexus. Once and for all, you must:
+ - specify <username> in <server>in mvn Settings.xml
+ - specify <pasword> in <server>in mvn Settings.xml
+once all the above is done, from cmd line:
+ - check org.prompto/Server dependency version in pom.xml
+ - go to parent pom dir
+ - run: mvn versions:set -DnewVersion=x.y.z -DgenerateBackupPoms=false
+ - run: mvn clean deploy -P deploy -DskipTests=true
+ if successful:
+  - wait for artifact to be available on maven central (https://repo1.maven.org/maven2/org/prompto/CodeFactory/)
+  - only then, create release on github, with 'v' prefix i.e. v0.0.5
+  - run: mvn versions:set -DnewVersion=0.0.1-SNAPSHOT -DgenerateBackupPoms=false
+ 

@@ -10,3 +10,4 @@ travis.yml
 seed.yml
 chromedriver_linux64.zip
 chromedriver_mac64.zip
+release.json
