@@ -3,7 +3,7 @@ var path = require('path');
 module.exports = {
     entry: './widgets.js',
     output: {
-        filename: 'dev-center-widgets.js',
+        filename: '../CodeFactory/src/main/web/js/lib/factory-widgets.js',
         library: ["widgets"],
         libraryTarget: 'umd'
     },
