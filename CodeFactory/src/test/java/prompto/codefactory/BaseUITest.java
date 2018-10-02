@@ -7,7 +7,7 @@ import prompto.codefactory.Application;
 import prompto.runtime.Mode;
 import prompto.server.AppServer;
 
-public abstract class BaseUITest extends BaseBrowserTest {
+public abstract class BaseUITest extends BaseServerTest {
 
 	@BeforeClass
 	public static void startCodeServer() throws Throwable {

@@ -22,7 +22,7 @@ import prompto.store.IQueryBuilder.MatchOp;
 import prompto.store.IStore;
 import prompto.store.IStored;
 
-public abstract class BaseBrowserTest {
+public abstract class BaseServerTest {
 
 	protected static WebDriver webDriver;
 	protected static Properties properties;

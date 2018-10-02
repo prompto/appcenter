@@ -12,7 +12,7 @@ import org.openqa.selenium.WebElement;
 import prompto.codefactory.Application;
 import prompto.server.AppServer;
 
-public class TestAppStore extends BaseBrowserTest {
+public class TestAppStore extends BaseServerTest {
 
 	@BeforeClass
 	public static void startCodeServer() throws Throwable {
