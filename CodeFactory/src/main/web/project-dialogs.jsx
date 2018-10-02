@@ -267,8 +267,7 @@ class WebSiteParameters extends ServiceParameters {
     constructor(props) {
         super(props);
         this.handleDropIcon = this.handleDropIcon.bind(this);
-        this.handleCustomHome = this.handleCustomHome.bind(this);
-        this.handleHomePage = this.handleHomePage.bind(this);
+        this.homePagePlaceHolder = this.homePagePlaceHolder.bind(this);
         this.image = this.props.forRename ? this.props.dialog.props.module.value.image : null;
         this.state = { ...this.state, iconFile: null, customHome: false, homePage: "" };
     }
@@ -277,24 +276,14 @@ class WebSiteParameters extends ServiceParameters {
         this.setState( { iconFile: file } );
     }
 
-    handleCustomHome(custom) {
-        this.setState( { customHome: custom } );
-    }
-
-    handleHomePage(name) {
-        this.setState( { homePage: name } );
-    }
-
     homePage() {
         return this.state.customHome ? this.state.homePage : this.homePagePlaceHolder();
     }
 
     homePagePlaceHolder() {
         const cleanName = (this.props.dialog.state.name || "").toLowerCase().replace(/ /g, "-");
-        return cleanName + "/index.html";
+        return cleanName + "/index.page";
     }
-
-
 
     render() {
         return <div>
@@ -303,8 +292,20 @@ class WebSiteParameters extends ServiceParameters {
                     <DroppedFileWidget onDrop={this.handleDropIcon} style={widgetStyle} image={this.image}/>
                 </FormGroup>
                 { super.render() }
-                { !this.props.forRename && <OptionalInput name="home" label="Home page:" customize={this.state.customHome} placeHolder={this.homePagePlaceHolder()} value={this.state.homePage}
-                               handleCustom={this.handleCustomHome} handleName={this.handleHomePage} /> }
+            {!this.props.forRename && <FormGroup>
+                <ControlLabel>Home page:</ControlLabel>
+                <div style={{marginBottom: 5}}>
+                    <Radio inline name="home-name-radio" checked={!this.state.customHome}
+                           onChange={() => this.setState(customHome: false)}>Use default</Radio>
+                    <Radio inline name="home-name-radio" checked={this.state.customHome}
+                           onChange={() => this.setState(customHome: true)}>Customize</Radio>
+                </div>
+                <FormControl type="text" value={this.state.homePage}
+                             placeholder={this.homePagePlaceHolder()}
+                             onChange={e=>this.setState({homePage: e.currentTarget.value })}
+                             readOnly={!this.state.customHome}/>
+                </FormGroup>
+            }
             </div>;
     }
 
