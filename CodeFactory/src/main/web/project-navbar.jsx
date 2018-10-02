@@ -17,7 +17,7 @@ class ProjectsNavBar extends React.Component {
                 <NavItem href="http://www.prompto.org" target="_blank">Reference</NavItem>
             </Nav>
             <Navbar.Form pullRight>
-                <Button type="button" onClick={this.props.root.newProject} style={btnStyle}>New</Button>
+                <Button type="button" id="btnNewProject" onClick={this.props.root.newProject} style={btnStyle}>New</Button>
                 &nbsp;
                 <Button type="button" style={btnStyle}>Import</Button>
             </Navbar.Form>

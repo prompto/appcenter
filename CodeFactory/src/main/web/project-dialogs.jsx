@@ -362,7 +362,8 @@ class NewProjectDialog extends React.Component {
         this.handleType = this.handleType.bind(this);
         this.handleName = this.handleName.bind(this);
         this.handleDescription = this.handleDescription.bind(this);
-        this.state = { show: true, page: 1, type: ALL_PROJECT_TYPES[0], name:"", description: "" };
+        this.checkValidName = this.checkValidName.bind(this);
+        this.state = { show: true, page: 1, type: ALL_PROJECT_TYPES[0], name:"", description: "", validName: false };
     }
 
     handleCreate() {
@@ -387,7 +388,7 @@ class NewProjectDialog extends React.Component {
 
     handleName(e) {
         const name = e.currentTarget.value;
-        this.setState( { name: name } );
+        this.setState( { name: name }, this.checkValidName );
     }
 
     handleDescription(e) {
@@ -398,6 +399,10 @@ class NewProjectDialog extends React.Component {
     handleClose() {
         this.setState({show: false});
         this.props.onClose();
+    }
+
+    checkValidName() {
+        this.setState({validName: this.state.name.length > 0});
     }
 
     render() {
@@ -412,10 +417,10 @@ class NewProjectDialog extends React.Component {
                             <FormGroup style={{marginBottom: "0px"}}>
                                 <ControlLabel>Select type:</ControlLabel><br/>
                                 <ToggleButtonGroup name={"project-type"}>
-                                    {WEB_PROJECT_TYPES.map(type=><NewModuleTypeButton key={type.id} projectType={type} onClick={this.handleType} active={type===this.state.type}/>)}
+                                    {WEB_PROJECT_TYPES.map(type=><NewModuleTypeButton key={type.id} id={"button" + type.id} projectType={type} onClick={this.handleType} active={type===this.state.type}/>)}
                                 </ToggleButtonGroup><br/>
                                 <ToggleButtonGroup name={"project-type"}>
-                                    {CODE_PROJECT_TYPES.map(type=><NewModuleTypeButton key={type.id} projectType={type} onClick={this.handleType} active={type===this.state.type}/>)}
+                                    {CODE_PROJECT_TYPES.map(type=><NewModuleTypeButton key={type.id} id={"button" + type.id} projectType={type} onClick={this.handleType} active={type===this.state.type}/>)}
                                 </ToggleButtonGroup>
                             </FormGroup>
                         </form>
@@ -439,9 +444,9 @@ class NewProjectDialog extends React.Component {
 
                 <Modal.Footer>
                     <Button onClick={this.handleClose}>Cancel</Button>
-                    { this.state.page===1 && <Button bsStyle="primary" onClick={()=>this.setState({page: 2})}>Next</Button> }
+                    { this.state.page===1 && <Button id="btnNext" bsStyle="primary" onClick={()=>this.setState({page: 2})}>Next</Button> }
                     { this.state.page===2 && <Button onClick={()=>this.setState({page: 1})}>Previous</Button> }
-                    { this.state.page===2 && <Button bsStyle="primary" onClick={this.handleCreate}>Create</Button> }
+                    { this.state.page===2 && <Button id="btnCreate" bsStyle="primary" disabled={!this.state.validName} onClick={this.handleCreate}>Create</Button> }
                 </Modal.Footer>
             </Modal>;
     }
