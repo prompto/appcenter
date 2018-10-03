@@ -208,6 +208,15 @@ function Catalog() {
             status.stuff = res;
         }
     };
+    this.resourceExists = function(name) {
+        const types = Object.getOwnPropertyNames(this.resources).filter(n=>n!="statuses");
+        for(let i=0;i<types.length;i++) {
+            resources = this.resources[types[i]];
+            if(resources.findIndex(res=>name===res.value.name)>=0)
+                return true;
+        }
+        return false;
+    };
     this.prepareCommit = function() {
         var statuses = this.resources.statuses;
         var edited = [];

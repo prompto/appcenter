@@ -156,8 +156,8 @@ class EditorNavBar extends React.Component {
                     <Button type="button" onClick={()=>this.props.root.push()}>Push</Button>
                 </Navbar.Form>
                 <Navbar.Form pullRight style={editStyle}>
-                    <DropdownButton id="mode" title="New">
-                        { ALL_ELEMENT_TYPES.map(t=><MenuItem key={t.id} onClick={()=>t.newResource(this.props.root)}>{t.label}</MenuItem>) }
+                    <DropdownButton id="btnNew" title="New">
+                        { ALL_ELEMENT_TYPES.map(t=><MenuItem key={t.id} id={t.id} onClick={()=>t.newResource(this.props.root)}>{t.label}</MenuItem>) }
                     </DropdownButton>
                     &nbsp;
                     <Button type="button" onClick={()=>this.props.root.destroy()}>Delete</Button>
