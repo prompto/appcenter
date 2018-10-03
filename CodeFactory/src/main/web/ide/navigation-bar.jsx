@@ -138,10 +138,10 @@ class EditorNavBar extends React.Component {
                 </Navbar.Form>
                 <Navbar.Form pullRight style={editStyle}>
                     <ButtonGroup>
-                        <Button type="button" onClick={this.tryRun} >Run</Button>
                         <DropdownButton id="mode" title={runModeLabels[this.state.runMode]}>
                             { ALL_RUN_MODES.map(m=><MenuItem key={m} active={this.state.runMode===m} onClick={()=>this.setRunMode(m)}>{runModeLabels[m]}</MenuItem>) }
                         </DropdownButton>
+                        <Button type="button" onClick={this.tryRun} >Run</Button>
                     </ButtonGroup>
                     &nbsp;
                     <Button type="button" onClick={()=>this.stopServer()} disabled={this.state.runMode==="LI"}>Shutdown</Button>
@@ -153,7 +153,7 @@ class EditorNavBar extends React.Component {
                     &nbsp;
                     <Button type="button" onClick={()=>this.props.root.commit()}>Commit</Button>
                     &nbsp;
-                    <Button type="button" onClick={()=>this.props.root.push()}>Push</Button>
+                    { false &&  <Button type="button" onClick={()=>this.props.root.push()}>Push</Button> }
                 </Navbar.Form>
                 <Navbar.Form pullRight style={editStyle}>
                     <DropdownButton id="btnNew" title="New">
