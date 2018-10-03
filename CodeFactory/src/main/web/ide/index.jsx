@@ -98,7 +98,7 @@ class ImageDisplayer extends React.Component {
     render() {
         const source = this.props.source || this.state.preview;
         const state = source ? "PREVIEW" : "LOADING";
-        return <div id="image">
+        return <div id="image-display">
             { state==="PREVIEW" && <img src={source} style={{ maxWidth: "98%", maxHeight: "98%", width: "auto", height: "auto" }}/> }
             { state==="LOADING" && 'Loading...' }
         </div>

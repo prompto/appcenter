@@ -31,7 +31,7 @@
     overflow: hidden;
 }
 
-#image {
+#image*display {
     display: block;
     position: fixed;
     top: 51px;
