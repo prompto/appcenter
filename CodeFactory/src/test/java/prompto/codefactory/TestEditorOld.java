@@ -10,7 +10,7 @@ import org.openqa.selenium.WebElement;
 import prompto.codefactory.Application;
 
 @Category(SeleniumTests.class)
-public class TestEditor extends BaseUITest {
+public class TestEditorOld extends BaseUITest {
 
 	static final String editorURL(String dbId, String name) {
 		return "http://localhost:" + HTTP_PORT + "/ide/index.html?"
@@ -34,7 +34,7 @@ public class TestEditor extends BaseUITest {
 	}
 
 	private void loadSalesAppAndHideLibraries() throws Exception {
-		Application.importSamples();
+		Application.importSample("samples/Sales/");
 		String dbId = getDbIdForModule("Sales");
 		String url = editorURL(dbId, "Sales");
 		webDriver.get(url);

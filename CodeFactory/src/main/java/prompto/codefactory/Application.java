@@ -1,5 +1,6 @@
 package prompto.codefactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -143,16 +144,24 @@ public class Application {
 		importer.importModule(codeStore);
 	}
 
-	public static void importSamples() {
+	public static void importSamples(String root) throws IOException {
+		Collection<URL> samples = ResourceUtils.listResourcesAt(root, null);
+		samples.forEach(Application::importSample);
+	}
+	
+	public static void importSample(String name) {
+		importSample(Thread.currentThread().getContextClassLoader().getResource(name));
+	}
+	
+	public static void importSample(URL sample) {
 		try {
 			ICodeStore codeStore = codeStoreUsingDataStore();
-			Collection<URL> samples = ResourceUtils.listResourcesAt("samples/", null);
-			for(URL sample : samples)
-				doImportModule(codeStore, sample);
+			doImportModule(codeStore, sample);
 		} catch(Throwable t) {
 			t.printStackTrace();
 		}
 	}
+	
 
 	private static void createToolsLibraries(ICodeStore codeStore) throws Exception {
 		Module codeStoreLibrary = new Library();
@@ -178,6 +187,8 @@ public class Application {
 	private static boolean isToolsDataStore() {
 		return config.getDataStoreConfiguration().getDbName().toLowerCase().contains("tools");
 	}
+
+
 
 
 }
