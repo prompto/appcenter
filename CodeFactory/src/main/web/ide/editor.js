@@ -3,6 +3,7 @@ var promptoEditor = null;
 var resourceEditor = null;
 var resourceContent = null;
 var modeId = null;
+var fetchRunnablePageCallback = null;
 
 function setDialect(dialect) {
     var mode = promptoEditor.getSession().getMode();
@@ -94,6 +95,19 @@ function runMethod(id, runMode) {
     var session = promptoEditor.getSession();
     var mode = session.getMode();
     mode.runMethod(id, runMode);
+}
+
+function fetchRunnablePage(content, onFound) {
+    var session = promptoEditor.getSession();
+    var mode = session.getMode();
+    fetchRunnablePageCallback = onFound;
+    mode.fetchRunnablePage(content);
+}
+
+function runnablePageFetched(runnable) {
+    var callback = fetchRunnablePageCallback;
+    fetchRunnablePageCallback = null;
+    callback(runnable);
 }
 
 // a utility method to inspect worker data in Firefox/Safari

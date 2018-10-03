@@ -14,7 +14,7 @@ class EditorNavBar extends React.Component {
         this.setDialect = this.setDialect.bind(this);
         this.setRunMode = this.setRunMode.bind(this);
         this.tryRun = this.tryRun.bind(this);
-        this.alertIfNotRunnable = this.alertIfNotRunnable.bind(this);
+        this.getRunnableContent = this.getRunnableContent.bind(this);
         this.runPromptoCode = this.runPromptoCode.bind(this);
         this.stopPromptoCode = this.stopPromptoCode.bind(this);
         this.openWebPage = this.openWebPage.bind(this);
@@ -30,13 +30,34 @@ class EditorNavBar extends React.Component {
     }
 
     tryRun() {
-        const content = this.props.root.currentContent;
-        if(this.alertIfNotRunnable(content))
-            return;
-        if(content.type === "html" || content.type === "page")
-            this.openWebPage(content);
-        else
-            this.runPromptoCode(content);
+        this.getRunnableContent(this.props.root.currentContent, runnable => {
+            if (runnable == null) {
+                alert("Nothing to run!");
+                return true;
+            }
+            if (!runnable.valid) {
+                alert("Can only run tests methods, main methods or web pages!");
+                return;
+            }
+            if (runnable.content.type === "html" || runnable.content.type === "page")
+                this.openWebPage(runnable.content);
+            else
+                this.runPromptoCode(runnable.content);
+        });
+    }
+
+    getRunnableContent(content, onFound) {
+        // check runnable code
+        if(content.subType==="test" || (content.subType==="method" && content.main))
+            return onFound({ valid: true, content: content });
+        // check runnable page
+        if(this.props.root.getProject().type !== "WebSite")
+            return onFound({ valid: false, content: null });
+        if(content.type=="html" || content.type=="page")
+            return onFound({ valid: true, content: content });
+        if(content.subType!=="widget")
+            return onFound({ valid: false, content: null });
+        this.props.root.editorWindow.fetchRunnablePage(content, onFound);
     }
 
     openWebPage(content) {
@@ -88,23 +109,6 @@ class EditorNavBar extends React.Component {
 
     stopPromptoCode() {
         this.props.root.setState({editMode: "EDIT"});
-    }
-
-    alertIfNotRunnable(content) {
-        let msg = null
-        if (!content) {
-            alert("Nothing to run!");
-            return true;
-        } else if(content.subType==="test")
-            return false;
-        else if(content.subType==="method" && content.main)
-            return false;
-        else if((content.type=="html" || content.type=="page") && this.props.root.getProject().type==="WebSite")
-            return false;
-        else {
-            alert("Can only run tests methods, main methods or web pages!");
-            return true;
-        }
     }
 
     render() {

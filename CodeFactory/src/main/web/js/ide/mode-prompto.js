@@ -153,6 +153,10 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
             this.$worker && this.$worker.send("runMethod", [ id, mode ] );
         };
 
+        this.fetchRunnablePage = function(content) {
+            this.$worker && this.$worker.send("fetchRunnablePage", [ content ] );
+        };
+
         // a utility method to inspect worker data in Firefox/Safari
         this.inspect = function(name) {
             this.$worker && this.$worker.send("inspect", [ name ] );
@@ -201,6 +205,9 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
                 parent.commitPrepared(v.data);
             });
 
+            this.$worker.on("runnablePageFetched", function(v) {
+                runnablePageFetched(v.data);
+            });
 
             // a utility method to inspect worker data in Firefox/Safari
             this.$worker.on("inspected", function(v) {

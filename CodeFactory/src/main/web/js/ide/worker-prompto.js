@@ -76,6 +76,19 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
             this.runRemotely(id, "execute");
     };
 
+
+    PromptoWorker.prototype.fetchRunnablePage = function(content) {
+        var runnable = { valid: false, content: null };
+        var decl = this.$repo.getDeclaration(content);
+        if(decl!==null && decl.annotations && decl instanceof prompto.declaration.ConcreteWidgetDeclaration) {
+            var annotations = decl.annotations.filter(function(a) { return a.id.name==="@PageWidgetOf" });
+            if(annotations.length>0 && annotations[0].expression instanceof prompto.literal.TextLiteral)
+                runnable = { valid: true, content: { type: "page", name: annotations[0].expression.value.toString() }};
+        }
+        this.sender.emit("runnablePageFetched", runnable);
+    };
+
+
     PromptoWorker.prototype.runRemotely = function(id, mode) {
         var worker = this;
         this.fetchModuleURL(worker.$projectId, function(url) {

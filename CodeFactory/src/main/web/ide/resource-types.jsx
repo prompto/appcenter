@@ -100,8 +100,10 @@ class PageType extends TextResourceType {
 
 
     createWidget(state, addCode) {
+        const resourceName = state.folder + "/" + state.name + "." + state.extension;
         const widgetName = this.computeWidgetName(state.name);
-        const widgetCode = "widget " + widgetName + " {\n" +
+        const widgetCode = "@PageWidgetOf(\"" + resourceName + "\")\n" +
+            "widget " + widgetName + " {\n" +
             "\n" +
             "\tHtml method render() {\n" +
             '\t\treturn <div>Hello "' + state.name + '"!</div>;\n' +

@@ -382,9 +382,6 @@ function catalogUpdated(delta) {
     root.catalogUpdated(delta);
 }
 
-function catalogUpdated(delta) {
-    root.catalogUpdated(delta);
-}
 
 function destroy() {
     root.destroy();

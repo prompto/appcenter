@@ -35,6 +35,11 @@ exports.unparse = function(context, decl, dialect) {
             cmt.toDialect(writer);
         });
     }
+    if(decl.annotations) {
+        decl.annotations.forEach(function (ant) {
+            ant.toDialect(writer);
+        });
+    }
     decl.toDialect(writer);
     return writer.toString();
 }
