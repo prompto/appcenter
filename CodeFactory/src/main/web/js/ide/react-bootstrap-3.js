@@ -15,11 +15,17 @@ self.ReactBootstrap = {
     FormControl: React.Component,
     ControlLabel: React.Component,
     HelpBlock: React.Component,
+    Table: React.Component,
     Modal: {
     	Title: React.Component,
     	Header: React.Component,
     	Body: React.Component,
     	Footer: React.Component
+    },
+    Navbar: {
+        Brand: React.Component,
+        Header: React.Component,
+        Form: React.Component
     }
 };
 

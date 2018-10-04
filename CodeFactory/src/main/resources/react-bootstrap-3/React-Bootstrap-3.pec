@@ -54,6 +54,13 @@ and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
 
+define Table as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Table
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
 define Modal as native widget with bindings:
 	define category bindings as:
 		JavaScript: ReactBootstrap.Modal
@@ -88,3 +95,33 @@ define ModalTitle as native widget with bindings:
 and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
+		
+define Navbar as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Navbar
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define NavbarBrand as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Navbar.Brand
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define NavbarHeader as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Navbar.Header
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define NavbarForm as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Navbar.Form
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+		
