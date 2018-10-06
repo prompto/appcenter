@@ -96,12 +96,6 @@ Repository.prototype.getDeclarationBody = function(content, dialect) {
 };
 
 
-Repository.prototype.getResourceBody = function(content, dialect) {
-    var decl = codeutils.parse(content.body, content.dialect);
-    return codeutils.unparse(this.projectContext, decl, dialect);
-};
-
-
 Repository.prototype.getDeclaration = function(content) {
     if(content.subType==="test")
         return this.projectContext.getRegisteredTest(content.name);
@@ -155,14 +149,14 @@ Repository.prototype.registerDestroyed = function(id) {
 };
 
 
-Repository.prototype.registerDirty = function(decls, dialect) {
+Repository.prototype.registerDirty = function(decls, parser, dialect) {
     decls.map(function(decl) {
         var decl_obj;
         var id = this.idFromDecl(decl);
         var existing = this.statuses[id];
         if(existing) {
             decl_obj = existing.stuff.value;
-            var body = codeutils.unparse(this.projectContext, decl, dialect);
+            var body = decl.fetchBody(parser);
             if(decl_obj.dialect !== dialect || decl_obj.body !== body) {
                 decl_obj.dialect = dialect;
                 decl_obj.body = body;
@@ -180,7 +174,7 @@ Repository.prototype.registerDirty = function(decls, dialect) {
                 name: decl.name,
                 version: "0.0.1",
                 dialect: dialect,
-                body: codeutils.unparse(this.projectContext, decl, dialect),
+                body: decl.fetchBody(parser),
                 module: {
                     type: "Module",
                     value: {
@@ -262,12 +256,13 @@ Repository.prototype.handleEditContent = function (content, dialect, listener, s
     var previousListener = Object.create(listener);
     var old_decls = codeutils.parse(this.lastSuccess, this.lastDialect, previousListener);
     // always annotate new content
-    var new_decls = codeutils.parse(content, dialect, listener);
+    var parser = codeutils.newParser(content, dialect, listener);
+    var new_decls = parser.parse();
     // only update codebase if syntax is correct
     if (listener.problems.length === 0) {
         this.lastSuccess = content;
         this.lastDialect = dialect;
-        var catalog = this.updateCodebase(old_decls, new_decls, dialect, listener);
+        var catalog = this.updateCodebase(old_decls, new_decls, parser, dialect, listener);
         if(select && new_decls.length===1)
             catalog.select = new_decls[0].name;
         return catalog;
@@ -276,7 +271,7 @@ Repository.prototype.handleEditContent = function (content, dialect, listener, s
 };
 
 
-Repository.prototype.updateCodebase = function (old_decls, new_decls, dialect, listener) {
+Repository.prototype.updateCodebase = function (old_decls, new_decls, parser, dialect, listener) {
     var delta = new Delta();
     delta.removed = new Codebase(old_decls, this.projectContext, this.librariesContext);
     delta.added = new Codebase(new_decls, this.projectContext, this.librariesContext);
@@ -319,7 +314,7 @@ Repository.prototype.updateCodebase = function (old_decls, new_decls, dialect, l
                     var decl_obj = new_status.stuff.value;
                     decl_obj.name = new_decl.name;
                     decl_obj.dialect = dialect;
-                    decl_obj.body = codeutils.unparse(this.projectContext, new_decl, dialect);
+                    decl_obj.body = new_decl.fetchBody(parser);
                     if(new_decl.getProto!==undefined)
                         decl_obj.prototype = new_decl.getProto();
                     if(new_decl.storable!==undefined)
@@ -333,7 +328,7 @@ Repository.prototype.updateCodebase = function (old_decls, new_decls, dialect, l
         // either no change in ids, or more than one
         // simply mark new decls as dirty, don't destroy old ones, since this can
         // be achieved safely through an explicit action in the UI
-        this.registerDirty(new_decls, dialect);
+        this.registerDirty(new_decls, parser, dialect);
     }
     this.updateAppContext(old_decls, new_decls, listener);
     if(changedIdsCount !== 0) {

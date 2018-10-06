@@ -17,7 +17,6 @@ var Delta = require("./delta").Delta;
 var Codebase = require("./codebase").Codebase;
 var Repository = require("./repository").Repository;
 
-
 function fixPath(filePath) {
     return path.normalize(path.dirname(path.dirname(module.filename)) + "/" + filePath);
 }
@@ -26,7 +25,12 @@ function loadText(filePath) {
     return fs.readFileSync(fixPath(filePath), {encoding: 'utf8'});
 }
 
+function clearws(text) {
+    return text.replace(/(\n|\r|\t)+/g, "");
+}
+
 exports.codeIsLoaded = function (test) {
+    global.Event = function () {}; // referred by web stuff
     var code = loadText("../prompto/prompto.pec");
     var repo = new Repository();
     repo.registerLibraryCode(code, "E");
@@ -80,7 +84,7 @@ exports.updatingNewAttributeKeepsStatusToCREATED = function (test) {
     var delta = repo.handleEditContent("define name as Integer attribute", "E", listener);
     test.equal(delta, null);
     test.equal(repo.statuses["name"].editStatus, "CREATED");
-    test.equal(repo.statuses["name"].stuff.value.body, "define name as Integer attribute");
+    test.equal(clearws(repo.statuses["name"].stuff.value.body), clearws("define name as Integer attribute"));
     test.done();
 };
 
@@ -96,7 +100,7 @@ exports.updatingExistingAttributePreservesDbIdAndSetsStatusToDIRTY = function (t
     test.equal(delta, null);
     test.equal(repo.statuses["name"].editStatus, "DIRTY");
     test.equal(repo.statuses["name"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["name"].stuff.value.body, "define name as Text attribute");
+    test.equal(clearws(repo.statuses["name"].stuff.value.body), clearws("define name as Text attribute"));
     test.done();
 };
 
@@ -112,7 +116,7 @@ exports.changingDialectOfExistingAttributePreservesDbIdAndSetsStatusToDIRTY = fu
     test.equal(repo.statuses["name"].editStatus, "DIRTY");
     test.equal(repo.statuses["name"].stuff.value.dbId, "Some UUID");
     test.equal(repo.statuses["name"].stuff.value.dialect, "O");
-    test.equal(repo.statuses["name"].stuff.value.body, "attribute name : Text;");
+    test.equal(repo.statuses["name"].stuff.value.body, "attribute name: Text;");
     test.done();
 };
 
@@ -288,7 +292,7 @@ exports.updatingNewCategoryKeepsStatusToCREATED = function (test) {
     var delta = repo.handleEditContent("define Xyz as category with attribute other", "E", listener);
     test.equal(delta, null);
     test.equal(repo.statuses["Xyz"].editStatus, "CREATED");
-    test.equal(repo.statuses["Xyz"].stuff.value.body, "define Xyz as category with attribute other\n");
+    test.equal(clearws(repo.statuses["Xyz"].stuff.value.body), "define Xyz as category with attribute other");
     test.done();
 };
 
@@ -304,7 +308,7 @@ exports.updatingExistingCategoryPreservesDbIdAndSetsStatusToDIRTY = function (te
     test.equal(delta, null);
     test.equal(repo.statuses["Xyz"].editStatus, "DIRTY");
     test.equal(repo.statuses["Xyz"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["Xyz"].stuff.value.body, "define Xyz as category with attribute other\n");
+    test.equal(clearws(repo.statuses["Xyz"].stuff.value.body), "define Xyz as category with attribute other");
     test.done();
 };
 
@@ -320,7 +324,7 @@ exports.selectingThenUpdatingNewCategoryKeepsStatusToCREATED = function (test) {
     var delta = repo.handleEditContent("define Xyz as category with attribute other", "E", listener);
     test.equal(delta, null);
     test.equal(repo.statuses["Xyz"].editStatus, "CREATED");
-    test.equal(repo.statuses["Xyz"].stuff.value.body, "define Xyz as category with attribute other\n");
+    test.equal(clearws(repo.statuses["Xyz"].stuff.value.body), "define Xyz as category with attribute other");
     test.done();
 };
 
@@ -338,7 +342,7 @@ exports.selectingThenUpdatingExistingCategoryPreservesDbIdAndSetsStatusToDIRTY =
     test.equal(delta, null);
     test.equal(repo.statuses["Xyz"].editStatus, "DIRTY");
     test.equal(repo.statuses["Xyz"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["Xyz"].stuff.value.body, "define Xyz as category with attribute other\n");
+    test.equal(clearws(repo.statuses["Xyz"].stuff.value.body), "define Xyz as category with attribute other");
     test.done();
 };
 
@@ -369,7 +373,7 @@ exports.renamingExistingCategoryPreservesDbIdAndSetsStatusToDIRTY = function (te
     test.equal(repo.statuses["Xyz"], undefined);
     test.equal(repo.statuses["Abc"].editStatus, "DIRTY");
     test.equal(repo.statuses["Abc"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["Abc"].stuff.value.body, "define Abc as category with attribute other\n");
+    test.equal(clearws(repo.statuses["Abc"].stuff.value.body), "define Abc as category with attribute other");
     test.done();
 };
 
@@ -406,7 +410,7 @@ exports.selectedThenRenamingExistingCategoryPreservesDbIdAndSetsStatusToDIRTY = 
     test.equal(repo.statuses["Xyz"], undefined);
     test.equal(repo.statuses["Abc"].editStatus, "DIRTY");
     test.equal(repo.statuses["Abc"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["Abc"].stuff.value.body, "define Abc as category with attribute other\n");
+    test.equal(repo.statuses["Abc"].stuff.value.body, "define Abc as category with attribute other");
     test.done();
 };
 
@@ -475,7 +479,7 @@ exports.creatingTestSetsStatusToCREATED = function (test) {
     var delta = repo.handleEditContent('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2', "E", listener);
     test.equal(delta, null);
     test.equal(repo.statuses['"simple test"'].editStatus, "CREATED");
-    test.equal(repo.statuses['"simple test"'].stuff.value.body, 'define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n');
+    test.equal(clearws(repo.statuses['"simple test"'].stuff.value.body), clearws('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n'));
     test.done();
 };
 
@@ -490,7 +494,7 @@ exports.selectingThenUpdatingNewTestKeepsStatusToCREATED = function (test) {
     var delta = repo.handleEditContent('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2', "E", listener);
     test.equal(delta, null);
     test.equal(repo.statuses['"simple test"'].editStatus, "CREATED");
-    test.equal(repo.statuses['"simple test"'].stuff.value.body, 'define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n');
+    test.equal(clearws(repo.statuses['"simple test"'].stuff.value.body), clearws('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n'));
     test.done();
 };
 
@@ -508,7 +512,7 @@ exports.selectingThenUpdatingExistingTestPreservesDbIdAndSetsStatusToDIRTY = fun
     test.equal(delta, null);
     test.equal(repo.statuses['"simple test"'].editStatus, "DIRTY");
     test.equal(repo.statuses['"simple test"'].stuff.value.dbId, 'Some UUID');
-    test.equal(repo.statuses['"simple test"'].stuff.value.body, 'define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n');
+    test.equal(clearws(repo.statuses['"simple test"'].stuff.value.body), clearws('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n'));
     test.done();
 };
 
@@ -658,7 +662,7 @@ exports.updatingNewMethodKeepsStatusToCREATED = function (test) {
     var delta = repo.handleEditContent("define main as method doing:\n\ta = 3\n", "E", listener);
     test.equal(delta, null);
     test.equal(repo.statuses["main/"].editStatus, "CREATED");
-    test.equal(repo.statuses["main/"].stuff.value.body, "define main as method doing:\n\ta = 3\n");
+    test.equal(clearws(repo.statuses["main/"].stuff.value.body), clearws("define main as method doing:\n\ta = 3\n"));
     test.done();
 };
 
@@ -674,7 +678,7 @@ exports.updatingExistingMethodPreservesDbIdAndSetsStatusToDIRTY = function (test
     test.equal(delta, null);
     test.equal(repo.statuses["main/"].editStatus, "DIRTY");
     test.equal(repo.statuses["main/"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["main/"].stuff.value.body, "define main as method doing:\n\ta = 3\n");
+    test.equal(clearws(repo.statuses["main/"].stuff.value.body), clearws("define main as method doing:\n\ta = 3\n"));
     test.done();
 };
 
@@ -689,7 +693,7 @@ exports.selectingThenUpdatingNewMethodKeepsStatusToCREATED = function (test) {
     var delta = repo.handleEditContent("define main as method doing:\n\ta = 3\n", "E", listener);
     test.equal(delta, null);
     test.equal(repo.statuses["main/"].editStatus, "CREATED");
-    test.equal(repo.statuses["main/"].stuff.value.body, "define main as method doing:\n\ta = 3\n");
+    test.equal(clearws(repo.statuses["main/"].stuff.value.body), clearws("define main as method doing:\n\ta = 3\n"));
     test.done();
 };
 
@@ -707,7 +711,7 @@ exports.selectingThenUpdatingExistingMethodPreservesDbIdAndSetsStatusToDIRTY = f
     test.equal(delta, null);
     test.equal(repo.statuses["main/"].editStatus, "DIRTY");
     test.equal(repo.statuses["main/"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["main/"].stuff.value.body, "define main as method doing:\n\ta = 3\n");
+    test.equal(clearws(repo.statuses["main/"].stuff.value.body), clearws("define main as method doing:\n\ta = 3\n"));
     test.done();
 };
 
@@ -741,7 +745,7 @@ exports.renamingExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDIRTY = func
     test.equal(repo.statuses["main/"], undefined);
     test.equal(repo.statuses["renamed/"].editStatus, "DIRTY");
     test.equal(repo.statuses["renamed/"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["renamed/"].stuff.value.body, "define renamed as method doing:\n\ta = 2\n");
+    test.equal(clearws(repo.statuses["renamed/"].stuff.value.body), clearws("define renamed as method doing:\n\ta = 2\n"));
     test.done();
 };
 
@@ -778,7 +782,7 @@ exports.selectingThenrenamingExistingMethodWith1ProtoPreservesDbIdAndSetsStatusT
     test.equal(repo.statuses["main/"], undefined);
     test.equal(repo.statuses["renamed/"].editStatus, "DIRTY");
     test.equal(repo.statuses["renamed/"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["renamed/"].stuff.value.body, "define renamed as method doing:\n\ta = 2\n");
+    test.equal(clearws(repo.statuses["renamed/"].stuff.value.body), clearws("define renamed as method doing:\n\ta = 2\n"));
     test.done();
 };
 
@@ -814,7 +818,7 @@ exports.updatingProtoOfExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDIRTY
     test.equal(repo.statuses["main/"], undefined);
     test.equal(repo.statuses["main/Text"].editStatus, "DIRTY");
     test.equal(repo.statuses["main/Text"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["main/Text"].stuff.value.body, "define main as method receiving Text value doing:\n\ta = 2\n");
+    test.equal(clearws(repo.statuses["main/Text"].stuff.value.body), clearws("define main as method receiving Text value doing:\n\ta = 2\n"));
     test.done();
 };
 
@@ -855,7 +859,7 @@ exports.selectingThenUpdatingProtoOfExistingMethodWith1ProtoPreservesDbIdAndSets
     test.equal(repo.statuses["main/"], undefined);
     test.equal(repo.statuses["main/Text"].editStatus, "DIRTY");
     test.equal(repo.statuses["main/Text"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["main/Text"].stuff.value.body, "define main as method receiving Text value doing:\n\ta = 2\n");
+    test.equal(clearws(repo.statuses["main/Text"].stuff.value.body), clearws("define main as method receiving Text value doing:\n\ta = 2\n"));
     test.done();
 };
 
@@ -901,7 +905,7 @@ exports.renamingExistingMethodWith2ProtosPreservesDbIdAndSetsStatusToDIRTY = fun
     test.equal(repo.statuses["main/"], undefined);
     test.equal(repo.statuses["renamed/"].editStatus, "DIRTY");
     test.equal(repo.statuses["renamed/"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["renamed/"].stuff.value.body, "define renamed as method doing:\n\ta = 2\n");
+    test.equal(clearws(repo.statuses["renamed/"].stuff.value.body), clearws("define renamed as method doing:\n\ta = 2\n"));
     test.done();
 };
 
@@ -951,7 +955,7 @@ exports.selectingThenRenamingExistingMethodWith2ProtosPreservesDbIdAndSetsStatus
     test.equal(repo.statuses["main/"], undefined);
     test.equal(repo.statuses["renamed/"].editStatus, "DIRTY");
     test.equal(repo.statuses["renamed/"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["renamed/"].stuff.value.body, "define renamed as method doing:\n\ta = 2\n");
+    test.equal(clearws(repo.statuses["renamed/"].stuff.value.body), clearws("define renamed as method doing:\n\ta = 2\n"));
     test.done();
 };
 
@@ -998,7 +1002,7 @@ exports.updatingProtoOfExistingMethodWith2ProtosPreservesDbIdAndSetsStatusToDIRT
     test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
     test.equal(repo.statuses["main/Integer"].editStatus, "DIRTY");
     test.equal(repo.statuses["main/Integer"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["main/Integer"].stuff.value.body, "define main as method receiving Integer value doing:\n\ta = 2\n");
+    test.equal(clearws(repo.statuses["main/Integer"].stuff.value.body), clearws("define main as method receiving Integer value doing:\n\ta = 2"));
     test.done();
 };
 
@@ -1049,7 +1053,7 @@ exports.selectingThenUpdatingProtoOfExistingMethodWith2ProtosPreservesDbIdAndSet
     test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
     test.equal(repo.statuses["main/Integer"].editStatus, "DIRTY");
     test.equal(repo.statuses["main/Integer"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["main/Integer"].stuff.value.body, "define main as method receiving Integer value doing:\n\ta = 2\n");
+    test.equal(clearws(repo.statuses["main/Integer"].stuff.value.body), clearws("define main as method receiving Integer value doing:\n\ta = 2\n"));
     test.done();
 };
 
@@ -1078,7 +1082,7 @@ exports.destroyingExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDELETED = 
     test.equal(delta.removed.methods[0].protos[0].proto, "");
     test.equal(repo.statuses["main/"].editStatus, "DELETED");
     test.equal(repo.statuses["main/"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["main/"].stuff.value.body, "define main as method doing:\n\ta = 2\n");
+    test.equal(clearws(repo.statuses["main/"].stuff.value.body), clearws("define main as method doing:\n\ta = 2\n"));
     test.done();
 };
 
@@ -1111,7 +1115,7 @@ exports.selectingThenDestroyingExistingMethodWith1ProtoPreservesDbIdAndSetsStatu
     test.equal(delta.removed.methods[0].protos[0].proto, "");
     test.equal(repo.statuses["main/"].editStatus, "DELETED");
     test.equal(repo.statuses["main/"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["main/"].stuff.value.body, "define main as method doing:\n\ta = 2\n");
+    test.equal(clearws(repo.statuses["main/"].stuff.value.body), clearws("define main as method doing:\n\ta = 2\n"));
     test.done();
 };
 
@@ -1150,5 +1154,13 @@ exports.destroyingExistingMethodWith2ProtosPreservesDbIdAndSetsStatusToDELETED =
     test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
     test.equal(repo.statuses["main/"].editStatus, "DELETED");
     test.equal(repo.statuses["main/"].stuff.value.dbId, "Some UUID");
+    test.done();
+};
+
+exports.checkFailureDoesNotPreventRegistering = function (test) {
+    var repo = new Repository();
+    var listener = new prompto.problem.ProblemCollector();
+    repo.handleEditContent("define main as method doing:\n\ta = stuff for each stuff in stuffs\n", "E", listener);
+    repo.statuses["main/"].editStatus = "DIRTY";
     test.done();
 };

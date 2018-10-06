@@ -16,13 +16,19 @@ exports.inferDialect = function(path) {
     return path.substring(path.length-2, path.length-1).toUpperCase();
 }
 
-/* a function for parsing prompto code into declarations */
-exports.parse = function(input, dialect, listener) {
+/* a function for getting a new prompto code parser */
+exports.newParser = function(input, dialect, listener) {
     var klass = prompto.parser[dialect + "CleverParser"];
     var parser = new klass(input);
     parser.removeErrorListeners();
     if(listener)
         parser.addErrorListener(listener);
+    return parser;
+}
+
+/* a function for parsing prompto code into declarations */
+exports.parse = function(input, dialect, listener) {
+    var parser = exports.newParser(input, dialect, listener);
     return parser.parse();
 }
 
