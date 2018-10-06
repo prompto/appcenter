@@ -156,7 +156,7 @@ class EditorPage extends React.Component {
     }
 
     setEditorDefaults() {
-        this.editorWindow.setDialect("E");
+        this.editorWindow.setDialect("O");
     }
 
     revert() {

@@ -10,7 +10,7 @@ class EditorNavBar extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { dialect: "E", runMode: "LI", dialog: null};
+        this.state = { dialect: "O", runMode: "LI", dialog: null};
         this.setDialect = this.setDialect.bind(this);
         this.setRunMode = this.setRunMode.bind(this);
         this.tryRun = this.tryRun.bind(this);
