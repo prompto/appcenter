@@ -1157,6 +1157,36 @@ exports.destroyingExistingMethodWith2ProtosPreservesDbIdAndSetsStatusToDELETED =
     test.done();
 };
 
+
+var widgetBody = '@PageWidgetOf("accounts/index.page")' +
+'widget IndexPage extends ReactWidget {' +
+'' +
+'    Document method getInitialState () {' +
+'        return { view:"Accounts"};' +
+'    }' +
+'' +
+'    Html method render () {' +
+'        state = getState();' +
+'        return <div>' +
+'        <AccountsNavbar/>' +
+'        <AccountsTable visible={state.view == "Accounts"} />' +
+'        <UsersTable visible={state.view == "Users"} />' +
+'        <OrganizationsTable visible={state.view == "Organizations"} />' +
+'        </div>;' +
+'    }' +
+'' +
+'}';
+
+exports.storedBodyIsComplete = function (test) {
+    var repo = new Repository();
+    var listener = new prompto.problem.ProblemCollector();
+    repo.handleEditContent(widgetBody, "O", listener);
+    test.equal(repo.statuses["IndexPage"].editStatus, "CREATED");
+    test.equal(clearws(repo.statuses["IndexPage"].stuff.value.body), clearws(widgetBody));
+    test.done();
+};
+
+
 exports.checkFailureDoesNotPreventRegistering = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
