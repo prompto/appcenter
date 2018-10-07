@@ -245,7 +245,14 @@ Repository.prototype.handleDestroyed = function (content) {
 
 
 Repository.prototype.handleSetContent = function (content, dialect, listener) {
-    codeutils.parse(content, dialect, listener);
+    var decls = codeutils.parse(content, dialect, listener);
+    var saved_listener = this.projectContext.problemListener;
+    try {
+        this.projectContext.problemListener = listener;
+        decls.check(this.projectContext.newChildContext()); // don't pollute projectContext
+    } finally {
+        this.projectContext.problemListener = saved_listener;
+    }
     this.lastSuccess = content; // assume registered content is always parsed successfully
     this.lastDialect = dialect;
 };
