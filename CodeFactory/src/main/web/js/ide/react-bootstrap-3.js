@@ -26,6 +26,8 @@ self.ReactBootstrap = {
         Brand: React.Component,
         Header: React.Component,
         Form: React.Component
-    }
+    },
+    Nav: React.Component,
+    NavItem: React.Component
 };
 

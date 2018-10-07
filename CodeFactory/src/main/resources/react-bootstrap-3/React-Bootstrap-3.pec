@@ -117,6 +117,20 @@ and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
 
+define Nav as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Nav
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define NavItem as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.NavItem
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
 define NavbarForm as native widget with bindings:
 	define category bindings as:
 		JavaScript: ReactBootstrap.Navbar.Form
