@@ -25,6 +25,7 @@ self.ReactBootstrap = {
     Navbar: {
         Brand: React.Component,
         Header: React.Component,
+        Text: React.Component,
         Form: React.Component
     },
     Nav: React.Component,

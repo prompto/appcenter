@@ -176,6 +176,20 @@ public class TestReactBootstrap3 extends BaseUITest {
 		assertEquals("Hi", input.getAttribute("value"));
 	}
 
+	@Test
+	public void navSelectCallbackIsCalled() throws Exception {
+		linkResourcesAndLoadPage("NavSelectCallbackIsCalled", Dialect.O);
+		WebElement nav = waitElement(By.id("nav-1"), 2);
+		WebElement nav1 = nav.findElement(By.xpath(".."));
+		assertTrue(nav1.getAttribute("class").contains("active"));
+		nav = waitElement(By.id("nav-2"), 2);
+		WebElement nav2 = nav.findElement(By.xpath(".."));
+		assertFalse(nav2.getAttribute("class").contains("active"));
+		click(nav2, 100);
+		assertFalse(nav1.getAttribute("class").contains("active"));
+		assertTrue(nav2.getAttribute("class").contains("active"));
+	}
+
 
 	private void linkResourcesAndLoadPage(String resourceName, Dialect dialect) throws Exception {
 		URL bootstrapURL = Thread.currentThread().getContextClassLoader().getResource("react-bootstrap-3/React-Bootstrap-3.pec");

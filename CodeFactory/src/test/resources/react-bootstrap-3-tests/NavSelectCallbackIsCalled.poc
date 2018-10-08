@@ -1,0 +1,20 @@
+widget NavSelectCallbackIsCalledPage extends ReactWidget {
+
+	method getInitialState() {
+		return { active: "nav-1" };
+	}
+	
+    method navItemSelected(Text key) {
+        setState({ active: key });
+    }
+    
+	Html method render () {
+		state = getState();
+		return <Nav activeKey={state.active} onSelect={navItemSelected}>
+				<NavItem id="nav-1" eventKey="nav-1">Nav 1</NavItem>
+				<NavItem id="nav-2" eventKey="nav-2">Nav 2</NavItem>
+				<NavItem id="nav-3" eventKey="nav-3">Nav 3</NavItem>
+			</Nav>;
+	}
+	
+}
