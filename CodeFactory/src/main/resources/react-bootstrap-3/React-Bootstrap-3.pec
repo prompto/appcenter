@@ -67,6 +67,13 @@ define Modal as native widget with bindings:
 and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
+
+define ModalDialog as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Modal.Dialog
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
 		
 define ModalHeader as native widget with bindings:
 	define category bindings as:

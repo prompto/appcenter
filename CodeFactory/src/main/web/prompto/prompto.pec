@@ -416,8 +416,7 @@ and verifying:
 	docs[1].name = "John"
 	docs[2].id = "2"
 	docs[2].name = "Riou, Sylvie"
-
-define ClickEvent as native category with bindings:
+ define ClickEvent as native category with bindings:
 	
 	define category bindings as:
 		JavaScript: Event
@@ -463,12 +462,25 @@ define setReactWidgetState as native method receiving Any w and Document state d
 
 define ReactWidget as widget with methods:
 	
-	define getProperties as method doing:
-		return getReactWidgetProps self
-
+	@Callback
 	define getInitialState as method doing:
 		return {}
 	
+	@Callback
+	define getDerivedStateFromProps as method receiving Document props and Document state doing:
+		return Nothing
+		
+	@Callback
+	define componentDidMount as method doing:
+		// nothing to do		
+
+	@Callback
+	define componentWillUnmount as method doing:
+		// nothing to do		
+
+	define getProperties as method doing:
+		return getReactWidgetProps self
+
 	define getState as method doing:
 		return getReactWidgetState self
 	

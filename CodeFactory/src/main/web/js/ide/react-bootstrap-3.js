@@ -17,6 +17,7 @@ self.ReactBootstrap = {
     HelpBlock: React.Component,
     Table: React.Component,
     Modal: {
+    	Dialog: React.Component,
     	Title: React.Component,
     	Header: React.Component,
     	Body: React.Component,
