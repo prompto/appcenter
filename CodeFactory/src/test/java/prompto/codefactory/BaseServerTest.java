@@ -16,7 +16,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import prompto.selenium.WebDriverFactory;
 import prompto.store.AttributeInfo;
-import prompto.store.IDataStore;
+import prompto.store.DataStore;
 import prompto.store.IQueryBuilder;
 import prompto.store.IQueryBuilder.MatchOp;
 import prompto.store.IStore;
@@ -100,7 +100,7 @@ public abstract class BaseServerTest {
 	}
 
 	protected String getDbIdForModule(String name) throws Exception {
-		IStore store = IDataStore.getInstance();
+		IStore store = DataStore.getInstance();
 		store.flush();
 		IQueryBuilder builder = store.newQueryBuilder();
 		builder.verify(AttributeInfo.CATEGORY, MatchOp.CONTAINS, "Module");

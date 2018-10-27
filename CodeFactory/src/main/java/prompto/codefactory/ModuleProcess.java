@@ -30,7 +30,7 @@ import prompto.config.auth.CodeStoreAuthenticationConfiguration;
 import prompto.runtime.Mode;
 import prompto.server.AppServer;
 import prompto.server.PromptoServlet;
-import prompto.store.IDataStore;
+import prompto.store.DataStore;
 import prompto.store.IStored;
 import prompto.utils.Logger;
 import prompto.utils.SocketUtils;
@@ -97,7 +97,7 @@ public class ModuleProcess {
 	}
 
 	private static ModuleProcess createModuleProcess(Object dbId) throws Throwable {
-		IStored stored = IDataStore.getInstance().fetchUnique(dbId);
+		IStored stored = DataStore.getInstance().fetchUnique(dbId);
 		if(stored==null)
 			return null;
 		ModuleProcess module = new ModuleProcess(stored);
@@ -340,7 +340,7 @@ public class ModuleProcess {
 
 	private YamlMapping authenticationSettingsToYaml() throws Throwable {
 		if(hasAuthenticationSettings()) {
-			StoredRecordConfigurationReader reader = new StoredRecordConfigurationReader(IDataStore.getInstance(), stored);
+			StoredRecordConfigurationReader reader = new StoredRecordConfigurationReader(DataStore.getInstance(), stored);
 			CodeStoreAuthenticationConfiguration config = new CodeStoreAuthenticationConfiguration(reader);
 			return config.toYaml(Mode.DEVELOPMENT);
 		} else

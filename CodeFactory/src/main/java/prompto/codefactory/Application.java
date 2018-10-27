@@ -28,7 +28,7 @@ import prompto.runtime.Mode;
 import prompto.runtime.Standalone;
 import prompto.server.AppServer;
 import prompto.server.DataServlet;
-import prompto.store.IDataStore;
+import prompto.store.DataStore;
 import prompto.store.IStore;
 import prompto.store.IStoreFactory;
 import prompto.store.memory.MemStore;
@@ -72,7 +72,7 @@ public class Application {
 			IStore store = fetchLoginStore(config);
 			if(store!=null)
 				stores.put("LOGIN", store);
-			store = IDataStore.getInstance();
+			store = DataStore.getInstance();
 			if(store!=null)
 				stores.put("APPS", store);
 			store = newStore(config.getTargetStoreConfiguration());
@@ -136,7 +136,7 @@ public class Application {
 
 	private static ICodeStore codeStoreUsingDataStore() {
 		ICodeStore runtime = ImmutableCodeStore.bootstrapRuntime(()->Libraries.getPromptoLibraries(Libraries.class, AppServer.class));
-		return new QueryableCodeStore(IDataStore.getInstance(), runtime, null, null, null);
+		return new QueryableCodeStore(DataStore.getInstance(), runtime, null, null, null);
 	}
 
 	private static void doImportModule(ICodeStore codeStore, URL url) throws Exception {
