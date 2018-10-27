@@ -10,7 +10,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<platform.version>0.0.1-SNAPSHOT</platform.version>
+		<platform.version>0.0.17</platform.version>
 		<jackson-version>2.6.2</jackson-version>
 		<jetty-version>9.3.3.v20150827</jetty-version>
 		<solr-version>5.4.0</solr-version>
