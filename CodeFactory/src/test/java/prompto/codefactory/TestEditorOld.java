@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import prompto.codefactory.Application;
+import prompto.server.SeleniumTests;
 
 @Category(SeleniumTests.class)
 public class TestEditorOld extends BaseUITest {

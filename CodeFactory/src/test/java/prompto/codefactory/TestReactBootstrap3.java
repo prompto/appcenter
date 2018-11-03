@@ -23,6 +23,7 @@ import prompto.code.ImmutableCodeStore;
 import prompto.code.ModuleType;
 import prompto.intrinsic.PromptoVersion;
 import prompto.parser.Dialect;
+import prompto.server.HeadlessTests;
 
 import com.esotericsoftware.yamlbeans.YamlConfig;
 import com.esotericsoftware.yamlbeans.YamlConfig.WriteClassName;

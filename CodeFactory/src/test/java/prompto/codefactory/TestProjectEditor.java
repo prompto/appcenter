@@ -9,6 +9,8 @@ import org.junit.experimental.categories.Category;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import prompto.server.HeadlessTests;
+
 @Category(HeadlessTests.class)
 public class TestProjectEditor extends BaseUITest {
 

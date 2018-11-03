@@ -11,8 +11,9 @@ import org.openqa.selenium.WebElement;
 
 import prompto.codefactory.Application;
 import prompto.server.AppServer;
+import prompto.server.BaseWebTest;
 
-public class TestAppStore extends BaseServerTest {
+public class TestAppStore extends BaseWebTest {
 
 	@BeforeClass
 	public static void startCodeServer() throws Throwable {

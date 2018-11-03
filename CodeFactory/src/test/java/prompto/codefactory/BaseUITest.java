@@ -6,8 +6,9 @@ import org.junit.BeforeClass;
 import prompto.codefactory.Application;
 import prompto.runtime.Mode;
 import prompto.server.AppServer;
+import prompto.server.BaseWebTest;
 
-public abstract class BaseUITest extends BaseServerTest {
+public abstract class BaseUITest extends BaseWebTest {
 
 	@BeforeClass
 	public static void startCodeServer() throws Throwable {
@@ -25,6 +26,6 @@ public abstract class BaseUITest extends BaseServerTest {
 	}
 	
 	
-	static int HTTP_PORT;
+	public static int HTTP_PORT;
 
 }
