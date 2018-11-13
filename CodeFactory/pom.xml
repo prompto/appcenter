@@ -10,10 +10,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<platform.version>0.0.1-SNAPSHOT</platform.version>
-		<jackson-version>2.6.2</jackson-version>
+		<prompto.version>0.0.18</prompto.version>
+		<jackson-version>2.9.5</jackson-version>
 		<jetty-version>9.3.3.v20150827</jetty-version>
-		<solr-version>5.4.0</solr-version>
+		<solr-version>7.1.0</solr-version>
 		<mongo-version>3.4.2</mongo-version>
 	</properties>
 
@@ -101,23 +101,23 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>Core</artifactId>
-			<version>${platform.version}</version>
+			<version>${prompto.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>CodeStore</artifactId>
-			<version>${platform.version}</version>
+			<version>${prompto.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>Server</artifactId>
-			<version>${platform.version}</version>
+			<version>${prompto.version}</version>
 		</dependency>
 		<!-- testing -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>Server</artifactId>
-			<version>${platform.version}</version>
+			<version>${prompto.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -142,20 +142,20 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>Core</artifactId>
-			<version>${platform.version}</version>
+			<version>${prompto.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>MongoStore</artifactId>
-			<version>${platform.version}</version>
+			<version>${prompto.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>MongoStore</artifactId>
-			<version>${platform.version}</version>
+			<version>${prompto.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -168,20 +168,20 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>SOLRStore</artifactId>
-			<version>${platform.version}</version>
+			<version>${prompto.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>SOLRStore</artifactId>
-			<version>${platform.version}</version>
+			<version>${prompto.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>SOLRFields</artifactId>
-			<version>${platform.version}</version>
+			<version>${prompto.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
