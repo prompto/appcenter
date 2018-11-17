@@ -842,7 +842,7 @@ exports.selectingThenUpdatingProtoOfNewMethodWith1ProtoKeepsStatusToCREATED = fu
 
 
 
-exports.selectingThenUpdatingProtoOfExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+exports.changingProtoOfExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDIRTY = function (test) {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -860,6 +860,30 @@ exports.selectingThenUpdatingProtoOfExistingMethodWith1ProtoPreservesDbIdAndSets
     test.equal(repo.statuses["main/Text"].editStatus, "DIRTY");
     test.equal(repo.statuses["main/Text"].stuff.value.dbId, "Some UUID");
     test.equal(clearws(repo.statuses["main/Text"].stuff.value.body), clearws("define main as method receiving Text value doing:\n\ta = 2\n"));
+    test.done();
+};
+
+
+exports.changingProtoOfExistingAbstractMethodWith1ProtoPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+    var repo = new Repository();
+    var listener = new prompto.problem.ProblemCollector();
+    repo.handleEditContent("define text as Text attribute\ndefine main as abstract method receiving Text value\n", "E", listener);
+    repo.statuses["main/Text"].editStatus = "CLEAN";
+    repo.statuses["main/Text"].stuff.value.dbId = "Some UUID";
+    listener = new prompto.problem.ProblemCollector();
+    repo.handleSetContent("define main as abstract method receiving Text value\n", "E", listener);
+    listener = new prompto.problem.ProblemCollector();
+    var delta = repo.handleEditContent("define main as abstract method receiving text\n", "E", listener);
+    test.equal(delta.removed.methods[0].name, "main");
+    test.equal(delta.removed.methods[0].protos.length, 1);
+    test.equal(delta.removed.methods[0].protos[0].proto, "Text");
+    test.equal(delta.added.methods[0].name, "main");
+    test.equal(delta.added.methods[0].protos.length, 1);
+    test.equal(delta.added.methods[0].protos[0].proto, "text");
+    test.equal(repo.statuses["main/Text"], undefined);
+    test.equal(repo.statuses["main/text"].editStatus, "DIRTY");
+    test.equal(repo.statuses["main/text"].stuff.value.dbId, "Some UUID");
+    test.equal(clearws(repo.statuses["main/text"].stuff.value.body), clearws("define main as abstract method receiving text\n"));
     test.done();
 };
 
