@@ -331,13 +331,13 @@ Repository.prototype.updateCodebase = function (old_decls, new_decls, parser, di
             }
         }
     }
+    this.updateAppContext(old_decls, new_decls, listener);
     if(!handled) {
         // either no change in ids, or more than one
         // simply mark new decls as dirty, don't destroy old ones, since this can
         // be achieved safely through an explicit action in the UI
         this.registerDirty(new_decls, parser, dialect);
     }
-    this.updateAppContext(old_decls, new_decls, listener);
     if(changedIdsCount !== 0) {
         delta.adjustForMovingProtos(this.projectContext);
         return delta.getContent();
