@@ -30,6 +30,8 @@ self.ReactBootstrap = {
         Form: React.Component
     },
     Nav: React.Component,
-    NavItem: React.Component
+    NavItem: React.Component,
+    Tabs: React.Component,
+    Tab: React.Component 
 };
 

@@ -152,4 +152,16 @@ and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
 
+define Tabs as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Tabs
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();	
 		
+define Tab as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Tab
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();			
