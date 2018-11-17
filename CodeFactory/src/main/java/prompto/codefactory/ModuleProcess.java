@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import prompto.config.IStoreConfiguration;
 import prompto.config.StoredRecordConfigurationReader;
 import prompto.config.auth.CodeStoreAuthenticationConfiguration;
 import prompto.runtime.Mode;
@@ -292,29 +291,15 @@ public class ModuleProcess {
 	}
 
 	private void writeDataStoreYamlEntries(YamlDocument document) throws YamlException {
-		IStoreConfiguration config = Application.config.getTargetStoreConfiguration();
-		if(config!=null)
-			document.setEntry("dataStore", config.toYaml());
-		else {
-			YamlEntry entry = document.getEntry("dataStore");
-			YamlMapping current = (YamlMapping)entry.getValue();
-			// create a copy
-			YamlMapping target = new YamlMapping();
-			for(int i=0; i<current.size(); i++) {
-				entry = current.getEntry(i);
-				if("dbName".equals(entry.getKey()))
-					continue;
-				else
-					target.setEntry(entry.getKey().getValue(), entry.getValue());
-			}
-			target.setEntry("dbName", "APPS"); // TODO make this configurable
-			document.setEntry("dataStore", target);
-		}
+		YamlEntry entry = document.getEntry("targetStore");
+		document.setEntry("dataStore", entry.getValue());
+		document.deleteEntry("targetStore");
 	}
 
 	private void writeCodeStoreYamlEntries(YamlDocument document) throws YamlException {
 		YamlEntry entry = document.getEntry("dataStore");
 		document.setEntry("codeStore", entry.getValue());
+		document.deleteEntry("dataStore");
 	}
 
 	
