@@ -18,6 +18,10 @@ dataStore:
   <<: *atlasMongoStore
   dbName: SEED-TOOLS
 
+targetStore: 
+  <<: *atlasMongoStore
+  dbName: SEED-DATA
+
 http:
   port: 8080
   
