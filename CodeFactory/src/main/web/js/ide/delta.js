@@ -140,7 +140,7 @@ Delta.prototype.adjustForMovingProtos = function(context) {
     if (this.removed && this.removed.methods) {
         this.removed.methods.map(function (method) {
             var decl = context.getRegisteredDeclaration(method.name);
-            if (decl && Object.keys(decl.protos).length === 1) // moved from N to 1
+            if (decl && Object.keys(decl.protos).length === 1 && !this.isModifiedProto(method)) // moved from N to 1
                 this.adjustMethodForRemovedProtos(method, decl);
         }, this);
     }
@@ -173,12 +173,20 @@ Delta.prototype.adjustForMovingProtos = function(context) {
 };
 
 
+Delta.prototype.isModifiedProto = function(method) {
+    if(!this.added || !this.added.methods)
+        return false;
+    var added = this.added.methods.filter(m => m.name === method.name);
+    if(added.length==0)
+        return false;
+    return true;
+};
+
 Delta.prototype.adjustMethodForAddedProtos = function(method, decl)
 {
     var proto = this.findPreExistingProto(method, decl);
     if(proto) {
-        var main = decl.protos[proto].isEligibleAsMain();
-        var proto_to_move = {proto: proto, main: main};
+        var proto_to_move = {proto: proto, main: decl.protos[proto].isEligibleAsMain()};
         // add it to the remove list
         if(!this.removed)
             this.removed = new Codebase();
@@ -214,8 +222,7 @@ Delta.prototype.adjustMethodForRemovedProtos = function(method, decl) {
 };
 
 Delta.prototype.adjustMethodForRemovedProto = function(method, decl, proto) {
-    var main = decl.protos[proto].isEligibleAsMain();
-    var proto_to_move = { proto: proto, main: main };
+    var proto_to_move = { proto: proto, main: decl.protos[proto].isEligibleAsMain() };
     // add it to the remove list
     method.proto_to_remove = proto_to_move;
     // add it to the added list
