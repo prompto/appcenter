@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import prompto.config.IPortRangeConfiguration;
 import prompto.config.StoredRecordConfigurationReader;
 import prompto.config.auth.CodeStoreAuthenticationConfiguration;
 import prompto.runtime.Mode;
@@ -49,6 +50,7 @@ public class ModuleProcess {
 	
 	static Logger logger = new Logger();
 	static Map<Object, ModuleProcess> modules = new HashMap<>();
+	static IPortRangeConfiguration portRangeConfiguration = IPortRangeConfiguration.ANY_PORT;
 	
 	static {
 		Runtime.getRuntime().addShutdownHook(new Thread(ModuleProcess::shutDownAll));
@@ -166,7 +168,7 @@ public class ModuleProcess {
 	}
 
 	public void start() throws Throwable {
-		this.port = SocketUtils.findAvailablePortInRange(8080, 9090); // TODO extract from security group
+		this.port = SocketUtils.findAvailablePortInRange(portRangeConfiguration.getMinPort(), portRangeConfiguration.getMaxPort()); 
 		String[] args = buildCommandLineArgs();
 		ProcessBuilder builder = new ProcessBuilder(args)
 			.redirectError(Redirect.INHERIT)

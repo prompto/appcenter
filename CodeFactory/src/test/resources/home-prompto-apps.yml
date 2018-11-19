@@ -11,9 +11,10 @@ dataStore:
   <<: *homeMongoStore
   dbName: PROMPTO-APPS
 
-targetStore:
-  <<: *homeMongoStore
-  dbName: PROMPTO-DATA
+target:
+  dataStore:
+    <<: *homeMongoStore
+    dbName: PROMPTO-DATA
 
 http:
   port: 8888

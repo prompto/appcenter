@@ -18,7 +18,7 @@ public class TestYamlHome {
 	@Test
 	public void testThatCodeServerRunsWithYamlHome() throws Throwable {
 		URL url = Thread.currentThread().getContextClassLoader().getResource("home.yml");
-		String[] args = new String[] { "yamlConfigFile", url.getFile() };
+		String[] args = new String[] { "-yamlConfigFile", url.getFile() };
 		Application.main(args, Mode.UNITTEST);
 		assertTrue(AppServer.isStarted());
 	}

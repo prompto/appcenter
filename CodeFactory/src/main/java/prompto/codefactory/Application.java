@@ -18,7 +18,9 @@ import prompto.config.CodeServerConfiguration;
 import prompto.config.ICodeServerConfiguration;
 import prompto.config.IConfigurationReader;
 import prompto.config.IHttpConfiguration;
+import prompto.config.IPortRangeConfiguration;
 import prompto.config.IStoreConfiguration;
+import prompto.config.ITargetConfiguration;
 import prompto.config.auth.IAuthenticationConfiguration;
 import prompto.config.auth.source.IAuthenticationSourceConfiguration;
 import prompto.config.auth.source.IStoredAuthenticationSourceConfiguration;
@@ -50,12 +52,12 @@ public class Application {
 		config = loadConfiguration(args);
 		config = config.withServerAboutToStartMethod("serverAboutToStart")
 					.withHttpConfiguration(config.getHttpConfiguration().withSendsXAuthorization(true))
-					.withApplicationName("dev-center")
+					.withApplicationName("prompto-factory")
 					.withApplicationVersion(PromptoVersion.parse("1.0.0"))
 					.withResourceURLs(Application.getResourceURLs());
 		if(runtimeMode!=null)
 			config = config.withRuntimeMode(runtimeMode);
-		AppServer.main(config, Application::initDataServletStores); 
+		AppServer.main(config, Application::init); 
 	}
 	
 	public static ICodeServerConfiguration loadConfiguration(String[] args) throws Exception {
@@ -66,6 +68,24 @@ public class Application {
 	}
 
 	
+	private static void init(ICodeServerConfiguration config) {
+		initDataServletStores(config);
+		initModuleProcessPortRange(config);
+	}
+	
+	private static void initModuleProcessPortRange(ICodeServerConfiguration config2) {
+		try {
+			ITargetConfiguration target = config.getTargetConfiguration();
+			if(target!=null) {
+				IPortRangeConfiguration portRange = target.getPortRangeConfiguration();
+				if(portRange!=null)
+					ModuleProcess.portRangeConfiguration = portRange;
+			}
+		} catch(Throwable t) {
+			throw new RuntimeException(t);
+		}		
+	}
+
 	private static void initDataServletStores(ICodeServerConfiguration config) {
 		try {
 			Map<String, IStore> stores = new HashMap<>();
@@ -75,13 +95,18 @@ public class Application {
 			store = DataStore.getInstance();
 			if(store!=null)
 				stores.put("APPS", store);
-			store = newStore(config.getTargetStoreConfiguration());
+			store = readTargetStoreConfiguration(config);
 			if(store!=null)
 				stores.put("DATA", store);
 			DataServlet.setStores(stores);
 		} catch(Throwable t) {
 			throw new RuntimeException(t);
 		}
+	}
+
+	private static IStore readTargetStoreConfiguration(ICodeServerConfiguration config) throws Throwable {
+		ITargetConfiguration target = config.getTargetConfiguration();
+		return target == null ? null : newStore(target.getDataStoreConfiguration());
 	}
 
 	private static IStore fetchLoginStore(ICodeServerConfiguration config) throws Throwable {

@@ -5,16 +5,23 @@ import java.util.function.Supplier;
 
 public class CodeServerConfiguration extends ServerConfiguration implements ICodeServerConfiguration {
 
-	Supplier<IStoreConfiguration> targetStoreConfiguration;
+	Supplier<ITargetConfiguration> targetConfiguration;
 
 	public CodeServerConfiguration(IConfigurationReader reader, Map<String, String> argsMap) {
 		super(reader, argsMap);
-		this.targetStoreConfiguration = ()->reader.readStoreConfiguration("targetStore");
-	}
-	
-	@Override
-	public IStoreConfiguration getTargetStoreConfiguration() {
-		return targetStoreConfiguration==null ? null : targetStoreConfiguration.get();
+		this.targetConfiguration = ()->readTargetConfiguration();
 	}
 
+	private ITargetConfiguration readTargetConfiguration() {
+		IConfigurationReader child = reader.getObject("target");
+		return child==null ? null : new TargetConfiguration(child);
+	}
+
+	@Override
+	public ITargetConfiguration getTargetConfiguration() {
+		return targetConfiguration==null ? null : targetConfiguration.get();
+	}
+	
+	
+	
 }

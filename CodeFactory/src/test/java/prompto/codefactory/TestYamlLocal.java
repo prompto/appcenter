@@ -22,9 +22,11 @@ public class TestYamlLocal {
 		MongodExecutable mongo = BaseMongoTest.startMongo(27017);
 		try {
 			URL url = Thread.currentThread().getContextClassLoader().getResource("local.yml");
-			String[] args = new String[] { "yamlConfigFile", url.getFile() };
+			String[] args = new String[] { "-yamlConfigFile", url.getFile() };
 			Application.main(args, Mode.UNITTEST);
 			assertTrue(AppServer.isStarted());
+			assertEquals(8000, ModuleProcess.portRangeConfiguration.getMinPort());
+			assertEquals(9000, ModuleProcess.portRangeConfiguration.getMaxPort());
 		} finally {
 			BaseMongoTest.stopMongo(mongo);
 		}

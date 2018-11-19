@@ -11,9 +11,10 @@ dataStore:
   <<: *homeMongoStore
   dbName: TOOLS
 
-targetStore:
-  <<: *homeMongoStore
-  dbName: TOOLS
+target:
+  dataStore:
+    <<: *homeMongoStore
+    dbName: TOOLS
 
 http:
   port: 8080

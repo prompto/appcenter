@@ -11,9 +11,10 @@ dataStore:
   <<: *homeMongoStore
   dbName: APPS
 
-targetStore:
-  <<: *homeMongoStore
-  dbName: DATA
+target:
+  dataStore:
+    <<: *homeMongoStore
+    dbName: DATA
 
 http:
   port: 8080

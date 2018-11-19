@@ -11,6 +11,14 @@ dataStore:
   <<: *localMongoStore
   dbName: CODE
 
+target:
+  dataStore: 
+    <<: *localMongoStore
+    dbName: DATA
+  portRange:
+    minPort: 8000
+    maxPort: 9000
+
 http:
   port: 8080
   
