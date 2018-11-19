@@ -277,6 +277,7 @@ public class ModuleProcess {
 		document.setEntry("applicationName", getModuleName());
 		document.setEntry("applicationVersion", getModuleVersion());
 		document.setEntry("runtimeMode", Mode.DEVELOPMENT.name());
+		document.deleteEntry("target");
 		document.deleteEntry("webSiteRoot");
 		document.deleteEntry("startMethod");
 		String method = getStartMethod();
