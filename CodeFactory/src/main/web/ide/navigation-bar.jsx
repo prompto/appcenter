@@ -63,7 +63,16 @@ class EditorNavBar extends React.Component {
     openWebPage(content) {
         this.fetchModuleURL(url => {
             const tab = window.open(url + content.name, '_blank', '');
-            tab.focus();
+            if(tab)
+                tab.focus();
+            else {
+                var msg = "It seems your browser is blocking popups.\n" +
+                    "Allow popups for [*.]prompto.cloud to open your web site automatically.\n" +
+                    "Alternately, open a new tab or window with the following URL:\n" +
+                    url + content.name;
+                alert(msg);
+            }
+
         });
     }
 
