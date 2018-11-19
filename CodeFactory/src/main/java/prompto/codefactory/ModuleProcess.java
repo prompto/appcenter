@@ -277,7 +277,6 @@ public class ModuleProcess {
 		document.setEntry("applicationName", getModuleName());
 		document.setEntry("applicationVersion", getModuleVersion());
 		document.setEntry("runtimeMode", Mode.DEVELOPMENT.name());
-		document.deleteEntry("target");
 		document.deleteEntry("webSiteRoot");
 		document.deleteEntry("startMethod");
 		String method = getStartMethod();
@@ -290,13 +289,14 @@ public class ModuleProcess {
 		writeCodeStoreYamlEntries(document);
 		writeDataStoreYamlEntries(document);
 		writeHttpYamlEntries(document);
-			
+		document.deleteEntry("target");
 	}
 
 	private void writeDataStoreYamlEntries(YamlDocument document) throws YamlException {
-		YamlEntry entry = document.getEntry("targetStore");
+		YamlEntry entry = document.getEntry("target");
+		YamlMapping target = (YamlMapping)entry.getValue();
+		entry = target.getEntry("dataStore");
 		document.setEntry("dataStore", entry.getValue());
-		document.deleteEntry("targetStore");
 	}
 
 	private void writeCodeStoreYamlEntries(YamlDocument document) throws YamlException {
