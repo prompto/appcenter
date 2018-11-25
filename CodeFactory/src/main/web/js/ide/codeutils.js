@@ -36,6 +36,8 @@ exports.parse = function(input, dialect, listener) {
 exports.unparse = function(context, decl, dialect) {
     var d = prompto.parser.Dialect[dialect];
     var writer = new prompto.utils.CodeWriter(d, context.newChildContext());
+    // avoid throwing since this would stop the translation
+    writer.context.problemListener = prompto.problem.ProblemCollector();
     if(decl.comments) {
         decl.comments.forEach(function (cmt) {
             cmt.toDialect(writer);
