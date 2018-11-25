@@ -368,7 +368,8 @@ public class ModuleProcess {
 		URL thisJar = this.getClass().getProtectionDomain().getCodeSource().getLocation();
 		File parent = Paths.get(thisJar.toURI()).getParent().toFile();
 		for(File file : parent.listFiles()) {
-			if(file.getName().startsWith("Server-") && file.getName().endsWith(".jar")) {
+			String name = file.getName();
+			if(name.startsWith("Server-") && name.endsWith(".jar") && !name.contains("-tests.")) {
 				cmds.add("-jar");
 				cmds.add(file.getAbsolutePath());
 				return;

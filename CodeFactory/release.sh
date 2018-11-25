@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Did you bump the version in the install script?"
+echo "Did you bump the aws version in the install script?"
 echo "Is the platform-version released?"
 read -p "version to publish: " version
 read -p "release name: " name
