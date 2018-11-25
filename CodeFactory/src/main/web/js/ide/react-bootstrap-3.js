@@ -1,4 +1,4 @@
-/* a mock implementation for native binding resolution purpose */
+/* a mock implementation required for native binding resolution */
 var React = {
 	Component : function() {
 		this.render = function() { return {}; };
@@ -10,7 +10,10 @@ self.ReactBootstrap = {
     Button: React.Component,
     Checkbox: React.Component,
     Radio: React.Component,
+    DropdownButton: React.Component,
+    SplitButton: React.Component,
     InputGroup: React.Component,
+    Form: React.Component,
     FormGroup: React.Component,
     FormControl: React.Component,
     ControlLabel: React.Component,
@@ -31,6 +34,7 @@ self.ReactBootstrap = {
     },
     Nav: React.Component,
     NavItem: React.Component,
+    MenuItem: React.Component,
     Tabs: React.Component,
     Tab: React.Component 
 };

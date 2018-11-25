@@ -26,6 +26,13 @@ and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
 
+define Form as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Form
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
 define FormGroup as native widget with bindings:
 	define category bindings as:
 		JavaScript: ReactBootstrap.FormGroup
@@ -164,4 +171,26 @@ define Tab as native widget with bindings:
 		JavaScript: ReactBootstrap.Tab
 and methods:
 	define render as method returning Html doing:
-		JavaScript: return this.render();			
+		JavaScript: return this.render();		
+		
+define DropdownButton as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.DropdownButton
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();		
+
+define SplitButton as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.SplitButton
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();		
+
+define MenuItem as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.MenuItem
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+		
