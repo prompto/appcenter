@@ -122,10 +122,11 @@ class EditorPage extends React.Component {
         this.resourcesLoaded = this.resourcesLoaded.bind(this);
         this.destroy = this.destroy.bind(this);
         this.revert = this.revert.bind(this);
-        this.commit = this.commit.bind(this);
+        this.commitAndReset = this.commitAndReset.bind(this);
         this.commitPrepared = this.commitPrepared.bind(this);
         this.commitFailed = this.commitFailed.bind(this);
         this.commitSuccessful = this.commitSuccessful.bind(this);
+        this.resetServer = this.resetServer.bind(this);
         this.renameResource = this.renameResource.bind(this);
         this.addResource = this.addResource.bind(this);
         this.addCode = this.addCode.bind(this);
@@ -166,12 +167,13 @@ class EditorPage extends React.Component {
         this.loadResources();
     }
 
-    commit() {
+    commitAndReset() {
         // TODO confirm
         // remember content to restore
         this.activeContent = this.currentContent;
         this.setEditorContent({ type: "Prompto" });
         this.editorWindow.prepareCommit();
+        this.resetServer();
         return false;
     }
 
@@ -207,6 +209,13 @@ class EditorPage extends React.Component {
         this.loadResources(()=>{
             this.setEditorContent(this.activeContent);
             this.activeContent = null;
+        });
+    }
+
+    resetServer() {
+        this.fetchModuleURL(url => {
+            const fullUrl = url + "ws/control/clear-context";
+            axios.get(fullUrl);
         });
     }
 
@@ -274,6 +283,26 @@ class EditorPage extends React.Component {
             else
                 this.setState({project: response.data});
         });
+    }
+
+    fetchModuleURL(success, optional) {
+        const dbId = this.getProject().value.dbId.value || this.getProject().value.dbId;
+        const params = { params: JSON.stringify([ {name:"dbId", value: dbId}, {name: "optional", type: "Boolean", value: optional || false}]) };
+        axios.get('/ws/run/getModulePort', { params: params }).
+        then(resp=>{
+            const response = resp.data;
+            if (response.error)
+                ; // TODO something
+            else if(response.data == -1)
+                alert("Server is not running!");
+            else {
+                const href = self.location.protocol +
+                    "//" + self.location.hostname +
+                    ":" + response.data + "/";
+                success(href);
+            }
+        }).
+        catch(error=>alert(error));
     }
 
     render() {
@@ -387,8 +416,8 @@ function destroy() {
     root.destroy();
 }
 
-function commit() {
-    root.commit();
+function commitAndReset() {
+    root.commitAndReset();
 }
 
 function commitPrepared(declarations) {

@@ -61,7 +61,7 @@ class EditorNavBar extends React.Component {
     }
 
     openWebPage(content) {
-        this.fetchModuleURL(url => {
+        this.props.root.fetchModuleURL(url => {
             const tab = window.open(url + content.name, '_blank', '');
             if(tab)
                 tab.focus();
@@ -77,38 +77,11 @@ class EditorNavBar extends React.Component {
     }
 
     stopServer() {
-        this.fetchModuleURL(url => {
+        this.props.root.fetchModuleURL(url => {
             const fullUrl = url + "ws/control/exit";
             axios.get(fullUrl);
         }, true); // optional  = true, don't launch server only to stop it
     }
-
-    resetServer() {
-        this.fetchModuleURL(url => {
-            const fullUrl = url + "ws/control/clear-context";
-            axios.get(fullUrl);
-        });
-    }
-
-    fetchModuleURL(success, optional) {
-        const dbId = this.props.root.getProject().value.dbId.value || this.props.root.getProject().value.dbId;
-        const params = { params: JSON.stringify([ {name:"dbId", value: dbId}, {name: "optional", type: "Boolean", value: optional || false}]) };
-        axios.get('/ws/run/getModulePort', { params: params }).
-            then(resp=>{
-                const response = resp.data;
-                if (response.error)
-                    ; // TODO something
-                else if(response.data == -1)
-                    alert("Server is not running!");
-                else {
-                    const href = self.location.protocol +
-                        "//" + self.location.hostname +
-                        ":" + response.data + "/";
-                    success(href);
-                }
-            }).
-            catch(error=>alert(error));
-     }
 
     runPromptoCode(content) {
         this.props.root.setState({editMode: "RUNNING"});
@@ -159,12 +132,12 @@ class EditorNavBar extends React.Component {
                     &nbsp;
                     <Button type="button" onClick={()=>this.stopServer()} disabled={this.state.runMode==="LI"}>Shutdown</Button>
                     &nbsp;
-                    <Button type="button" onClick={()=>this.resetServer()} disabled={this.state.runMode==="LI"}>Reset</Button>
+                    <Button type="button" onClick={()=>this.props.root.resetServer()} disabled={this.state.runMode==="LI"}>Reset</Button>
                 </Navbar.Form>
                 <Navbar.Form pullRight style={editStyle}>
                     <Button type="button" onClick={()=>this.props.root.revert()}>Revert</Button>
                     &nbsp;
-                    <Button type="button" onClick={()=>this.props.root.commit()}>Commit</Button>
+                    <Button type="button" onClick={()=>this.props.root.commitAndReset()}>Commit</Button>
                     &nbsp;
                     { false &&  <Button type="button" onClick={()=>this.props.root.push()}>Push</Button> }
                 </Navbar.Form>

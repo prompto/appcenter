@@ -179,7 +179,7 @@ function bindCommitKey(editor) {
     editor.commands.addCommand({
         name: "commit",
         bindKey: { win: "Ctrl-S", mac: "Command-S" },
-        exec: parent.commit
+        exec: parent.commitAndReset
     });
 }
 
