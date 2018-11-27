@@ -61,13 +61,26 @@ public class ModuleProcess {
 		synchronized(modules) {
 			List<ModuleProcess> values = new ArrayList<>(modules.values());
 			modules.clear();
-			values.forEach(ModuleProcess::shutDown);
+			values.forEach(m->m.shutDown());
 		}
 	}
 	
-	public static Long launchIfNeeded(Object dbId, Boolean optional) {
-		if(optional==null)
-			optional = false;
+	public static void shutDown(Object dbId) {
+		synchronized(modules) {
+			try {
+				if(dbId instanceof IValue)
+					dbId = ((IValue)dbId).getStorableData();
+				ModuleProcess module = modules.remove(dbId);
+				if(module!=null)
+					module.shutDown();
+			} catch(Throwable t) {
+				t.printStackTrace();
+				// TODO send error to client
+			}
+		}
+	}
+	
+	public static Long launchIfNeeded(Object dbId) {
 		synchronized(modules) {
 			try {
 				if(dbId instanceof IValue)
@@ -77,10 +90,8 @@ public class ModuleProcess {
 				// if no longer alive recreate 
 				if(module!=null && !module.process.isAlive())
 					module = null;
-				// create needed ?
+				// create if needed
 				if(module==null) {
-					if(optional)
-						return -1L; // don't create it
 					module = createModuleProcess(dbId);
 					if(module!=null)
 						modules.put(dbId, module);

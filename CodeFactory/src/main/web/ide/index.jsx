@@ -285,9 +285,19 @@ class EditorPage extends React.Component {
         });
     }
 
-    fetchModuleURL(success, optional) {
+    killModule() {
         const dbId = this.getProject().value.dbId.value || this.getProject().value.dbId;
-        const params = { params: JSON.stringify([ {name:"dbId", value: dbId}, {name: "optional", type: "Boolean", value: optional || false}]) };
+        const params = { params: JSON.stringify([ {name:"dbId", value: dbId}]) };
+        axios.get('/ws/run/killModule', { params: params }).
+            then(resp=>{
+                this.messageArea.setMessage("Server stopped!");
+            }).
+            catch(error=>alert(error));
+    }
+
+    fetchModuleURL(success) {
+        const dbId = this.getProject().value.dbId.value || this.getProject().value.dbId;
+        const params = { params: JSON.stringify([ {name:"dbId", value: dbId}]) };
         axios.get('/ws/run/getModulePort', { params: params }).
         then(resp=>{
             const response = resp.data;

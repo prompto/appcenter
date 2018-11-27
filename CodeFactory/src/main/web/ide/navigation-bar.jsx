@@ -77,10 +77,7 @@ class EditorNavBar extends React.Component {
     }
 
     stopServer() {
-        this.props.root.fetchModuleURL(url => {
-            const fullUrl = url + "ws/control/exit";
-            axios.get(fullUrl);
-        }, true); // optional  = true, don't launch server only to stop it
+        this.props.root.killModule();
     }
 
     runPromptoCode(content) {
