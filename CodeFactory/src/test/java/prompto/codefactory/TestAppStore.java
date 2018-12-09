@@ -36,7 +36,7 @@ public class TestAppStore extends BaseWebTest {
 				"DATA"
 		};
 		Application.main(args);
-		HTTP_PORT = AppServer.getHttpPort();
+		HTTP_PORT = (int)AppServer.getHttpPort();
 	}
 	
 	@AfterClass
