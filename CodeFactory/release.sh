@@ -1,6 +1,6 @@
 #!/bin/bash
-echo "Did you bump the aws version in the install script?"
-echo "Is the platform-version released?"
+echo "Did you bump the platform version in pom.xml?"
+echo "Is the platform version released?"
 read -p "version to publish: " version
 read -p "release name: " name
 mvn versions:set -DnewVersion=$version -DgenerateBackupPoms=false
