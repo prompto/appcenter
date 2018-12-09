@@ -535,6 +535,8 @@ define getHttpSession as native method returning Document doing:
 
 define getHttpPort as native method returning Integer doing:
     Java: return $server.getHttpPort();
+	JavaScript: return self.location.port;
+
 define ClickEvent as native category with bindings:
 	
 	define category bindings as:
