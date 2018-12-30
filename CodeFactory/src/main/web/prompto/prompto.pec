@@ -553,6 +553,9 @@ and methods:
 	define createLogin as method receiving login and password doing:
 		Java: this.createLogin(login, password);
 
+	define updateLogin as method receiving login and password doing:
+		Java: this.updateLogin(login, password);
+
 	define checkLogin as method receiving login and password doing:
 		Java: this.checkLogin(login, password);
 
@@ -564,7 +567,7 @@ define serviceHandler as abstract method receiving Document doc
 define installServiceHandler as native method receiving Text path and serviceHandler doing:
     Java: $server.installHandler(path, serviceHandler);
 
-define getLoginFactory as native method receiving Text config = nothing doing:
+define getLoginFactory as native method receiving Text config = nothing returning LoginFactory doing:
     Java: $server.getLoginFactory(config);
 
 define getHttpUser as native method returning Text doing:
