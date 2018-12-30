@@ -1,5 +1,0 @@
-header:
-  htmlEngine: react-16
-
-body:
-  widget: UrlContentIsLoadedPage
