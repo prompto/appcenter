@@ -1,11 +1,11 @@
 define Any as native category with attributes id and text, and bindings:
 
 	define category bindings as:
-		Java: prompto.value.Any
+		Java: prompto.intrinsic.PromptoAny
 		C#: prompto.value.Any
 		Python2: Any from module: prompto.value.Any
 		Python3: Any from module: prompto.value.Any
-		JavaScript: AnyValue from module: prompto/value/AnyValue.js
+		JavaScript: Any from module: prompto/intrinsic/Any.js
 
 and methods: 
 
@@ -224,7 +224,7 @@ define now as native method returning DateTime doing:
 	C#: return System.DateTimeOffset.Now;
 	Python2: return datetime.utcnow() from module: datetime
 	Python3: return datetime.utcnow() from module: datetime
-	JavaScript: return new Date();
+	JavaScript: return DateTime.now(); from module: prompto/intrinsic/DateTime.js
 
 define "now is a DateTime" as test method doing: 
 	a = now
@@ -275,7 +275,7 @@ define "sleeps for 1 second" as test method doing:
 	sleep 1000
 	end = now
 and verifying: 
-	end > start + 'PT1S'
+	end >= start + 'PT1S'
 define Buffer as native resource with attribute text, and bindings:
 	
 	define category bindings as:
@@ -422,9 +422,9 @@ and verifying:
 
 
 define "decode Html charcode" as test method doing:
-	encoded = htmlDecode "a&#39;b"
+	encoded = htmlDecode "a&#49;b"
 and verifying:
-	encoded = "a'b"
+	encoded = "a1b"
 
 define Url as storable native resource with attributes path and encoding, and bindings:
 	
@@ -488,6 +488,14 @@ and verifying:
 	o is a Document[]
 	o[1].field = 122
 
+define "test that readJson returns a complex Document" as test method doing:
+    json = "[{\"field\":122, \"list\": [{\"field\":123, \"doc\": {\"name\": \"John\"}}], \"doc\": { \"list\": [ 122, 233, 344] }}]"
+	o = (readJson json) as Document[]
+and verifying:
+	o is a Document[]
+	o[1].field = 122
+
+
 define iterateCsv as native method receiving text, Text<:> columnNames = nothing, Character separator = ',', Character quote = '"' returning Iterator<Document> doing:
 	Java: return prompto.reader.CSVReader.iterator(text, columnNames, separator, quote);
 	C#: return prompto.reader.CSVReader.iterator(text, columnNames, separator, quote); 
@@ -535,13 +543,29 @@ and verifying:
 	docs[2].id = "2"
 	docs[2].name = "Riou, Sylvie"
 
+define LoginFactory as native category with bindings:
+	
+	define category bindings as:
+		Java: prompto.security.auth.source.IAuthenticationSource
+		
+and methods:
+
+	define createLogin as method receiving login and password doing:
+		Java: this.createLogin(login, password);
+
+	define checkLogin as method receiving login and password doing:
+		Java: this.checkLogin(login, password);
+
+	define hasLogin as method receiving login returning Boolean doing:
+		Java: return this.hasLogin(login);
+
 define serviceHandler as abstract method receiving Document doc
 
 define installServiceHandler as native method receiving Text path and serviceHandler doing:
     Java: $server.installHandler(path, serviceHandler);
 
-define createLogin as native method receiving login and password doing:
-    Java: $server.createLogin(login, password);
+define getLoginFactory as native method receiving Text config = nothing doing:
+    Java: $server.getLoginFactory(config);
 
 define getHttpUser as native method returning Text doing:
 	Java: return $server.getHttpUser();
