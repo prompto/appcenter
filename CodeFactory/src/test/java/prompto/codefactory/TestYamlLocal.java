@@ -21,7 +21,7 @@ public class TestYamlLocal {
 	public void testThatCodeServerRunsWithYamlLocal() throws Throwable {
 		MongodExecutable mongo = BaseMongoTest.startMongo(27017);
 		try {
-			URL url = Thread.currentThread().getContextClassLoader().getResource("local.yml");
+			URL url = Thread.currentThread().getContextClassLoader().getResource("local-mongo.yml");
 			String[] args = new String[] { "-yamlConfigFile", url.getFile() };
 			Application.main(args, Mode.UNITTEST);
 			assertTrue(AppServer.isStarted());
