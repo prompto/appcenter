@@ -17,6 +17,7 @@ class EditorNavBar extends React.Component {
         this.getRunnableContent = this.getRunnableContent.bind(this);
         this.runPromptoCode = this.runPromptoCode.bind(this);
         this.stopPromptoCode = this.stopPromptoCode.bind(this);
+        this.clearOutput = this.clearOutput.bind(this);
         this.openWebPage = this.openWebPage.bind(this);
     }
 
@@ -90,6 +91,11 @@ class EditorNavBar extends React.Component {
         this.props.root.setState({editMode: "EDIT"});
     }
 
+    clearOutput() {
+        const doc = document.getElementById("output");
+        doc.innerHTML = "";
+    }
+
     render() {
         const projectName = getParam("name");
         const editStyle = {display: this.props.root.state.editMode==="EDIT" ? "block" : "none"};
@@ -146,7 +152,8 @@ class EditorNavBar extends React.Component {
                     <Button type="button" onClick={()=>this.props.root.destroy()}>Delete</Button>
                 </Navbar.Form>
                 <Navbar.Form style={runningStyle}>
-                    <Button type="button" onClick={()=>this.stopPromptoCode()}>{runningLabel}</Button>
+                    <Button type="button" style={{marginRight: "5px"}} onClick={this.stopPromptoCode}>{runningLabel}</Button>
+                    <Button type="button" onClick={this.clearOutput}>Clear</Button>
                 </Navbar.Form>
             </Navbar>
             { this.state.dialog==="Authentication" && <AuthenticationSettingsDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
