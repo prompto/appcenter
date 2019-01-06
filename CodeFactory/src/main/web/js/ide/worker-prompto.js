@@ -77,6 +77,15 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     };
 
 
+    PromptoWorker.prototype.debugMethod = function(id, mode) {
+        if (mode==="LI")
+            this.debugLocally(id);
+        else if(mode==="SI")
+            this.runRemotely(id,"interpret", true);
+        else // compiled
+            this.runRemotely(id, "execute", true);
+    };
+
     PromptoWorker.prototype.fetchRunnablePage = function(content) {
         var runnable = { valid: false, content: null };
         var decl = this.$repo.getDeclaration(content);
@@ -89,11 +98,12 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
     };
 
 
-    PromptoWorker.prototype.runRemotely = function(id, mode) {
+    PromptoWorker.prototype.runRemotely = function(id, mode, debugMode) {
         var worker = this;
         this.fetchModuleURL(worker.$projectId, function(url) {
             var fullUrl = url + "ws/run/" + id.name +
-                "?mode=" + mode;
+                "?mode=" + mode +
+                (debugMode ? "&debug=true" : "");
             if(id.subType==="method")
                 fullUrl = fullUrl + "&main=true";
             worker.loadJSON(fullUrl, function (response) {

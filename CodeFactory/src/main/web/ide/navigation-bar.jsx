@@ -31,20 +31,36 @@ class EditorNavBar extends React.Component {
     }
 
     tryRun() {
-        this.getRunnableContent(this.props.root.currentContent, runnable => {
-            if (runnable == null) {
-                alert("Nothing to run!");
-                return true;
-            }
-            if (!runnable.valid) {
-                alert("Can only run tests methods, main methods or web pages!");
-                return;
-            }
-            if (runnable.content.type === "html" || runnable.content.type === "page")
-                this.openWebPage(runnable.content);
-            else
-                this.runPromptoCode(runnable.content);
-        });
+        this.getRunnableContent(this.props.root.currentContent, runnable => this.checkRunnable(runnable, this.doRun);
+    }
+
+
+    tryDebug() {
+        this.getRunnableContent(this.props.root.currentContent, runnable => this.checkRunnable(runnable, this.doDebug);
+    }
+
+    checkRunnable(runnable, andThen) {
+        if (runnable == null) {
+            alert("Nothing to run!");
+        } else if (!runnable.valid) {
+            alert("Can only run tests methods, main methods or web pages!");
+            return;
+        } else
+            andThen(runnable);
+    }
+
+    doRun(runnable) {
+        if (runnable.content.type === "html" || runnable.content.type === "page")
+            this.openWebPage(runnable.content);
+        else
+            this.runPromptoCode(runnable.content);
+    }
+
+    doDebug(runnable) {
+        if (runnable.content.type === "html" || runnable.content.type === "page")
+            this.openWebPage(runnable.content, true);
+        else
+            this.debugPromptoCode(runnable.content);
     }
 
     getRunnableContent(content, onFound) {
@@ -61,16 +77,17 @@ class EditorNavBar extends React.Component {
         this.props.root.editorWindow.fetchRunnablePage(content, onFound);
     }
 
-    openWebPage(content) {
+    openWebPage(content, debugMode) {
         this.props.root.fetchModuleURL(url => {
-            const tab = window.open(url + content.name, '_blank', '');
+            const fullUrl = url + content.name + (debugMode ? "&debug=true" : "");
+            const tab = window.open(fullUrl, '_blank', '');
             if(tab)
                 tab.focus();
             else {
                 var msg = "It seems your browser is blocking popups.\n" +
                     "Allow popups for [*.]prompto.cloud to open your web site automatically.\n" +
                     "Alternately, open a new tab or window with the following URL:\n" +
-                    url + content.name;
+                    fullUrl;
                 alert(msg);
             }
 
@@ -85,6 +102,11 @@ class EditorNavBar extends React.Component {
         this.props.root.setState({editMode: "RUNNING"});
         print("Running " + content.name + "...");
         this.props.root.editorWindow.runMethod(content, this.state.runMode);
+    }
+
+    debugPromptoCode(content) {
+        this.props.root.setState({editMode: "DEBUGGING"});
+        this.props.root.editorWindow.debugMethod(content, this.state.runMode);
     }
 
     stopPromptoCode() {
@@ -130,7 +152,8 @@ class EditorNavBar extends React.Component {
                         <DropdownButton id="mode" title={runModeLabels[this.state.runMode]}>
                             { ALL_RUN_MODES.map(m=><MenuItem key={m} active={this.state.runMode===m} onClick={()=>this.setRunMode(m)}>{runModeLabels[m]}</MenuItem>) }
                         </DropdownButton>
-                        <Button type="button" onClick={this.tryRun} >Run</Button>
+                        <Button type="button" onClick={this.tryRun}>Run</Button>
+                        <Button type="button" onClick={this.tryDebug}>Debug</Button>
                     </ButtonGroup>
                     &nbsp;
                     <Button type="button" onClick={()=>this.stopServer()} disabled={this.state.runMode==="LI"}>Shutdown</Button>
@@ -152,7 +175,8 @@ class EditorNavBar extends React.Component {
                     <Button type="button" onClick={()=>this.props.root.destroy()}>Delete</Button>
                 </Navbar.Form>
                 <Navbar.Form style={runningStyle}>
-                    <Button type="button" style={{marginRight: "5px"}} onClick={this.stopPromptoCode}>{runningLabel}</Button>
+                    <Button type="button" onClick={this.stopPromptoCode}>{runningLabel}</Button>
+                    &nbsp;
                     <Button type="button" onClick={this.clearOutput}>Clear</Button>
                 </Navbar.Form>
             </Navbar>

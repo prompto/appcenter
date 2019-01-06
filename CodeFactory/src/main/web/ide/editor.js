@@ -97,6 +97,12 @@ function runMethod(id, runMode) {
     mode.runMethod(id, runMode);
 }
 
+function debugMethod(id, runMode) {
+    var session = promptoEditor.getSession();
+    var mode = session.getMode();
+    mode.debugMethod(id, runMode);
+}
+
 function fetchRunnablePage(content, onFound) {
     var session = promptoEditor.getSession();
     var mode = session.getMode();

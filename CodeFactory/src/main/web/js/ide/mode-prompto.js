@@ -153,6 +153,10 @@ ace.define('ace/mode/prompto',["require","exports","module","ace/range","ace/lib
             this.$worker && this.$worker.send("runMethod", [ id, mode ] );
         };
 
+        this.debugMethod = function(id, mode) {
+            this.$worker && this.$worker.send("debugMethod", [ id, mode ] );
+        };
+
         this.fetchRunnablePage = function(content) {
             this.$worker && this.$worker.send("fetchRunnablePage", [ content ] );
         };
