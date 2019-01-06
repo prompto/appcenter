@@ -202,6 +202,10 @@ class OptionalInput extends React.Component {
 
 }
 
+function identifierize(prefix, name) {
+    return ((prefix || "") + (name || "")).replace(/[^a-zA-Z0-9_]/g, "_");
+}
+
 class BatchParameters extends React.Component {
 
     constructor(props) {
@@ -226,8 +230,7 @@ class BatchParameters extends React.Component {
     }
 
     startMethodPlaceHolder() {
-        const cleanName = (this.props.dialog.state.name || "").replace(/ /g, "_");
-        return this.startMethodPrefix + cleanName;
+        return identifierize(this.startMethodPrefix, this.props.dialog.state.name)
     }
 
 
@@ -281,8 +284,7 @@ class WebSiteParameters extends ServiceParameters {
     }
 
     homePagePlaceHolder() {
-        const cleanName = (this.props.dialog.state.name || "").toLowerCase().replace(/ /g, "-");
-        return cleanName + "/index.page";
+        return this.props.dialog.state.name + "/index.page";
     }
 
     render() {
