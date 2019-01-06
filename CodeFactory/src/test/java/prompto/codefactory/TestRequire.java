@@ -70,6 +70,12 @@ public class TestRequire extends BaseUITest {
 	}
 	
 	
+	@Test
+	public void jsonIsParsed() throws Exception {
+		linkResourcesAndLoadPage("JsonIsParsed", Dialect.O);
+		WebElement out = waitElement(By.id("value"), 2);
+		assertEquals("ok!", out.getText());
+	}
 
 
 	private void linkResourcesAndLoadPage(String resourceName, Dialect dialect) throws Exception {

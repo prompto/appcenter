@@ -1,0 +1,19 @@
+widget JsonIsParsedPage extends ReactWidget {
+
+	method getInitialState() {
+		return { value: "" };
+	}
+	
+    method componentWillMount() {
+    	json = "{ \"value\": \"ok!\" }";
+    	doc = (Document)readJson(json);
+    	value = doc.value;
+        setState({ value: value });
+    }
+    
+	Html method render () {
+		state = getState();
+		return <div id="value">{state.value}</div>;
+	}
+	
+}
