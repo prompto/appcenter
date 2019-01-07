@@ -194,3 +194,31 @@ and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
 		
+define Grid as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Grid
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+		
+define Row as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Row
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define Col as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Col
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define Clearfix as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Clearfix
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+		
