@@ -7,14 +7,14 @@ ace.define('ace/mode/prompto_highlight_rules',["require","exports","module","ace
 
         var controls = (
             "always|break|case|catch|default|do|each|else|except|finally|for|from|if|" +
-            "on|otherwise|raise|return|switch|throw|to|try|with|when|where|while"
+            "on|otherwise|raise|return|switch|then|throw|to|try|with|when|where|while"
         );
 
         var types = (
             "Java|C#|Python2|Python3|JavaScript|Swift|Any|Blob|Boolean|Character|Text|" +
-            "Image|Integer|Decimal|Date|Time|DateTime|Period|Method|Code|Document|" +
+            "Image|Integer|Decimal|Date|Time|DateTime|Period|Method|Code|Document|Html|" +
             "attr|attribute|attributes|bindings|enum|category|class|getter|" +
-            "method|methods|operator|resource|setter|singleton|test"
+            "method|methods|operator|resource|setter|singleton|test|widget"
         );
 
         var modifiers = (
