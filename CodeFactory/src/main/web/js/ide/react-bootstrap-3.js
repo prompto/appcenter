@@ -44,6 +44,7 @@ self.ReactBootstrap = {
     Grid: React.Component,
     Row: React.Component,
     Col: React.Component,
-    Clearfix: React.Component
+    Clearfix: React.Component,
+    Glyphicon: React.Component
 };
 

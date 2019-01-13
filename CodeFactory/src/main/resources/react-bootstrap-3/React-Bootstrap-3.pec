@@ -235,4 +235,12 @@ define Clearfix as native widget with bindings:
 and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
+
+define Glyphicon as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Glyphicon
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
 		
