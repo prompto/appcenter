@@ -1,6 +1,6 @@
 package prompto.config;
 
-public interface ICodeServerConfiguration extends IServerConfiguration {
+public interface ICodeFactoryConfiguration extends IServerConfiguration {
 
 	ITargetConfiguration getTargetConfiguration();	
 

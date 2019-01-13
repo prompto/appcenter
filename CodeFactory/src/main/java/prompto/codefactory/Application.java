@@ -14,8 +14,8 @@ import prompto.code.ImmutableCodeStore;
 import prompto.code.Library;
 import prompto.code.Module;
 import prompto.code.QueryableCodeStore;
-import prompto.config.CodeServerConfiguration;
-import prompto.config.ICodeServerConfiguration;
+import prompto.config.CodeFactoryConfiguration;
+import prompto.config.ICodeFactoryConfiguration;
 import prompto.config.IConfigurationReader;
 import prompto.config.IHttpConfiguration;
 import prompto.config.IPortRangeConfiguration;
@@ -42,7 +42,7 @@ import prompto.utils.ResourceUtils;
 public class Application {
 
 	static Logger logger = new Logger();
-	static ICodeServerConfiguration config;
+	static ICodeFactoryConfiguration config;
 	
 	public static void main(String[] args) throws Throwable {
 		main(args, null);
@@ -60,33 +60,35 @@ public class Application {
 		AppServer.main(config, Application::init); 
 	}
 	
-	public static ICodeServerConfiguration loadConfiguration(String[] args) throws Exception {
+	public static ICodeFactoryConfiguration loadConfiguration(String[] args) throws Exception {
 		Map<String, String> argsMap = CmdLineParser.read(args);
 		IConfigurationReader reader = Standalone.readerFromArgs(argsMap);
-		ICodeServerConfiguration config = new CodeServerConfiguration(reader, argsMap);
+		ICodeFactoryConfiguration config = new CodeFactoryConfiguration(reader, argsMap);
 		return config.withRuntimeLibs(()->Libraries.getPromptoLibraries(Libraries.class, AppServer.class));
 	}
 
 	
-	private static void init(ICodeServerConfiguration config) {
+	private static void init(ICodeFactoryConfiguration config) {
 		initDataServletStores(config);
 		initModuleProcessPortRange(config);
 	}
 	
-	private static void initModuleProcessPortRange(ICodeServerConfiguration config2) {
+	private static void initModuleProcessPortRange(ICodeFactoryConfiguration config2) {
 		try {
 			ITargetConfiguration target = config.getTargetConfiguration();
 			if(target!=null) {
 				IPortRangeConfiguration portRange = target.getPortRangeConfiguration();
-				if(portRange!=null)
+				if(portRange!=null) {
+					logger.info(()->"Target port range is " + portRange.getMinPort() + " to " + portRange.getMaxPort());
 					ModuleProcess.portRangeConfiguration = portRange;
+				}
 			}
 		} catch(Throwable t) {
 			throw new RuntimeException(t);
 		}		
 	}
 
-	private static void initDataServletStores(ICodeServerConfiguration config) {
+	private static void initDataServletStores(ICodeFactoryConfiguration config) {
 		try {
 			Map<String, IStore> stores = new HashMap<>();
 			IStore store = fetchLoginStore(config);
@@ -104,12 +106,12 @@ public class Application {
 		}
 	}
 
-	private static IStore readTargetStoreConfiguration(ICodeServerConfiguration config) throws Throwable {
+	private static IStore readTargetStoreConfiguration(ICodeFactoryConfiguration config) throws Throwable {
 		ITargetConfiguration target = config.getTargetConfiguration();
 		return target == null ? null : newStore(target.getDataStoreConfiguration());
 	}
 
-	private static IStore fetchLoginStore(ICodeServerConfiguration config) throws Throwable {
+	private static IStore fetchLoginStore(ICodeFactoryConfiguration config) throws Throwable {
 		IHttpConfiguration http = config.getHttpConfiguration();
 		if(http==null)
 			return null;

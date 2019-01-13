@@ -3,11 +3,11 @@ package prompto.config;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class CodeServerConfiguration extends ServerConfiguration implements ICodeServerConfiguration {
+public class CodeFactoryConfiguration extends ServerConfiguration implements ICodeFactoryConfiguration {
 
 	Supplier<ITargetConfiguration> targetConfiguration;
 
-	public CodeServerConfiguration(IConfigurationReader reader, Map<String, String> argsMap) {
+	public CodeFactoryConfiguration(IConfigurationReader reader, Map<String, String> argsMap) {
 		super(reader, argsMap);
 		this.targetConfiguration = ()->readTargetConfiguration();
 	}

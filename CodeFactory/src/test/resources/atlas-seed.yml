@@ -22,6 +22,9 @@ target:
   dataStore: 
     <<: *atlasMongoStore
     dbName: SEED-DATA
+  portRange:
+    minPort: 8080
+    maxPort: 9090    
 
 http:
   port: 8080
