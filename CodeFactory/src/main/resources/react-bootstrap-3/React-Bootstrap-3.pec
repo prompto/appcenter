@@ -26,6 +26,20 @@ and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
 
+define InputGroupAddon as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.InputGroup.Addon
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define InputGroupButton as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.InputGroup.Button
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
 define Form as native widget with bindings:
 	define category bindings as:
 		JavaScript: ReactBootstrap.Form

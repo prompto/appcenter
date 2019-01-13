@@ -12,7 +12,11 @@ self.ReactBootstrap = {
     Radio: React.Component,
     DropdownButton: React.Component,
     SplitButton: React.Component,
-    InputGroup: React.Component,
+    InputGroup: {
+        render: React.Component.render,
+        Addon: React.Component,
+        Button: React.Component
+    },
     Form: React.Component,
     FormGroup: React.Component,
     FormControl: React.Component,
