@@ -7,6 +7,7 @@ class ProjectType {
         this.id = id;
         this.title = title;
         this.image = image;
+        this.disabled = false;
         this.createMethod = createMethod;
     }
 
@@ -30,6 +31,7 @@ class ScriptType extends ProjectType {
 
     constructor() {
         super("Script", "Script", "/img/script.jpg", "createScript");
+        this.disabled = true;
     }
 }
 
@@ -386,7 +388,10 @@ class NewProjectDialog extends React.Component {
 
 
     handleType(type) {
-        this.setState( { type: type } );
+        if(type.disabled)
+            alert("Sorry, not supported yet!");
+        else
+            this.setState( { type: type } );
     }
 
     handleName(e) {
