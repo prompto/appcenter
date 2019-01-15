@@ -286,7 +286,7 @@ class WebSiteParameters extends ServiceParameters {
     }
 
     homePagePlaceHolder() {
-        return this.props.dialog.state.name.toLowerCase() + "/index.page";
+        return identifierize(null, this.props.dialog.state.name.toLowerCase()) + "/index.page";
     }
 
     render() {
@@ -300,9 +300,9 @@ class WebSiteParameters extends ServiceParameters {
                 <ControlLabel>Home page:</ControlLabel>
                 <div style={{marginBottom: 5}}>
                     <Radio inline name="home-name-radio" checked={!this.state.customHome}
-                           onChange={() => this.setState(customHome: false)}>Use default</Radio>
+                           onChange={() => this.setState({customHome: false})}>Use default</Radio>
                     <Radio inline name="home-name-radio" checked={this.state.customHome}
-                           onChange={() => this.setState(customHome: true)}>Customize</Radio>
+                           onChange={() => this.setState({customHome: true})}>Customize</Radio>
                 </div>
                 <FormControl type="text" value={this.state.homePage}
                              placeholder={this.homePagePlaceHolder()}
