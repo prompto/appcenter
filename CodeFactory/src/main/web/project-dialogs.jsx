@@ -286,7 +286,7 @@ class WebSiteParameters extends ServiceParameters {
     }
 
     homePagePlaceHolder() {
-        return this.props.dialog.state.name + "/index.page";
+        return this.props.dialog.state.name.toLowerCase() + "/index.page";
     }
 
     render() {
