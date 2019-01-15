@@ -1,6 +1,6 @@
 .thumbnail {
     width: 170px;
-    height: 230px;
+    height: 210px;
     box-sizing: content-box;
 }
 
@@ -26,4 +26,9 @@
 
 .new-project-dialog {
     width: 448px;
+}
+
+
+.placeholder {
+    font-style: italic;
 }
