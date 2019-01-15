@@ -26,6 +26,7 @@ class Project extends React.Component {
         return <Col xs={4} sm={2} style={{width: "170px", boxSizing: "content-box" }} onContextMenu={this.handleContextMenu}>
             <Thumbnail src={imageSrc} onClick={this.handleClick}>
                 <p><strong>{module.value.name}</strong></p>
+                <p><span className="text-muted">{module.value.version.value}</span></p>
                 <span className="text-muted">{module.value.description}</span>
             </Thumbnail>
             {this.state.contextMenu && <Clearfix id="project-menu" style={menuStyle}>
