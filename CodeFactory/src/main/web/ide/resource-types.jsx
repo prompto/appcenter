@@ -117,7 +117,8 @@ class PageType extends TextResourceType {
             "\t}\n" +
             "\n" +
             "}\n";
-        addCode(widgetCode, "O", widgetName);
+        const content = { type: "Prompto", subType: "widget", name: widgetName, creating: true };
+        addCode(content, widgetCode, "O");
     }
 
     getInitialState() {
