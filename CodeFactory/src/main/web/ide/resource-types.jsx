@@ -88,22 +88,29 @@ class PageType extends TextResourceType {
             "  title: "+ state.name + '\n' +
             "  icon: favicon.ico\n";
         if(state.widgetLibrary!=="none")
-            sample = sample + "  widgetLibrary: " + state.widgetLibrary + "\n";
+            sample += "  widgetLibrary: " + state.widgetLibrary + "\n";
         else
-            sample = sample + "  htmlEngine: " + state.htmlEngine + "\n" +
+            sample += "  htmlEngine: " + state.htmlEngine + "\n" +
             "  uiFramework: " + state.uiFramework + "\n"
-        sample = sample + "\n" +
+        sample += "\n" +
             "body:\n" +
             '  widget: ' + widgetName + '\n';
         return sample;
     }
 
+    computeWidgetRoot(state) {
+        if(state.htmlEngine && state.htmlEngine.toLowerCase().startsWith("react"))
+            return " extends ReactWidget"
+        else
+            return "";
+    }
 
     createWidget(state, addCode) {
         const resourceName = state.folder + "/" + state.name + "." + state.extension;
         const widgetName = this.computeWidgetName(state.name);
+        const widgetRoot = this.computeWidgetRoot(state);
         const widgetCode = "@PageWidgetOf(\"" + resourceName + "\")\n" +
-            "widget " + widgetName + " {\n" +
+            "widget " + widgetName + widgetRoot + " {\n" +
             "\n" +
             "\tHtml method render() {\n" +
             '\t\treturn <div>Hello "' + state.name + '"!</div>;\n' +
