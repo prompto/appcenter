@@ -23,11 +23,13 @@ class Project extends React.Component {
         const module = this.props.module;
         const imageSrc = module.value.image || moduleImage[module.type.toLowerCase()];
         const menuStyle = { position: "fixed", display: "block", left: this.state.menuLeft, top: this.state.menuTop, zIndex: 999999 };
+        const description = module.value.description || "No description";
+        const descClassName = "text-muted" + (description==="No description" ? " placeholder" : "");
         return <Col xs={4} sm={2} style={{width: "170px", boxSizing: "content-box" }} onContextMenu={this.handleContextMenu}>
             <Thumbnail src={imageSrc} onClick={this.handleClick}>
                 <p><strong>{module.value.name}</strong></p>
                 <p><span className="text-muted">{module.value.version.value}</span></p>
-                <span className="text-muted">{module.value.description}</span>
+                <span className={descClassName}>{description}</span>
             </Thumbnail>
             {this.state.contextMenu && <Clearfix id="project-menu" style={menuStyle}>
                 <ul className="dropdown-menu" style={{display: "block"}}>
