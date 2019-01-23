@@ -35,6 +35,7 @@
 					<nodeVersion>v11.7.0</nodeVersion>
 					<yarnVersion>v1.13.0</yarnVersion>
 					<workingDirectory>src/web</workingDirectory>
+					<installDirectory>../tools</installDirectory>
 				</configuration>
 				<executions>
 					<execution>

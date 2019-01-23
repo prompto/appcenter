@@ -14,3 +14,4 @@ release.json
 CodeFactory/EditorApp/src/web/node
 CodeFactory/ProjectsApp/src/web/node
 CodeFactory/DataApp/src/web/node
+CodeFactory/tools/node
