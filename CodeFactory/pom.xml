@@ -10,6 +10,7 @@
 
 	<modules>
 		<module>ProjectsApp</module>
+		<module>DataApp</module>
 		<module>EditorApp</module>
 		<module>CodeFactory</module>
 	</modules>
