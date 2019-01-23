@@ -135,6 +135,9 @@ class EditorNavBar extends React.Component {
                         <a href="#">Project: <b>{projectName}</b></a>
                     </Navbar.Brand>
                 </Navbar.Header>
+                <Nav pullRight>
+                    <NavItem href="http://www.prompto.org" target="_blank">Reference</NavItem>
+                </Nav>
                 <Navbar.Form pullRight style={editStyle}>
                     <DropdownButton id="dialect" title="Dialect">
                         { ALL_DIALECTS.map(d => <MenuItem key={d} active={this.state.dialect===d} onClick={()=>this.setDialect(d)}>{dialectLabels[d]}</MenuItem>) }

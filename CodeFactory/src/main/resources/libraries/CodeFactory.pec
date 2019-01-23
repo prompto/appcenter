@@ -131,7 +131,9 @@ define createScript as method receiving name, description = nothing doing:
 	dependencies = [Dependency from lib]
 	version = 'v0.0.1'
 	module = Script with name, version, description and dependencies
-	store module
+	login = getHttpUser
+	recent = RecentSession with login, module and now as lastOpened 
+	store module, recent
 	flush
 
 
@@ -141,7 +143,9 @@ define createLibrary as method receiving name, description = nothing doing:
 	dependencies = [Dependency from lib]
 	version = 'v0.0.1'
 	module = Library with name, version, description and dependencies
-	store module
+	login = getHttpUser
+	recent = RecentSession with login, module and now as lastOpened 
+	store module, recent
 	flush
 
 
@@ -151,7 +155,9 @@ define createWebLibrary as method receiving name, description = nothing, widgetL
 	dependencies = [Dependency from lib]
 	version = 'v0.0.1'
 	module = WebLibrary with name, version, description, widgetLibrary, htmlEngine, uiFramework and dependencies
-	store module
+	login = getHttpUser
+	recent = RecentSession with login, module and now as lastOpened 
+	store module, recent
 	flush
 
 
@@ -162,7 +168,9 @@ define createBatch as method receiving name, description = nothing and startMeth
 	version = 'v0.0.1'
 	module = Batch with name, version, description, startMethod and dependencies
 	decl = createStartMethod with module and startMethod as name
-	store decl, module
+	login = getHttpUser
+	recent = RecentSession with login, module and now as lastOpened 
+	store decl, module, recent
 	flush
 
 
@@ -173,7 +181,9 @@ define createService as method receiving name, description = nothing and serverA
 	version = 'v0.0.1'
 	module = Service with name, version, description, serverAboutToStartMethod and dependencies
 	decl = createStartMethod with module and serverAboutToStartMethod as name
-	store decl, module
+	login = getHttpUser
+	recent = RecentSession with login, module and now as lastOpened 
+	store decl, module, recent
 	flush
 
 
@@ -185,7 +195,9 @@ define createWebSite as method receiving name, description = nothing, image = no
 	module = WebSite with name, version, description, image, serverAboutToStartMethod, homePage and dependencies
 	decl = createStartMethod with module and serverAboutToStartMethod as name
 	resources = createHomeHtmlOrPageResources with module and homePage as name
-	store decl, resources, module
+	login = getHttpUser
+	recent = RecentSession with login, module and now as lastOpened 
+	store decl, resources, module, recent
 	flush
 
 
@@ -212,8 +224,9 @@ define createHomeHtmlResources as method receiving module and name doing:
 define createHomePageResources as method receiving module and name doing:
 	start = name.indexOf "/"
 	widgetName = name[start + 1:-6].toCapitalized + "Page"
+	widgetRoot = " extends ReactWidget"
 	body = "@PageWidgetOf(\"" + name + "\")\n"
-	body = body + "widget " + widgetName + " {\n\n"
+	body = body + "widget " + widgetName + widgetRoot + " {\n\n"
 	body = body + "\tHtml method render() {\n"
 	body = body + "\t\treturn <div>Hello \"" + module.name + "\"!</div>;\n"
 	body = body + "\t}\n\n}\n" 

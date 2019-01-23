@@ -15,6 +15,9 @@ target:
   dataStore:
     <<: *homeMongoStore
     dbName: PROMPTO-DATA
+  portRange:
+    minPort: 8080
+    maxPort: 9090    
 
 http:
   port: 8888

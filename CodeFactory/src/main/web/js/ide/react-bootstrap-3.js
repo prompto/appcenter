@@ -12,7 +12,11 @@ self.ReactBootstrap = {
     Radio: React.Component,
     DropdownButton: React.Component,
     SplitButton: React.Component,
-    InputGroup: React.Component,
+    InputGroup: {
+        render: React.Component.render,
+        Addon: React.Component,
+        Button: React.Component
+    },
     Form: React.Component,
     FormGroup: React.Component,
     FormControl: React.Component,
@@ -36,6 +40,11 @@ self.ReactBootstrap = {
     NavItem: React.Component,
     MenuItem: React.Component,
     Tabs: React.Component,
-    Tab: React.Component 
+    Tab: React.Component,
+    Grid: React.Component,
+    Row: React.Component,
+    Col: React.Component,
+    Clearfix: React.Component,
+    Glyphicon: React.Component
 };
 

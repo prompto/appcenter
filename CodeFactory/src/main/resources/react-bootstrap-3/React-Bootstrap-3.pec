@@ -26,6 +26,20 @@ and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
 
+define InputGroupAddon as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.InputGroup.Addon
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define InputGroupButton as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.InputGroup.Button
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
 define Form as native widget with bindings:
 	define category bindings as:
 		JavaScript: ReactBootstrap.Form
@@ -193,4 +207,40 @@ define MenuItem as native widget with bindings:
 and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
+		
+define Grid as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Grid
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+		
+define Row as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Row
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define Col as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Col
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define Clearfix as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Clearfix
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define Glyphicon as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Glyphicon
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
 		

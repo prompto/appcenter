@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -121,10 +122,13 @@ public class ModuleProcess {
 		
 		static Process waitForServerReadiness(ProcessBuilder builder) throws IOException, InterruptedException {
 			OutStream out = new OutStream(builder);
-			return out.waitForServerReadiness();
+			out.waitForServerReadiness();
+			out.startForwarding();
+			return out.process;
 		}
 		
 		ProcessBuilder builder;
+		Process process;
 		
 		OutStream(ProcessBuilder builder) {
 			this.builder = builder;
@@ -133,10 +137,13 @@ public class ModuleProcess {
 		Process waitForServerReadiness() throws InterruptedException, IOException {
 			logger.info(()->"Starting: " + builder.command().toString());
 			Object ready = new Object();
-			Process process = builder.start();
+			this.process = builder.start();
 			Thread reader = new Thread(()->{
 				try { 
-					waitForServerReadiness(process);
+					readLoop((data, size)->{
+						System.out.write(data, 0 , size);
+						return new String(data, 0, size).contains(AppServer.WEB_SERVER_SUCCESSFULLY_STARTED);
+					});
 				} catch(Throwable t) {
 					t.printStackTrace(System.err);
 				} finally {
@@ -152,16 +159,29 @@ public class ModuleProcess {
 			return process;
 		}
 		
-		private void waitForServerReadiness(Process process) throws IOException {
-			InputStream input = process.getInputStream();
+		void startForwarding() {
+			Thread reader = new Thread(()->{
+				try { 
+					readLoop((data, size)->{
+						System.out.write(data, 0 , size);
+						return false;
+					});
+				} catch(Throwable t) {
+					t.printStackTrace(System.err);
+				} 
+			});
+			reader.start();
+		}
+		
+		private void readLoop(BiFunction<byte[], Integer, Boolean> hook) throws IOException {
+			InputStream input = this.process.getInputStream();
 			byte[] data = new byte[0x10000];
 			while(process.isAlive()) {
 				int read = input.read(data);
 				if(read<0)
 					break;
 				if(read>0) {
-					System.out.write(data, 0 , read);
-					if(new String(data, 0, read).contains(AppServer.WEB_SERVER_SUCCESSFULLY_STARTED)) 
+					if(hook.apply(data, read))
 						break;
 				}
 			}

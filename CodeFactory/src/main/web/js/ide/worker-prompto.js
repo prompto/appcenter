@@ -43,7 +43,11 @@ ace.define('ace/worker/prompto',["require","exports","module","ace/lib/oop","ace
         var worker = this;
         safe_require(function() {
             // remember value if it does not result from an edit
-            if(content.name) {
+            if(content.creating) {
+                worker.$value = "";
+                worker.$select = false;
+                worker.$core = false;
+            } else if(content.name) {
                 worker.$value = worker.$repo.getDeclarationBody(content, worker.$dialect);
                 worker.$core = content.core || false;
             } else {

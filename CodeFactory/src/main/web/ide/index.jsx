@@ -399,8 +399,8 @@ class EditorPage extends React.Component {
         this.elementsNavigator.setState({catalog: this.catalog}, () => projectTree.selectContent(renamed));
     }
 
-    addCode(code, dialect, name) {
-        this.setEditorContent({ type: "Prompto" },
+    addCode(content, code, dialect) {
+        this.setEditorContent(content,
             () => this.navBar.setDialect(dialect,
                 () => this.editorWindow.setPromptoText(code)));
     }

@@ -7,6 +7,7 @@ class ProjectType {
         this.id = id;
         this.title = title;
         this.image = image;
+        this.disabled = false;
         this.createMethod = createMethod;
     }
 
@@ -30,6 +31,7 @@ class ScriptType extends ProjectType {
 
     constructor() {
         super("Script", "Script", "/img/script.jpg", "createScript");
+        this.disabled = true;
     }
 }
 
@@ -284,7 +286,7 @@ class WebSiteParameters extends ServiceParameters {
     }
 
     homePagePlaceHolder() {
-        return this.props.dialog.state.name + "/index.page";
+        return identifierize(null, this.props.dialog.state.name.toLowerCase()) + "/index.page";
     }
 
     render() {
@@ -298,9 +300,9 @@ class WebSiteParameters extends ServiceParameters {
                 <ControlLabel>Home page:</ControlLabel>
                 <div style={{marginBottom: 5}}>
                     <Radio inline name="home-name-radio" checked={!this.state.customHome}
-                           onChange={() => this.setState(customHome: false)}>Use default</Radio>
+                           onChange={() => this.setState({customHome: false})}>Use default</Radio>
                     <Radio inline name="home-name-radio" checked={this.state.customHome}
-                           onChange={() => this.setState(customHome: true)}>Customize</Radio>
+                           onChange={() => this.setState({customHome: true})}>Customize</Radio>
                 </div>
                 <FormControl type="text" value={this.state.homePage}
                              placeholder={this.homePagePlaceHolder()}
@@ -386,7 +388,10 @@ class NewProjectDialog extends React.Component {
 
 
     handleType(type) {
-        this.setState( { type: type } );
+        if(type.disabled)
+            alert("Sorry, not supported yet!");
+        else
+            this.setState( { type: type } );
     }
 
     handleName(e) {
