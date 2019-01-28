@@ -12,7 +12,8 @@ export default class SingleProtoMethodItem extends React.Component {
     render() {
         const id = "method_" + this.props.method.name;
         return <ListGroupItem id={id} onClick={this.itemClicked}>
-            <a href="/">{this.props.method.name}</a> {this.props.method.core && <Glyphicon glyph="lock"/>}
+            { /* eslint-disable-next-line */ }
+            <a href="#">{this.props.method.name}</a> {this.props.method.core && <Glyphicon glyph="lock"/>}
         </ListGroupItem>;
     }
 

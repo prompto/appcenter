@@ -13,7 +13,8 @@ export default class BinaryResourceItem extends ResourceItem {
     render() {
         const menuStyle = { position: "fixed", display: "block", left: this.state.menuLeft, top: this.state.menuTop, zIndex: 999999 };
         return <ListGroupItem onClick={this.itemClicked} onContextMenu={this.handleContextMenu}>
-            <a href="/">{this.props.resource.value.name}</a>
+            { /* eslint-disable-next-line */ }
+            <a href="#">{this.props.resource.value.name}</a>
             {this.state.contextMenu &&
             <Clearfix id="item-menu" style={menuStyle}>
                 <ul className="dropdown-menu" style={{display: "block"}}>

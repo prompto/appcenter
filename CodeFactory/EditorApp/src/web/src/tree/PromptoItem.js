@@ -11,7 +11,8 @@ export default class PromptoItem extends React.Component {
 
     render() {
         return <ListGroupItem onClick={this.itemClicked}>
-            <a href="/">{this.props.item.name}</a> {this.props.item.core && <Glyphicon glyph="lock"/>}
+            { /* eslint-disable-next-line */ }
+            <a href="#">{this.props.item.name}</a> {this.props.item.core && <Glyphicon glyph="lock"/>}
         </ListGroupItem>;
     }
 

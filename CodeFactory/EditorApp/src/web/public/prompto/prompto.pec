@@ -1,0 +1,679 @@
+define Any as native category with attributes id and text, and bindings:
+
+	define category bindings as:
+		Java: prompto.intrinsic.PromptoAny
+		C#: prompto.value.Any
+		Python2: Any from module: prompto.value.Any
+		Python3: Any from module: prompto.value.Any
+		JavaScript: Any from module: prompto/intrinsic/Any.js
+
+and methods: 
+
+	define id as getter doing:
+		Java: return System.identityHashCode(self);
+		C#: return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(self);
+		Python2: return id(self)
+		Python3: return id(self)
+		JavaScript: return self.id;
+	
+	define text as getter doing:
+		Java: return self.toString();
+		C#: return self.ToString();
+		Python2: return str(self)
+		Python3: return str(self)
+		JavaScript: return self.toString();
+
+define Attribute as native category with attribute name, and bindings:
+
+	define category bindings as:
+		Java: prompto.declaration.AttributeDeclaration
+		C#: prompto.declaration.AttributeDeclaration
+		Python2: AttributeDeclaration from module: prompto.declaration.AttributeDeclaration
+		Python3: AttributeDeclaration from module: prompto.declaration.AttributeDeclaration
+		JavaScript: AttributeDeclaration from module: prompto/declaration/AttributeDeclaration.js
+
+define findAttribute as native method receiving name returning Attribute doing:
+	Java: return $context.findAttribute(name);
+	C#: return $context.findAttribute(name);
+	Python2: return $context.findAttribute(name)
+	Python3: return $context.findAttribute(name)
+	JavaScript: return $context.findAttribute(name);
+
+define getAllAttributes as native method returning Attribute[] doing:
+	Java: return $context.getAllAttributes();
+	C#: return $context.getAllAttributes();
+	Python2: return $context.getAllAttributes()
+	Python3: return $context.getAllAttributes()
+	JavaScript: return $context.getAllAttributes();
+
+define "findAttribute id" as test method doing:
+	a = findAttribute "id"
+and verifying: 
+	a is an Attribute
+	a.name = "id"
+
+define "findAttribute name" as test method doing:
+	a = findAttribute "name"
+and verifying: 
+	a is an Attribute
+	a.name = "name" 
+
+define "findAttribute text" as test method doing: 
+	a = findAttribute "text"
+and verifying: 
+	a is an Attribute
+	a.name = "text"
+
+define "at least 3 items getAllAttributes" as test method doing:
+	l = getAllAttributes 
+and verifying: 
+	l is an Attribute[]
+	l.count >= 3
+
+// runtime reference of any object
+define id as Any attribute
+// database reference of stored object
+define dbId as Any attribute
+// any object has a text attribute, used for display 
+define text as storable Text attribute with value and words index
+// many objects have a name, it is not unique 
+define name as storable Text attribute with key and value index
+// many objects have a description, it is not unique 
+define description as storable Text attribute with words index
+// many objects have an image, it is not unique 
+define image as storable Image attribute
+// many events have a timeStamp
+define timeStamp as storable DateTime attribute
+// urls, files and fragments have a path
+define path as storable Text attribute
+// external text sources have an encoding such as "UTF-8"
+define encoding as storable Text attribute
+// many systems require a login
+define login as storable Text attribute with key and value index
+// many systems require a password
+define password as Text attribute
+// users typically have an email  
+define email as storable Text attribute with value index
+
+define getCurrentCloud as native method returning Text doing:
+	Java: return prompto.cloud.Cloud.current().name();
+
+define Error as enumerated category with attributes name and text, and symbols:
+	DIVIDE_BY_ZERO with "Divide by zero!" as text
+	INDEX_OUT_OF_RANGE with "Index out of range!" as text
+	NULL_REFERENCE with "Null reference!" as text
+	NOT_MUTABLE with "Not a mutable object!" as text
+	NOT_STORABLE with "Not a storable object!" as text
+	READ_WRITE with "Read/write failed!" as text
+
+define DecimalConstant as enumerated Decimal with symbols:
+	PI with 3.14159265358979323846 as value
+	E with 2.7182818284590452354 as value
+
+define parseInteger as native method receiving Text text returning Integer doing:
+	Java: return Long.parseLong(text);
+	C#: return System.Int64.Parse(text);
+	Python2: return int(text)
+	Python3: return int(text)
+	JavaScript: return parseInt(text);
+
+
+define parseDecimal as native method receiving Text text returning Decimal doing:
+	Java: return Double.parseDouble(text);
+	C#: return System.Double.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
+	Python2: return float(text)
+	Python3: return float(text)
+	JavaScript: return parseFloat(text);
+
+
+define parseDate as native method receiving Text text returning Date doing:
+	Java: return prompto.intrinsic.PromptoDate.parse(text);
+	C#: return prompto.value.Date.Parse(text);
+	Python2: return Date.Parse(text) from module: prompto.value.Date
+	Python3: return Date.Parse(text) from module: prompto.value.Date
+	JavaScript: return LocalDate.parse(text); from module: prompto/intrinsic/LocalDate.js
+
+
+define parseTime as native method receiving Text text returning Time doing:
+	Java: return prompto.intrinsic.PromptoTime.parse(text);
+	C#: return prompto.value.Time.Parse(text);
+	Python2: return Time.Parse(text) from module: prompto.value.Time
+	Python3: return Time.Parse(text) from module: prompto.value.Time
+	JavaScript: return LocalTime.parse(text); from module: prompto/intrinsic/LocalTime.js
+
+
+define parseDateTime as native method receiving Text text returning DateTime doing:
+	Java: return prompto.intrinsic.PromptoDateTime.parse(text);
+	C#: return prompto.value.DateTime.Parse(text);
+	Python2: return DateTime.Parse(text) from module: prompto.value.DateTime
+	Python3: return DateTime.Parse(text) from module: prompto.value.DateTime
+	JavaScript: return DateTime.parse(text); from module: prompto/intrinsic/DateTime.js
+
+
+define parseUuid as native method receiving Text text returning Uuid doing:
+	Java: return java.util.UUID.fromString(text);
+	C#: return System.Guid.Parse(text);
+	Python2: return UUID(text) from module: uuid
+	Python3: return UUID(text) from module: uuid
+	JavaScript: return UUID.fromString(text); from module: prompto/intrinsic/UUID.js
+
+
+define parseVersion as native method receiving Text text returning Version doing:
+	Java: return prompto.intrinsic.PromptoVersion.parse(text);
+	C#: return prompto.value.Version.Parse(text);
+	Python2: return Version.Parse(text) from module: prompto.value.Version
+	Python3: return Version.Parse(text) from module: prompto.value.Version
+	JavaScript: return Version.Parse(text); from module: prompto/intrinsic/Version.js
+
+
+define parsePeriod as native method receiving Text text returning Period doing:
+	Java: return prompto.intrinsic.PromptoPeriod.parse(text);
+	C#: return prompto.value.Period.Parse(text);
+	Python2: return Period.Parse(text) from module: prompto.value.Period
+	Python3: return Period.Parse(text) from module: prompto.value.Period
+	JavaScript: return Period.parse(text); from module: prompto/intrinsic/Period.js
+
+
+define "parses Integer" as test method doing:
+	i = parseInteger "123"
+and verifying:
+	i = 123
+
+define "parses Integer with leading 0" as test method doing:
+	i = parseInteger "0123"
+and verifying:
+	i = 123
+
+define "parses Decimal" as test method doing:
+	i = parseDecimal "123.45"
+and verifying:
+	i = 123.45
+
+define "parses Date" as test method doing:
+	d = parseDate "2018-02-17"
+and verifying:
+	d = '2018-02-17'
+
+define "parses Time" as test method doing:
+	t = parseTime "16:15:18"
+and verifying:
+	t = '16:15:18'
+
+define "parses DateTime" as test method doing:
+	dt = parseDateTime "2018-02-17T16:15:18"
+and verifying:
+	dt = '2018-02-17T16:15:18'
+
+define "parses Uuid" as test method doing:
+	u = parseUuid "11223344-aabb-ccdd-eeff-112233445566"
+and verifying:
+	u = '11223344-aabb-ccdd-eeff-112233445566'
+
+define "parses Version" as test method doing:
+	v = parseVersion "v1.2.3"
+and verifying:
+	v = 'v1.2.3'
+
+define "parses Period" as test method doing:
+	p = parsePeriod "PT1S"
+and verifying:
+	p = 'PT1S'
+
+define now as native method returning DateTime doing:
+	Java: return prompto.intrinsic.PromptoDateTime.now();
+	C#: return System.DateTimeOffset.Now;
+	Python2: return datetime.utcnow() from module: datetime
+	Python3: return datetime.utcnow() from module: datetime
+	JavaScript: return DateTime.now(); from module: prompto/intrinsic/DateTime.js
+
+define "now is a DateTime" as test method doing: 
+	a = now
+and verifying: 
+	a is a DateTime 
+
+// returns a random UUID as defined by http://www.ietf.org/rfc/rfc4122.txt
+define randomUuid as native method returning Uuid doing:
+	Java: return java.util.UUID.randomUUID();
+	C#: return System.Guid.NewGuid();
+	Python2: return uuid4() from module: uuid
+	Python3: return uuid4() from module: uuid
+	JavaScript: return UUID.create(); from module: prompto/intrinsic/UUID.js
+
+// waits for n milliseconds (consuming all CPU in JavaScript)
+define sleep as native method receiving Integer millis doing:
+	Java: java.lang.Thread.sleep(millis);
+	C#: prompto.utils.Utils.Sleep(millis);
+	Python2: sleep(millis) from module: prompto.utils.Utils
+	Python3: sleep(millis) from module: prompto.utils.Utils
+	JavaScript: sleep(millis); from module: prompto/utils/Utils.js
+
+
+define isServer as native method returning Boolean doing:
+	Java: return $context.isServer();
+	C#: return false;
+	Python2: return False
+	Python3: return False
+	JavaScript: return false;
+
+
+define fetchTextResource as native method receiving path returning Text doing:
+	Java: return $context.fetchTextResource(path);
+	C#: return $context.fetchTextResource(path);
+	Python2: return $context.fetchTextResource(path)
+	Python3: return $context.fetchTextResource(path)
+	JavaScript: return $context.fetchTextResource(path);
+ 
+
+define "randomUuid is not null" as test method doing:
+	uuid = randomUuid
+and verifying: 
+	uuid is not Nothing
+
+
+define "sleeps for 1 second" as test method doing:
+	start = now
+	sleep 1000
+	end = now
+and verifying: 
+	end >= start + 'PT1S'
+define Buffer as native resource with attribute text, and bindings:
+	
+	define category bindings as:
+		Java: prompto.io.Buffer
+		C#: prompto.io.Buffer
+		Python2: Buffer from module: prompto.io.Buffer
+		Python3: Buffer from module: prompto.io.Buffer
+		JavaScript: Buffer from module: prompto/io/Buffer.js
+
+define "writes to Buffer" as test method doing:
+	content = ""
+	with buffer = Buffer, do:
+		write "some content" to buffer
+		write "other content" to buffer
+		content = buffer.text	
+and verifying: 
+	"some content" in content
+	"other content" in content
+
+// a wrapper around native console printing
+define printNative as native method receiving any value and NativeWriter writer doing:
+	Java: writer.print(value);
+	C#: writer.Write(value);
+	Python2: print(objects=str(value), end="", file=writer)
+	Python3: print(objects=str(value), end="", file=writer)
+	JavaScript: writer.write(value.toString());
+
+// a wrapper around heterogeneous native console io
+define NativeWriter as native category with bindings:
+
+	define category bindings as:
+		Java: java.io.PrintStream
+		C#: System.IO.TextWriter
+		Python2: StringIO from module: StringIO 
+		Python3: StringIO from module: io
+		JavaScript: writer from module: prompto/io/io.js
+
+// a wrapper around heterogeneous native stdout
+define stdout as native method returning NativeWriter doing:
+	Java: return System.out;
+	C#: return System.Console.Out;
+	Python2: return stdout from module: sys
+	Python3: return stdout from module: sys
+	JavaScript: return stdout; from module: prompto/io/io.js
+
+// a wrapper around heterogeneous native stdin
+define stderr as native method returning NativeWriter doing:
+	Java: return System.err;
+	C#: return System.Console.Error;
+	Python2: return stderr from module: sys
+	Python3: return stderr from module: sys
+	JavaScript: return stderr; from module: prompto/io/io.js
+
+// an abstract Writer which can be derived (unlike NativeWriter) 
+define Writer as category with methods:
+	
+	define print as abstract method receiving any value
+
+// the native Writer implementation 
+define nativeWriter as NativeWriter attribute
+define ConsoleWriter as Writer with attribute nativeWriter, and methods:
+	
+	define print as method receiving any value doing:
+		printNative value with nativeWriter as writer
+
+// the buffered Writer implementation (useful for testing) 
+define TextWriter as Writer with attribute text, and methods: 
+	
+	define print as method receiving any value doing:
+		if text is nothing:
+			text = "" + value
+		else:
+			text = text + value
+
+// now the interesting methods  
+define print as method receiving any value doing:
+	out = invoke: stdout
+	printNative value with out as writer
+	
+define printLine as method receiving any value doing:
+	out = invoke: stdout
+	value = "" + value + "\n" 
+	printNative value with out as writer
+
+
+define print as method receiving any value and Writer writer doing:
+	writer.print with value as value
+
+define printLine as method receiving any value and Writer writer doing:
+	print value with writer as writer
+	print '\n' with writer as writer
+
+// and the corresponding tests  
+define "print a text" as test method doing:
+	w = mutable TextWriter
+	print "Hello" with w as writer
+	print " John" with w as writer
+and verifying: 
+	w.text = "Hello John"
+
+define "print an integer" as test method doing:
+	w = mutable TextWriter
+	print 12345 with w as writer
+and verifying: 
+	w.text = "12345" 
+
+define "printLine a text" as test method doing:
+	w = mutable TextWriter
+	print "Hello" with w as writer
+	printLine " John" with w as writer
+and verifying: 
+	w.text = "Hello John\n"
+
+define "printLine an integer" as test method doing:
+	w = mutable TextWriter
+	printLine 12345 with w as writer
+and verifying: 
+	w.text = "12345\n" 
+define htmlEncode as native method receiving Text value returning Text doing:
+	Java: return prompto.internet.Html.encode(value);
+	C#: return System.Net.WebUtility.HtmlEncode(value);
+	Python2: return escape(value) from module: cgi
+	Python3: return escape(value) from module: html
+	JavaScript: return htmlEncode(value); from module: prompto/internet/Html.js
+
+define htmlDecode as native method receiving Text value returning Text doing:
+	Java: return prompto.internet.Html.decode(value);
+	C#: return System.Net.WebUtility.HtmlDecode(value);
+	Python2: return HTMLParser().unescape(value) from module: HTMLParser
+	Python3: return unescape(value) from module: html.parser
+	JavaScript: return htmlDecode(value); from module: prompto/internet/Html.js
+
+
+define "encode Html entity" as test method doing:
+	encoded = htmlEncode "<ab>"
+and verifying:
+	encoded = "&lt;ab&gt;"
+
+
+define "decode Html entity" as test method doing:
+	encoded = htmlDecode "&lt;ab&gt;"
+and verifying:
+	encoded = "<ab>"
+
+
+define "decode Html charcode" as test method doing:
+	encoded = htmlDecode "a&#49;b"
+and verifying:
+	encoded = "a1b"
+
+define Url as storable native resource with attributes path and encoding, and bindings:
+	
+	define category bindings as:
+		Java: prompto.internet.Url
+		C#: prompto.internet.Url
+		Python2: Url from module: prompto.internet.Url
+		Python3: Url from module: prompto.internet.Url
+		JavaScript: Url from module: prompto/internet/Url.js
+
+// many objects have an Url  
+define url as storable Url attribute
+
+define "reads from www.google.com" as test method doing:
+	// need a cross-domain enabled page for browser testing
+	content = read all from Url with "https://www.google.com/" as path
+and verifying: 
+	content contains "doctype"
+
+define readJson as native method receiving text returning Any doing:
+	Java: return prompto.reader.JSONReader.read(text);
+	C#: return prompto.reader.JSONReader.read(text); 
+	Python2: return jsonRead(text) from module: prompto.reader.JSONReader
+	Python3: return jsonRead(text) from module: prompto.reader.JSONReader
+	JavaScript: return jsonRead(text); from module: prompto/reader/JSONReader.js
+
+
+define "test that readJson returns a boolean" as test method doing:
+	o = readJson "true"
+and verifying:
+	o is a Boolean
+	o is true
+
+define "test that readJson returns an Integer" as test method doing:
+	o = readJson "237"
+and verifying:
+	o is an Integer
+	o = 237
+
+define "test that readJson returns a Decimal" as test method doing:
+	o = readJson "123.02"
+and verifying:
+	o is a Decimal
+	o = 123.02
+
+define "test that readJson returns a Text" as test method doing:
+	o = readJson "\"some text\""
+and verifying:
+	o is a Text
+	o = "some text"
+
+define "test that readJson returns a Document" as test method doing:
+	o = (readJson "{\"field\":122}") as Document
+and verifying:
+	o is a Document
+	o.field = 122
+
+define "test that readJson returns a List" as test method doing:
+	o = (readJson "[{\"field\":122}]") as Document[]
+and verifying:
+	o is a Document[]
+	o[1].field = 122
+
+define "test that readJson returns a complex Document" as test method doing:
+    json = "[{\"field\":122, \"list\": [{\"field\":123, \"doc\": {\"name\": \"John\"}}], \"doc\": { \"list\": [ 122, 233, 344] }}]"
+	o = (readJson json) as Document[]
+and verifying:
+	o is a Document[]
+	o[1].field = 122
+
+
+define iterateCsv as native method receiving text, Text<:> columnNames = nothing, Character separator = ',', Character quote = '"' returning Iterator<Document> doing:
+	Java: return prompto.reader.CSVReader.iterator(text, columnNames, separator, quote);
+	C#: return prompto.reader.CSVReader.iterator(text, columnNames, separator, quote); 
+	Python2: return csvIterate(text, columnNames, separator, quote) from module: prompto.reader.CSVReader
+	Python3: return csvIterate(text, columnNames, separator, quote) from module: prompto.reader.CSVReader
+	JavaScript: return csvIterate(text, columnNames, separator, quote); from module: prompto/reader/CSVReader.js
+
+
+define readCsv as native method receiving text, Text<:> columnNames = nothing, Character separator = ',', Character quote = '"' returning Document[] doing:
+	Java: return prompto.reader.CSVReader.read(text, columnNames, separator, quote);
+	C#: return prompto.reader.CSVReader.read(text, columnNames, separator, quote); 
+	Python2: return csvRead(text, columnNames, separator, quote) from module: prompto.reader.CSVReader
+	Python3: return csvRead(text, columnNames, separator, quote) from module: prompto.reader.CSVReader
+	JavaScript: return csvRead(text, columnNames, separator, quote); from module: prompto/reader/CSVReader.js
+
+
+define "reads from csv text" as test method doing:
+	docs = readCsv with "id,name\n1,John\n2,Riou\\, Sylvie\n" as text
+and verifying: 
+	docs.count = 2
+	docs[1].id = "1"
+	docs[1].name = "John"
+	docs[2].id = "2"
+	docs[2].name = "Riou, Sylvie"
+
+define "iterates from csv text" as test method doing:
+	iterCsv = iterateCsv with "id,name\n1,John\n2,Riou\\, Sylvie\n" as text
+	docs = [] as Document[] 
+	for each doc in iterCsv:
+		docs = docs + [doc]
+and verifying: 
+	docs.count = 2
+	docs[1].id = "1"
+	docs[1].name = "John"
+	docs[2].id = "2"
+	docs[2].name = "Riou, Sylvie"
+	
+define "maps csv headers" as test method doing:
+	names = < "Code" : "id", "Name" : "name" >
+	docs = readCsv with "Code,Name\n1,John\n2,Riou\\, Sylvie\n" as text and names as columnNames
+and verifying: 
+	docs.count = 2
+	docs[1].id = "1"
+	docs[1].name = "John"
+	docs[2].id = "2"
+	docs[2].name = "Riou, Sylvie"
+
+define LoginFactory as native category with bindings:
+	
+	define category bindings as:
+		Java: prompto.security.auth.source.IAuthenticationSource
+		
+and methods:
+
+	define createLogin as method receiving login and password doing:
+		Java: this.createLogin(login, password);
+
+	define updateLogin as method receiving login and password doing:
+		Java: this.updateLogin(login, password);
+
+	define checkLogin as method receiving login and password doing:
+		Java: this.checkLogin(login, password);
+
+	define hasLogin as method receiving login returning Boolean doing:
+		Java: return this.hasLogin(login);
+
+define serviceHandler as abstract method receiving Document doc
+
+define installServiceHandler as native method receiving Text path and serviceHandler doing:
+    Java: $server.installHandler(path, serviceHandler);
+
+define getLoginFactory as native method receiving Text config = nothing returning LoginFactory doing:
+    Java: $server.getLoginFactory(config);
+
+define getHttpUser as native method returning Text doing:
+	Java: return $server.getHttpUser();
+
+define getHttpSession as native method returning Document doing:
+	Java: return $server.getHttpSession();
+
+define getHttpPort as native method returning Integer doing:
+    Java: return $server.getHttpPort();
+	JavaScript: return self.location.port;
+
+define ClickEvent as native category with bindings:
+	
+	define category bindings as:
+		JavaScript: Event
+
+@Inlined
+define RadioChangedEvent as native category with bindings:
+
+	define category bindings as:
+		JavaScript: Event
+
+and methods:
+		
+	define getSelectedRadio as method returning Text doing:
+		JavaScript: return this.target.id;
+	
+
+@Inlined
+define InputChangedEvent as native category with bindings:
+
+	define category bindings as:
+		JavaScript: Event
+
+and methods:
+		
+	define getCurrentText as method returning Text doing:
+		JavaScript: return this.target.defaultValue;
+	
+	define getProposedText as method returning Text doing:
+		JavaScript: return this.target.value;
+
+
+define getReactWidgetProps as native method receiving ReactWidget w returning Document doing:
+	JavaScript: return w.props;
+
+
+define getReactWidgetState as native method receiving ReactWidget w returning Document doing:
+	JavaScript: return w.state;
+
+
+define setReactWidgetState as native method receiving ReactWidget w and Document state doing:
+	JavaScript: w.setState(state);
+
+
+define forceReactWidgetRender as native method receiving ReactWidget w doing:
+	JavaScript: w.forceUpdate();
+
+
+define ReactWidget as widget with methods:
+	
+	@Static
+	@Callback
+	define getDerivedStateFromProps as method receiving Document props and Document state doing:
+		return Nothing
+		
+	@Callback
+	define getInitialState as method doing:
+		return {}
+	
+	@Callback
+	define componentDidMount as method doing:
+		// nothing to do		
+
+	@Callback
+	define render as method returning Html doing:
+		return <div>Your widget must override render!</div>		
+
+	@Callback
+	define componentWillUnmount as method doing:
+		// nothing to do		
+
+	@Callback
+	define shouldComponentUpdate as method receiving Document nextProps and Document nextState returning Boolean doing:
+		return true		
+
+	@Callback
+	define getSnapshotBeforeUpdate as method receiving Document prevProps and Document prevState returning Boolean doing:
+		return nothing		
+
+	@Callback
+	define componentDidUpdate as method receiving Document prevProps, Document prevState and Document snapshot returning Boolean doing:
+		// nothing to do
+
+	define getProperties as method doing:
+		return getReactWidgetProps self
+
+	define getState as method doing:
+		return getReactWidgetState self
+	
+	define setState as method receiving Document state doing:
+		setReactWidgetState self with state
+
+	define forceRender as method doing:
+		forceReactWidgetRender self
+define alert as native method receiving Text text doing:
+	JavaScript: alert(text);
+

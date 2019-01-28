@@ -35,3 +35,6 @@ export default class TextResourceType extends ResourceType {
     }
 
 }
+
+// needed by editor frame
+window.TextResourceType = TextResourceType;

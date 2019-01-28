@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mode-prompto.js" type="text/javascript" charset="utf-8"></script>
+        <script src="frame.js" type="text/javascript" charset="utf-8"></script>
+        <link href="frame.css" rel="stylesheet">
+    </head>
+
+    <body onLoad="documentLoaded()">
+        <div class="wrapper" id="prompto-container" style="display: block">
+            <div id="prompto-editor" class="editor"></div>
+        </div>
+        <div class="wrapper" id="resource-container" style="display: none">
+            <div id="resource-editor" class="editor"></div>
+            <div id="resource-content">Resource content</div>
+        </div>
+        <div class="wrapper" id="file-container" style="display: none">
+        </div>
+    </body>
+</html>
+

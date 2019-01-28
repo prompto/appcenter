@@ -15,8 +15,10 @@ export default class MethodProtoItem extends React.Component {
         const proto = this.props.proto;
         const key = "method_" + makeValidId(proto.proto);
         return <ListGroupItem key={key} onClick={this.itemClicked}>
-            {proto.proto.length===0 && <a href="/"><i>{"<no parameter>"}</i></a>}
-            {proto.proto.length>0 && <a href="/">{proto.proto}</a>}
+            { /* eslint-disable-next-line */ }
+            {proto.proto.length===0 && <a href="#"><i>{"<no parameter>"}</i></a>}
+            { /* eslint-disable-next-line */ }
+            {proto.proto.length>0 && <a href="#">{proto.proto}</a>}
             {method.core && <Glyphicon glyph="lock"/>}
         </ListGroupItem>;
     }
