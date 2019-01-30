@@ -291,7 +291,7 @@ export default class EditorPage extends React.Component {
     }
 
     addResource(content, callback) {
-        content.value.module =  { type: "Module", value: { dbId: this.props.projectId.toString() } };
+        content.value.module =  { type: "Module", value: { dbId: this.projectId.toString() } };
         const delta = { added: { resources: [content]}};
         const projectTree = this.elementsNavigator.projectTree;
         if(callback)

@@ -8,7 +8,7 @@ export default class NewTextResourceDialog extends React.Component {
         super(props);
         const cleanName = getParam("name").toLowerCase().replace(/ /g, "-");
         const typeState = this.props.type.getInitialState();
-        this.state = Object.assign(typeState, {show: true, folder: cleanName, name: '', extension: this.props.type.id.toLowerCase(), canCreate: false});
+        this.state = {...typeState, show: true, folder: cleanName, name: '', extension: this.props.type.id.toLowerCase(), canCreate: false};
         this.handleClose = this.handleClose.bind(this);
         this.handleFolder = this.handleFolder.bind(this);
         this.handleName = this.handleName.bind(this);
