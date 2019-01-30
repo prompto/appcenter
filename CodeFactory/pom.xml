@@ -44,7 +44,7 @@
 	<scm>
 		<connection>scm:git:https://github.com/prompto/prompto-factory</connection>
 		<developerConnection>scm:git:https://github.com/prompto/prompto-factory</developerConnection>
-		<tag>Parent-Core-0.0.1</tag>
+		<tag>Parent-Factory</tag>
 		<url>https://github.com/prompto/prompto-java</url>
 	</scm>
 
