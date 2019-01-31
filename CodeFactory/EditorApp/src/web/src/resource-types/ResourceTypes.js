@@ -13,6 +13,7 @@ import ImageType from "./ImageType";
 import AudioType from "./AudioType";
 import VideoType from "./VideoType";
 import OtherType from "./OtherType";
+import TextResourceType from "./TextResourceType";
 
 export const ALL_ELEMENT_TYPES = [
     new PromptoType(),
@@ -35,6 +36,4 @@ export const ID_TO_TYPE_MAP = {};
 ALL_ELEMENT_TYPES.forEach(t => ID_TO_TYPE_MAP[t.id] = t);
 
 export const ALL_RESOURCE_TYPES = ALL_ELEMENT_TYPES.filter(t => t instanceof ResourceType);
-
-// needed by editor frame
-window.ID_TO_TYPE_MAP = ID_TO_TYPE_MAP;
+export const TEXT_RESOURCE_TYPES = ALL_ELEMENT_TYPES.filter(t => t instanceof TextResourceType);

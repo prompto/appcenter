@@ -6,6 +6,7 @@ export default class PageType extends TextResourceType {
 
     constructor() {
         super("page", "Web page", "text/page", "web_page");
+        this.aceMode = "yaml";
     }
 
     createResources(state, addResource, addCode) {

@@ -10,7 +10,8 @@ import NewTextResourceDialog from "./dialogs/NewTextResourceDialog";
 import RenameResourceDialog from "./dialogs/RenameResourceDialog";
 import ContentNavigator from './ContentNavigator';
 import EditorNavBar from './EditorNavBar';
-import EditorFrame from './EditorFrame';
+import PromptoEditor from './PromptoEditor';
+import ResourceEditor from './ResourceEditor';
 
 export default class EditorPage extends React.Component {
 
@@ -21,8 +22,6 @@ export default class EditorPage extends React.Component {
         this.specialTypes = new Set(["prompto", "image", "audio", "video", "other"]);
         this.navBar = null;
         this.elementsNavigator = null;
-        this.editorFrame = null;
-        this.editorWindow = null;
         this.editorDidMount = this.editorDidMount.bind(this);
         this.setEditorDefaults = this.setEditorDefaults.bind(this);
         this.loadCodeInWorker = this.loadCodeInWorker.bind(this);
@@ -36,6 +35,7 @@ export default class EditorPage extends React.Component {
         this.commitFailed = this.commitFailed.bind(this);
         this.commitSuccessful = this.commitSuccessful.bind(this);
         this.resetServer = this.resetServer.bind(this);
+        this.textResourceEdited = this.textResourceEdited.bind(this);
         this.renameResource = this.renameResource.bind(this);
         this.addResource = this.addResource.bind(this);
         this.addCode = this.addCode.bind(this);
@@ -43,9 +43,10 @@ export default class EditorPage extends React.Component {
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
         this.done = this.done.bind(this);
-        this.state = { project: null, editMode: "EDIT", contentType: "Prompto", resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
+        this.promptoEditor = null;
+        this.resourceEditor = null;
+        this.state = { project: null, editMode: "EDIT", content: null, activeContent: null, resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
         this.catalog = new Catalog();
-        this.currentContent = null;
         Mousetrap.bind('command+s', this.commit);
     }
 
@@ -54,7 +55,6 @@ export default class EditorPage extends React.Component {
     }
 
     componentDidMount() {
-        this.editorWindow = document.getElementById("editor").contentWindow;
         this.loadDescription();
         this.loadResources();
         document.title = "Project: " + this.projectName;
@@ -79,9 +79,9 @@ export default class EditorPage extends React.Component {
     commitAndReset() {
         // TODO confirm
         // remember content to restore
-        this.activeContent = this.currentContent;
-        this.setEditorContent({ type: "Prompto" });
-        this.editorWindow.prepareCommit();
+        this.setState({activeContent: this.state.content});
+        this.setEditorContent({type: "Prompto"});
+        // TODO this.editorWindow.prepareCommit();
         this.resetServer();
         return false;
     }
@@ -99,25 +99,25 @@ export default class EditorPage extends React.Component {
                 .catch(error=>this.commitFailed(error));
         } else {
             this.messageArea.setMessage("Nothing to commit!");
-            this.setEditorContent(this.activeContent);
-            this.activeContent = null;
+            this.setEditorContent(this.state.activeContent);
+            this.setState({activeContent: null});
         }
 
     }
 
     commitFailed(failure) {
         this.messageArea.setMessage("Commit failed!");
-        this.editorWindow.commitFailed();
-        this.setEditorContent(this.activeContent);
-        this.activeContent = null;
+        // TODO this.editorWindow.commitFailed();
+        this.setEditorContent(this.state.activeContent);
+        this.setState({activeContent: null});
     }
 
     commitSuccessful(success) {
         this.messageArea.setMessage("Commit ok!");
-        this.editorWindow.commitSuccessful();
+        // TODO this.editorWindow.commitSuccessful();
         this.loadResources(()=>{
-            this.setEditorContent(this.activeContent);
-            this.activeContent = null;
+            this.setEditorContent(this.state.activeContent);
+            this.setState({activeContent: null});
         });
     }
 
@@ -233,8 +233,7 @@ export default class EditorPage extends React.Component {
             <MessageArea ref={ref=>this.messageArea=ref}/>
             <div style={editorStyle}>
                 <ContentNavigator ref={ref=>{if(ref)this.elementsNavigator=ref;}} root={this} catalog={this.catalog}/>
-                { /* always render editor otherwise iframe, ace editor and prompto worker are destroyed */ }
-                <EditorFrame ref={ref=>this.editorFrame=ref} root={this}/>
+                <ResourceEditor ref={ref=>this.resourceEditor=ref} textEdited={this.textResourceEdited} />
                 { showImage && <ImageDisplayer file={this.currentContent.file} source={this.currentContent.data}/> }
                 { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }
                 { this.state.newTextResourceType!=null && <NewTextResourceDialog type={this.state.newTextResourceType} root={this} onClose={()=>this.setState({newTextResourceType: null})}/> }
@@ -248,28 +247,20 @@ export default class EditorPage extends React.Component {
     setEditorContent(content, callback) {
         if(!content)
             content = { type: "Prompto" };
-        if (content === this.currentContent)
+        if (content === this.state.content)
             return;
-        this.saveEditedTextResource();
-        this.currentContent = content;
-        const contentType = ((content || {}).type || "prompto").toLowerCase();
-        this.setState({contentType: contentType}, ()=> {
-            // need to adjust visibility in callback otherwise it is always 'block'
-            const editor = document.getElementById("editor");
-            if (contentType === "image")
-                editor.style.display = "none";
-            else {
-                editor.style.display = "block";
-                this.editorWindow.setContent(content, callback);
-            }
+        this.setState({content: content}, ()=>{
+            if(this.resourceEditor)
+                this.resourceEditor.setContent(content);
+            if(callback)
+                callback();
         });
     }
 
-    saveEditedTextResource() {
-        if(this.currentContent===null || this.specialTypes.has(this.currentContent.type.toLowerCase()))
-            return;
-        this.currentContent.body = this.editorWindow.getResourceBody();
-        this.catalog.setResourceBody(this.currentContent);
+    textResourceEdited(newValue) {
+        const content = {...this.state.content, body: newValue};
+        this.catalog.setResourceBody(content);
+        this.setState({content: content});
     }
 
     destroy() {
@@ -301,7 +292,6 @@ export default class EditorPage extends React.Component {
     }
 
     renameResource(current, newName) {
-        this.saveEditedTextResource();
         this.currentContent = null;
         const renamed = this.catalog.renameResource(current, newName);
         const projectTree = this.elementsNavigator.projectTree;
