@@ -70,7 +70,12 @@ export default class ResourceEditor extends React.Component {
     render() {
         const style = {display: this.state.display};
         return <div className="editor" style={style} >
-                <AceEditor ref={ref=>this.aceEditor=ref} name="resource-editor" theme="eclipse" mode="text" editorProps={{ $blockScrolling: Infinity }} value={this.state.value} onChange={this.textEdited}/>
+                <div id="resource-editor-wrapper">
+                    <AceEditor ref={ref=>this.aceEditor=ref} name="resource-editor"
+                               theme="eclipse" mode="text" onChange={this.textEdited}
+                               width="100%" height="100%"
+                               editorProps={{ $blockScrolling: Infinity }} value={this.state.value} />
+                </div>
                 <div id="resource-name">{this.state.name}</div>
             </div>;
     }
