@@ -1,4 +1,4 @@
-import { print, getParam } from "./code/Utils";
+import { print, getParam } from "./utils/Utils";
 import React from 'react';
 import { Navbar, Nav, NavItem, MenuItem, DropdownButton, ButtonGroup, Button } from 'react-bootstrap';
 import AuthenticationSettingsDialog from './dialogs/AuthenticationSettingsDialog';

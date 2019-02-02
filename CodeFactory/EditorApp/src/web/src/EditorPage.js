@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React from 'react';
 import Mousetrap from 'mousetrap';
-import { getParam } from './code/Utils';
+import { getParam } from './utils/Utils';
 import Catalog from './code/Catalog';
 import MessageArea from './components/MessageArea';
 import NewFileResourceDialog from "./dialogs/NewFileResourceDialog";
@@ -233,6 +233,7 @@ export default class EditorPage extends React.Component {
             <MessageArea ref={ref=>this.messageArea=ref}/>
             <div style={editorStyle}>
                 <ContentNavigator ref={ref=>{if(ref)this.elementsNavigator=ref;}} root={this} catalog={this.catalog}/>
+                <PromptoEditor ref={ref=>this.promptoEditor=ref} />
                 <ResourceEditor ref={ref=>this.resourceEditor=ref} textEdited={this.textResourceEdited} />
                 <BinaryEditor ref={ref=>this.binaryEditor=ref} /> }
                 { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }
@@ -250,6 +251,8 @@ export default class EditorPage extends React.Component {
         if (content === this.state.content)
             return;
         this.setState({content: content}, ()=>{
+            if(this.promptoEditor)
+                this.promptoEditor.setContent(content);
             if(this.resourceEditor)
                 this.resourceEditor.setContent(content);
             if(this.binaryEditor)
