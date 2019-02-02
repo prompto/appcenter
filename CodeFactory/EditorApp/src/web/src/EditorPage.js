@@ -4,7 +4,6 @@ import Mousetrap from 'mousetrap';
 import { getParam } from './code/Utils';
 import Catalog from './code/Catalog';
 import MessageArea from './components/MessageArea';
-import ImageDisplayer from './components/ImageDisplayer';
 import NewFileResourceDialog from "./dialogs/NewFileResourceDialog";
 import NewTextResourceDialog from "./dialogs/NewTextResourceDialog";
 import RenameResourceDialog from "./dialogs/RenameResourceDialog";
@@ -12,6 +11,7 @@ import ContentNavigator from './ContentNavigator';
 import EditorNavBar from './EditorNavBar';
 import PromptoEditor from './PromptoEditor';
 import ResourceEditor from './ResourceEditor';
+import BinaryEditor from './BinaryEditor';
 
 export default class EditorPage extends React.Component {
 
@@ -45,6 +45,7 @@ export default class EditorPage extends React.Component {
         this.done = this.done.bind(this);
         this.promptoEditor = null;
         this.resourceEditor = null;
+        this.imageDisplayer = null;
         this.state = { project: null, editMode: "EDIT", content: null, activeContent: null, resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
         this.catalog = new Catalog();
         Mousetrap.bind('command+s', this.commit);
@@ -227,14 +228,13 @@ export default class EditorPage extends React.Component {
     render() {
         const editorStyle = { display: this.state.editMode==="EDIT" ? "block" : "none"};
         const outputStyle = { display: this.state.editMode==="EDIT" ? "none" : "block"};
-        const showImage = this.state.contentType==="image";
         return <div>
             <EditorNavBar ref={ref=>this.navBar=ref} root={this}/>
             <MessageArea ref={ref=>this.messageArea=ref}/>
             <div style={editorStyle}>
                 <ContentNavigator ref={ref=>{if(ref)this.elementsNavigator=ref;}} root={this} catalog={this.catalog}/>
                 <ResourceEditor ref={ref=>this.resourceEditor=ref} textEdited={this.textResourceEdited} />
-                { showImage && <ImageDisplayer file={this.currentContent.file} source={this.currentContent.data}/> }
+                <BinaryEditor ref={ref=>this.binaryEditor=ref} /> }
                 { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }
                 { this.state.newTextResourceType!=null && <NewTextResourceDialog type={this.state.newTextResourceType} root={this} onClose={()=>this.setState({newTextResourceType: null})}/> }
                 { this.state.resourceToRename!=null && <RenameResourceDialog resource={this.state.resourceToRename} root={this} onClose={()=>this.setState({resourceToRename: null})}/>}
@@ -252,6 +252,8 @@ export default class EditorPage extends React.Component {
         this.setState({content: content}, ()=>{
             if(this.resourceEditor)
                 this.resourceEditor.setContent(content);
+            if(this.binaryEditor)
+                this.binaryEditor.setContent(content);
             if(callback)
                 callback();
         });
