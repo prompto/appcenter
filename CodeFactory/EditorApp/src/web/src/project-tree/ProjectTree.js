@@ -93,7 +93,7 @@ export default class ProjectTree extends React.Component {
     }
 
     selectContent(content, callback) {
-        this.expandContent(content, callback, false);
+        this.expandContent(content, callback, true);
     }
 
     expandContent(content, callback, simulateClick) {
