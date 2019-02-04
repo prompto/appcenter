@@ -2,11 +2,10 @@ import Sender from '../ace/Sender';
 import PromptoWorker from './PromptoWorker';
 
 self.Honey = {'requirePath': ['..']}; // walk up to js folder
-importScripts("/js/lib/require.js", "/js/lib/prompto.core.bundle.js");
+importScripts("/js/lib/require.js", "/js/lib/prompto.core.bundle.js", "js/AnnotatingErrorListener.js");
 
 var sender = new Sender();
 var worker = new PromptoWorker(sender);
-
 
 onmessage = function(e) {
     var msg = e.data;

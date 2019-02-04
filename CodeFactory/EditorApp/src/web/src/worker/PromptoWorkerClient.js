@@ -1,5 +1,6 @@
 // eslint-disable-next-line
 import PromptoWorkerThread from "worker-loader!./PromptoWorkerThread";
+import Range from "../ace/Range";
 
 /* ***** BEGIN LICENSE BLOCK *****
  * Distributed under the BSD license:
@@ -84,8 +85,8 @@ export default class PromptoWorkerClient extends window.ace.acequire("ace/worker
         e.data.forEach( a => {
             const range = new Range(a.row, a.column, a.endRow, a.endColumn);
             const marker = this.getSession().addMarker(range, "ace_error-word", "text", true);
-            this.markers.push(marker);
-        });
+            this.$markers.push(marker);
+        }, this);
     }
 
     onTerminate() {

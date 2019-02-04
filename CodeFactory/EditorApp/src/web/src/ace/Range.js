@@ -28,8 +28,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-"use strict";
-
 /**
  * This object is used in various places to indicate a region within the editor. To better visualize how this works, imagine a rectangle. Each quadrant of the rectangle is analogous to a range, as ranges contain a starting row and starting column, and an ending row, and ending column.
  * @class Range
@@ -98,7 +96,7 @@ export default class Range {
      **/
 
     contains(row, column) {
-        return this.compare(row, column) == 0;
+        return this.compare(row, column) === 0;
     }
 
     /**
@@ -121,22 +119,22 @@ export default class Range {
             start = range.start;
 
         cmp = this.compare(end.row, end.column);
-        if (cmp == 1) {
+        if (cmp === 1) {
             cmp = this.compare(start.row, start.column);
-            if (cmp == 1) {
+            if (cmp === 1) {
                 return 2;
-            } else if (cmp == 0) {
+            } else if (cmp === 0) {
                 return 1;
             } else {
                 return 0;
             }
-        } else if (cmp == -1) {
+        } else if (cmp === -1) {
             return -2;
         } else {
             cmp = this.compare(start.row, start.column);
-            if (cmp == -1) {
+            if (cmp === -1) {
                 return -1;
-            } else if (cmp == 1) {
+            } else if (cmp === 1) {
                 return 42;
             } else {
                 return 0;
@@ -175,7 +173,7 @@ export default class Range {
      * @related Range.comparePoint
      **/
     containsRange(range) {
-        return this.comparePoint(range.start) == 0 && this.comparePoint(range.end) == 0;
+        return this.comparePoint(range.start) === 0 && this.comparePoint(range.end) === 0;
     }
 
     /**
@@ -186,7 +184,7 @@ export default class Range {
      **/
     intersects(range) {
         var cmp = this.compareRange(range);
-        return (cmp == -1 || cmp == 0 || cmp == 1);
+        return (cmp === -1 || cmp === 0 || cmp === 1);
     }
 
     /**
@@ -197,7 +195,7 @@ export default class Range {
      * @returns {Boolean}
      **/
     isEnd(row, column) {
-        return this.end.row == row && this.end.column == column;
+        return this.end.row === row && this.end.column === column;
     }
 
     /**
@@ -208,7 +206,7 @@ export default class Range {
      * @returns {Boolean}
      **/
     isStart(row, column) {
-        return this.start.row == row && this.start.column == column;
+        return this.start.row === row && this.start.column === column;
     }
 
     /**
@@ -218,7 +216,7 @@ export default class Range {
      *
      **/
     setStart(row, column) {
-        if (typeof row == "object") {
+        if (typeof row === "object") {
             this.start.column = row.column;
             this.start.row = row.row;
         } else {
@@ -234,7 +232,7 @@ export default class Range {
      *
      **/
     setEnd(row, column) {
-        if (typeof row == "object") {
+        if (typeof row === "object") {
             this.end.column = row.column;
             this.end.row = row.row;
         } else {
@@ -253,7 +251,7 @@ export default class Range {
      * @related Range.compare
      **/
     inside(row, column) {
-        if (this.compare(row, column) == 0) {
+        if (this.compare(row, column) === 0) {
             if (this.isEnd(row, column) || this.isStart(row, column)) {
                 return false;
             } else {
@@ -272,7 +270,7 @@ export default class Range {
      * @related Range.compare
      **/
     insideStart(row, column) {
-        if (this.compare(row, column) == 0) {
+        if (this.compare(row, column) === 0) {
             if (this.isEnd(row, column)) {
                 return false;
             } else {
@@ -292,7 +290,7 @@ export default class Range {
      *
      **/
     insideEnd(row, column) {
-        if (this.compare(row, column) == 0) {
+        if (this.compare(row, column) === 0) {
             if (this.isStart(row, column)) {
                 return false;
             } else {
@@ -364,7 +362,7 @@ export default class Range {
      *
      **/
     compareStart(row, column) {
-        if (this.start.row == row && this.start.column == column) {
+        if (this.start.row === row && this.start.column === column) {
             return -1;
         } else {
             return this.compare(row, column);
@@ -391,7 +389,7 @@ export default class Range {
      * Otherwise, it returns 1
      */
     compareEnd(row, column) {
-        if (this.end.row == row && this.end.column == column) {
+        if (this.end.row === row && this.end.column === column) {
             return 1;
         } else {
             return this.compare(row, column);
@@ -412,9 +410,9 @@ export default class Range {
      *
      **/
     compareInside(row, column) {
-        if (this.end.row == row && this.end.column == column) {
+        if (this.end.row === row && this.end.column === column) {
             return 1;
-        } else if (this.start.row == row && this.start.column == column) {
+        } else if (this.start.row === row && this.start.column === column) {
             return -1;
         } else {
             return this.compare(row, column);
@@ -430,15 +428,16 @@ export default class Range {
      * @returns {Range}
      **/
     clipRows(firstRow, lastRow) {
+        var start, end;
         if (this.end.row > lastRow)
-            var end = {row: lastRow + 1, column: 0};
+            end = {row: lastRow + 1, column: 0};
         else if (this.end.row < firstRow)
-            var end = {row: firstRow, column: 0};
+            end = {row: firstRow, column: 0};
 
         if (this.start.row > lastRow)
-            var start = {row: lastRow + 1, column: 0};
+            start = {row: lastRow + 1, column: 0};
         else if (this.start.row < firstRow)
-            var start = {row: firstRow, column: 0};
+            start = {row: firstRow, column: 0};
 
         return Range.fromPoints(start || this.start, end || this.end);
     }
@@ -454,9 +453,9 @@ export default class Range {
     extend(row, column) {
         var cmp = this.compare(row, column);
 
-        if (cmp == 0)
+        if (cmp === 0)
             return this;
-        else if (cmp == -1)
+        else if (cmp === -1)
             var start = {row: row, column: column};
         else
             var end = {row: row, column: column};
@@ -493,7 +492,7 @@ export default class Range {
      * @returns {Range}
      **/
     collapseRows() {
-        if (this.end.column == 0)
+        if (this.end.column === 0)
             return new Range(this.start.row, 0, Math.max(this.start.row, this.end.row - 1), 0);
         else
             return new Range(this.start.row, 0, this.end.row, 0);

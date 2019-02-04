@@ -29,6 +29,21 @@ export default class PromptoWorker extends Mirror {
         });
     }
 
+    onUpdate() {
+        var value = this.doc.getValue();
+        var errorListener = new AnnotatingErrorListener();
+        if(value === this.$value && !this.$selectedContent)
+            this.$repo.handleSetContent(value, this.$dialect, errorListener);
+        else {
+            const catalog = this.$repo.handleEditContent(value, this.$dialect, errorListener, this.$selectedContent);
+            delete this.$selectedContent;
+            if (catalog)
+                this.sender.emit("catalogUpdated", catalog);
+        }
+        this.$value = value;
+        this.sender.emit("annotate", errorListener.problems);
+    }
+
     setDialect(dialect) {
         var old = this.$dialect;
         this.$dialect = dialect;
@@ -53,14 +68,14 @@ export default class PromptoWorker extends Mirror {
         // remember value if it does not result from an edit
         if(content.creating) {
             this.$value = "";
-            this.$select = false;
+            this.$selectedContent = false;
             this.$core = false;
         } else if(content.name) {
             this.$value = this.$repo.getDeclarationBody(content, this.$dialect);
             this.$core = content.core || false;
         } else {
             this.$value = content.body || "";
-            this.$select = (content.body || null) !== null;
+            this.$selectedContent = (content.body || null) !== null;
             this.$core = false;
         }
         this.sender.emit("value", this.$value);

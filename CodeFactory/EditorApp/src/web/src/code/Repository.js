@@ -1,4 +1,6 @@
-import { parse, unparse } from './Utils';
+import { parse, unparse, newParser } from './Utils';
+import Codebase from "./Codebase";
+import Delta from "./Delta";
 
 /* a class to maintain an up-to-date copy of the repository */
 /* which can be used to detect required changes in the UI, and deltas to commit */
@@ -232,7 +234,7 @@ export default class Repository {
 
 
     handleSetContent = function (content, dialect, listener) {
-        var decls = codeutils.parse(content, dialect, listener);
+        var decls = parse(content, dialect, listener);
         var saved_listener = this.projectContext.problemListener;
         try {
             this.projectContext.problemListener = listener;
@@ -248,9 +250,9 @@ export default class Repository {
     handleEditContent = function (content, dialect, listener, select) {
         // analyze what has changed, we'll ignore errors but let's catch them using a temporary listener
         var previousListener = Object.create(listener);
-        var old_decls = codeutils.parse(this.lastSuccess, this.lastDialect, previousListener);
+        var old_decls = parse(this.lastSuccess, this.lastDialect, previousListener);
         // always annotate new content
-        var parser = codeutils.newParser(content, dialect, listener);
+        var parser = newParser(content, dialect, listener);
         var new_decls = parser.parse();
         // only update codebase if syntax is correct
         if (listener.problems.length === 0) {

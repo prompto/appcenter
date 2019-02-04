@@ -131,3 +131,7 @@
     width: 664px;
 }
 
+.ace_error-word {
+    position: absolute;
+    border-bottom: 2px dotted red;
+}
