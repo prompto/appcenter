@@ -67,4 +67,9 @@ export default class PromptoMode extends window.ace.acequire("ace/mode/text")
             this.$editor.catalogUpdated(catalog);
         }
 
-}
+        onCommitPrepared(declarations) {
+            this.$editor.commitPrepared(declarations);
+        }
+
+
+    }

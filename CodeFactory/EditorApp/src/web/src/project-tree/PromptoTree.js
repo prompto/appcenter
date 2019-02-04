@@ -13,7 +13,7 @@ export default class PromptoTree extends GroupTree {
 
     renderItem(item) {
         const key = this.props.type + "_" + makeValidId(item.name);
-        return <PromptoItem  ref={this.addChild} title key={key} subType={this.props.subType} item={item} root={this.props.root}/>;
+        return <PromptoItem  ref={this.addChild} parent={this} title key={key} subType={this.props.subType} item={item} root={this.props.root}/>;
     }
 
 

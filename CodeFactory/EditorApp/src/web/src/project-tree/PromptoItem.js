@@ -9,6 +9,10 @@ export default class PromptoItem extends React.Component {
         this.expandContent = this.expandContent.bind(this);
     }
 
+    componentWillUnmount() {
+        this.props.parent.removeChild(this);
+    }
+
     render() {
         return <ListGroupItem onClick={this.itemClicked}>
             { /* eslint-disable-next-line */ }

@@ -34,9 +34,7 @@ export default class PromptoEditor extends React.Component {
     }
 
     setProject(dbId, loadDependencies) {
-        var mode = this.getSession().getMode();
-        mode.setProject(dbId, loadDependencies);
-
+        this.getSession().getMode().setProject(dbId, loadDependencies);
     }
 
     setContent(content) {
@@ -52,11 +50,26 @@ export default class PromptoEditor extends React.Component {
 
     codeEdited(newValue) {
         this.setState({value: newValue});
-        // this.props.codeEdited(newValue);
     }
 
     catalogUpdated(catalog) {
         this.props.catalogUpdated(catalog);
+    }
+
+    prepareCommit() {
+        this.getSession().getMode().prepareCommit();
+    }
+
+    commitPrepared(declarations) {
+        this.props.commitPrepared(declarations);
+    }
+
+    commitFailed() {
+        this.getSession().getMode().commitFailed();
+    }
+
+    commitSuccessful() {
+        this.getSession().getMode().commitSuccessful();
     }
 
     render() {

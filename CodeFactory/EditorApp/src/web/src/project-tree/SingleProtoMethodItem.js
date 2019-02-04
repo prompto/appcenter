@@ -9,6 +9,10 @@ export default class SingleProtoMethodItem extends React.Component {
         this.expandContent = this.expandContent.bind(this);
     }
 
+    componentWillUnmount() {
+        this.props.parent.removeChild(this);
+    }
+
     render() {
         const id = "method_" + this.props.method.name;
         return <ListGroupItem id={id} onClick={this.itemClicked}>
@@ -17,16 +21,24 @@ export default class SingleProtoMethodItem extends React.Component {
         </ListGroupItem>;
     }
 
-
     itemClicked(e) {
         e.stopPropagation();
+        this.select();
+    }
+
+    select() {
         const method = this.props.method;
         const content = { type: "Prompto", subType: "method", name: method.name, proto: method.proto, core: method.core, main: method.main };
         this.props.root.setEditorContent(content);
     }
 
     expandContent(content, simulateClick) {
-        return false; // TODO
+        if(content.type==="Prompto" && content.value.name===this.props.method.name){
+            if(simulateClick)
+                this.select();
+            return true;
+        } else
+            return false;
     }
 
 }

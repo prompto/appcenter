@@ -21,7 +21,7 @@ export default class EditorPage extends React.Component {
         this.projectName = getParam("name");
         this.specialTypes = new Set(["prompto", "image", "audio", "video", "other"]);
         this.navBar = null;
-        this.elementsNavigator = null;
+        this.contentNavigator = null;
         this.loadDescription = this.loadDescription.bind(this);
         this.loadResources = this.loadResources.bind(this);
         this.resourcesLoaded = this.resourcesLoaded.bind(this);
@@ -43,7 +43,7 @@ export default class EditorPage extends React.Component {
         this.promptoEditor = null;
         this.resourceEditor = null;
         this.imageDisplayer = null;
-        this.state = { project: null, editMode: "EDIT", content: null, activeContent: null, resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
+        this.state = { project: null, editMode: "EDIT", content: null, resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
         this.catalog = new Catalog();
         Mousetrap.bind('command+s', this.commit);
     }
@@ -61,17 +61,13 @@ export default class EditorPage extends React.Component {
 
     revert() {
         // TODO confirm
-        this.setEditorContent({ type: "Prompto" });
         this.loadResources();
         this.loadCode(false);
     }
 
     commitAndReset() {
         // TODO confirm
-        // remember content to restore
-        this.setState({activeContent: this.state.content});
-        this.setEditorContent({type: "Prompto"});
-        // TODO this.editorWindow.prepareCommit();
+        this.promptoEditor.prepareCommit();
         this.resetServer();
         return false;
     }
@@ -89,26 +85,19 @@ export default class EditorPage extends React.Component {
                 .catch(error=>this.commitFailed(error));
         } else {
             this.messageArea.setMessage("Nothing to commit!");
-            this.setEditorContent(this.state.activeContent);
-            this.setState({activeContent: null});
         }
 
     }
 
     commitFailed(failure) {
         this.messageArea.setMessage("Commit failed!");
-        // TODO this.editorWindow.commitFailed();
-        this.setEditorContent(this.state.activeContent);
-        this.setState({activeContent: null});
+        this.promptoEditor.commitFailed();
     }
 
     commitSuccessful(success) {
         this.messageArea.setMessage("Commit ok!");
-        // TODO this.editorWindow.commitSuccessful();
-        this.loadResources(()=>{
-            this.setEditorContent(this.state.activeContent);
-            this.setState({activeContent: null});
-        });
+        this.promptoEditor.commitSuccessful();
+        // this.loadResources();
     }
 
     resetServer() {
@@ -159,14 +148,12 @@ export default class EditorPage extends React.Component {
 
     catalogUpdated(delta, callback) {
         this.catalog.applyDelta(delta);
-        var kallback = callback;
+        let content = null;
         if(delta.select)
-            kallback = () => {
-                this.elementsNavigator.projectTree.selectContent({type: "Prompto", value: { name: delta.select }});
-                if (callback)
-                    callback();
-            };
-        this.elementsNavigator.setState({catalog: this.catalog}, kallback);
+            content = {type: "Prompto", value: {name: delta.select}};
+        else if(delta.project && this.state.content)
+            content = {type: this.state.content.type, value: {subType: this.state.content.subType, name: this.state.content.name}};
+        this.setCatalog(this.catalog, content, callback);
     }
 
     loadCode(loadDependencies) {
@@ -221,8 +208,8 @@ export default class EditorPage extends React.Component {
             <EditorNavBar ref={ref=>this.navBar=ref} root={this}/>
             <MessageArea ref={ref=>this.messageArea=ref}/>
             <div style={editorStyle}>
-                <ContentNavigator ref={ref=>{if(ref)this.elementsNavigator=ref;}} root={this} catalog={this.catalog}/>
-                <PromptoEditor ref={ref=>this.promptoEditor=ref} catalogUpdated={this.catalogUpdated}/>
+                <ContentNavigator ref={ref=>{if(ref)this.contentNavigator=ref;}} root={this} catalog={this.catalog}/>
+                <PromptoEditor ref={ref=>this.promptoEditor=ref} catalogUpdated={this.catalogUpdated} projectUpdated={this.projectUpdated} commitPrepared={this.commitPrepared}/>
                 <ResourceEditor ref={ref=>this.resourceEditor=ref} textEdited={this.textResourceEdited} />
                 <BinaryEditor ref={ref=>this.binaryEditor=ref} /> }
                 { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }
@@ -249,6 +236,14 @@ export default class EditorPage extends React.Component {
             if(callback)
                 callback();
         });
+    }
+
+    setCatalog(catalog, content, callback) {
+        this.setState({catalog: catalog}, () => {
+            this.contentNavigator.projectTree.setContentToSelect(content);
+            if(callback)
+                callback();
+        })
     }
 
     textResourceEdited(newValue) {
@@ -278,7 +273,7 @@ export default class EditorPage extends React.Component {
     addResource(content, callback) {
         content.value.module =  { type: "Module", value: { dbId: this.projectId.toString() } };
         const delta = { added: { resources: [content]}};
-        const projectTree = this.elementsNavigator.projectTree;
+        const projectTree = this.contentNavigator.projectTree;
         if(callback)
             this.catalogUpdated(delta, () => projectTree.showContent(content, callback));
         else
@@ -288,8 +283,7 @@ export default class EditorPage extends React.Component {
     renameResource(current, newName) {
         this.currentContent = null;
         const renamed = this.catalog.renameResource(current, newName);
-        const projectTree = this.elementsNavigator.projectTree;
-        this.elementsNavigator.setState({catalog: this.catalog}, () => projectTree.selectContent(renamed));
+        this.setCatalog(this.catalog, renamed);
     }
 
     addCode(content, code, dialect) {

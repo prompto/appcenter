@@ -10,6 +10,10 @@ export default class MethodProtoItem extends React.Component {
         this.expandContent = this.expandContent.bind(this);
     }
 
+    componentWillUnmount() {
+        this.props.parent.removeChild(this);
+    }
+
     render() {
         const method = this.props.method;
         const proto = this.props.proto;

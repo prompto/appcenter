@@ -42,7 +42,8 @@ export default class Repository {
     publishProject() {
         return {
             removed: {},
-            added: this.projectContext.getLocalCatalog()
+            added: this.projectContext.getLocalCatalog(),
+            project: true
         };
     };
 

@@ -13,7 +13,7 @@ export default class ProjectTree extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { showCodeItems: true, showResourceItems: true };
+        this.state = { showCodeItems: true, showResourceItems: true, contentToSelect: null };
         this.toggleCodeItems = this.toggleCodeItems.bind(this);
         this.toggleResourceItems = this.toggleResourceItems.bind(this);
         this.selectContent = this.selectContent.bind(this);
@@ -34,6 +34,19 @@ export default class ProjectTree extends React.Component {
     addResourceRoot(ref) {
         if(ref)
             this.resourceRoots.add(ref);
+    }
+
+
+    setContentToSelect(content) {
+        this.setState({contentToSelect: content});
+    }
+
+    componentDidUpdate() {
+        if(this.state.contentToSelect) {
+            if(!this.selectContent(this.state.contentToSelect))
+                this.props.root.setEditorContent({type: "Prompto"});
+            this.setState({contentToSelect: null});
+        }
     }
 
     render() {
@@ -89,18 +102,22 @@ export default class ProjectTree extends React.Component {
     }
 
     showContent(content, callback) {
-        this.expandContent(content, callback, false);
+        return this.expandContent(content, callback, false);
     }
 
     selectContent(content, callback) {
-        this.expandContent(content, callback, true);
+        return this.expandContent(content, callback, true);
     }
 
     expandContent(content, callback, simulateClick) {
-        if (this.expandContentInRoots(this.resourceRoots, content, simulateClick))
+        if (this.expandContentInRoots(this.resourceRoots, content, simulateClick)) {
             this.setState({showResourceItems: true}, callback);
-        else if(this.expandContentInRoots(this.codeRoots, content, simulateClick))
+            return true;
+        } else if(this.expandContentInRoots(this.codeRoots, content, simulateClick)) {
             this.setState({showCodeItems: true}, callback);
+            return true;
+        } else
+            return false;
     }
 
     expandContentInRoots(roots, content, simulateClick) {

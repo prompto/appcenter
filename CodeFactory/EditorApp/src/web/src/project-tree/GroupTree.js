@@ -8,12 +8,18 @@ export default class GroupTree extends React.Component {
         this.state = { showItems: false };
         this.children = new Set();
         this.addChild = this.addChild.bind(this);
+        this.removeChild = this.removeChild.bind(this);
         this.toggleTreeNode = this.toggleTreeNode.bind(this);
     }
 
     addChild(ref) {
         if(ref)
             this.children.add(ref);
+    }
+
+    removeChild(ref) {
+        if(ref)
+            this.children.delete(ref);
     }
 
     render() {

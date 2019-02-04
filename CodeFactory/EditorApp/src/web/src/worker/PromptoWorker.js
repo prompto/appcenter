@@ -198,4 +198,24 @@ export default class PromptoWorker extends Mirror {
         xhr.send(null);
     }
 
+    prepareCommit() {
+        const edited = this.$repo.prepareCommit();
+        this.sender.emit("commitPrepared", edited);
+    }
+
+    commitFailed() {
+        // keep state as is
+    }
+
+    commitSuccessful() {
+        this.fetchProjectDeclarations(this.$projectId, response => {
+            if (response.error)
+                ; // TODO something
+            else {
+                const declarations = response.data.value;
+                this.$repo.registerCommitted(declarations);
+             }
+        });
+    }
+
 }

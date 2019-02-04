@@ -13,7 +13,7 @@ export default class BinaryResourceTree extends GroupTree {
 
     renderItem(item) {
         const key = item.value.mimeType.replace("/", "_") + "_" + makeValidId(item.value.name);
-        return <BinaryResourceItem  ref={this.addChild} title key={key} type={this.props.type} resource={item} root={this.props.root}/>
+        return <BinaryResourceItem  ref={this.addChild} parent={this} title key={key} type={this.props.type} resource={item} root={this.props.root}/>
     }
 
 

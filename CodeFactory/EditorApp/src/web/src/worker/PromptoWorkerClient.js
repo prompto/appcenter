@@ -135,8 +135,7 @@ export default class PromptoWorkerClient extends window.ace.acequire("ace/worker
     }
 
     onCommitPrepared(v) {
-        console.log("onDone");
-        // parent.onCommitPrepared(v.data);
+        this.getSession().getMode().onCommitPrepared(v.data);
     }
 
     onRunnablePageFetched(v) {

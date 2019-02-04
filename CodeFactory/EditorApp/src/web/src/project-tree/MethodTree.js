@@ -16,8 +16,8 @@ export default class MethodTree extends GroupTree {
     renderItem(method) {
         const key = this.props.type + "_" + makeValidId(method.name);
         if(method.protos.length>1)
-            return <MultiProtoMethodItem  ref={this.addChild} title key={key} method={method} root={this.props.root}/>;
+            return <MultiProtoMethodItem  ref={this.addChild} parent={this} title key={key} method={method} root={this.props.root}/>;
         else
-            return <SingleProtoMethodItem  ref={this.addChild} title key={key} method={method} root={this.props.root}/>;
+            return <SingleProtoMethodItem  ref={this.addChild} parent={this} title key={key} method={method} root={this.props.root}/>;
     }
 }

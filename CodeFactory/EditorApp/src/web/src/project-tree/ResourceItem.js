@@ -10,6 +10,10 @@ export default class ResourceItem extends React.Component {
         this.handleDocumentClick = this.handleDocumentClick.bind(this);
     }
 
+    componentWillUnmount() {
+        this.props.parent.removeChild(this);
+    }
+
     expandContent(content, simulateClick) {
         if(content.type===this.props.resource.type && content.value.name===this.props.resource.value.name){
             if(simulateClick)

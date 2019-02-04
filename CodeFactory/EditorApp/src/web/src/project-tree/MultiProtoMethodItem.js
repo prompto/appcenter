@@ -12,11 +12,21 @@ export default class MultiProtoMethodItem extends React.Component {
         this.expandContent = this.expandContent.bind(this);
         this.children = new Set();
         this.addChild = this.addChild.bind(this);
+        this.removeChild = this.removeChild.bind(this);
+    }
+
+    componentWillUnmount() {
+        this.props.parent.removeChild(this);
     }
 
     addChild(ref) {
         if(ref)
             this.children.add(ref);
+    }
+
+    removeChild(ref) {
+        if(ref)
+            this.children.delete(ref);
     }
 
     render() {
@@ -28,7 +38,7 @@ export default class MultiProtoMethodItem extends React.Component {
                     {
                         method.protos.map(proto => {
                             const key = "method_" + makeValidId(proto.proto);
-                            return <MethodProtoItem ref={this.addChild} title key={key} method={method} proto={proto} root={this.props.root}/>;
+                            return <MethodProtoItem ref={this.addChild} parent={this} title key={key} method={method} proto={proto} root={this.props.root}/>;
                         })
                     }
                 </ListGroup>
