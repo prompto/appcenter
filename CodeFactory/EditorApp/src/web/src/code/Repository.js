@@ -1,4 +1,4 @@
-import { parse, unparse, newParser } from './Utils';
+import { parse, unparse, newParser, translate } from './Utils';
 import Codebase from "./Codebase";
 import Delta from "./Delta";
 
@@ -213,17 +213,17 @@ export default class Repository {
     };
 
 
-    translate = function (data, from, to) {
-        return codeutils.translate(this.projectContext, data, from, to);
-    };
+    translate(data, from, to) {
+        return translate(this.projectContext, data, from, to);
+    }
 
 
-    handleDestroyed = function (content) {
+    handleDestroyed(content) {
         var id = this.idFromContent(content);
         this.registerDestroyed(id);
         var obj_status = this.statuses[id];
         if (obj_status && obj_status.editStatus === "DELETED") {
-            var decls = codeutils.parse(obj_status.stuff.value.body, obj_status.stuff.value.dialect);
+            var decls = parse(obj_status.stuff.value.body, obj_status.stuff.value.dialect);
             decls[0].unregister(this.projectContext);
             var delta = new Delta();
             delta.removed = new Codebase(decls, this.librariesContext);
@@ -234,7 +234,7 @@ export default class Repository {
     };
 
 
-    handleSetContent = function (content, dialect, listener) {
+    handleSetContent(content, dialect, listener) {
         var decls = parse(content, dialect, listener);
         var saved_listener = this.projectContext.problemListener;
         try {
@@ -248,7 +248,7 @@ export default class Repository {
     };
 
 
-    handleEditContent = function (content, dialect, listener, select) {
+    handleEditContent(content, dialect, listener, select) {
         // analyze what has changed, we'll ignore errors but let's catch them using a temporary listener
         var previousListener = Object.create(listener);
         var old_decls = parse(this.lastSuccess, this.lastDialect, previousListener);
@@ -268,7 +268,7 @@ export default class Repository {
     };
 
 
-    updateCodebase = function (old_decls, new_decls, parser, dialect, listener) {
+    updateCodebase(old_decls, new_decls, parser, dialect, listener) {
         var delta = new Delta();
         delta.removed = new Codebase(old_decls, this.projectContext, this.librariesContext);
         delta.added = new Codebase(new_decls, this.projectContext, this.librariesContext);
@@ -335,7 +335,7 @@ export default class Repository {
             return null; // no UI update required
     };
 
-    updateAppContext = function (old_decls, new_decls, listener) {
+    updateAppContext(old_decls, new_decls, listener) {
         old_decls.unregister(this.projectContext); // TODO: manage damage on objects referring to these
         new_decls.unregister(this.projectContext); // avoid duplicate declaration errors
         var saved_listener = this.projectContext.problemListener;

@@ -14,6 +14,7 @@ export default class PromptoEditor extends React.Component {
         this.getSession = this.getSession.bind(this);
         this.setContent = this.setContent.bind(this);
         this.codeEdited = this.codeEdited.bind(this);
+        this.commitAndReset = this.commitAndReset.bind(this);
         this.state = {display: "block", value: ""};
     }
 
@@ -31,6 +32,21 @@ export default class PromptoEditor extends React.Component {
         const session = this.getSession();
         session.setMode(new PromptoMode(this));
         session.setUseWorker(true);
+        this.getEditor().commands.addCommand({
+            name: "commit",
+            bindKey: { win: "Ctrl-S", mac: "Command-S" },
+            exec: this.commitAndReset
+        });
+    }
+
+    setDialect(dialect) {
+        this.getSession().getMode().setDialect(dialect);
+    }
+
+
+    commitAndReset() {
+        this.props.commitAndReset();
+        return true;
     }
 
     setProject(dbId, loadDependencies) {
@@ -46,6 +62,14 @@ export default class PromptoEditor extends React.Component {
             session.setScrollTop(0);
             this.getEditor().setReadOnly(content ? content.core : false);
         }
+    }
+
+    runMethod(content, runMode) {
+        this.getSession().getMode().runMethod(content, runMode);
+    }
+
+    done() {
+        this.props.done();
     }
 
     codeEdited(newValue) {

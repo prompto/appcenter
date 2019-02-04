@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React from 'react';
 import Mousetrap from 'mousetrap';
-import { getParam } from './utils/Utils';
+import { getParam, print } from './utils/Utils';
 import Catalog from './code/Catalog';
 import MessageArea from './components/MessageArea';
 import NewFileResourceDialog from "./dialogs/NewFileResourceDialog";
@@ -12,6 +12,7 @@ import EditorNavBar from './EditorNavBar';
 import PromptoEditor from './prompto-editor/PromptoEditor';
 import ResourceEditor from './resource-editors/ResourceEditor';
 import BinaryEditor from './resource-editors/BinaryEditor';
+import Runner from './run/Runner';
 
 export default class EditorPage extends React.Component {
 
@@ -25,6 +26,7 @@ export default class EditorPage extends React.Component {
         this.loadDescription = this.loadDescription.bind(this);
         this.loadResources = this.loadResources.bind(this);
         this.resourcesLoaded = this.resourcesLoaded.bind(this);
+        this.setDialect = this.setDialect.bind(this);
         this.destroy = this.destroy.bind(this);
         this.revert = this.revert.bind(this);
         this.commitAndReset = this.commitAndReset.bind(this);
@@ -40,12 +42,14 @@ export default class EditorPage extends React.Component {
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
         this.done = this.done.bind(this);
+        this.tryRun = this.tryRun.bind(this);
         this.promptoEditor = null;
         this.resourceEditor = null;
         this.imageDisplayer = null;
         this.state = { project: null, editMode: "EDIT", content: null, resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
         this.catalog = new Catalog();
-        Mousetrap.bind('command+s', this.commit);
+        Mousetrap.bind('command+s', this.commitAndReset);
+        console.log = print;
     }
 
     getProject() {
@@ -57,6 +61,10 @@ export default class EditorPage extends React.Component {
         this.loadResources();
         this.loadCode(true);
         document.title = "Project: " + this.projectName;
+    }
+
+    setDialect(dialect) {
+        this.promptoEditor.setDialect(dialect);
     }
 
     revert() {
@@ -209,7 +217,10 @@ export default class EditorPage extends React.Component {
             <MessageArea ref={ref=>this.messageArea=ref}/>
             <div style={editorStyle}>
                 <ContentNavigator ref={ref=>{if(ref)this.contentNavigator=ref;}} root={this} catalog={this.catalog}/>
-                <PromptoEditor ref={ref=>this.promptoEditor=ref} catalogUpdated={this.catalogUpdated} projectUpdated={this.projectUpdated} commitPrepared={this.commitPrepared}/>
+                <PromptoEditor ref={ref=>this.promptoEditor=ref}
+                               commitAndReset={this.commitAndReset} commitPrepared={this.commitPrepared}
+                               catalogUpdated={this.catalogUpdated} projectUpdated={this.projectUpdated}
+                                done={()=>this.setState({editMode: "IDLE"})}/>
                 <ResourceEditor ref={ref=>this.resourceEditor=ref} textEdited={this.textResourceEdited} />
                 <BinaryEditor ref={ref=>this.binaryEditor=ref} /> }
                 { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }
@@ -296,6 +307,15 @@ export default class EditorPage extends React.Component {
     done(data) {
         this.setState({editMode: "IDLE"});
     }
+
+    tryRun(runMode) {
+        const runner = new Runner(this, this.state.content, runMode);
+        runner.tryRun();
+    }
+
+
+
+
 
 }
 

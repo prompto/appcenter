@@ -25,7 +25,8 @@ export default class SingleProtoMethodItem extends TreeItem {
 
     select() {
         const method = this.props.method;
-        const content = { type: "Prompto", subType: "method", name: method.name, proto: method.proto, core: method.core, main: method.main };
+        const proto = method.protos[0];
+        const content = { type: "Prompto", subType: "method", name: method.name, proto: proto.proto, core: method.core, main: proto.main };
         this.props.root.setEditorContent(content);
     }
 

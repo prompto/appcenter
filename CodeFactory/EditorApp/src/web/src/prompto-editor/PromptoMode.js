@@ -14,7 +14,7 @@ export default class PromptoMode extends window.ace.acequire("ace/mode/text")
         }
 
         setDialect(dialect) {
-            this.$worker && this.$worker.send("setDialect", [ this.$dialect ] );
+            this.$worker && this.$worker.send("setDialect", [ dialect ] );
         }
 
         setContent(content) {
@@ -69,6 +69,10 @@ export default class PromptoMode extends window.ace.acequire("ace/mode/text")
 
         onCommitPrepared(declarations) {
             this.$editor.commitPrepared(declarations);
+        }
+
+        onDone() {
+            this.$editor.done();
         }
 
 

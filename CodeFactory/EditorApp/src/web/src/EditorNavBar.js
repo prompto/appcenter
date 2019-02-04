@@ -1,4 +1,4 @@
-import { print, getParam } from "./utils/Utils";
+import { getParam } from "./utils/Utils";
 import React from 'react';
 import { Navbar, Nav, NavItem, MenuItem, DropdownButton, ButtonGroup, Button } from 'react-bootstrap';
 import AuthenticationSettingsDialog from './dialogs/AuthenticationSettingsDialog';
@@ -21,15 +21,12 @@ export default class EditorNavBar extends React.Component {
         this.setDialect = this.setDialect.bind(this);
         this.setRunMode = this.setRunMode.bind(this);
         this.tryRun = this.tryRun.bind(this);
-        this.getRunnableContent = this.getRunnableContent.bind(this);
-        this.runPromptoCode = this.runPromptoCode.bind(this);
         this.stopPromptoCode = this.stopPromptoCode.bind(this);
         this.clearOutput = this.clearOutput.bind(this);
-        this.openWebPage = this.openWebPage.bind(this);
     }
 
     setDialect(dialect, callback) {
-        this.props.root.editorWindow.setDialect(dialect);
+        this.props.root.setDialect(dialect);
         this.setState({ dialect: dialect}, callback);
     }
 
@@ -38,51 +35,13 @@ export default class EditorNavBar extends React.Component {
     }
 
     tryRun() {
-        this.getRunnableContent(this.props.root.currentContent, runnable => this.checkRunnable(runnable, this.doRun));
+        this.props.root.tryRun(this.state.runMode);
     }
 
 
     tryDebug() {
-        this.getRunnableContent(this.props.root.currentContent, runnable => this.checkRunnable(runnable, this.doDebug));
     }
 
-    checkRunnable(runnable, andThen) {
-        if (runnable == null) {
-            alert("Nothing to run!");
-        } else if (!runnable.valid) {
-            alert("Can only run tests methods, main methods or web pages!");
-            return;
-        } else
-            andThen(runnable);
-    }
-
-    doRun(runnable) {
-        if (runnable.content.type === "html" || runnable.content.type === "page")
-            this.openWebPage(runnable.content);
-        else
-            this.runPromptoCode(runnable.content);
-    }
-
-    doDebug(runnable) {
-        if (runnable.content.type === "html" || runnable.content.type === "page")
-            this.openWebPage(runnable.content, true);
-        else
-            this.debugPromptoCode(runnable.content);
-    }
-
-    getRunnableContent(content, onFound) {
-        // check runnable code
-        if(content.subType==="test" || (content.subType==="method" && content.main))
-            return onFound({ valid: true, content: content });
-        // check runnable page
-        if(this.props.root.getProject().type !== "WebSite")
-            return onFound({ valid: false, content: null });
-        if(content.type==="html" || content.type==="page")
-            return onFound({ valid: true, content: content });
-        if(content.subType!=="widget")
-            return onFound({ valid: false, content: null });
-        this.props.root.editorWindow.fetchRunnablePage(content, onFound);
-    }
 
     openWebPage(content, debugMode) {
         this.props.root.fetchModuleURL(url => {
@@ -103,17 +62,6 @@ export default class EditorNavBar extends React.Component {
 
     stopServer() {
         this.props.root.killModule();
-    }
-
-    runPromptoCode(content) {
-        this.props.root.setState({editMode: "RUNNING"});
-        print("Running " + content.name + "...");
-        this.props.root.editorWindow.runMethod(content, this.state.runMode);
-    }
-
-    debugPromptoCode(content) {
-        this.props.root.setState({editMode: "DEBUGGING"});
-        this.props.root.editorWindow.debugMethod(content, this.state.runMode);
     }
 
     stopPromptoCode() {

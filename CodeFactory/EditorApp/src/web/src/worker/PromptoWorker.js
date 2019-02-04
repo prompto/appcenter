@@ -218,4 +218,29 @@ export default class PromptoWorker extends Mirror {
         });
     }
 
+    runMethod(content, mode) {
+        if (mode==="LI")
+            this.interpretLocally(content);
+        else if(mode==="SI")
+            this.runRemotely(content,"interpret");
+        else // compiled
+            this.runRemotely(content, "execute");
+    }
+
+    interpretLocally(content) {
+        var context = this.$repo.projectContext;
+        if(content.subType==="test") {
+            const store = prompto.store.DataStore.instance;
+            prompto.store.DataStore.instance = new prompto.memstore.MemStore();
+            try {
+                prompto.runtime.Interpreter.interpretTest(context, content.name);
+            } finally {
+                prompto.store.DataStore.instance = store;
+            }
+        } else  {
+            prompto.runtime.Interpreter.interpret(context, content.name, "");
+            console.log("Finished running " + content.name);
+        }
+        this.sender.emit("done");
+    }
 }
