@@ -1,6 +1,6 @@
-import React from 'react';
+import TreeItem from './TreeItem';
 
-export default class ResourceItem extends React.Component {
+export default class ResourceItem extends TreeItem {
 
     constructor(props) {
         super(props);
@@ -8,10 +8,6 @@ export default class ResourceItem extends React.Component {
         this.expandContent = this.expandContent.bind(this);
         this.handleContextMenu = this.handleContextMenu.bind(this);
         this.handleDocumentClick = this.handleDocumentClick.bind(this);
-    }
-
-    componentWillUnmount() {
-        this.props.parent.removeChild(this);
     }
 
     expandContent(content, simulateClick) {

@@ -1,17 +1,14 @@
 import { makeValidId } from '../code/Utils';
 import React from 'react';
+import TreeItem from './TreeItem';
 import { ListGroupItem, Glyphicon } from 'react-bootstrap';
 
-export default class MethodProtoItem extends React.Component {
+export default class MethodProtoItem extends TreeItem {
 
     constructor(props) {
         super(props);
         this.itemClicked = this.itemClicked.bind(this);
         this.expandContent = this.expandContent.bind(this);
-    }
-
-    componentWillUnmount() {
-        this.props.parent.removeChild(this);
     }
 
     render() {

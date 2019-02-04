@@ -1,9 +1,10 @@
 import { makeValidId } from '../code/Utils';
 import React from 'react';
+import TreeItem from './TreeItem';
 import { ListGroup, ListGroupItem, Collapse } from 'react-bootstrap';
 import MethodProtoItem from './MethodProtoItem';
 
-export default class MultiProtoMethodItem extends React.Component {
+export default class MultiProtoMethodItem extends TreeItem {
 
     constructor(props) {
         super(props);
@@ -15,11 +16,7 @@ export default class MultiProtoMethodItem extends React.Component {
         this.removeChild = this.removeChild.bind(this);
     }
 
-    componentWillUnmount() {
-        this.props.parent.removeChild(this);
-    }
-
-    addChild(ref) {
+   addChild(ref) {
         if(ref)
             this.children.add(ref);
     }
