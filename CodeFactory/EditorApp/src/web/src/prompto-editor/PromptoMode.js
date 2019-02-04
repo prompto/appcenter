@@ -49,8 +49,8 @@ export default class PromptoMode extends window.ace.acequire("ace/mode/text")
             this.$worker && this.$worker.send("debugMethod", [ id, mode ] );
         }
 
-        fetchRunnablePage(content) {
-            this.$worker && this.$worker.send("fetchRunnablePage", [ content ] );
+        fetchRunnablePage(content, andThen) {
+            this.$worker && this.$worker.call("fetchRunnablePage", [ content ], andThen );
         }
 
         createWorker(session) {

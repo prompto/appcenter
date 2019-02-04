@@ -43,23 +43,6 @@ export default class EditorNavBar extends React.Component {
     }
 
 
-    openWebPage(content, debugMode) {
-        this.props.root.fetchModuleURL(url => {
-            const fullUrl = url + content.name + (debugMode ? "&debug=true" : "");
-            const tab = window.open(fullUrl, '_blank', '');
-            if(tab)
-                tab.focus();
-            else {
-                var msg = "It seems your browser is blocking popups.\n" +
-                    "Allow popups for [*.]prompto.cloud to open your web site automatically.\n" +
-                    "Alternately, open a new tab or window with the following URL:\n" +
-                    fullUrl;
-                alert(msg);
-            }
-
-        });
-    }
-
     stopServer() {
         this.props.root.killModule();
     }

@@ -9,6 +9,7 @@ export default class Runner {
         this.checkRunnable = this.checkRunnable.bind(this);
         this.doRun = this.doRun.bind(this);
         this.runMethod = this.runMethod.bind(this);
+        this.openPage = this.openPage.bind(this);
     }
 
     tryRun() {
@@ -50,6 +51,23 @@ export default class Runner {
         this.root.setState({editMode: "RUNNING"});
         print("Running " + content.name + "...");
         this.root.promptoEditor.runMethod(content, this.runMode);
+    }
+
+    openPage(content) {
+        this.root.fetchModuleURL(url => {
+            const fullUrl = url + content.name;
+            const tab = window.open(fullUrl, '_blank', '');
+            if(tab)
+                tab.focus();
+            else {
+                var msg = "It seems your browser is blocking popups.\n" +
+                    "Allow popups for [*.]prompto.cloud to open your web site automatically.\n" +
+                    "Alternately, open a new tab or window with the following URL:\n" +
+                    fullUrl;
+                alert(msg);
+            }
+
+        });
     }
 
 
