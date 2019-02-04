@@ -79,7 +79,17 @@ export default class PromptoWorker extends Mirror {
             this.$core = false;
         }
         this.sender.emit("value", this.$value);
-    };
+    }
+
+
+    destroy(content) {
+        this.$value = "";
+        const catalog = this.$repo.handleDestroyed(content);
+        if(catalog)
+            this.sender.emit("catalogUpdated", catalog);
+        this.sender.emit("value", this.$value);
+    }
+
 
     loadProject(projectId, loadDependencies) {
         this.fetchModuleDescription(projectId, true, response => {

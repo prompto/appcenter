@@ -264,13 +264,13 @@ export default class EditorPage extends React.Component {
     }
 
     destroy() {
-        if(this.currentContent===null)
+        if(this.state.content===null)
             alert("Nothing to destroy!");
         else {
-            const content = this.currentContent;
-            this.currentContent = null;
+            const content = this.state.content;
             if(content.type.toLowerCase()==="prompto") {
-                this.editorWindow.destroyPrompto(content);
+                this.promptoEditor.destroy(content);
+                this.setEditorContent({ type: "prompto" });
             } else {
                 var res = this.catalog.resourceFromContent(content);
                 this.catalog.removeResources([res]);
@@ -300,7 +300,7 @@ export default class EditorPage extends React.Component {
     addCode(content, code, dialect) {
         this.setEditorContent(content,
             () => this.navBar.setDialect(dialect,
-                () => this.editorWindow.setPromptoText(code)));
+                () => this.promptoEditor.setContent({type: "prompto", body: code})));
     }
 
 
