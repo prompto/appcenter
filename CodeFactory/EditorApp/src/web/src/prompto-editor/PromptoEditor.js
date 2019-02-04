@@ -17,8 +17,14 @@ export default class PromptoEditor extends React.Component {
         this.state = {display: "block", value: ""};
     }
 
+
+    getEditor() {
+        return this.aceEditor.editor;
+    }
+
+
     getSession() {
-        return this.aceEditor.editor.getSession();
+        return this.getEditor().getSession();
     }
 
     componentDidMount() {
@@ -34,8 +40,14 @@ export default class PromptoEditor extends React.Component {
     }
 
     setContent(content) {
-        const display = (content && content.type==="prompto") ? "block" : "none";
+        const display = (content && content.type.toLowerCase()==="prompto") ? "block" : "none";
         this.setState({display: display});
+        if(display==="block") {
+            const session = this.getSession();
+            session.getMode().setContent(content)
+            session.setScrollTop(0);
+            this.getEditor().setReadOnly(content ? content.core : false);
+        }
     }
 
     codeEdited(newValue) {

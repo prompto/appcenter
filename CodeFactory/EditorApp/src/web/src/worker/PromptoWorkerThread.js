@@ -18,7 +18,7 @@ onmessage = function(e) {
         else if (self[msg.command])
             self[msg.command].apply(window, msg.args);
         else
-            throw new Error("Unknown command:" + msg.command);
+            throw new Error("Unknown command: " + msg.command);
     } else if (msg.init) {
         // console.log("init");
     }

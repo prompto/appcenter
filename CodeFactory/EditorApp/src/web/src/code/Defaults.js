@@ -1,3 +1,3 @@
-export class Defaults {
+export default {
     dialect: "O"
-}
+};

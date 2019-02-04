@@ -1,4 +1,4 @@
-import { getParam } from '../code/Utils';
+import { getParam } from '../utils/Utils';
 import React from 'react';
 import { FormGroup, FormControl, ControlLabel, InputGroup, HelpBlock } from 'react-bootstrap';
 import AuthenticationMethod from './AuthenticationMethod';

@@ -1,4 +1,4 @@
-import { parse } from './Utils';
+import { parse, unparse } from './Utils';
 
 /* a class to maintain an up-to-date copy of the repository */
 /* which can be used to detect required changes in the UI, and deltas to commit */
@@ -75,7 +75,7 @@ export default class Repository {
 
     getDeclarationBody(content, dialect) {
         var decl = this.getDeclaration(content);
-        return codeutils.unparse(this.projectContext, decl, dialect);
+        return unparse(this.projectContext, decl, dialect);
     };
 
 

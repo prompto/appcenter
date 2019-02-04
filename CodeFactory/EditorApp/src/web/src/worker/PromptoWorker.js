@@ -1,6 +1,6 @@
 import Mirror from '../ace/Mirror';
 import Repository from '../code/Repository';
-import { Defaults } from '../code/Defaults';
+import Defaults from '../code/Defaults';
 
 export default class PromptoWorker extends Mirror {
 
@@ -47,6 +47,24 @@ export default class PromptoWorker extends Mirror {
         this.unpublishProject();
         this.loadProject(projectId, loadDependencies);
     }
+
+
+    setContent(content) {
+        // remember value if it does not result from an edit
+        if(content.creating) {
+            this.$value = "";
+            this.$select = false;
+            this.$core = false;
+        } else if(content.name) {
+            this.$value = this.$repo.getDeclarationBody(content, this.$dialect);
+            this.$core = content.core || false;
+        } else {
+            this.$value = content.body || "";
+            this.$select = (content.body || null) !== null;
+            this.$core = false;
+        }
+        this.sender.emit("value", this.$value);
+    };
 
     loadProject(projectId, loadDependencies) {
         this.fetchModuleDescription(projectId, true, response => {

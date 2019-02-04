@@ -1,4 +1,4 @@
-import { getParam } from '../code/Utils';
+import { getParam } from '../utils/Utils';
 import React from 'react';
 import { Modal, Button, FormGroup, ControlLabel, InputGroup, FormControl, HelpBlock } from 'react-bootstrap';
 

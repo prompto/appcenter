@@ -5,7 +5,7 @@ import AuthenticationSettingsDialog from './dialogs/AuthenticationSettingsDialog
 import DependenciesDialog from './dialogs/DependenciesDialog';
 import ConfigurationDialog from './dialogs/ConfigurationDialog';
 import { ALL_ELEMENT_TYPES } from "./resource-types/ResourceTypes";
-import { Defaults } from './code/Defaults';
+import Defaults from './code/Defaults';
 
 const dialectLabels = { "E": "Engly", "O": "Objy", "M": "Monty"};
 const ALL_DIALECTS = ["E", "O", "M"];

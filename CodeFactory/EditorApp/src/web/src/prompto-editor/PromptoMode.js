@@ -2,7 +2,7 @@
 import 'brace/mode/text';
 import PromptoHighlightRules from './PromptoHighlightRules';
 import PromptoWorkerClient from '../worker/PromptoWorkerClient';
-import { Defaults } from "../code/Defaults";
+import Defaults from "../code/Defaults";
 
 export default class PromptoMode extends window.ace.acequire("ace/mode/text")
     .Mode {
@@ -54,7 +54,7 @@ export default class PromptoMode extends window.ace.acequire("ace/mode/text")
         }
 
         createWorker(session) {
-            this.$worker = new PromptoWorkerClient(session, Defaults.dialect);
+            this.$worker = new PromptoWorkerClient(this.$editor, Defaults.dialect);
             return this.$worker;
         }
 
