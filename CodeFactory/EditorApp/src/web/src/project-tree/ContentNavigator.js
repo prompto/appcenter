@@ -1,5 +1,5 @@
 import React from 'react';
-import ProjectTree from './tree/ProjectTree';
+import ProjectTree from './ProjectTree';
 
 export default class ContentNavigator extends React.Component {
 

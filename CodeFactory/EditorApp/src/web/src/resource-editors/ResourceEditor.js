@@ -11,7 +11,7 @@ import 'brace/mode/json';
 import 'brace/mode/javascript';
 import 'brace/mode/jsx';
 
-import { ID_TO_TYPE_MAP, TEXT_RESOURCE_TYPES } from './resource-types/ResourceTypes';
+import { ID_TO_TYPE_MAP, TEXT_RESOURCE_TYPES } from '../resource-types/ResourceTypes';
 
 const TextTypes = new Set(TEXT_RESOURCE_TYPES.map(t=>t.id));
 

@@ -7,11 +7,11 @@ import MessageArea from './components/MessageArea';
 import NewFileResourceDialog from "./dialogs/NewFileResourceDialog";
 import NewTextResourceDialog from "./dialogs/NewTextResourceDialog";
 import RenameResourceDialog from "./dialogs/RenameResourceDialog";
-import ContentNavigator from './ContentNavigator';
+import ContentNavigator from './project-tree/ContentNavigator';
 import EditorNavBar from './EditorNavBar';
-import PromptoEditor from './PromptoEditor';
-import ResourceEditor from './ResourceEditor';
-import BinaryEditor from './BinaryEditor';
+import PromptoEditor from './prompto-editor/PromptoEditor';
+import ResourceEditor from './resource-editors/ResourceEditor';
+import BinaryEditor from './resource-editors/BinaryEditor';
 
 export default class EditorPage extends React.Component {
 
@@ -22,9 +22,6 @@ export default class EditorPage extends React.Component {
         this.specialTypes = new Set(["prompto", "image", "audio", "video", "other"]);
         this.navBar = null;
         this.elementsNavigator = null;
-        this.editorDidMount = this.editorDidMount.bind(this);
-        this.setEditorDefaults = this.setEditorDefaults.bind(this);
-        this.loadCodeInWorker = this.loadCodeInWorker.bind(this);
         this.loadDescription = this.loadDescription.bind(this);
         this.loadResources = this.loadResources.bind(this);
         this.resourcesLoaded = this.resourcesLoaded.bind(this);
@@ -58,23 +55,15 @@ export default class EditorPage extends React.Component {
     componentDidMount() {
         this.loadDescription();
         this.loadResources();
+        this.loadCode(true);
         document.title = "Project: " + this.projectName;
-    }
-
-    editorDidMount() {
-        this.setEditorDefaults();
-        this.loadCodeInWorker(true);
-    }
-
-    setEditorDefaults() {
-        this.editorWindow.setDialect("O");
     }
 
     revert() {
         // TODO confirm
         this.setEditorContent({ type: "Prompto" });
-        this.loadCodeInWorker(false);
         this.loadResources();
+        this.loadCode(false);
     }
 
     commitAndReset() {
@@ -180,8 +169,8 @@ export default class EditorPage extends React.Component {
         this.elementsNavigator.setState({catalog: this.catalog}, kallback);
     }
 
-    loadCodeInWorker(loadDependencies) {
-        this.editorWindow.setProject(this.projectId, loadDependencies);
+    loadCode(loadDependencies) {
+        this.promptoEditor.setProject(this.projectId, loadDependencies);
     }
 
     loadDescription() {
@@ -233,7 +222,7 @@ export default class EditorPage extends React.Component {
             <MessageArea ref={ref=>this.messageArea=ref}/>
             <div style={editorStyle}>
                 <ContentNavigator ref={ref=>{if(ref)this.elementsNavigator=ref;}} root={this} catalog={this.catalog}/>
-                <PromptoEditor ref={ref=>this.promptoEditor=ref} />
+                <PromptoEditor ref={ref=>this.promptoEditor=ref} catalogUpdated={this.catalogUpdated}/>
                 <ResourceEditor ref={ref=>this.resourceEditor=ref} textEdited={this.textResourceEdited} />
                 <BinaryEditor ref={ref=>this.binaryEditor=ref} /> }
                 { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }

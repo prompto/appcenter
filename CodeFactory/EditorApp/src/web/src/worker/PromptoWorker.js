@@ -1,5 +1,6 @@
 import Mirror from '../ace/Mirror';
 import Repository from '../code/Repository';
+import { Defaults } from '../code/Defaults';
 
 export default class PromptoWorker extends Mirror {
 
@@ -7,7 +8,7 @@ export default class PromptoWorker extends Mirror {
         super(sender);
         this.$projectId = null;
         this.$project = null;
-        this.$dialect = null;
+        this.$dialect = Defaults.dialect;
         this.$value = this.doc.getValue();
         this.$core = false;
         this.$repo = new Repository();
@@ -41,6 +42,84 @@ export default class PromptoWorker extends Mirror {
         }
     }
 
+    setProject(projectId, loadDependencies) {
+        this.$projectId = projectId;
+        this.unpublishProject();
+        this.loadProject(projectId, loadDependencies);
+    }
+
+    loadProject(projectId, loadDependencies) {
+        this.fetchModuleDescription(projectId, true, response => {
+            if(response.error)
+                ; // TODO something
+            else {
+                this.$project = response.data.value;
+                if(loadDependencies && this.$project.dependencies) {
+                    this.$project.dependencies.value
+                        .filter(dep => dep!=null)
+                        .map(dep=>this.loadDependency(dep.value || dep), this);
+                }
+                this.markLoaded("%Description%");
+            }
+        });
+        this.fetchProjectDeclarations(projectId, response => {
+            if(response.error)
+                ; // TODO something
+            else {
+                const declarations = response.data.value;
+                this.$repo.registerProjectDeclarations(projectId, declarations);
+                this.markLoaded("Project");
+            }
+        });
+    }
+
+    loadDependency(dependency) {
+        this.markLoading(dependency.name);
+        this.fetchLibraryDeclarations(dependency.name, dependency.version, response => {
+            if(response.error)
+                ; // TODO something
+            else {
+                const declarations = response.data.value;
+                this.$repo.registerLibraryDeclarations(declarations);
+                this.markLoaded(dependency.name);
+            }
+        });
+    }
+
+    fetchModuleDescription(projectId, register, success) {
+        var params = [ {name:"dbId", value:projectId.toString()}, {name:"register", type:"Boolean", value:register}];
+        var url = '/ws/run/getModuleDescription?params=' + JSON.stringify(params);
+        this.loadJSON(url, success);
+    }
+
+    fetchProjectDeclarations(projectId, success) {
+        var params = [ {name:"dbId", value:projectId.toString()}];
+        var url = '/ws/run/getModuleDeclarations?params=' + JSON.stringify(params);
+        this.loadJSON(url, success);
+    }
+
+
+    fetchLibraryDeclarations(name, version, success) {
+        var params = [ {name:"name", type:"Text", value:name}, {name:"version", type:version.type, value:version.value} ];
+        var url = '/ws/run/getModuleDeclarations?params=' + JSON.stringify(params);
+        this.loadJSON(url, success);
+    }
+
+    publishLibraries() {
+        var catalog = this.$repo.publishLibraries();
+        this.sender.emit("catalogUpdated", catalog);
+    }
+
+    publishProject() {
+        var catalog = this.$repo.publishProject();
+        this.sender.emit("catalogUpdated", catalog);
+    }
+
+    unpublishProject() {
+        var catalog = this.$repo.unpublishProject();
+        this.sender.emit("catalogUpdated", catalog);
+    }
+
     markLoading(name) {
         this.$loading[name] = true;
     }
@@ -56,6 +135,10 @@ export default class PromptoWorker extends Mirror {
         // is this the last loading
         else if (Object.keys(this.$loading).length === 0)
             this.publishLibraries();
+    }
+
+    loadJSON(url, success) {
+        this.loadText(url, text => success(JSON.parse(text)));
     }
 
     loadText(url, success) {

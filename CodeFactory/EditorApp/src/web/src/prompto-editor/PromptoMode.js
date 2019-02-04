@@ -1,19 +1,19 @@
 /*eslint-disable no-alert, no-console */
 import 'brace/mode/text';
 import PromptoHighlightRules from './PromptoHighlightRules';
-import PromptoWorkerClient from './PromptoWorkerClient';
+import PromptoWorkerClient from '../worker/PromptoWorkerClient';
+import { Defaults } from "../code/Defaults";
 
 export default class PromptoMode extends window.ace.acequire("ace/mode/text")
     .Mode {
-        constructor() {
+        constructor(editor) {
             super();
             this.$id = "ace/mode/prompto";
-            this.$dialect = "E";
+            this.$editor = editor;
             this.HighlightRules = PromptoHighlightRules;
         }
 
         setDialect(dialect) {
-            this.$dialect = dialect;
             this.$worker && this.$worker.send("setDialect", [ this.$dialect ] );
         }
 
@@ -54,13 +54,17 @@ export default class PromptoMode extends window.ace.acequire("ace/mode/text")
         }
 
         createWorker(session) {
-            this.$worker = new PromptoWorkerClient(session, this.$dialect);
+            this.$worker = new PromptoWorkerClient(session, Defaults.dialect);
             return this.$worker;
         }
 
         // a utility method to inspect worker data in Firefox/Safari
         inspect = function(name) {
             this.$worker && this.$worker.send("inspect", [ name ] );
+        }
+
+        onCatalogUpdated(catalog) {
+            this.$editor.catalogUpdated(catalog);
         }
 
 }

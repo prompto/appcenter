@@ -5,6 +5,7 @@ import AuthenticationSettingsDialog from './dialogs/AuthenticationSettingsDialog
 import DependenciesDialog from './dialogs/DependenciesDialog';
 import ConfigurationDialog from './dialogs/ConfigurationDialog';
 import { ALL_ELEMENT_TYPES } from "./resource-types/ResourceTypes";
+import { Defaults } from './code/Defaults';
 
 const dialectLabels = { "E": "Engly", "O": "Objy", "M": "Monty"};
 const ALL_DIALECTS = ["E", "O", "M"];
@@ -16,7 +17,7 @@ export default class EditorNavBar extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { dialect: "O", runMode: "LI", dialog: null};
+        this.state = { dialect: Defaults.dialect, runMode: "LI", dialog: null};
         this.setDialect = this.setDialect.bind(this);
         this.setRunMode = this.setRunMode.bind(this);
         this.tryRun = this.tryRun.bind(this);

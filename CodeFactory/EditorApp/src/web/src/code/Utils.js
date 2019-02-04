@@ -60,3 +60,9 @@ exports.sortBy = function(a, f) {
         return (i1[f]>i2[f]) ? 1 : ((i1[f]<i2[f]) ? -1 : 0);
     });
 }
+
+exports.makeValidId = function(name) {
+    /*eslint no-useless-escape: "off"*/
+    return name.replace(/[ /\.]/g, "_").replace(/[\"\'\(\),]/g,"");
+};
+

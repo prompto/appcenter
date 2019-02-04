@@ -60,7 +60,7 @@ export default class Repository {
         this.moduleId = moduleId;
         var worker = this;
         declarations.map(function (obj) {
-            var decl = codeutils.parse(obj.value.body, obj.value.dialect);
+            var decl = parse(obj.value.body, obj.value.dialect);
             decl.register(worker.projectContext);
             // prepare for commit
             var module = obj.value.module;
