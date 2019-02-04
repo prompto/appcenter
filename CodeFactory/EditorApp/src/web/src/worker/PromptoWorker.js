@@ -243,4 +243,36 @@ export default class PromptoWorker extends Mirror {
         }
         this.sender.emit("done");
     }
+
+    runRemotely(content, mode) {
+        this.fetchModuleURL(this.$projectId, url => {
+            var fullUrl = url + "ws/run/" + content.name +  "?mode=" + mode;
+            if(content.subType==="method")
+                fullUrl = fullUrl + "&main=true";
+            this.loadJSON(fullUrl, response => {
+                if (response.error)
+                    console.log(response.error);
+                else if(response.data instanceof Array)
+                    response.data.map(console.log);
+                else
+                    console.log(response.data);
+                this.sender.emit("done");
+            });
+        });
+    }
+
+    fetchModuleURL(projectId, success) {
+        var params = [ {name:"dbId", value:projectId.toString()}];
+        var url = '/ws/run/getModulePort?params=' + JSON.stringify(params);
+        this.loadJSON(url, response => {
+            if (response.error)
+                ; // TODO something
+            else {
+                var href = self.location.protocol +
+                    "//" + self.location.hostname +
+                    ":" + response.data + "/";
+                success(href);
+            }
+        });
+    }
 }
