@@ -51,7 +51,6 @@ export default class PromptoWorkerClient extends window.ace.acequire("ace/worker
         }
         // done with the hacky stuff
         this.$editor = editor;
-        this.$markers = [];
         this.addEventListeners(["errors", "annotate", "terminate", "value", "catalogUpdated", "done", "commitPrepared", "runnablePageFetched", "inspected"]);
         this.attachToDocument(this.getSession().getDocument());
         this.send("setDialect", [ dialect ] );
@@ -80,13 +79,41 @@ export default class PromptoWorkerClient extends window.ace.acequire("ace/worker
 
     onAnnotate(e) {
         this.getSession().setAnnotations(e.data);
-        while(this.$markers.length)
-            this.getSession().removeMarker(this.$markers.pop());
-        e.data.forEach( a => {
-            const range = new Range(a.row, a.column, a.endRow, a.endColumn);
-            const marker = this.getSession().addMarker(range, "ace_error-word", "text", true);
-            this.$markers.push(marker);
-        }, this);
+        this.clearMarkers();
+        this.createMarkers(e.data);
+    }
+
+    clearMarkers() {
+        const session = this.getSession();
+        const markers = session.getMarkers(true);
+        for(let marker in markers)
+            session.removeMarker(marker);
+    }
+
+    createMarkers(data) {
+        const ranges = this.computeRanges(data);
+        const session = this.getSession();
+        ranges.forEach(range => session.addMarker(range, "ace_error-word", "text", true));
+    }
+
+    computeRanges(data) {
+        const ranges = [];
+        // avoid overlapping markers which look ugly
+        data.forEach( a => this.mergeRange(ranges, new Range(a.row, a.column, a.endRow, a.endColumn)), this);
+        return ranges;
+    }
+
+    mergeRange(ranges, range) {
+        const mergeable = ranges.filter( r => r.intersects(range) );
+        if( mergeable.length === 0)
+            ranges.push(range);
+        else {
+            // recursively merge first intersecting range
+            const idx = ranges.indexOf(mergeable[0]);
+            const old = ranges.splice(idx, 1)[0];
+            const merged = old.extend(range.start.row, range.start.column).extend(range.end.row, range.end.column);
+            this.mergeRange(ranges, merged);
+        }
     }
 
     onTerminate() {
