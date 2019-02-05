@@ -1,5 +1,6 @@
 // eslint-disable-next-line
-const prompto = self.prompto;
+const globals = self || window;
+const prompto = globals.prompto;
 
 /* an object which represents a catalog of declarations, classified by type */
 export default class Codebase {

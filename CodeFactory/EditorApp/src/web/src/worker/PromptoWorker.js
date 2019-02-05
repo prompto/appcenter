@@ -3,11 +3,9 @@ import Repository from '../code/Repository';
 import Defaults from '../code/Defaults';
 
 // eslint-disable-next-line
-const prompto = self.prompto;
-// eslint-disable-next-line
-const location = self.location;
-// eslint-disable-next-line
-const AnnotatingErrorListener = self.AnnotatingErrorListener;
+const globals = self || window;
+const prompto = globals.prompto;
+const location = globals.location;
 
 export default class PromptoWorker extends Mirror {
 
@@ -30,7 +28,7 @@ export default class PromptoWorker extends Mirror {
         this.markLoading("%Description%");
         // load core
         this.markLoading("Core");
-        this.loadText("../prompto/prompto.pec", text => {
+        this.loadText("prompto/prompto.pec", text => {
             this.$repo.registerLibraryCode(text, "E");
             this.markLoaded("Core");
         });
@@ -38,7 +36,7 @@ export default class PromptoWorker extends Mirror {
 
     onUpdate() {
         var value = this.doc.getValue();
-        var errorListener = new AnnotatingErrorListener();
+        var errorListener = new globals.AnnotatingErrorListener();
         if(value === this.$value && !this.$selectedContent)
             this.$repo.handleSetContent(value, this.$dialect, errorListener);
         else {
@@ -199,11 +197,14 @@ export default class PromptoWorker extends Mirror {
             return null;
         };
         xhr.onload = function(e) {
-            if(url[0]==="/" || url[0]===".") {
-                // can't read unsafe header
-                worker.$authorization = xhr.getResponseHeader("X-Authorization") || null;
-            }
-            success(xhr.responseText);
+            if(xhr.status==200) {
+                if (url[0] === "/" || url[0] === ".") {
+                    // can't read unsafe header
+                    worker.$authorization = xhr.getResponseHeader("X-Authorization") || null;
+                }
+                success(xhr.responseText);
+            } else
+                console.error("Failed to load " + url + ", error: " + xhr.status);
         };
         xhr.open('GET', url);
         if(url[0]!=="/" && url[0]!==".") {

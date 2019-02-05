@@ -1,14 +1,12 @@
-import './Console';
+import './Globals';
 import Sender from '../ace/Sender';
 import PromptoWorker from './PromptoWorker';
 
-// eslint-disable-next-line
-const self = self || {};
-self.Honey = {'requirePath': ['..']}; // walk up to js folder
-self.importScripts("/js/lib/require.js", "/js/lib/prompto.core.bundle.js", "js/AnnotatingErrorListener.js");
-
 var sender = new Sender();
 var worker = new PromptoWorker(sender);
+
+// eslint-disable-next-line
+const globals = self;
 
 onmessage = function(e) {
     var msg = e.data;
@@ -17,8 +15,8 @@ onmessage = function(e) {
     } else if (msg.command) {
         if (worker[msg.command])
             worker[msg.command].apply(worker, msg.args);
-        else if (self[msg.command])
-            self[msg.command].apply(window, msg.args);
+        else if (globals[msg.command])
+            globals[msg.command].apply(globals, msg.args);
         else
             throw new Error("Unknown command: " + msg.command);
     } else if (msg.init) {

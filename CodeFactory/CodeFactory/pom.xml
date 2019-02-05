@@ -90,6 +90,8 @@
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.0.1</version>
+				<!-- copy web pages to src/main/web -->
+				<!-- not sure why tests fail when using resources/resource/directory + targetPath -->
 				<executions>
 					<execution>
 						<id>include projects app</id>

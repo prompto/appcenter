@@ -1,12 +1,14 @@
+// eslint-disable-next-line
+const globals = self || window;
+const prompto = globals.prompto;
+
 /* a function for inferring dialect from file extension */
-exports.inferDialect = function(path) {
+export const inferDialect = function(path) {
     return path.substring(path.length-2, path.length-1).toUpperCase();
 }
 
 /* a function for getting a new prompto code parser */
-exports.newParser = function(input, dialect, listener) {
-    /* eslint-disable-next-line */
-    const prompto = self.prompto;
+export const newParser = function(input, dialect, listener) {
     var klass = prompto.parser[dialect + "CleverParser"];
     var parser = new klass(input);
     parser.removeErrorListeners();
@@ -16,15 +18,13 @@ exports.newParser = function(input, dialect, listener) {
 }
 
 /* a function for parsing prompto code into declarations */
-exports.parse = function(input, dialect, listener) {
-    var parser = exports.newParser(input, dialect, listener);
+export const parse = function(input, dialect, listener) {
+    var parser = newParser(input, dialect, listener);
     return parser.parse();
 }
 
 /* a function for producing code from a declaration object */
-exports.unparse = function(context, decl, dialect) {
-    /* eslint-disable-next-line */
-    const prompto = self.prompto;
+export const unparse = function(context, decl, dialect) {
     var d = prompto.parser.Dialect[dialect];
     var writer = new prompto.utils.CodeWriter(d, context.newChildContext());
     // avoid throwing since this would stop the translation
@@ -44,10 +44,8 @@ exports.unparse = function(context, decl, dialect) {
 }
 
 /* a function for translating current input to other dialect */
-exports.translate = function(context, data, from, to) {
-    /* eslint-disable-next-line */
-    const prompto = self.prompto;
-    var decls = exports.parse(data, from); // could be cached
+export const translate = function(context, data, from, to) {
+    var decls = parse(data, from); // could be cached
     var dialect = prompto.parser.Dialect[to];
     var writer = new prompto.utils.CodeWriter(dialect, context.newChildContext());
     decls.toDialect(writer);
@@ -55,13 +53,13 @@ exports.translate = function(context, data, from, to) {
 }
 
 /* a utility function to sort by field name */
-exports.sortBy = function(a, f) {
+export const sortBy = function(a, f) {
     return a.sort(function(i1,i2) {
         return (i1[f]>i2[f]) ? 1 : ((i1[f]<i2[f]) ? -1 : 0);
     });
 }
 
-exports.makeValidId = function(name) {
+export const makeValidId = function(name) {
     /*eslint no-useless-escape: "off"*/
     return name.replace(/[ /\.]/g, "_").replace(/[\"\'\(\),]/g,"");
 };

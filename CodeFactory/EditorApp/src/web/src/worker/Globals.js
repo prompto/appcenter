@@ -1,6 +1,21 @@
+// eslint-disable-next-line
+const globals = self;
+globals.Honey = {'requirePath': ['..']}; // walk up to js folder
+globals.importScripts("/js/lib/require.js", "/js/lib/prompto.core.bundle.js");
+
+const log = function() {
+    var e = Array.prototype.slice.call(arguments, 0);
+    postMessage({
+        type: "log",
+        data: e
+    });
+};
+
+console.error = console.warn = console.log = console.trace = log;
+
 /* not Webpacking this yet because that would require webpacking and installing prompto runtime too, which is not ready yet */
 
-class AnnotatingErrorListener extends prompto.problem.ProblemCollector {
+globals.AnnotatingErrorListener = class AnnotatingErrorListener extends globals["prompto"].problem.ProblemCollector {
 
     constructor(problems) {
         super();

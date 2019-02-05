@@ -3,7 +3,9 @@ import Codebase from "./Codebase";
 import Delta from "./Delta";
 
 // eslint-disable-next-line
-const prompto = self.prompto;
+const globals = self || window;
+const prompto = globals.prompto;
+
 
 /* a class to maintain an up-to-date copy of the repository */
 /* which can be used to detect required changes in the UI, and deltas to commit */
