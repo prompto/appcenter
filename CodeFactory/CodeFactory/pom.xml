@@ -96,9 +96,10 @@
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
-						<phase>validate</phase>
+						<phase>generate-resources</phase>
 						<configuration>
 							<outputDirectory>src/main/web</outputDirectory>
+							<overwrite>true</overwrite>
 							<resources>
 								<resource>
 									<directory>../ProjectsApp/src/web/build</directory>
@@ -112,9 +113,10 @@
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
-						<phase>validate</phase>
+						<phase>generate-resources</phase>
 						<configuration>
 							<outputDirectory>src/main/web/data</outputDirectory>
+							<overwrite>false</overwrite>
 							<resources>
 								<resource>
 									<directory>../DataApp/src/web/build</directory>
@@ -128,9 +130,10 @@
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
-						<phase>validate</phase>
+						<phase>generate-resources</phase>
 						<configuration>
 							<outputDirectory>src/main/web/ide</outputDirectory>
+							<overwrite>false</overwrite>
 							<resources>
 								<resource>
 									<directory>../EditorApp/src/web/build</directory>

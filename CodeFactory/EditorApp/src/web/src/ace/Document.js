@@ -30,18 +30,20 @@
 
 
 import Range from './Range';
+import Anchor from './Anchor';
 import EventEmitter from './EventEmitter';
 
-
+/*
 function throwDeltaError(delta, errorText){
     console.log("Invalid Delta:", delta);
-    throw "Invalid Delta: " + errorText;
+    throw new Error("Invalid Delta: " + errorText);
 }
 
 function positionInDocument(docLines, position) {
     return position.row    >= 0 && position.row    <  docLines.length &&
         position.column >= 0 && position.column <= docLines[position.row].length;
 }
+
 
 function validateDelta(docLines, delta) {
     // Validate action string.
@@ -72,6 +74,7 @@ function validateDelta(docLines, delta) {
     if (numRangeRows != delta.lines.length - 1 || delta.lines[numRangeRows].length != numRangeLastLineChars)
         throwDeltaError(delta, "delta.range must match delta lines");
 }
+*/
 
 function applyDelta(docLines, delta, doNotValidate) {
     // disabled validation since it breaks autocompletion popup
@@ -105,6 +108,8 @@ function applyDelta(docLines, delta, doNotValidate) {
                 );
             }
             break;
+        default:
+            throw new Error("Unsupported: " + delta.action);
     }
 }
 
@@ -233,7 +238,7 @@ export default class Document extends EventEmitter {
      *
      **/
     isNewLine(text) {
-        return (text == "\r\n" || text == "\r" || text == "\n");
+        return (text === "\r\n" || text === "\r" || text === "\n");
     };
 
     /**
@@ -295,7 +300,7 @@ export default class Document extends EventEmitter {
             lines = this.getLines(range.start.row, range.end.row);
             lines[0] = (lines[0] || "").substring(range.start.column);
             var l = lines.length - 1;
-            if (range.end.row - range.start.row == l)
+            if (range.end.row - range.start.row === l)
                 lines[l] = lines[l].substring(0, range.end.column);
         }
         return lines;
@@ -369,7 +374,7 @@ export default class Document extends EventEmitter {
             column = undefined;
         }
         var line = this.getLine(row);
-        if (column == undefined)
+        if (column === undefined)
             column = line.length;
         column = Math.min(Math.max(column, 0), line.length);
         return {row: row, column: column};
@@ -466,7 +471,7 @@ export default class Document extends EventEmitter {
         var start = this.clippedPos(position.row, position.column);
         var end = {
             row: start.row + lines.length - 1,
-            column: (lines.length == 1 ? start.column : 0) + lines[lines.length - 1].length
+            column: (lines.length === 1 ? start.column : 0) + lines[lines.length - 1].length
         };
 
         this.applyDelta({
@@ -534,7 +539,7 @@ export default class Document extends EventEmitter {
         // Calculate deletion range.
         // Delete the ending new line unless we're at the end of the document.
         // If we're at the end of the document, delete the starting new line.
-        var deleteFirstNewLine = lastRow == this.getLength() - 1 && firstRow > 0;
+        var deleteFirstNewLine = lastRow === this.getLength() - 1 && firstRow > 0;
         var deleteLastNewLine  = lastRow  < this.getLength() - 1;
         var startRow = ( deleteFirstNewLine ? firstRow - 1                  : firstRow                    );
         var startCol = ( deleteFirstNewLine ? this.getLine(startRow).length : 0                           );
@@ -590,7 +595,7 @@ export default class Document extends EventEmitter {
 
         // Shortcut: If the text we want to insert is the same as it is already
         // in the document, we don't have to replace anything.
-        if (text == this.getTextRange(range))
+        if (text === this.getTextRange(range))
             return range.end;
 
         this.remove(range);
@@ -630,7 +635,7 @@ export default class Document extends EventEmitter {
      * @param {Object} delta A delta object (can include "insert" and "remove" actions)
      **/
     applyDelta(delta, doNotValidate) {
-        var isInsert = delta.action == "insert";
+        var isInsert = delta.action === "insert";
         // An empty range is a NOOP.
         if (isInsert ? delta.lines.length <= 1 && !delta.lines[0]
             : !Range.comparePoints(delta.start, delta.end)) {
@@ -686,7 +691,7 @@ export default class Document extends EventEmitter {
         this.applyDelta({
             start: this.clonePos(delta.start),
             end: this.clonePos(delta.end),
-            action: (delta.action == "insert" ? "remove" : "insert"),
+            action: (delta.action === "insert" ? "remove" : "insert"),
             lines: delta.lines.slice()
         });
     };

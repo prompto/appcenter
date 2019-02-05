@@ -1,3 +1,6 @@
+// eslint-disable-next-line
+const prompto = self.prompto;
+
 /* an object which represents a catalog of declarations, classified by type */
 export default class Codebase {
 

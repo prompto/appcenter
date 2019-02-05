@@ -1,4 +1,5 @@
 import { sortBy } from './Utils';
+import Codebase from './Codebase';
 
 /**
  * An object which represents the delta between 2 catalogs
@@ -132,14 +133,14 @@ export default class Delta {
         // methods with 1 proto are displayed differently than methods with multiple protos
         // if proto cardinality changes from N to 1 or 1 to N, we need to rebuild the corresponding displays
         if (this.removed && this.removed.methods) {
-            this.removed.methods.map(function (method) {
+            this.removed.methods.forEach(method => {
                 var decl = context.getRegisteredDeclaration(method.name);
                 if (decl && Object.keys(decl.protos).length === 1 && !this.isModifiedProto(method)) // moved from N to 1
                     this.adjustMethodForRemovedProtos(method, decl);
             }, this);
         }
         if (this.added && this.added.methods) {
-            this.added.methods.map(function (method) {
+            this.added.methods.forEach(method => {
                 var decl = context.getRegisteredDeclaration(method.name);
                 if (decl && Object.keys(decl.protos).length - method.protos.length === 1) // moved from 1 to N
                     this.adjustMethodForAddedProtos(method, decl);
@@ -147,7 +148,7 @@ export default class Delta {
         }
         // cleanup
         if (this.removed && this.removed.methods) {
-            this.removed.methods.map(function (method) {
+            this.removed.methods.forEach(method => {
                 if (method.proto_to_remove) {
                     method.protos.push(method.proto_to_remove);
                     sortBy(method.protos, "proto");
@@ -156,7 +157,7 @@ export default class Delta {
             });
         }
         if (this.added && this.added.methods) {
-            this.added.methods.map(function (method) {
+            this.added.methods.forEach(method => {
                 if (method.proto_to_add) {
                     method.protos.push(method.proto_to_add);
                     sortBy(method.protos, "proto");
@@ -171,7 +172,7 @@ export default class Delta {
         if (!this.added || !this.added.methods)
             return false;
         var added = this.added.methods.filter(m => m.name === method.name);
-        if (added.length == 0)
+        if (added.length === 0)
             return false;
         return true;
     }
@@ -223,7 +224,7 @@ export default class Delta {
             this.added = new Codebase();
         var added = this.findOrCreateMethod(this.added, decl.name);
         // avoid adding it twice (it might have just been added)
-        added.protos.map(function (current) {
+        added.protos.forEach(current => {
             if (proto_to_move && proto_to_move.proto === current.proto)
                 proto_to_move = null; // don't add it
         });

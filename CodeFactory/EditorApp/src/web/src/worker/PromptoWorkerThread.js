@@ -1,19 +1,11 @@
-self.console = function() {
-    var e = Array.prototype.slice.call(arguments, 0);
-    postMessage({
-        type: "log",
-        data: e
-    });
-};
-
-console.error = console.warn = console.log = console.trace = console;
-
-
+import './Console';
 import Sender from '../ace/Sender';
 import PromptoWorker from './PromptoWorker';
 
+// eslint-disable-next-line
+const self = self || {};
 self.Honey = {'requirePath': ['..']}; // walk up to js folder
-importScripts("/js/lib/require.js", "/js/lib/prompto.core.bundle.js", "js/AnnotatingErrorListener.js");
+self.importScripts("/js/lib/require.js", "/js/lib/prompto.core.bundle.js", "js/AnnotatingErrorListener.js");
 
 var sender = new Sender();
 var worker = new PromptoWorker(sender);

@@ -28,8 +28,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-"use strict";
-
 exports.last = function(a) {
     return a[a.length - 1];
 };
@@ -44,7 +42,7 @@ exports.stringRepeat = function (string, count) {
         if (count & 1)
             result += string;
 
-        if (count >>= 1)
+        if ((count >>= 1) !== 0)
             string += string;
     }
     return result;
@@ -95,7 +93,7 @@ exports.deepCopy = function deepCopy(obj) {
         return obj;
 
     copy = {};
-    for (var key in obj)
+    for (key in obj)
         copy[key] = deepCopy(obj[key]);
     return copy;
 };
@@ -129,6 +127,7 @@ exports.arrayRemove = function(array, value) {
 };
 
 exports.escapeRegExp = function(str) {
+    // eslint-disable-next-line
     return str.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1');
 };
 

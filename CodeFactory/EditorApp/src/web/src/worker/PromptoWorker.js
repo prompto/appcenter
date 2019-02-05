@@ -2,6 +2,13 @@ import Mirror from '../ace/Mirror';
 import Repository from '../code/Repository';
 import Defaults from '../code/Defaults';
 
+// eslint-disable-next-line
+const prompto = self.prompto;
+// eslint-disable-next-line
+const location = self.location;
+// eslint-disable-next-line
+const AnnotatingErrorListener = self.AnnotatingErrorListener;
+
 export default class PromptoWorker extends Mirror {
 
     constructor(sender) {
@@ -188,18 +195,18 @@ export default class PromptoWorker extends Mirror {
         var worker = this;
         var xhr = new XMLHttpRequest();
         xhr.onerror = function(e) {
-            self.console.log("Error " + e.target.status + " occurred while receiving the document.");
+            console.log("Error " + e.target.status + " occurred while receiving the document.");
             return null;
         };
         xhr.onload = function(e) {
-            if(url[0]=="/" || url[0]==".") {
+            if(url[0]==="/" || url[0]===".") {
                 // can't read unsafe header
                 worker.$authorization = xhr.getResponseHeader("X-Authorization") || null;
             }
             success(xhr.responseText);
         };
         xhr.open('GET', url);
-        if(url[0]!="/" && url[0]!=".") {
+        if(url[0]!=="/" && url[0]!==".") {
             if(worker.$authorization!=null)
                 xhr.setRequestHeader("X-Authorization", worker.$authorization);
             xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
@@ -278,8 +285,8 @@ export default class PromptoWorker extends Mirror {
             if (response.error)
                 ; // TODO something
             else {
-                var href = self.location.protocol +
-                    "//" + self.location.hostname +
+                var href = location.protocol +
+                    "//" + location.hostname +
                     ":" + response.data + "/";
                 success(href);
             }

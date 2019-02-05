@@ -28,8 +28,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-"use strict";
-
 const stopPropagation = function () {
     this.propagationStopped = true;
 };
@@ -113,7 +111,7 @@ export default class EventEmitter {
                 handlers._disabled_[eventName] = disabled = [];
             disabled.push(old);
             var i = disabled.indexOf(callback);
-            if (i != -1)
+            if (i !== -1)
                 disabled.splice(i, 1);
         }
         handlers[eventName] = callback;
@@ -125,12 +123,12 @@ export default class EventEmitter {
             return;
         var disabled = handlers._disabled_[eventName];
 
-        if (handlers[eventName] == callback) {
+        if (handlers[eventName] === callback) {
             if (disabled)
                 this.setDefaultHandler(eventName, disabled.pop());
         } else if (disabled) {
             var i = disabled.indexOf(callback);
-            if (i != -1)
+            if (i !== -1)
                 disabled.splice(i, 1);
         }
     }
@@ -142,7 +140,7 @@ export default class EventEmitter {
         if (!listeners)
             listeners = this._eventRegistry[eventName] = [];
 
-        if (listeners.indexOf(callback) == -1)
+        if (listeners.indexOf(callback) === -1)
             listeners[capturing ? "unshift" : "push"](callback);
         return callback;
     }

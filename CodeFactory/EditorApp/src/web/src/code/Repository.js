@@ -2,6 +2,9 @@ import { parse, unparse, newParser, translate } from './Utils';
 import Codebase from "./Codebase";
 import Delta from "./Delta";
 
+// eslint-disable-next-line
+const prompto = self.prompto;
+
 /* a class to maintain an up-to-date copy of the repository */
 /* which can be used to detect required changes in the UI, and deltas to commit */
 export default class Repository {
@@ -24,7 +27,7 @@ export default class Repository {
 
     registerLibraryDeclarations(declarations) {
         var worker = this;
-        declarations.map(function (obj) {
+        declarations.forEach(obj => {
             var decl = parse(obj.value.body, obj.value.dialect);
             decl.register(worker.librariesContext);
         });
@@ -62,7 +65,7 @@ export default class Repository {
     registerProjectDeclarations(moduleId, declarations) {
         this.moduleId = moduleId;
         var worker = this;
-        declarations.map(function (obj) {
+        declarations.forEach(obj => {
             var decl = parse(obj.value.body, obj.value.dialect);
             decl.register(worker.projectContext);
             // prepare for commit
@@ -136,7 +139,7 @@ export default class Repository {
 
 
     registerDirty(decls, parser, dialect) {
-        decls.map(function (decl) {
+        decls.forEach(decl => {
             var decl_obj;
             var id = this.idFromDecl(decl);
             var existing = this.statuses[id];
@@ -192,7 +195,7 @@ export default class Repository {
 
     registerCommitted(storedDecls) {
         var repo = this;
-        storedDecls.map(function (storedDecl) {
+        storedDecls.forEach(storedDecl => {
             var id = repo.idFromDbDecl(storedDecl);
             repo.statuses[id].stuff.value.dbId = storedDecl.value.dbId;
             repo.statuses[id].editStatus = "CLEAN";
@@ -275,12 +278,12 @@ export default class Repository {
         var changedIdsCount = delta.filterOutDuplicates();
         var handled = false;
         // special case when changing id of a declaration, try connect to the previous version
-        if (changedIdsCount === 2 && old_decls.length > 0 && new_decls.length == old_decls.length) {
+        if (changedIdsCount === 2 && old_decls.length > 0 && new_decls.length === old_decls.length) {
             // locate new declaration, for which there is no existing status entry
-            var decls_with_status = new_decls.filter(function (decl) {
+            var decls_with_status = new_decls.filter(decl => {
                 var id = this.idFromDecl(decl);
                 var status = this.statuses[id] || null;
-                return status == null;
+                return status === null;
             }, this);
             if (decls_with_status.length === 1) {
                 var new_decl = decls_with_status[0];

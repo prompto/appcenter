@@ -1,5 +1,5 @@
 {
-  "name": "home",
+  "name": "ide",
   "version": "0.1.0",
   "private": true,
   "homepage": ".",
@@ -22,6 +22,7 @@
   },
   "scripts": {
     "start": "node scripts/start-patching-webconfig.js",
+    "watch": "node scripts/build-watching.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

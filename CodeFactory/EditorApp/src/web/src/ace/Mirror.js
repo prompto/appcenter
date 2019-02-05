@@ -17,11 +17,9 @@ export default class Mirror {
                 doc.applyDeltas(data);
             } else {
                 for (var i = 0; i < data.length; i += 2) {
-                    if (Array.isArray(data[i+1])) {
-                        var d = {action: "insert", start: data[i], lines: data[i+1]};
-                    } else {
-                        var d = {action: "remove", start: data[i], end: data[i+1]};
-                    }
+                    var d = Array.isArray(data[i+1]) ?
+                        {action: "insert", start: data[i], lines: data[i+1]}
+                        : {action: "remove", start: data[i], end: data[i+1]};
                     doc.applyDelta(d, true);
                 }
             }
