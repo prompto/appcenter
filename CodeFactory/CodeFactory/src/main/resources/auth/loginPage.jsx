@@ -30,6 +30,7 @@ class LoginPage extends React.Component {
             document.write(response.data);
             document.close();
         }).catch(error=>{
+            console.log(error);
             document.location = "/auth/errorPage.html";
         });
     }
@@ -80,8 +81,8 @@ class LoginPage extends React.Component {
                         </form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button onClick={this.handleClose}>Cancel</Button>
-                        <Button bsStyle="primary" onClick={this.handleConnect}>Connect</Button>
+                        <Button style={btnStyle} onClick={this.handleClose}>Cancel</Button>
+                        <Button style={btnStyle} bsStyle="primary" onClick={this.handleConnect}>Connect</Button>
                     </Modal.Footer>
                 </Modal>
             </div>;
