@@ -92,7 +92,13 @@ export default class Launcher {
     }
 
     debugRemoteTestOrMethod(content) {
-        alert("Not supported yet!");
+        const runner = Runners.forMode(this.runMode);
+        if (runner) {
+            this.root.setState({activity: Activity.Debugging});
+            // runner.debugContent(this.root.projectId, null, content));
+        } else {
+            alert("Unsupported mode: " + this.runMode);
+        }
     }
 
     openWebPage(content) {

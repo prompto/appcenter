@@ -71,8 +71,8 @@ export default class ResourceEditor extends React.Component {
 
     render() {
         const style = {display: this.state.display};
-        return <div className="editor" style={style} >
-                <div id="resource-editor-wrapper">
+        return <div className="resource-editor-wrapper" style={style} >
+                <div className="ace-editor-wrapper">
                     <AceEditor ref={ref=>this.aceEditor=ref} name="resource-editor"
                                theme="eclipse" mode="text"
                                value={this.state.value} onChange={this.textEdited}

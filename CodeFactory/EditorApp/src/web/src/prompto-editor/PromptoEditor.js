@@ -104,12 +104,12 @@ export default class PromptoEditor extends React.Component {
 
     render() {
         const style = {display: this.state.display};
-        return <div className="editor" style={style} >
-                <AceEditor ref={ref=>{if(ref)this.aceEditor=ref;}} name="prompto-editor"
-                           theme="eclipse" mode="text"
-                           value={this.state.value} onChange={this.codeEdited}
-                           width="100%" height="100%" editorProps={{ $blockScrolling: Infinity }} />
-            </div>;
+        return <div className="ace-editor-wrapper" style={style}>
+                    <AceEditor ref={ref=>{if(ref)this.aceEditor=ref;}} name="prompto-editor"
+                               theme="eclipse" mode="text"
+                               value={this.state.value} onChange={this.codeEdited}
+                               width="100%" height="100%" editorProps={{ $blockScrolling: Infinity }} />
+                </div>;
     }
 
 }

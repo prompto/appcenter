@@ -10,7 +10,7 @@ export default class ContentNavigator extends React.Component {
     }
 
     render() {
-        return <div id="sidebar">
+        return <div className="tree">
             <div className="checkbox">
                 <label><input type="checkbox" id="show-libs" checked={this.state.showLibraries} onChange={this.toggleShowLibraries} />&nbsp;Show libraries</label>
             </div>

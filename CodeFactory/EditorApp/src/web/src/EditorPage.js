@@ -201,10 +201,21 @@ export default class EditorPage extends React.Component {
         return <div>
             <EditorNavBar ref={ref=>this.navBar=ref} root={this}/>
             <MessageArea ref={ref=>this.messageArea=ref}/>
-            { this.renderLoading() }
-            { this.renderEditor() }
-            { this.renderOutput() }
+            <div>
+                { this.renderLoading() }
+                { this.renderEditor() }
+                { this.renderOutput() }
+            </div>
+            { this.renderDialog() }
         </div>;
+    }
+
+    renderDialog() {
+        return <div>
+                { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }
+                { this.state.newTextResourceType!=null && <NewTextResourceDialog type={this.state.newTextResourceType} root={this} onClose={()=>this.setState({newTextResourceType: null})}/> }
+                { this.state.resourceToRename!=null && <RenameResourceDialog resource={this.state.resourceToRename} root={this} onClose={()=>this.setState({resourceToRename: null})}/>}
+            </div>;
     }
 
     renderOutput() {
@@ -222,17 +233,19 @@ export default class EditorPage extends React.Component {
     }
 
     renderEditor() {
-        const style = { display: this.state.activity===Activity.Editing ? "block" : "none"};
-        return <div style={style}>
-                <ContentNavigator ref={ref=>{if(ref)this.contentNavigator=ref;}} root={this} catalog={this.catalog}/>
-                <PromptoEditor ref={ref=>this.promptoEditor=ref} commitAndReset={this.commitAndReset}
-                               catalogUpdated={this.catalogUpdated} projectUpdated={this.projectUpdated}
-                               done={()=>this.setState({activity: Activity.Idling})}/>
-                <ResourceEditor ref={ref=>this.resourceEditor=ref} textEdited={this.textResourceEdited} />
-                <BinaryEditor ref={ref=>this.binaryEditor=ref} /> }
-                { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }
-                { this.state.newTextResourceType!=null && <NewTextResourceDialog type={this.state.newTextResourceType} root={this} onClose={()=>this.setState({newTextResourceType: null})}/> }
-                { this.state.resourceToRename!=null && <RenameResourceDialog resource={this.state.resourceToRename} root={this} onClose={()=>this.setState({resourceToRename: null})}/>}
+        const activity = this.state.activity;
+        const style = { display: activity===Activity.Editing || activity===Activity.Debugging ? "block" : "none"};
+        return <div className="content" style={style}>
+                <div className="navigator">
+                    <ContentNavigator ref={ref=>{if(ref)this.contentNavigator=ref;}} root={this} catalog={this.catalog}/>
+                </div>
+                <div className="editor">
+                    <PromptoEditor ref={ref=>this.promptoEditor=ref} commitAndReset={this.commitAndReset}
+                                   catalogUpdated={this.catalogUpdated} projectUpdated={this.projectUpdated}
+                                   activity={activity} done={()=>this.setState({activity: Activity.Idling})}/>
+                    <ResourceEditor ref={ref=>this.resourceEditor=ref} textEdited={this.textResourceEdited} />
+                    <BinaryEditor ref={ref=>this.binaryEditor=ref} />
+                </div>
             </div>;
     }
 

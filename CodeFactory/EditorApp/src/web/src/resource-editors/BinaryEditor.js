@@ -35,12 +35,10 @@ export default class BinaryEditor extends React.Component {
         const source = this.state.source || this.state.preview;
         const state = source ? "PREVIEW" : "LOADING";
         const style = {display: this.state.display};
-        return <div className="editor" style={style} >
-                    <div id="image-displayer-wrapper">
-                        <div id="image-displayer">
-                            { state==="PREVIEW" && <img src={source} style={{ maxWidth: "98%", maxHeight: "98%", width: "auto", height: "auto" }} alt="" /> }
-                            { state==="LOADING" && 'Loading...' }
-                        </div>
+        return <div className="resource-editor-wrapper" style={style} >
+                    <div id="image-displayer">
+                        { state==="PREVIEW" && <img src={source} style={{ maxWidth: "98%", maxHeight: "98%", width: "auto", height: "auto" }} alt="" /> }
+                        { state==="LOADING" && 'Loading...' }
                     </div>
                 <div id="resource-name">{this.state.name}</div>
             </div>;
