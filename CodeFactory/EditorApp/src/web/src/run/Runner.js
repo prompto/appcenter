@@ -1,75 +1,104 @@
-import {print} from "../utils/Utils";
+import { fetchModuleURL } from './Utils';
+import Fetcher from './Fetcher';
+
+const fetcher = Fetcher.instance;
 
 export default class Runner {
 
-    constructor(root, content, runMode) {
-        this.root = root;
-        this.content = content;
-        this.runMode = runMode;
-        this.checkRunnable = this.checkRunnable.bind(this);
-        this.doRun = this.doRun.bind(this);
-        this.runMethod = this.runMethod.bind(this);
-        this.openPage = this.openPage.bind(this);
+    static types = {};
+
+    static forMode(mode) {
+        const type = Runner.types[mode];
+        return new type();
     }
 
-    tryRun() {
-        this.getRunnableContent(runnable => this.checkRunnable(runnable, this.doRun));
+    runContent(projectId, repo, content, callback) {
+        throw new Error("Unsupported!");
     }
-
-    getRunnableContent(andThen) {
-        // check runnable code
-        if(this.content.subType==="test" || (this.content.subType==="method" && this.content.main))
-            return andThen({ valid: true, content: this.content });
-        // check runnable page
-        if(this.root.getProject().type !== "WebSite")
-            return andThen({ valid: false, content: null });
-        if(this.content.type==="html" || this.content.type==="page")
-            return andThen({ valid: true, content: this.content });
-        if(this.content.subType!=="widget")
-            return andThen({ valid: false, content: null });
-        this.root.promptoEditor.fetchRunnablePage(this.content, andThen);
-    }
-
-    checkRunnable(runnable, andThen) {
-        if (runnable == null) {
-            alert("Nothing to run!");
-        } else if (!runnable.valid) {
-            alert("Can only run tests methods, main methods or web pages!");
-            return;
-        } else
-            andThen(runnable);
-    }
-
-    doRun(runnable) {
-        if (runnable.content.type === "html" || runnable.content.type === "page")
-            this.openPage(runnable.content);
-        else
-            this.runMethod(runnable.content);
-    }
-
-    runMethod(content) {
-        this.root.setState({editMode: "RUNNING"});
-        print("Running " + content.name + "...");
-        this.root.promptoEditor.runMethod(content, this.runMode);
-    }
-
-    openPage(content) {
-        this.root.fetchModuleURL(url => {
-            const fullUrl = url + content.name;
-            const tab = window.open(fullUrl, '_blank', '');
-            if(tab)
-                tab.focus();
-            else {
-                var msg = "It seems your browser is blocking popups.\n" +
-                    "Allow popups for [*.]prompto.cloud to open your web site automatically.\n" +
-                    "Alternately, open a new tab or window with the following URL:\n" +
-                    fullUrl;
-                alert(msg);
-            }
-
-        });
-    }
-
-
 
 }
+
+class LocalInterpreter extends Runner {
+
+    runContent(projectId, repo, content, callback) {
+        if (content.subType === "test")
+            this.runTest(repo, content, callback);
+        else
+            this.runMethod(repo, content, callback);
+    }
+
+    runTest(repo, content, callback) {
+        const store = prompto.store.DataStore.instance;
+        prompto.store.DataStore.instance = new prompto.memstore.MemStore();
+        try {
+            prompto.runtime.Interpreter.interpretTest(repo.projectContext, content.name);
+        } finally {
+            prompto.store.DataStore.instance = store;
+            callback();
+        }
+    }
+
+    runMethod(repo, content, callback) {
+        try {
+            prompto.runtime.Interpreter.interpret(repo.projectContext, content.name, "");
+            console.log("Finished running " + content.name);
+        } finally {
+            callback();
+        }
+    }
+}
+Runner.types.LI = LocalInterpreter;
+
+
+class LocalExecutor extends Runner {
+
+}
+Runner.types.LE = LocalExecutor;
+
+
+class RemoteRunner extends Runner {
+
+    runRemotely(projectId, mode, content, callback) {
+        fetchModuleURL(projectId, url => {
+            var fullUrl = url + "ws/run/" + content.name +  "?mode=" + mode;
+            if(content.subType==="method")
+                fullUrl = fullUrl + "&main=true";
+            fetcher.fetchJSON(fullUrl, response => {
+                if (response.error)
+                    console.log(response.error);
+                else if(response.data instanceof Array)
+                    response.data.map(console.log);
+                else
+                    console.log(response.data);
+                callback();
+            }, error => {
+                console.log(error);
+                callback();
+            });
+        }, error => {
+            console.log(error);
+            callback();
+        });
+    }
+}
+
+
+class RemoteInterpreter extends RemoteRunner {
+
+    runContent(projectId, repo, content, callback) {
+        this.runRemotely(projectId, "interpret", content, callback);
+    }
+}
+Runner.types.SI = RemoteInterpreter;
+
+
+class RemoteExecutor extends RemoteRunner {
+
+    runContent(projectId, repo, content, callback) {
+        this.runRemotely(projectId, "execute", content, callback);
+    }
+}
+Runner.types.SE = RemoteExecutor;
+
+
+

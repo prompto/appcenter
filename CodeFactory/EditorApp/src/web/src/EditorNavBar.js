@@ -6,11 +6,13 @@ import DependenciesDialog from './dialogs/DependenciesDialog';
 import ConfigurationDialog from './dialogs/ConfigurationDialog';
 import { ALL_ELEMENT_TYPES } from "./resource-types/ResourceTypes";
 import Defaults from './code/Defaults';
+import Activity from './utils/Activity';
+import Launcher from "./run/Launcher";
 
 const dialectLabels = { "E": "Engly", "O": "Objy", "M": "Monty"};
 const ALL_DIALECTS = ["E", "O", "M"];
-const runModeLabels = { "LI": "Local interpreted", "SI": "Server interpreted", "SE": "Server compiled"};
-const ALL_RUN_MODES = ["LI", "SI", "SE"];
+const runModeLabels = { "LI": "Local interpreted", "LE": "Local transpiled", "SI": "Server interpreted", "SE": "Server compiled"};
+const ALL_RUN_MODES = ["LI", "SI", "SE"]; // LE not supported yet
 
 
 export default class EditorNavBar extends React.Component {
@@ -21,6 +23,7 @@ export default class EditorNavBar extends React.Component {
         this.setDialect = this.setDialect.bind(this);
         this.setRunMode = this.setRunMode.bind(this);
         this.tryRun = this.tryRun.bind(this);
+        this.tryDebug = this.tryDebug.bind(this);
         this.stopPromptoCode = this.stopPromptoCode.bind(this);
         this.clearOutput = this.clearOutput.bind(this);
     }
@@ -35,11 +38,14 @@ export default class EditorNavBar extends React.Component {
     }
 
     tryRun() {
-        this.props.root.tryRun(this.state.runMode);
+        const root = this.props.root;
+        const runner = new Launcher(root, root.state.content, this.state.runMode);
+        runner.tryRun();
     }
 
 
     tryDebug() {
+        alert("debug");
     }
 
 
@@ -48,7 +54,7 @@ export default class EditorNavBar extends React.Component {
     }
 
     stopPromptoCode() {
-        this.props.root.setState({editMode: "EDIT"});
+        this.props.root.setState({activity: Activity.Editing});
     }
 
     clearOutput() {
@@ -58,9 +64,9 @@ export default class EditorNavBar extends React.Component {
 
     render() {
         const projectName = getParam("name");
-        const editStyle = {display: this.props.root.state.editMode==="EDIT" ? "block" : "none"};
-        const runningStyle = {display: this.props.root.state.editMode!=="EDIT" ? "block" : "none"};
-        const runningLabel = this.props.root.state.editMode==="RUNNING" ? "Stop" : "Done";
+        const activity = this.props.root.state.activity;
+        const editingStyle = {display: activity===Activity.Editing ? "block" : "none"};
+        const runningStyle = {display: activity===Activity.Running ? "block" : "none"};
         const project = this.props.root.getProject();
         const hasStartMethod = project && project.type==="Batch";
         const hasServerStartMethod = project && (project.type==="Service" || project.type==="WebSite");
@@ -76,19 +82,19 @@ export default class EditorNavBar extends React.Component {
                 <Nav pullRight>
                     <NavItem href="http://www.prompto.org" target="_blank">Reference</NavItem>
                 </Nav>
-                <Navbar.Form pullRight style={editStyle}>
+                <Navbar.Form pullRight style={editingStyle}>
                     <DropdownButton id="dialect" title="Dialect">
                         { ALL_DIALECTS.map(d => <MenuItem key={d} active={this.state.dialect===d} onClick={()=>this.setDialect(d)}>{dialectLabels[d]}</MenuItem>) }
                     </DropdownButton>
                 </Navbar.Form>
-                <Navbar.Form pullRight style={editStyle}>
+                <Navbar.Form pullRight style={editingStyle}>
                     <DropdownButton id="dialect" title="Settings">
                         { hasConfiguration && <MenuItem onClick={()=>this.setState({dialog: "Configuration"})}>Configuration</MenuItem> }
                         <MenuItem onClick={()=>this.setState({dialog: "Dependencies"})}>Dependencies</MenuItem>
                         { hasServerStartMethod && <MenuItem onClick={()=>this.setState({dialog: "Authentication"})}>Authentication</MenuItem> }
                     </DropdownButton>
                 </Navbar.Form>
-                <Navbar.Form pullRight style={editStyle}>
+                <Navbar.Form pullRight style={editingStyle}>
                     <ButtonGroup>
                         <DropdownButton id="mode" title={runModeLabels[this.state.runMode]}>
                             { ALL_RUN_MODES.map(m=><MenuItem key={m} active={this.state.runMode===m} onClick={()=>this.setRunMode(m)}>{runModeLabels[m]}</MenuItem>) }
@@ -101,14 +107,14 @@ export default class EditorNavBar extends React.Component {
                     &nbsp;
                     <Button type="button" onClick={()=>this.props.root.resetServer()} disabled={this.state.runMode==="LI"}>Reset</Button>
                 </Navbar.Form>
-                <Navbar.Form pullRight style={editStyle}>
+                <Navbar.Form pullRight style={editingStyle}>
                     <Button type="button" onClick={()=>this.props.root.revert()}>Revert</Button>
                     &nbsp;
                     <Button type="button" onClick={()=>this.props.root.commitAndReset()}>Commit</Button>
                     &nbsp;
                     { false &&  <Button type="button" onClick={()=>this.props.root.push()}>Push</Button> }
                 </Navbar.Form>
-                <Navbar.Form pullRight style={editStyle}>
+                <Navbar.Form pullRight style={editingStyle}>
                     <DropdownButton id="btnNew" title="New">
                         { ALL_ELEMENT_TYPES.map(t=><MenuItem key={t.id} id={t.id} onClick={()=>t.newResource(this.props.root)}>{t.label}</MenuItem>) }
                     </DropdownButton>
@@ -116,7 +122,7 @@ export default class EditorNavBar extends React.Component {
                     <Button type="button" onClick={()=>this.props.root.destroy()}>Delete</Button>
                 </Navbar.Form>
                 <Navbar.Form style={runningStyle}>
-                    <Button type="button" onClick={this.stopPromptoCode}>{runningLabel}</Button>
+                    <Button type="button" onClick={this.stopPromptoCode}>{activity===Activity.Running ? "Stop" : "Done"}</Button>
                     &nbsp;
                     <Button type="button" onClick={this.clearOutput}>Clear</Button>
                 </Navbar.Form>

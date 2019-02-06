@@ -1,11 +1,14 @@
 import Mirror from '../ace/Mirror';
 import Repository from '../code/Repository';
 import Defaults from '../code/Defaults';
+import Runner from '../run/Runner';
+import Fetcher from '../run/Fetcher';
 
 // eslint-disable-next-line
 const globals = self || window;
 const prompto = globals.prompto;
 const location = globals.location;
+const fetcher = Fetcher.instance;
 
 export default class PromptoWorker extends Mirror {
 
@@ -18,7 +21,6 @@ export default class PromptoWorker extends Mirror {
         this.$core = false;
         this.$repo = new Repository();
         this.$loading = {};
-        this.$authorization = null;
         this.onInit();
     }
 
@@ -28,7 +30,7 @@ export default class PromptoWorker extends Mirror {
         this.markLoading("%Description%");
         // load core
         this.markLoading("Core");
-        this.loadText("prompto/prompto.pec", text => {
+        fetcher.fetchText("prompto/prompto.pec", text => {
             this.$repo.registerLibraryCode(text, "E");
             this.markLoaded("Core");
         });
@@ -137,20 +139,20 @@ export default class PromptoWorker extends Mirror {
     fetchModuleDescription(projectId, register, success) {
         var params = [ {name:"dbId", value:projectId.toString()}, {name:"register", type:"Boolean", value:register}];
         var url = '/ws/run/getModuleDescription?params=' + JSON.stringify(params);
-        this.loadJSON(url, success);
+        fetcher.fetchJSON(url, success);
     }
 
     fetchProjectDeclarations(projectId, success) {
         var params = [ {name:"dbId", value:projectId.toString()}];
         var url = '/ws/run/getModuleDeclarations?params=' + JSON.stringify(params);
-        this.loadJSON(url, success);
+        fetcher.fetchJSON(url, success);
     }
 
 
     fetchLibraryDeclarations(name, version, success) {
         var params = [ {name:"name", type:"Text", value:name}, {name:"version", type:version.type, value:version.value} ];
         var url = '/ws/run/getModuleDeclarations?params=' + JSON.stringify(params);
-        this.loadJSON(url, success);
+        fetcher.fetchJSON(url, success);
     }
 
     publishLibraries() {
@@ -185,37 +187,6 @@ export default class PromptoWorker extends Mirror {
             this.publishLibraries();
     }
 
-    loadJSON(url, success) {
-        this.loadText(url, text => success(JSON.parse(text)));
-    }
-
-    loadText(url, success) {
-        var worker = this;
-        var xhr = new XMLHttpRequest();
-        xhr.onerror = function(e) {
-            console.log("Error " + e.target.status + " occurred while receiving the document.");
-            return null;
-        };
-        xhr.onload = function(e) {
-            if(xhr.status==200) {
-                if (url[0] === "/" || url[0] === ".") {
-                    // can't read unsafe header
-                    worker.$authorization = xhr.getResponseHeader("X-Authorization") || null;
-                }
-                success(xhr.responseText);
-            } else
-                console.error("Failed to load " + url + ", error: " + xhr.status);
-        };
-        xhr.open('GET', url);
-        if(url[0]!=="/" && url[0]!==".") {
-            if(worker.$authorization!=null)
-                xhr.setRequestHeader("X-Authorization", worker.$authorization);
-            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-            xhr.withCredentials = true;
-        }
-        xhr.send(null);
-    }
-
     prepareCommit() {
         const declarations = this.$repo.prepareCommit();
         this.sender.callback(declarations, arguments[0]); // callbackId is added by ACE);
@@ -237,62 +208,10 @@ export default class PromptoWorker extends Mirror {
     }
 
     runMethod(content, mode) {
-        if (mode==="LI")
-            this.interpretLocally(content);
-        else if(mode==="SI")
-            this.runRemotely(content,"interpret");
-        else // compiled
-            this.runRemotely(content, "execute");
+        const runner = Runner.forMode(mode);
+        runner.runContent(this.$projectId, this.$repo, content, ()=>this.sender.callback(arguments[2])); // callbackId is added by ACE
     }
 
-    interpretLocally(content) {
-        var context = this.$repo.projectContext;
-        if(content.subType==="test") {
-            const store = prompto.store.DataStore.instance;
-            prompto.store.DataStore.instance = new prompto.memstore.MemStore();
-            try {
-                prompto.runtime.Interpreter.interpretTest(context, content.name);
-            } finally {
-                prompto.store.DataStore.instance = store;
-            }
-        } else  {
-            prompto.runtime.Interpreter.interpret(context, content.name, "");
-            console.log("Finished running " + content.name);
-        }
-        this.sender.emit("done");
-    }
-
-    runRemotely(content, mode) {
-        this.fetchModuleURL(this.$projectId, url => {
-            var fullUrl = url + "ws/run/" + content.name +  "?mode=" + mode;
-            if(content.subType==="method")
-                fullUrl = fullUrl + "&main=true";
-            this.loadJSON(fullUrl, response => {
-                if (response.error)
-                    console.log(response.error);
-                else if(response.data instanceof Array)
-                    response.data.map(console.log);
-                else
-                    console.log(response.data);
-                this.sender.emit("done");
-            });
-        });
-    }
-
-    fetchModuleURL(projectId, success) {
-        var params = [ {name:"dbId", value:projectId.toString()}];
-        var url = '/ws/run/getModulePort?params=' + JSON.stringify(params);
-        this.loadJSON(url, response => {
-            if (response.error)
-                ; // TODO something
-            else {
-                var href = location.protocol +
-                    "//" + location.hostname +
-                    ":" + response.data + "/";
-                success(href);
-            }
-        });
-    }
 
     fetchRunnablePage(content) {
         var runnable = { valid: false, content: null };

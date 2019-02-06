@@ -12,7 +12,8 @@ import EditorNavBar from './EditorNavBar';
 import PromptoEditor from './prompto-editor/PromptoEditor';
 import ResourceEditor from './resource-editors/ResourceEditor';
 import BinaryEditor from './resource-editors/BinaryEditor';
-import Runner from './run/Runner';
+import Activity from './utils/Activity';
+import { fetchModuleURL } from './run/Utils';
 
 export default class EditorPage extends React.Component {
 
@@ -41,12 +42,10 @@ export default class EditorPage extends React.Component {
         this.getProject = this.getProject.bind(this);
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
-        this.done = this.done.bind(this);
-        this.tryRun = this.tryRun.bind(this);
         this.promptoEditor = null;
         this.resourceEditor = null;
         this.imageDisplayer = null;
-        this.state = { project: null, editMode: "EDIT", content: null, resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
+        this.state = { project: null, activity: Activity.Loading, content: null, resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
         this.catalog = new Catalog();
         Mousetrap.bind('command+s', this.commitAndReset);
         console.log = print;
@@ -113,10 +112,10 @@ export default class EditorPage extends React.Component {
     }
 
     resetServer() {
-        this.fetchModuleURL(url => {
+        fetchModuleURL(this.projectId, url => {
             const fullUrl = url + "ws/control/clear-context";
             axios.get(fullUrl);
-        });
+        }, error => alert(error));
     }
 
     prepareResourceFiles(formData, resources) {
@@ -163,8 +162,12 @@ export default class EditorPage extends React.Component {
         let content = null;
         if(delta.select)
             content = {type: "Prompto", value: {name: delta.select}};
-        else if(delta.project && this.state.content)
-            content = {type: this.state.content.type, value: {subType: this.state.content.subType, name: this.state.content.name}};
+        else if(delta.project) {
+            if(this.state.activity===Activity.Loading)
+                this.setState({activity: Activity.Editing});
+            if (this.state.content)
+                content = { type: this.state.content.type, value: {subType: this.state.content.subType, name: this.state.content.name} };
+        }
         this.setCatalog(this.catalog, content, callback);
     }
 
@@ -193,45 +196,28 @@ export default class EditorPage extends React.Component {
             .catch(error=>alert(error));
     }
 
-    fetchModuleURL(success) {
-        const dbId = this.getProject().value.dbId.value || this.getProject().value.dbId;
-        const params = { params: JSON.stringify([ {name:"dbId", value: dbId}]) };
-        axios.get('/ws/run/getModulePort', { params: params })
-            .then(resp=>{
-                const response = resp.data;
-                if (response.error)
-                    ; // TODO something
-                else if(response.data === -1)
-                    alert("Server is not running!");
-                else {
-                    const href = window.location.protocol +
-                        "//" + window.location.hostname +
-                        ":" + response.data + "/";
-                    success(href);
-                }
-            })
-            .catch(error=>alert(error));
-    }
 
     render() {
-        const editorStyle = { display: this.state.editMode==="EDIT" ? "block" : "none"};
-        const outputStyle = { display: this.state.editMode==="EDIT" ? "none" : "block"};
+        const loadingStyle = { display: this.state.activity===Activity.Loading ? "block" : "none"};
+        const editorStyle = { display: this.state.activity===Activity.Editing ? "block" : "none"};
+        const outputStyle = { display: this.state.activity===Activity.Running ? "block" : "none"};
         return <div>
             <EditorNavBar ref={ref=>this.navBar=ref} root={this}/>
             <MessageArea ref={ref=>this.messageArea=ref}/>
             <div style={editorStyle}>
                 <ContentNavigator ref={ref=>{if(ref)this.contentNavigator=ref;}} root={this} catalog={this.catalog}/>
-                <PromptoEditor ref={ref=>this.promptoEditor=ref}
-                               commitAndReset={this.commitAndReset} commitPrepared={this.commitPrepared}
+                <PromptoEditor ref={ref=>this.promptoEditor=ref} commitAndReset={this.commitAndReset}
                                catalogUpdated={this.catalogUpdated} projectUpdated={this.projectUpdated}
-                                done={()=>this.setState({editMode: "IDLE"})}/>
+                                done={()=>this.setState({activity: Activity.Idling})}/>
                 <ResourceEditor ref={ref=>this.resourceEditor=ref} textEdited={this.textResourceEdited} />
                 <BinaryEditor ref={ref=>this.binaryEditor=ref} /> }
                 { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }
                 { this.state.newTextResourceType!=null && <NewTextResourceDialog type={this.state.newTextResourceType} root={this} onClose={()=>this.setState({newTextResourceType: null})}/> }
                 { this.state.resourceToRename!=null && <RenameResourceDialog resource={this.state.resourceToRename} root={this} onClose={()=>this.setState({resourceToRename: null})}/>}
             </div>
-            <div id="output" style={outputStyle}>
+            <div id="output" style={outputStyle} />
+            <div style={loadingStyle}>
+                <img id="loading" src="img/loading.gif" alt=""/>
             </div>
         </div>;
     }
@@ -306,19 +292,6 @@ export default class EditorPage extends React.Component {
             () => this.navBar.setDialect(dialect,
                 () => this.promptoEditor.setContent({type: "prompto", body: code})));
     }
-
-
-    done(data) {
-        this.setState({editMode: "IDLE"});
-    }
-
-    tryRun(runMode) {
-        const runner = new Runner(this, this.state.content, runMode);
-        runner.tryRun();
-    }
-
-
-
 
 
 }
