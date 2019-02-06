@@ -92,6 +92,7 @@
 				<version>3.0.1</version>
 				<!-- copy web pages to src/main/web -->
 				<!-- not sure why tests fail when using resources/resource/directory + targetPath -->
+				<!-- TODO: explore maven-remote-resources-plugin to avoid warnings -->
 				<executions>
 					<execution>
 						<id>include projects app</id>
