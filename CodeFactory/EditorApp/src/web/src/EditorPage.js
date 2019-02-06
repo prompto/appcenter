@@ -198,28 +198,42 @@ export default class EditorPage extends React.Component {
 
 
     render() {
-        const loadingStyle = { display: this.state.activity===Activity.Loading ? "block" : "none"};
-        const editorStyle = { display: this.state.activity===Activity.Editing ? "block" : "none"};
-        const outputStyle = { display: this.state.activity===Activity.Running ? "block" : "none"};
         return <div>
             <EditorNavBar ref={ref=>this.navBar=ref} root={this}/>
             <MessageArea ref={ref=>this.messageArea=ref}/>
-            <div style={editorStyle}>
+            { this.renderLoading() }
+            { this.renderEditor() }
+            { this.renderOutput() }
+        </div>;
+    }
+
+    renderOutput() {
+        const activity = this.state.activity;
+        const style = { display: activity===Activity.Running || activity===Activity.Idling ? "block" : "none"};
+        return <div id="output" style={style} />;
+    }
+
+
+    renderLoading() {
+        const style = { display: this.state.activity===Activity.Loading ? "block" : "none"};
+        return <div style={style}>
+                <img id="loading" src="img/loading.gif" alt=""/>
+            </div>;
+    }
+
+    renderEditor() {
+        const style = { display: this.state.activity===Activity.Editing ? "block" : "none"};
+        return <div style={style}>
                 <ContentNavigator ref={ref=>{if(ref)this.contentNavigator=ref;}} root={this} catalog={this.catalog}/>
                 <PromptoEditor ref={ref=>this.promptoEditor=ref} commitAndReset={this.commitAndReset}
                                catalogUpdated={this.catalogUpdated} projectUpdated={this.projectUpdated}
-                                done={()=>this.setState({activity: Activity.Idling})}/>
+                               done={()=>this.setState({activity: Activity.Idling})}/>
                 <ResourceEditor ref={ref=>this.resourceEditor=ref} textEdited={this.textResourceEdited} />
                 <BinaryEditor ref={ref=>this.binaryEditor=ref} /> }
                 { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }
                 { this.state.newTextResourceType!=null && <NewTextResourceDialog type={this.state.newTextResourceType} root={this} onClose={()=>this.setState({newTextResourceType: null})}/> }
                 { this.state.resourceToRename!=null && <RenameResourceDialog resource={this.state.resourceToRename} root={this} onClose={()=>this.setState({resourceToRename: null})}/>}
-            </div>
-            <div id="output" style={outputStyle} />
-            <div style={loadingStyle}>
-                <img id="loading" src="img/loading.gif" alt=""/>
-            </div>
-        </div>;
+            </div>;
     }
 
     setEditorContent(content, callback) {

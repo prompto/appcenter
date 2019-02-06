@@ -57,14 +57,6 @@ export default class EditorNavBar extends React.Component {
 
     render() {
         const projectName = getParam("name");
-        const activity = this.props.root.state.activity;
-        const editingStyle = {display: activity===Activity.Editing ? "block" : "none"};
-        const runningStyle = {display: activity===Activity.Running ? "block" : "none"};
-        const project = this.props.root.getProject();
-        const hasStartMethod = project && project.type==="Batch";
-        const hasServerStartMethod = project && (project.type==="Service" || project.type==="WebSite");
-        const hasHomePage = project && project.type==="WebSite";
-        const hasConfiguration = hasStartMethod || hasServerStartMethod || hasHomePage;
         return <div>
             <Navbar inverse fluid fixedTop>
                 <Navbar.Header>
@@ -75,19 +67,47 @@ export default class EditorNavBar extends React.Component {
                 <Nav pullRight>
                     <NavItem href="http://www.prompto.org" target="_blank">Reference</NavItem>
                 </Nav>
-                <Navbar.Form pullRight style={editingStyle}>
+                { this.renderEditWidgets() }
+                { this.renderOutputWidgets() }
+            </Navbar>
+            { this.state.dialog==="Authentication" && <AuthenticationSettingsDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
+            { this.state.dialog==="Dependencies" && <DependenciesDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
+            { this.state.dialog==="Configuration" && <ConfigurationDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
+        </div>;
+    }
+
+    renderOutputWidgets() {
+        const activity = this.props.root.state.activity;
+        const style = {display: activity===Activity.Running || activity===Activity.Idling ? "block" : "none"};
+        return <Navbar.Form style={style}>
+                <Button type="button" onClick={this.stopPromptoCode}>{activity===Activity.Running ? "Stop" : "Done"}</Button>
+                &nbsp;
+                <Button type="button" onClick={this.clearOutput}>Clear</Button>
+            </Navbar.Form>;
+    }
+
+    renderEditWidgets() {
+        const project = this.props.root.getProject();
+        const hasStartMethod = project && project.type==="Batch";
+        const hasServerStartMethod = project && (project.type==="Service" || project.type==="WebSite");
+        const hasHomePage = project && project.type==="WebSite";
+        const hasConfiguration = hasStartMethod || hasServerStartMethod || hasHomePage;
+        const activity = this.props.root.state.activity;
+        const style = {display: activity===Activity.Editing ? "block" : "none"};
+        return <div style={style}>
+                <Navbar.Form pullRight>
                     <DropdownButton id="dialect" title="Dialect">
                         { ALL_DIALECTS.map(d => <MenuItem key={d} active={this.state.dialect===d} onClick={()=>this.setDialect(d)}>{dialectLabels[d]}</MenuItem>) }
                     </DropdownButton>
                 </Navbar.Form>
-                <Navbar.Form pullRight style={editingStyle}>
+                <Navbar.Form pullRight>
                     <DropdownButton id="dialect" title="Settings">
                         { hasConfiguration && <MenuItem onClick={()=>this.setState({dialog: "Configuration"})}>Configuration</MenuItem> }
                         <MenuItem onClick={()=>this.setState({dialog: "Dependencies"})}>Dependencies</MenuItem>
                         { hasServerStartMethod && <MenuItem onClick={()=>this.setState({dialog: "Authentication"})}>Authentication</MenuItem> }
-                    </DropdownButton>
+                </DropdownButton>
                 </Navbar.Form>
-                <Navbar.Form pullRight style={editingStyle}>
+                <Navbar.Form pullRight>
                     <ButtonGroup>
                         <DropdownButton id="mode" title={runModeLabels[this.state.runMode]}>
                             { ALL_RUN_MODES.map(m=><MenuItem key={m} active={this.state.runMode===m} onClick={()=>this.setRunMode(m)}>{runModeLabels[m]}</MenuItem>) }
@@ -100,31 +120,21 @@ export default class EditorNavBar extends React.Component {
                     &nbsp;
                     <Button type="button" onClick={()=>this.props.root.resetServer()} disabled={this.state.runMode==="LI"}>Reset</Button>
                 </Navbar.Form>
-                <Navbar.Form pullRight style={editingStyle}>
+                <Navbar.Form pullRight>
                     <Button type="button" onClick={()=>this.props.root.revert()}>Revert</Button>
                     &nbsp;
                     <Button type="button" onClick={()=>this.props.root.commitAndReset()}>Commit</Button>
                     &nbsp;
                     { false &&  <Button type="button" onClick={()=>this.props.root.push()}>Push</Button> }
                 </Navbar.Form>
-                <Navbar.Form pullRight style={editingStyle}>
+                <Navbar.Form pullRight>
                     <DropdownButton id="btnNew" title="New">
                         { ALL_ELEMENT_TYPES.map(t=><MenuItem key={t.id} id={t.id} onClick={()=>t.newResource(this.props.root)}>{t.label}</MenuItem>) }
                     </DropdownButton>
                     &nbsp;
                     <Button type="button" onClick={()=>this.props.root.destroy()}>Delete</Button>
                 </Navbar.Form>
-                <Navbar.Form style={runningStyle}>
-                    <Button type="button" onClick={this.stopPromptoCode}>{activity===Activity.Running ? "Stop" : "Done"}</Button>
-                    &nbsp;
-                    <Button type="button" onClick={this.clearOutput}>Clear</Button>
-                </Navbar.Form>
-            </Navbar>
-            { this.state.dialog==="Authentication" && <AuthenticationSettingsDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
-            { this.state.dialog==="Dependencies" && <DependenciesDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
-            { this.state.dialog==="Configuration" && <ConfigurationDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
-        </div>;
+            </div>;
     }
-
 
 }

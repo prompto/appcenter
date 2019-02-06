@@ -1,6 +1,7 @@
 import {print} from "../utils/Utils";
 import fetcher from '../utils/Fetcher';
 import Activity from '../utils/Activity';
+import Runners from './RemoteRunners';
 
 export default class Launcher {
 
@@ -11,55 +12,72 @@ export default class Launcher {
         this.debug = debug
         this.checkLaunchable = this.checkLaunchable.bind(this);
         this.doLaunch = this.doLaunch.bind(this);
-        this.runMethod = this.runMethod.bind(this);
-        this.openPage = this.openPage.bind(this);
+        this.runLocalTestOrMethod = this.runLocalTestOrMethod.bind(this);
+        this.runRemoteTestOrMethod = this.runRemoteTestOrMethod.bind(this);
+        this.openWebPage = this.openWebPage.bind(this);
     }
 
     launch() {
-        this.getLaunchableContent(runnable => this.checkLaunchable(runnable, this.doLaunch));
+        this.getLaunchableContent(this.checkLaunchable, this.doLaunch);
     }
 
-    getLaunchableContent(callback) {
+    getLaunchableContent(checker, runner) {
         if(this.content==null)
-            return callback(null);
+            return checker(null, runner);
         // check runnable code
-        else if(this.content.subType==="test" || (this.content.subType==="method" && this.content.main))
-            return callback({ valid: true, content: this.content });
+        if(this.content.subType==="test" || (this.content.subType==="method" && this.content.main))
+            return checker({ valid: true, content: this.content }, runner);
         // check runnable page
-        else if(this.root.getProject().type !== "WebSite")
-            return callback({ valid: false, content: null });
-        else if(this.content.type==="html" || this.content.type==="page")
-            return callback({ valid: true, content: this.content });
-        else if(this.content.subType!=="widget")
-            return callback({ valid: false, content: null });
-        else
-            this.root.promptoEditor.fetchRunnablePage(this.content, callback);
+        if(this.root.getProject().type !== "WebSite")
+            return checker({ valid: false, content: null }, runner);
+        if(this.content.type==="html" || this.content.type==="page")
+            return checker({ valid: true, content: this.content }, runner);
+        else {
+            if(this.content.subType!=="widget")
+                return checker({ valid: false, content: null }, runner);
+            else
+                this.root.promptoEditor.fetchRunnablePage(this.content, runnable => checker(runnable, runner));
+        }
     }
 
-    checkLaunchable(runnable, andThen) {
+    checkLaunchable(runnable, runner) {
         if (runnable == null) {
             alert("Nothing to run!");
         } else if (!runnable.valid) {
             alert("Can only run tests methods, main methods or web pages!");
             return;
         } else
-            andThen(runnable);
+            runner(runnable);
     }
 
     doLaunch(runnable) {
         if (runnable.content.type === "html" || runnable.content.type === "page")
-            this.openPage(runnable.content);
+            this.openWebPage(runnable.content);
+        else if(this.runMode.startsWith("L"))
+            this.runLocalTestOrMethod(runnable.content);
         else
-            this.runMethod(runnable.content);
+            this.runRemoteTestOrMethod(runnable.content);
     }
 
-    runMethod(content) {
+    runLocalTestOrMethod(content) {
         this.root.setState({activity: Activity.Running});
         print("Running " + content.name + "...");
         this.root.promptoEditor.runMethod(content, this.runMode);
     }
 
-    openPage(content) {
+
+    runRemoteTestOrMethod(content) {
+        const runner = Runners.forMode(this.runMode);
+        if (runner) {
+            this.root.setState({activity: Activity.Running});
+            print("Running " + content.name + "...");
+            runner.runContent(this.root.projectId, null, content, ()=>this.root.setState({activity: Activity.Idling}));
+        } else {
+            alert("Unsupported mode: " + this.runMode);
+        }
+    }
+
+    openWebPage(content) {
         fetcher.fetchModuleURL(this.root.projectId, url => {
             const fullUrl = url + content.name;
             const tab = window.open(fullUrl, '_blank', '');
@@ -72,7 +90,6 @@ export default class Launcher {
                     fullUrl;
                 alert(msg);
             }
-
         }, alert);
     }
 
