@@ -57,10 +57,14 @@ export default class EditorPage extends React.Component {
     }
 
     componentDidMount() {
-        this.loadDescription();
-        this.loadResources();
-        this.loadCode(true);
-        document.title = "Project: " + this.projectName;
+        if(!this.projectId)
+            alert("Missing project ID in URL!")
+        else {
+            this.loadDescription();
+            this.loadResources();
+            this.loadCode(true);
+            document.title = "Project: " + this.projectName;
+        }
     }
 
     setDialect(dialect) {
@@ -75,7 +79,7 @@ export default class EditorPage extends React.Component {
 
     commitAndReset() {
         // TODO confirm
-        this.promptoEditor.prepareCommit();
+        this.promptoEditor.prepareCommit(this.commitPrepared);
         this.resetServer();
         return false;
     }

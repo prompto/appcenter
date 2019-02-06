@@ -29,8 +29,8 @@ export default class PromptoMode extends window.ace.acequire("ace/mode/text")
             this.$worker && this.$worker.send("setProject", [ dbId, loadDependencies ] );
         }
 
-        prepareCommit(dbId) {
-            this.$worker && this.$worker.send("prepareCommit", [ dbId ] );
+        prepareCommit(callback) {
+            this.$worker && this.$worker.call("prepareCommit", [], callback);
         }
 
         commitFailed(dbId) {
@@ -49,8 +49,8 @@ export default class PromptoMode extends window.ace.acequire("ace/mode/text")
             this.$worker && this.$worker.send("debugMethod", [ id, mode ] );
         }
 
-        fetchRunnablePage(content, andThen) {
-            this.$worker && this.$worker.call("fetchRunnablePage", [ content ], andThen );
+        fetchRunnablePage(content, callback) {
+            this.$worker && this.$worker.call("fetchRunnablePage", [ content ], callback );
         }
 
         createWorker(session) {
@@ -65,10 +65,6 @@ export default class PromptoMode extends window.ace.acequire("ace/mode/text")
 
         onCatalogUpdated(catalog) {
             this.$editor.catalogUpdated(catalog);
-        }
-
-        onCommitPrepared(declarations) {
-            this.$editor.commitPrepared(declarations);
         }
 
         onDone() {

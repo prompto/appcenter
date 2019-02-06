@@ -217,8 +217,8 @@ export default class PromptoWorker extends Mirror {
     }
 
     prepareCommit() {
-        const edited = this.$repo.prepareCommit();
-        this.sender.emit("commitPrepared", edited);
+        const declarations = this.$repo.prepareCommit();
+        this.sender.callback(declarations, arguments[0]); // callbackId is added by ACE);
     }
 
     commitFailed() {

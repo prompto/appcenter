@@ -90,12 +90,8 @@ export default class PromptoEditor extends React.Component {
         session.setScrollTop(0);
     }
 
-    prepareCommit() {
-        this.getSession().getMode().prepareCommit();
-    }
-
-    commitPrepared(declarations) {
-        this.props.commitPrepared(declarations);
+    prepareCommit(callback) {
+        this.getSession().getMode().prepareCommit(callback);
     }
 
     commitFailed() {

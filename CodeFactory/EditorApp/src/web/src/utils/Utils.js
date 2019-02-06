@@ -1,7 +1,10 @@
 exports.getParam = function(name) {
     /*eslint no-useless-escape: "off"*/
-    let value = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href)[1];
-    return decodeURIComponent(value);
+    const values = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if(values && values.length>0)
+        return decodeURIComponent(values[1]);
+    else
+        return null;
 };
 
 exports.print = function(msg) {
