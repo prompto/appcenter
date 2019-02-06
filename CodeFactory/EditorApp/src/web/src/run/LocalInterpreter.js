@@ -1,5 +1,9 @@
 import Runner from "./Runner";
 
+// eslint-disable-next-line
+const globals = self || window;
+const prompto = globals.prompto;
+
 export default class LocalInterpreter extends Runner {
 
     runContent(projectId, repo, content, callback) {

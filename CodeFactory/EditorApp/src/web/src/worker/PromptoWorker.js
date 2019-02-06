@@ -7,7 +7,6 @@ import fetcher from '../utils/Fetcher';
 // eslint-disable-next-line
 const globals = self || window;
 const prompto = globals.prompto;
-const location = globals.location;
 
 export default class PromptoWorker extends Mirror {
 
