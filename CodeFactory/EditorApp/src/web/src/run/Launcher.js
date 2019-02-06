@@ -13,7 +13,9 @@ export default class Launcher {
         this.checkLaunchable = this.checkLaunchable.bind(this);
         this.doLaunch = this.doLaunch.bind(this);
         this.runLocalTestOrMethod = this.runLocalTestOrMethod.bind(this);
+        this.debugLocalTestOrMethod = this.debugLocalTestOrMethod.bind(this);
         this.runRemoteTestOrMethod = this.runRemoteTestOrMethod.bind(this);
+        this.debugRemoteTestOrMethod = this.debugRemoteTestOrMethod.bind(this);
         this.openWebPage = this.openWebPage.bind(this);
     }
 
@@ -51,12 +53,21 @@ export default class Launcher {
     }
 
     doLaunch(runnable) {
-        if (runnable.content.type === "html" || runnable.content.type === "page")
+        // content is deemed runnable
+        const content = runnable.content;
+        if (content.type === "html" || content.type === "page")
             this.openWebPage(runnable.content);
-        else if(this.runMode.startsWith("L"))
-            this.runLocalTestOrMethod(runnable.content);
-        else
-            this.runRemoteTestOrMethod(runnable.content);
+        else if(this.runMode.startsWith("L")) {
+            if(this.debug)
+                this.debugLocalTestOrMethod(content);
+            else
+                this.runLocalTestOrMethod(content);
+        } else {
+            if(this.debug)
+                this.debugRemoteTestOrMethod(content);
+            else
+                this.runRemoteTestOrMethod(content);
+        }
     }
 
     runLocalTestOrMethod(content) {
@@ -65,6 +76,9 @@ export default class Launcher {
         this.root.promptoEditor.runMethod(content, this.runMode);
     }
 
+    debugLocalTestOrMethod(content) {
+        alert("Not supported yet!");
+    }
 
     runRemoteTestOrMethod(content) {
         const runner = Runners.forMode(this.runMode);
@@ -75,6 +89,10 @@ export default class Launcher {
         } else {
             alert("Unsupported mode: " + this.runMode);
         }
+    }
+
+    debugRemoteTestOrMethod(content) {
+        alert("Not supported yet!");
     }
 
     openWebPage(content) {
