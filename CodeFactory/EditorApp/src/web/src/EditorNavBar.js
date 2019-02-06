@@ -22,8 +22,7 @@ export default class EditorNavBar extends React.Component {
         this.state = { dialect: Defaults.dialect, runMode: "LI", dialog: null};
         this.setDialect = this.setDialect.bind(this);
         this.setRunMode = this.setRunMode.bind(this);
-        this.tryRun = this.tryRun.bind(this);
-        this.tryDebug = this.tryDebug.bind(this);
+        this.launch = this.launch.bind(this);
         this.stopPromptoCode = this.stopPromptoCode.bind(this);
         this.clearOutput = this.clearOutput.bind(this);
     }
@@ -37,17 +36,11 @@ export default class EditorNavBar extends React.Component {
         this.setState({ runMode: mode});
     }
 
-    tryRun() {
+    launch(debug) {
         const root = this.props.root;
-        const runner = new Launcher(root, root.state.content, this.state.runMode);
-        runner.tryRun();
+        const launcher = new Launcher(root, root.state.content, this.state.runMode, debug);
+        launcher.launch();
     }
-
-
-    tryDebug() {
-        alert("debug");
-    }
-
 
     stopServer() {
         this.props.root.killModule();
@@ -99,8 +92,8 @@ export default class EditorNavBar extends React.Component {
                         <DropdownButton id="mode" title={runModeLabels[this.state.runMode]}>
                             { ALL_RUN_MODES.map(m=><MenuItem key={m} active={this.state.runMode===m} onClick={()=>this.setRunMode(m)}>{runModeLabels[m]}</MenuItem>) }
                         </DropdownButton>
-                        <Button type="button" onClick={this.tryRun}>Run</Button>
-                        <Button type="button" onClick={this.tryDebug}>Debug</Button>
+                        <Button type="button" onClick={()=>this.launch(false)}>Run</Button>
+                        <Button type="button" onClick={()=>this.launch(true)}>Debug</Button>
                     </ButtonGroup>
                     &nbsp;
                     <Button type="button" onClick={()=>this.stopServer()} disabled={this.state.runMode==="LI"}>Shutdown</Button>

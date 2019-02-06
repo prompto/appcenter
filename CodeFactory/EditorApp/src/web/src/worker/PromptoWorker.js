@@ -1,14 +1,13 @@
 import Mirror from '../ace/Mirror';
 import Repository from '../code/Repository';
 import Defaults from '../code/Defaults';
-import Runner from '../run/Runner';
-import Fetcher from '../run/Fetcher';
+import Runners from '../run/LocalRunners';
+import fetcher from '../utils/Fetcher';
 
 // eslint-disable-next-line
 const globals = self || window;
 const prompto = globals.prompto;
 const location = globals.location;
-const fetcher = Fetcher.instance;
 
 export default class PromptoWorker extends Mirror {
 
@@ -30,7 +29,7 @@ export default class PromptoWorker extends Mirror {
         this.markLoading("%Description%");
         // load core
         this.markLoading("Core");
-        fetcher.fetchText("prompto/prompto.pec", text => {
+        fetcher.fetchText("prompto/prompto.pec", null, text => {
             this.$repo.registerLibraryCode(text, "E");
             this.markLoaded("Core");
         });
@@ -137,22 +136,22 @@ export default class PromptoWorker extends Mirror {
     }
 
     fetchModuleDescription(projectId, register, success) {
-        var params = [ {name:"dbId", value:projectId.toString()}, {name:"register", type:"Boolean", value:register}];
-        var url = '/ws/run/getModuleDescription?params=' + JSON.stringify(params);
-        fetcher.fetchJSON(url, success);
+        const params = [ {name:"dbId", value:projectId.toString()}, {name:"register", type:"Boolean", value:register}];
+        const url = '/ws/run/getModuleDescription';
+        fetcher.fetchJSON(url, { params: JSON.stringify(params) }, success);
     }
 
     fetchProjectDeclarations(projectId, success) {
-        var params = [ {name:"dbId", value:projectId.toString()}];
-        var url = '/ws/run/getModuleDeclarations?params=' + JSON.stringify(params);
-        fetcher.fetchJSON(url, success);
+        const params = [ {name:"dbId", value:projectId.toString()}];
+        const url = '/ws/run/getModuleDeclarations';
+        fetcher.fetchJSON(url, { params: JSON.stringify(params) }, success);
     }
 
 
     fetchLibraryDeclarations(name, version, success) {
-        var params = [ {name:"name", type:"Text", value:name}, {name:"version", type:version.type, value:version.value} ];
-        var url = '/ws/run/getModuleDeclarations?params=' + JSON.stringify(params);
-        fetcher.fetchJSON(url, success);
+        const params = [ {name:"name", type:"Text", value:name}, {name:"version", type:version.type, value:version.value} ];
+        const url = '/ws/run/getModuleDeclarations';
+        fetcher.fetchJSON(url, { params: JSON.stringify(params) }, success);
     }
 
     publishLibraries() {
@@ -208,8 +207,13 @@ export default class PromptoWorker extends Mirror {
     }
 
     runMethod(content, mode) {
-        const runner = Runner.forMode(mode);
-        runner.runContent(this.$projectId, this.$repo, content, ()=>this.sender.callback(arguments[2])); // callbackId is added by ACE
+        const runner = Runners.forMode(mode);
+        if(runner)
+            runner.runContent(this.$projectId, this.$repo, content, ()=>this.sender.callback(arguments[2])); // callbackId is added by ACE
+        else {
+            console.log("Unsupported mode: " + mode);
+            this.sender.callback(arguments[2]);
+        }
     }
 
 

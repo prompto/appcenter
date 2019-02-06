@@ -13,7 +13,7 @@ import PromptoEditor from './prompto-editor/PromptoEditor';
 import ResourceEditor from './resource-editors/ResourceEditor';
 import BinaryEditor from './resource-editors/BinaryEditor';
 import Activity from './utils/Activity';
-import { fetchModuleURL } from './run/Utils';
+import fetcher from './utils/Fetcher';
 
 export default class EditorPage extends React.Component {
 
@@ -112,7 +112,7 @@ export default class EditorPage extends React.Component {
     }
 
     resetServer() {
-        fetchModuleURL(this.projectId, url => {
+        fetcher.fetchModuleURL(this.projectId, url => {
             const fullUrl = url + "ws/control/clear-context";
             axios.get(fullUrl);
         }, error => alert(error));

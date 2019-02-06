@@ -1,35 +1,39 @@
 import {print} from "../utils/Utils";
+import fetcher from '../utils/Fetcher';
 import Activity from '../utils/Activity';
-import { fetchModuleURL } from './Utils';
 
 export default class Launcher {
 
-    constructor(root, content, runMode) {
+    constructor(root, content, runMode, debug) {
         this.root = root;
         this.content = content;
         this.runMode = runMode;
+        this.debug = debug
         this.checkLaunchable = this.checkLaunchable.bind(this);
         this.doLaunch = this.doLaunch.bind(this);
         this.runMethod = this.runMethod.bind(this);
         this.openPage = this.openPage.bind(this);
     }
 
-    tryRun() {
+    launch() {
         this.getLaunchableContent(runnable => this.checkLaunchable(runnable, this.doLaunch));
     }
 
     getLaunchableContent(callback) {
+        if(this.content==null)
+            return callback(null);
         // check runnable code
-        if(this.content.subType==="test" || (this.content.subType==="method" && this.content.main))
+        else if(this.content.subType==="test" || (this.content.subType==="method" && this.content.main))
             return callback({ valid: true, content: this.content });
         // check runnable page
-        if(this.root.getProject().type !== "WebSite")
+        else if(this.root.getProject().type !== "WebSite")
             return callback({ valid: false, content: null });
-        if(this.content.type==="html" || this.content.type==="page")
+        else if(this.content.type==="html" || this.content.type==="page")
             return callback({ valid: true, content: this.content });
-        if(this.content.subType!=="widget")
+        else if(this.content.subType!=="widget")
             return callback({ valid: false, content: null });
-        this.root.promptoEditor.fetchRunnablePage(this.content, callback);
+        else
+            this.root.promptoEditor.fetchRunnablePage(this.content, callback);
     }
 
     checkLaunchable(runnable, andThen) {
@@ -56,7 +60,7 @@ export default class Launcher {
     }
 
     openPage(content) {
-        fetchModuleURL(this.root.projectId, url => {
+        fetcher.fetchModuleURL(this.root.projectId, url => {
             const fullUrl = url + content.name;
             const tab = window.open(fullUrl, '_blank', '');
             if(tab)
@@ -69,7 +73,7 @@ export default class Launcher {
                 alert(msg);
             }
 
-        });
+        }, alert);
     }
 
 
