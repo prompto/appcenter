@@ -12,6 +12,7 @@ import EditorNavBar from './EditorNavBar';
 import PromptoEditor from './prompto-editor/PromptoEditor';
 import ResourceEditor from './resource-editors/ResourceEditor';
 import BinaryEditor from './resource-editors/BinaryEditor';
+import DebuggerView from './debugger/DebuggerView';
 import Activity from './utils/Activity';
 import fetcher from './utils/Fetcher';
 
@@ -45,6 +46,7 @@ export default class EditorPage extends React.Component {
         this.promptoEditor = null;
         this.resourceEditor = null;
         this.imageDisplayer = null;
+        this.debuggerView = null;
         this.state = { project: null, activity: Activity.Loading, content: null, resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
         this.catalog = new Catalog();
         Mousetrap.bind('command+s', this.commitAndReset);
@@ -240,6 +242,7 @@ export default class EditorPage extends React.Component {
                     <ContentNavigator ref={ref=>{if(ref)this.contentNavigator=ref;}} root={this} catalog={this.catalog}/>
                 </div>
                 <div className="editor">
+                    <DebuggerView ref={ref=>this.debuggerView=ref} activity={activity}/>
                     <PromptoEditor ref={ref=>this.promptoEditor=ref} commitAndReset={this.commitAndReset}
                                    catalogUpdated={this.catalogUpdated} projectUpdated={this.projectUpdated}
                                    activity={activity} done={()=>this.setState({activity: Activity.Idling})}/>

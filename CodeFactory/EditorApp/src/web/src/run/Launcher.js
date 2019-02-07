@@ -94,8 +94,12 @@ export default class Launcher {
     debugRemoteTestOrMethod(content) {
         const runner = Runners.forMode(this.runMode);
         if (runner) {
-            this.root.setState({activity: Activity.Debugging});
-            // runner.debugContent(this.root.projectId, null, content));
+            const _debugger = this.root.debuggerView.debugger
+            runner.startDebugContent(this.root.projectId, null, content, port => {
+                _debugger.connect(port, ()=>{
+                    this.root.setState({activity: Activity.Debugging});
+                }, alert);
+            });
         } else {
             alert("Unsupported mode: " + this.runMode);
         }

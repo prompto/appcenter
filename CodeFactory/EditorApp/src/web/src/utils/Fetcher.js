@@ -53,9 +53,9 @@ class Fetcher {
             this.$authorization = response.headers["X-Authorization"] || null;
     }
 
-
-    fetchModuleURL(projectId, success, errored) {
-        const params = { params: JSON.stringify([ {name:"dbId", value: projectId}]) };
+    fetchModulePort(projectId, debug, success, errored) {
+        const args = [ {name:"dbId", value: projectId}, {name:"debug", type: "Boolean", value: debug} ];
+        const params = { params: JSON.stringify(args) };
         axios.get('/ws/run/getModulePort', { params: params })
             .then(resp => {
                 const response = resp.data;
@@ -63,14 +63,19 @@ class Fetcher {
                     ; // TODO something
                 else if(response.data === -1)
                     alert("Server is not running!");
-                else {
-                    const href = globals.location.protocol +
-                        "//" + globals.location.hostname +
-                        ":" + response.data + "/";
-                    success(href);
-                }
+                else
+                    success(response.data);
             })
             .catch(error => errored(error));
+    }
+
+    fetchModuleURL(projectId, success, errored) {
+        this.fetchModulePort(projectId, false, port => {
+            const href = globals.location.protocol +
+                "//" + globals.location.hostname +
+                ":" + port + "/";
+            success(href);
+        }, errored);
     }
 
 }

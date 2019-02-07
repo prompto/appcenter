@@ -1,12 +1,8 @@
 package prompto.codefactory;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
-import java.io.Writer;
 import java.lang.ProcessBuilder.Redirect;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -25,6 +21,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.esotericsoftware.yamlbeans.document.YamlMapping;
+
 import prompto.config.IPortRangeConfiguration;
 import prompto.config.StoredRecordConfigurationReader;
 import prompto.config.auth.CodeStoreAuthenticationConfiguration;
@@ -36,15 +34,6 @@ import prompto.store.IStored;
 import prompto.utils.Logger;
 import prompto.utils.SocketUtils;
 import prompto.value.IValue;
-
-import com.esotericsoftware.yamlbeans.YamlConfig;
-import com.esotericsoftware.yamlbeans.YamlConfig.WriteClassName;
-import com.esotericsoftware.yamlbeans.YamlException;
-import com.esotericsoftware.yamlbeans.YamlWriter;
-import com.esotericsoftware.yamlbeans.document.YamlDocument;
-import com.esotericsoftware.yamlbeans.document.YamlDocumentReader;
-import com.esotericsoftware.yamlbeans.document.YamlEntry;
-import com.esotericsoftware.yamlbeans.document.YamlMapping;
 
 /* represents the process used to run a Module on the dev server */
 public class ModuleProcess {
@@ -81,19 +70,24 @@ public class ModuleProcess {
 		}
 	}
 	
-	public static Long launchIfNeeded(Object dbId) {
+	public static Long launchIfNeeded(Object dbId, boolean debug) {
 		synchronized(modules) {
 			try {
 				if(dbId instanceof IValue)
 					dbId = ((IValue)dbId).getStorableData();
 				// already launched ?
 				ModuleProcess module = modules.get(dbId);
+				// kill if debug flag differs
+				if(module!=null && debug!=module.isDebug()) {
+					shutDown(dbId);
+					module = null;
+				}
 				// if no longer alive recreate 
 				if(module!=null && !module.process.isAlive())
 					module = null;
 				// create if needed
 				if(module==null) {
-					module = createModuleProcess(dbId);
+					module = createModuleProcess(dbId, debug);
 					if(module!=null)
 						modules.put(dbId, module);
 					else {
@@ -109,11 +103,11 @@ public class ModuleProcess {
 		}
 	}
 
-	private static ModuleProcess createModuleProcess(Object dbId) throws Throwable {
+	private static ModuleProcess createModuleProcess(Object dbId, boolean debug) throws Throwable {
 		IStored stored = DataStore.getInstance().fetchUnique(dbId);
 		if(stored==null)
 			return null;
-		ModuleProcess module = new ModuleProcess(stored);
+		ModuleProcess module = new ModuleProcess(stored, debug);
 		module.start();
 		return module.process.isAlive() ? module : null;
 	}
@@ -191,11 +185,21 @@ public class ModuleProcess {
 
 	
 	IStored stored;
+	boolean debug;
 	int port;
 	Process process;
 
-	public ModuleProcess(IStored stored) {
+	public ModuleProcess(IStored stored, boolean debug) {
 		this.stored = stored;
+		this.debug = debug;
+	}
+	
+	public int getPort() {
+		return port;
+	}
+	
+	public boolean isDebug() {
+		return debug;
 	}
 
 	public void start() throws Throwable {
@@ -207,21 +211,21 @@ public class ModuleProcess {
 		this.process = OutStream.waitForServerReadiness(builder);
 	}
 
-	private String getModuleName() {
+	String getModuleName() {
 		return stored.getData("name").toString();
 	}
 
 
-	private String getModuleVersion() {
+	String getModuleVersion() {
 		return stored.getData("version").toString();
 	}
 
-	private String getStartMethod() {
+	String getStartMethod() {
 		Object value = stored.getData("startMethod");
 		return value==null ? null : value.toString();
 	}
 
-	private String getServerAboutToStartMethod() {
+	String getServerAboutToStartMethod() {
 		Object value = stored.getData("serverAboutToStartMethod");
 		return value==null ? null : value.toString();
 	}
@@ -285,79 +289,19 @@ public class ModuleProcess {
 	}
 
 	private void addPromptoYamlConfigArgs(List<String> cmds) throws Throwable {
-		File currentFile = locateYamlConfigFile();
-		try(Reader reader = new FileReader(currentFile)) {
-			YamlDocument currentYaml = new YamlDocumentReader(reader).read();
-			writeSpecificYamlEntries(currentYaml);
-			File targetFile = createTempYamlFile();
-			cmds.add("-yamlConfigFile");
-			cmds.add(targetFile.getAbsolutePath());
-			logger.info(()->"Writing yaml config to " + targetFile.getAbsolutePath());
-			try(Writer writer = new FileWriter(targetFile)) {
-				YamlConfig config = new YamlConfig();
-				config.writeConfig.setWriteClassname(WriteClassName.NEVER);
-				config.writeConfig.setAutoAnchor(false);
-				YamlWriter targetYaml = new YamlWriter(writer, config);
-				targetYaml.write(currentYaml);
-			}
-		}
+		File targetFile = createTempYamlFile();
+		cmds.add("-yamlConfigFile");
+		cmds.add(targetFile.getAbsolutePath());
+		YamlConfigBuilder builder = new YamlConfigBuilder(this, locateYamlConfigFile(), targetFile);
+		builder.build();
 	}
-
 	
-	private void writeSpecificYamlEntries(YamlDocument document) throws Throwable {
-		document.setEntry("applicationName", getModuleName());
-		document.setEntry("applicationVersion", getModuleVersion());
-		document.setEntry("runtimeMode", Mode.DEVELOPMENT.name());
-		document.deleteEntry("webSiteRoot");
-		document.deleteEntry("startMethod");
-		String method = getStartMethod();
-		if(method!=null)
-			document.setEntry("startMethod", method);
-		document.deleteEntry("serverAboutToStart");
-		method = getServerAboutToStartMethod();
-		if(method!=null)
-			document.setEntry("serverAboutToStart", method);
-		writeCodeStoreYamlEntries(document);
-		writeDataStoreYamlEntries(document);
-		writeHttpYamlEntries(document);
-		document.deleteEntry("target");
-	}
-
-	private void writeDataStoreYamlEntries(YamlDocument document) throws YamlException {
-		YamlEntry entry = document.getEntry("target");
-		YamlMapping target = (YamlMapping)entry.getValue();
-		entry = target.getEntry("dataStore");
-		document.setEntry("dataStore", entry.getValue());
-	}
-
-	private void writeCodeStoreYamlEntries(YamlDocument document) throws YamlException {
-		YamlEntry entry = document.getEntry("dataStore");
-		document.setEntry("codeStore", entry.getValue());
-		document.deleteEntry("dataStore");
-	}
-
-	
-	private void writeHttpYamlEntries(YamlDocument document) throws Throwable {
-		YamlEntry entry = document.getEntry("http");
-		YamlMapping http = (YamlMapping)entry.getValue();
-		http.setEntry("port", port);
-		http.deleteEntry("redirectFrom");
-		http.deleteEntry("sendsXAuthorization");
-		String origin = PromptoServlet.REGISTERED_ORIGIN.get();
-		if(origin!=null) {
-			http.setEntry("allowedOrigins", origin);
-			http.setEntry("allowsXAuthorization", true);
-		}
-		YamlMapping auth = authenticationSettingsToYaml();
-		if(auth!=null)
-			http.setEntry("authentication", auth);
-	}
 
 	private boolean hasAuthenticationSettings() {
 		return stored.hasData("authenticationSettings");
 	}
 
-	private YamlMapping authenticationSettingsToYaml() throws Throwable {
+	YamlMapping authenticationSettingsToYaml() throws Throwable {
 		if(hasAuthenticationSettings()) {
 			StoredRecordConfigurationReader reader = new StoredRecordConfigurationReader(DataStore.getInstance(), stored);
 			CodeStoreAuthenticationConfiguration config = new CodeStoreAuthenticationConfiguration(reader);

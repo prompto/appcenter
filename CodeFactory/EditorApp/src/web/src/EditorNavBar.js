@@ -23,7 +23,8 @@ export default class EditorNavBar extends React.Component {
         this.setDialect = this.setDialect.bind(this);
         this.setRunMode = this.setRunMode.bind(this);
         this.launch = this.launch.bind(this);
-        this.stopPromptoCode = this.stopPromptoCode.bind(this);
+        this.stopRunning = this.stopRunning.bind(this);
+        this.stopDebugging = this.stopDebugging.bind(this);
         this.clearOutput = this.clearOutput.bind(this);
     }
 
@@ -46,7 +47,13 @@ export default class EditorNavBar extends React.Component {
         this.props.root.killModule();
     }
 
-    stopPromptoCode() {
+    stopRunning() {
+        this.props.root.setState({activity: Activity.Editing});
+    }
+
+    stopDebugging() {
+        this.props.root.debuggerView.debugger.disconnect();
+        this.props.root.killModule();
         this.props.root.setState({activity: Activity.Editing});
     }
 
@@ -69,6 +76,7 @@ export default class EditorNavBar extends React.Component {
                 </Nav>
                 { this.renderEditWidgets() }
                 { this.renderOutputWidgets() }
+                { this.renderDebuggerWidgets() }
             </Navbar>
             { this.state.dialog==="Authentication" && <AuthenticationSettingsDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
             { this.state.dialog==="Dependencies" && <DependenciesDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
@@ -76,11 +84,19 @@ export default class EditorNavBar extends React.Component {
         </div>;
     }
 
+    renderDebuggerWidgets() {
+        const activity = this.props.root.state.activity;
+        const style = {display: activity===Activity.Debugging ? "block" : "none"};
+        return <Navbar.Form style={style}>
+            <Button type="button" onClick={this.stopDebugging}>Stop debugging</Button>
+        </Navbar.Form>;
+    }
+
     renderOutputWidgets() {
         const activity = this.props.root.state.activity;
         const style = {display: activity===Activity.Running || activity===Activity.Idling ? "block" : "none"};
         return <Navbar.Form style={style}>
-                <Button type="button" onClick={this.stopPromptoCode}>{activity===Activity.Running ? "Stop" : "Done"}</Button>
+                <Button type="button" onClick={this.stopRunning}>{activity===Activity.Running ? "Stop" : "Done"}</Button>
                 &nbsp;
                 <Button type="button" onClick={this.clearOutput}>Clear</Button>
             </Navbar.Form>;

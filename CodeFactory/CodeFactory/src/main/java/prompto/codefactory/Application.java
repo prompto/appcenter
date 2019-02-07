@@ -33,8 +33,6 @@ import prompto.server.DataServlet;
 import prompto.store.DataStore;
 import prompto.store.IStore;
 import prompto.store.IStoreFactory;
-import prompto.store.memory.MemStore;
-import prompto.store.memory.MemStoreFactory;
 import prompto.utils.CmdLineParser;
 import prompto.utils.Logger;
 import prompto.utils.ResourceUtils;
@@ -130,10 +128,7 @@ public class Application {
 			return null;
 		else {
 			IStoreFactory factory = IStoreFactory.newStoreFactory(config.getFactory());
-			if(factory instanceof MemStoreFactory)
-				return new MemStore();
-			else 
-				return factory.newStore(config);
+			return factory.newStore(config);
 		}
 	}
 
