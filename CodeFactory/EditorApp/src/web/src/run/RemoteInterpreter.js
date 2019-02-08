@@ -1,5 +1,5 @@
 import RemoteRunner from "./RemoteRunner";
-import fetcher from '../utils/Fetcher';
+import RemoteDebugger from '../debugger/RemoteDebugger';
 
 export default class RemoteInterpreter extends RemoteRunner {
 
@@ -7,8 +7,9 @@ export default class RemoteInterpreter extends RemoteRunner {
         this.runRemotely(projectId, "interpret", content, callback);
     }
 
-    startDebugContent(projectId, repo, content, callback) {
-        fetcher.fetchModulePort(projectId, true, port => callback(port), alert);
+    startDebugContent(root, projectId, repo, content) {
+        root.debuggerView.setDebugger(new RemoteDebugger(root));
+        root.debuggerView.debugger.start(projectId, content);
     }
 
 }

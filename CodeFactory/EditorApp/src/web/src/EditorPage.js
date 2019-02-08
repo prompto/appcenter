@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React from 'react';
 import Mousetrap from 'mousetrap';
-import { getParam, print } from './utils/Utils';
+import { getParam } from './utils/Utils';
 import Catalog from './code/Catalog';
 import MessageArea from './components/MessageArea';
 import NewFileResourceDialog from "./dialogs/NewFileResourceDialog";
@@ -50,7 +50,6 @@ export default class EditorPage extends React.Component {
         this.state = { project: null, activity: Activity.Loading, content: null, resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
         this.catalog = new Catalog();
         Mousetrap.bind('command+s', this.commitAndReset);
-        console.log = print;
     }
 
     getProject() {

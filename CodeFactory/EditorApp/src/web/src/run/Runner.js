@@ -4,7 +4,7 @@ export default class Runner {
         throw new Error("Unsupported!");
     }
 
-    startDebugContent(projectId, repo, content, callback) {
+    startDebugContent(root, projectId, repo, content, callback) {
         throw new Error("Unsupported!");
     }
 

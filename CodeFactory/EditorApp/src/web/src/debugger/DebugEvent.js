@@ -14,8 +14,12 @@ DebugEvent.CONNECTED = class Connected extends DebugEvent {
 
     constructor(message) {
         super(message.type);
-        console.log(this.type);
     }
+
+    execute(listener) {
+        listener.processConnected(this);
+    }
+
 };
 
 DebugEvent.SUSPENDED = class Suspended extends DebugEvent {
@@ -23,7 +27,10 @@ DebugEvent.SUSPENDED = class Suspended extends DebugEvent {
     constructor(message) {
         super(message.type);
         this.reason = message.object.reason;
-        console.log(this.type + ", reason:" + this.reason);
+    }
+
+    execute(listener) {
+        listener.threadSuspended(this);
     }
 };
 
