@@ -1,7 +1,7 @@
 import RemoteListener from './RemoteListener';
 import RemoteRequester from './RemoteRequester';
 import Activity from "../utils/Activity";
-import { GetThreadsRequest } from './DebugRequest';
+import { GetWorkersRequest } from './DebugRequest';
 import fetcher from '../utils/Fetcher';
 
 export default class RemoteDebugger {
@@ -54,8 +54,8 @@ export default class RemoteDebugger {
 
     processConnected(event) {
         console.log("received: " + event.type);
-        this.getThreads(threads=>{
-            this.debuggerView.setThreads(threads);
+        this.getWorkers(workers=>{
+            this.debuggerView.setWorkers(workers);
         });
     }
 
@@ -64,8 +64,8 @@ export default class RemoteDebugger {
     }
 
 
-    getThreads(callback) {
-        this.requester.send(new GetThreadsRequest(), response => callback(response.threads), alert);
+    getWorkers(callback) {
+        this.requester.send(new GetWorkersRequest(), response => callback(response.workers), alert);
     }
 
 }

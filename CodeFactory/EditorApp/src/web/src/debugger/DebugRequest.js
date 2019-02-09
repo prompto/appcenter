@@ -5,11 +5,11 @@ class DebugRequest {
     }
 }
 
-export class GetThreadsRequest extends DebugRequest {
+export class GetWorkersRequest extends DebugRequest {
 
     constructor() {
-        super("GET_THREADS");
+        super("GET_WORKERS");
     }
 }
 
-DebugRequest.GET_THREADS = GetThreadsRequest;
+DebugRequest.GET_WORKERS = GetWorkersRequest;

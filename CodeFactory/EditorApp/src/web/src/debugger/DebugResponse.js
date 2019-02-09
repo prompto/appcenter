@@ -1,4 +1,4 @@
-import Thread from './Thread';
+import DebuggedWorker from './DebuggedWorker';
 
 export default class DebugResponse {
 
@@ -12,11 +12,11 @@ export default class DebugResponse {
     }
 }
 
-DebugResponse.GET_THREADS = class GetThreads extends DebugResponse {
+DebugResponse.GET_WORKERS = class GetWorkers extends DebugResponse {
 
     constructor(message) {
         super(message.type);
-        this.threads = message.object.threads.map(t => new Thread(t));
+        this.threads = message.object.workers.map(w => new DebuggedWorker(w));
     }
 
 };

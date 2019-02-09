@@ -30,7 +30,7 @@ DebugEvent.SUSPENDED = class Suspended extends DebugEvent {
     }
 
     execute(listener) {
-        listener.threadSuspended(this);
+        listener.workerSuspended(this);
     }
 };
 

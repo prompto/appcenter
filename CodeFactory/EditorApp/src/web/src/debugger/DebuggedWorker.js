@@ -1,7 +1,7 @@
-export default class Thread {
+export default class DebuggedWorker {
 
     constructor(data) {
-        this.threadId = data.threadId;
+        this.workerId = data.workerId;
         this.name = data.name;
         this.state = data.state;
     }
