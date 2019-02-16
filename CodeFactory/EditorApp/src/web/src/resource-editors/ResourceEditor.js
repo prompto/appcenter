@@ -1,5 +1,6 @@
 import React from 'react';
 import AceEditor from 'react-ace';
+import Activity from '../utils/Activity';
 /*eslint-disable no-alert, no-console */
 import 'brace/theme/eclipse';
 import 'brace/mode/text';
@@ -36,9 +37,9 @@ export default class ResourceEditor extends React.Component {
         }
         if(newModeId!=null) {
             editor.setValue(content.body, -1);
-            editor.setReadOnly(false);
             session.setScrollTop(0);
         }
+        editor.setReadOnly(this.props.activity===Activity.Debugging);
         // re-display
         const display = this.computeDisplay(content);
         this.setState({display: display, name: content.name, value: content.body});

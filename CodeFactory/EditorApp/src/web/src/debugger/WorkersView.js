@@ -49,7 +49,8 @@ export default class WorkersView extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { workers: [ { workerId: 1, state: "STEPPING", name: "main", stack: [ { methodName: "start_test"}, { methodName: "other" } ] } ] };
+        // this.state = { workers: [ { workerId: 1, state: "STEPPING", name: "main", stack: [ { methodName: "start_test"}, { methodName: "other" } ] } ] };
+        this.state = { workers: [] };
         this.eventQueue = [];
     }
 

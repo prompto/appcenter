@@ -75,8 +75,10 @@ export default class ContentEditor extends React.Component {
             <PromptoEditor ref={ref=>this.promptoEditor=ref} commitAndReset={root.commitAndReset}
                            catalogUpdated={root.catalogUpdated} projectUpdated={root.projectUpdated}
                            activity={activity}/>
-            <ResourceEditor ref={ref=>this.resourceEditor=ref} textEdited={root.textResourceEdited} />
-            <BinaryEditor ref={ref=>this.binaryEditor=ref} />
+            <ResourceEditor ref={ref=>this.resourceEditor=ref} textEdited={root.textResourceEdited}
+                            activity={activity} />
+            <BinaryEditor ref={ref=>this.binaryEditor=ref}
+                          activity={activity} />
         </div>
     }
 

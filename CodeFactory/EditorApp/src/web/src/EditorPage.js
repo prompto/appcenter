@@ -160,7 +160,7 @@ export default class EditorPage extends React.Component {
             content = {type: "Prompto", value: {name: delta.select}};
         else if(delta.project) {
             if(this.state.activity===Activity.Loading)
-                this.setState({activity: Activity.Debugging}); // TODO this.setState({activity: Activity.Editing});
+                this.setState({activity: Activity.Editing});
             if (this.state.content)
                 content = { type: this.state.content.type, value: {subType: this.state.content.subType, name: this.state.content.name} };
         }

@@ -5,6 +5,7 @@ import AceEditor from 'react-ace';
 import 'brace/theme/eclipse';
 import 'brace/mode/text';
 import PromptoMode from "./PromptoMode";
+import Activity from "../utils/Activity";
 
 export default class PromptoEditor extends React.Component {
 
@@ -60,8 +61,8 @@ export default class PromptoEditor extends React.Component {
             const session = this.getSession();
             session.getMode().setContent(content)
             session.setScrollTop(0);
-            this.getEditor().setReadOnly(content ? content.core : false);
         }
+        this.getEditor().setReadOnly(this.props.activity===Activity.Debugging  || (content ? content.core : false));
     }
 
     runTestOrMethod(content, runMode, callback) {
