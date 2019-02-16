@@ -12,11 +12,21 @@ export default class DebugResponse {
     }
 }
 
-DebugResponse.GET_WORKERS = class GetWorkers extends DebugResponse {
+DebugResponse.GET_WORKERS = class GetWorkersResponse extends DebugResponse {
 
     constructor(message) {
         super(message.type);
         this.workers = message.object.workers.map(w => new DebuggedWorker(w));
+    }
+
+};
+
+
+DebugResponse.GET_STACK = class GetStackResponse extends DebugResponse {
+
+    constructor(message) {
+        super(message.type);
+        this.stack = message.object.stack;
     }
 
 };

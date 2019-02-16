@@ -332,8 +332,12 @@ export default class EditorPage extends React.Component {
         return this.contentEditor.getDebuggerView();
     }
 
+    getDebugger() {
+        return this.contentEditor.getDebuggerView().getDebugger();
+    }
+
     stopDebugging() {
-        this.getDebuggerView.disconnect();
+        this.getDebuggerView().disconnect();
         this.killModule();
         this.setState({activity: Activity.Editing});
 

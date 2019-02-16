@@ -16,9 +16,27 @@ export default class DebuggerView extends React.Component {
         this.debugger = dbg;
     }
 
+    getDebugger() {
+        return this.debugger;
+    }
+
+    disconnect() {
+        this.debugger.disconnect();
+        this.debugger = null;
+    }
+
     setWorkers(workers) {
         this.workersView.setWorkers(workers);
     }
+
+    workerSuspended(event) {
+        this.workersView.workerSuspended(event, () => {
+            this.debugger.fetchStack(event.workerId, stack => {
+                this.workersView.setWorkerStack(event.workerId, stack);
+            });
+        });
+    }
+
 
     render() {
         const activity = this.props.activity;

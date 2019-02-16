@@ -72,10 +72,6 @@ export default class PromptoEditor extends React.Component {
         this.getSession().getMode().fetchRunnablePage(content, andThen);
     }
 
-    done() {
-        this.props.done();
-    }
-
     codeEdited(newValue) {
         this.setState({value: newValue});
     }

@@ -26,6 +26,7 @@ DebugEvent.SUSPENDED = class Suspended extends DebugEvent {
 
     constructor(message) {
         super(message.type);
+        this.workerId = message.object.workerId;
         this.reason = message.object.reason;
     }
 

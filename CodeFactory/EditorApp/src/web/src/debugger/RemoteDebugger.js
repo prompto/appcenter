@@ -1,7 +1,7 @@
 import RemoteListener from './RemoteListener';
 import RemoteRequester from './RemoteRequester';
 import Activity from "../utils/Activity";
-import { GetWorkersRequest } from './DebugRequest';
+import { GetWorkersRequest, GetStackRequest } from './DebugRequest';
 import fetcher from '../utils/Fetcher';
 
 export default class RemoteDebugger {
@@ -48,14 +48,13 @@ export default class RemoteDebugger {
     }
 
     processConnected(event) {
-        console.log("received: " + event.type);
-        this.getWorkers(workers=>{
+        this.fetchWorkers(workers=>{
             this.getDebuggerView().setWorkers(workers);
         });
     }
 
     workerSuspended(event) {
-        console.log("received: " + event.type);
+        this.getDebuggerView().workerSuspended(event);
     }
 
 
@@ -63,8 +62,12 @@ export default class RemoteDebugger {
         return this.rootView.getDebuggerView();
     }
 
-    getWorkers(callback) {
+    fetchWorkers(callback) {
         this.requester.send(new GetWorkersRequest(), response => callback(response.workers), alert);
+    }
+
+    fetchStack(workerId, callback) {
+        this.requester.send(new GetStackRequest(workerId), response => callback(response.stack), alert);
     }
 
 }

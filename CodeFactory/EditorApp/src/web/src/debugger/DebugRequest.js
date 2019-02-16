@@ -13,3 +13,14 @@ export class GetWorkersRequest extends DebugRequest {
 }
 
 DebugRequest.GET_WORKERS = GetWorkersRequest;
+
+
+export class GetStackRequest extends DebugRequest {
+
+    constructor(workerId) {
+        super("GET_STACK");
+        this.workerId = workerId;
+    }
+}
+
+DebugRequest.GET_STACK = GetStackRequest;
