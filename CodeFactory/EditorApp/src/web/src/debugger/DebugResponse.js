@@ -16,7 +16,7 @@ DebugResponse.GET_WORKERS = class GetWorkers extends DebugResponse {
 
     constructor(message) {
         super(message.type);
-        this.threads = message.object.workers.map(w => new DebuggedWorker(w));
+        this.workers = message.object.workers.map(w => new DebuggedWorker(w));
     }
 
 };
