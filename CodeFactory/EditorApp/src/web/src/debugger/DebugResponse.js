@@ -12,6 +12,16 @@ export default class DebugResponse {
     }
 }
 
+
+DebugResponse.VOID = class VoidResponse extends DebugResponse {
+
+    constructor(message) {
+        super(message.type);
+    }
+
+};
+
+
 DebugResponse.GET_WORKERS = class GetWorkersResponse extends DebugResponse {
 
     constructor(message) {

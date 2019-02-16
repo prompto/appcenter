@@ -70,6 +70,7 @@ export default class PromptoWorker extends Mirror {
 
 
     setContent(content) {
+        const callbackId = arguments[arguments.length - 1]; // callbackId is added by ACE
         // remember value if it does not result from an edit
         if(content.creating) {
             this.$value = "";
@@ -83,7 +84,7 @@ export default class PromptoWorker extends Mirror {
             this.$selectedContent = (content.body || null) !== null;
             this.$core = false;
         }
-        this.sender.emit("value", this.$value);
+        this.sender.callback(this.$value, callbackId);
     }
 
 
@@ -188,7 +189,7 @@ export default class PromptoWorker extends Mirror {
     prepareCommit() {
         const callbackId = arguments[arguments.length - 1]; // callbackId is added by ACE
         const declarations = this.$repo.prepareCommit();
-        this.sender.callback(declarations, callbackId); // callbackId is added by ACE);
+        this.sender.callback(declarations, callbackId);
     }
 
     commitFailed() {

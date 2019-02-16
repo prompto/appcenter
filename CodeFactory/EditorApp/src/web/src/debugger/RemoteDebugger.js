@@ -1,7 +1,7 @@
 import RemoteListener from './RemoteListener';
 import RemoteRequester from './RemoteRequester';
 import Activity from "../utils/Activity";
-import { GetWorkersRequest, GetStackRequest } from './DebugRequest';
+import { GetWorkersRequest, GetStackRequest, StepOverRequest } from './DebugRequest';
 import fetcher from '../utils/Fetcher';
 
 export default class RemoteDebugger {
@@ -57,6 +57,14 @@ export default class RemoteDebugger {
         this.getDebuggerView().workerSuspended(event);
     }
 
+    workerResumed(event) {
+        this.getDebuggerView().workerResumed(event);
+    }
+
+    workerCompleted(event) {
+        this.getDebuggerView().workerCompleted(event);
+    }
+
 
     getDebuggerView() {
         return this.rootView.getDebuggerView();
@@ -69,5 +77,34 @@ export default class RemoteDebugger {
     fetchStack(workerId, callback) {
         this.requester.send(new GetStackRequest(workerId), response => callback(response.stack), alert);
     }
+
+    resume(workerId) {
+
+    }
+
+    pause(workerId) {
+
+    }
+
+
+    stop(workerId) {
+
+    }
+
+
+    stepOver(workerId, callback) {
+        this.requester.send(new StepOverRequest(workerId), response => callback && callback(), alert);
+    }
+
+
+    stepInto(workerId) {
+
+    }
+
+
+    stepOut(workerId) {
+
+    }
+
 
 }

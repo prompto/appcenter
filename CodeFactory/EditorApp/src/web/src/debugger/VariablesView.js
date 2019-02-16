@@ -7,6 +7,10 @@ export default class VariablesView extends React.Component {
         this.state = { variables: [] };
     }
 
+    refreshState() {
+
+    }
+
     render() {
         return <div className="variables">
             <ul>

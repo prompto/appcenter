@@ -71,7 +71,7 @@ export default class ContentEditor extends React.Component {
         const root = this.props.root;
         const activity = root.state.activity;
         return <div className="container">
-            <DebuggerView ref={ref=>this.debuggerView=ref} activity={activity}/>
+            <DebuggerView ref={ref=>this.debuggerView=ref} activity={activity} container={this}/>
             <PromptoEditor ref={ref=>this.promptoEditor=ref} commitAndReset={root.commitAndReset}
                            catalogUpdated={root.catalogUpdated} projectUpdated={root.projectUpdated}
                            activity={activity}/>

@@ -193,8 +193,12 @@
     border-color: #F0F0F0;
 }
 
-.workers > table > tbody > .stack-row > td {
+.workers > table > tbody > .stack-frame-row > td {
     padding-left: 10px;
+}
+
+.workers > table > tbody > .stack-frame-row.active > td {
+    background-color: #d0c080;
 }
 
 .worker-row {
@@ -206,8 +210,13 @@
     padding-top: 2px;
 }
 
-.stack-row {
+.stack-frame-row {
     font-size: smaller;
+}
+
+.debugger-line {
+    background-image: url("/img/debugger-line.png");
+    background-size: contain;
 }
 
 .debugger-controls {

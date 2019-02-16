@@ -7,6 +7,11 @@ import 'brace/mode/text';
 import PromptoMode from "./PromptoMode";
 import Activity from "../utils/Activity";
 
+const EditSession = window.ace.EditSession;
+EditSession.prototype.clearGutterDecorations = function() {
+    this.$decorations = [];
+};
+
 export default class PromptoEditor extends React.Component {
 
     constructor(props) {
@@ -54,15 +59,24 @@ export default class PromptoEditor extends React.Component {
         this.getSession().getMode().setProject(dbId, loadDependencies);
     }
 
-    setContent(content) {
+    setContent(content, callback) {
         const display = (content && content.type.toLowerCase()==="prompto") ? "block" : "none";
         this.setState({display: display});
         if(display==="block") {
+            this.getEditor().setReadOnly(this.props.activity===Activity.Debugging  || (content ? content.core : false));
             const session = this.getSession();
-            session.getMode().setContent(content)
-            session.setScrollTop(0);
+            session.clearGutterDecorations();
+            session.getMode().setContent(content, () => {
+                session.setScrollTop(0);
+                if(callback)
+                    callback();
+            });
         }
-        this.getEditor().setReadOnly(this.props.activity===Activity.Debugging  || (content ? content.core : false));
+    }
+
+    showStackFrame(stackFrame) {
+        this.getEditor().gotoLine(stackFrame.line, 0, true);
+        this.getSession().addGutterDecoration(stackFrame.line-1, "debugger-line");
     }
 
     runTestOrMethod(content, runMode, callback) {

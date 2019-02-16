@@ -2,11 +2,12 @@ import React from 'react';
 import { Table, Glyphicon } from 'react-bootstrap';
 
 
-class StackRow extends React.Component {
+class StackFrameRow extends React.Component {
 
     render() {
-        const stack = this.props.stack;
-        return <tr className="stack-row"><td/><td>{stack.methodName}</td><td/></tr>;
+        const stackFrame = this.props.stackFrame;
+        const className = "stack-frame-row" + (stackFrame===this.props.debuggerView.state.stackFrame ? " active" : "");
+        return <tr className={className}><td/><td>{stackFrame.methodName}</td><td/></tr>;
 
     }
 }
@@ -25,7 +26,7 @@ class WorkerRow  extends React.Component {
             let idx = 0;
             return <React.Fragment key={key + "-fragment"}>
                 { this.renderWorker() }
-                { this.state.expanded && worker.stack.map(stack => <StackRow key={key + "-s-" + idx++} stack={stack} />, this) }
+                { this.state.expanded && worker.stack.map(frame => <StackFrameRow key={key + "-s-" + idx++} stackFrame={frame} debuggerView={this.props.debuggerView}/>, this) }
             </React.Fragment>;
         } else
             return this.renderWorker();
@@ -34,7 +35,7 @@ class WorkerRow  extends React.Component {
     renderWorker() {
         const worker = this.props.worker;
         const expand_glyph = this.state.expanded ? "triangle-bottom" : "triangle-right";
-        const state_glyph = worker.state==="STEPPING" ? "pause" : "play";
+        const state_glyph = worker.state==="STEPPING" ? "pause" : "refresh";
         return <tr className="worker-row">
             <td>{ worker.state==="STEPPING" && <Glyphicon glyph={expand_glyph} onClick={()=>this.setState({expanded: !this.state.expanded})}/> }</td>
             <td>{worker.name}</td>
@@ -47,65 +48,15 @@ class WorkerRow  extends React.Component {
 
 export default class WorkersView extends React.Component {
 
-    constructor(props) {
-        super(props);
-        // this.state = { workers: [ { workerId: 1, state: "STEPPING", name: "main", stack: [ { methodName: "start_test"}, { methodName: "other" } ] } ] };
-        this.state = { workers: [] };
-        this.eventQueue = [];
-    }
-
-    setWorkers(workers) {
-        this.setState({workers: workers}, this.processEvents);
-    }
-
-    processEvents() {
-        while(this.eventQueue.length) {
-            const callback = this.eventQueue.shift();
-            callback();
-        }
-    }
-
-    workerSuspended(event, callback) {
-        if (this.state.workers.length > 0)
-            this.doWorkerSuspended(event, callback);
-        else
-            this.eventQueue.push(() => this.doWorkerSuspended(event, callback));
-    }
-
-    doWorkerSuspended(event, callback) {
-        const workers = this.state.workers;
-        const worker = workers.filter(w => w.workerId===event.workerId)[0];
-        if(worker) {
-            worker.state = event.reason;
-            this.setState({ workers: workers }, callback);
-        }
-    }
-
-    setWorkerStack(workerId, stack) {
-        if (this.state.workers.length > 0)
-            this.doSetWorkerStack(workerId, stack);
-        else
-            this.eventQueue.push(() => this.doSetWorkerStack(workerId, stack));
-    }
-
-
-    doSetWorkerStack(workerId, stack) {
-        const workers = this.state.workers;
-        const worker = workers.filter(w => w.workerId === workerId)[0];
-        if (worker) {
-            worker.stack = stack;
-            this.setState({workers: workers});
-        }
-    }
-
     render() {
+        const state = this.props.debuggerView.state;
         return <div className="workers">
                 <Table size="sm">
                     <thead>
                         <tr><th key="h1" width="10px"/><th key="h2">Workers</th><th key="h3" width="10px"/></tr>
                     </thead>
                     <tbody>
-                    { this.state.workers.map(w => <WorkerRow key={w.workerId} worker={w} />, this) }
+                    { state.workers.map(w => <WorkerRow key={w.workerId} worker={w} debuggerView={this.props.debuggerView}/>, this) }
                     </tbody>
                 </Table>
                </div>;

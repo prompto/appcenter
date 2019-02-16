@@ -19,37 +19,86 @@ const controlImage = {
     STEP_OUT: "step-out.png"
 };
 
+const controlMethod = {
+    RESUME: "resume",
+    PAUSE: "pause",
+    STOP: "stop",
+    STEP_OVER: "stepOver",
+    STEP_INTO: "stepInto",
+    STEP_OUT: "stepOut"
+};
 
 class DebuggerControl extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { disabled: false };
+        this.state = { enabled: true };
+        this.onClick = this.onClick.bind(this);
+    }
+
+    onClick(e) {
+        const worker = this.props.debuggerView.state.worker;
+        const _debugger = this.props.debuggerView.getDebugger();
+        const method = _debugger[controlMethod[this.props.id]];
+        method.bind(_debugger)(worker.workerId);
     }
 
     render() {
-       return <OverlayTrigger overlay={this.renderTooltip()} trigger={["hover", "focus"]}>
-            <Button className="debugger-control" disabled={this.state.disabled}>
-                <img src={'img/' + controlImage[this.props.id] } alt=""/>
-            </Button>
-        </OverlayTrigger>;
+        return <Button className="debugger-control" disabled={!this.state.enabled} onClick={this.onClick}>
+                <OverlayTrigger overlay={this.renderTooltip()} trigger={["hover", "focus"]}>
+                    <img src={'img/' + controlImage[this.props.id] } alt=""/>
+                </OverlayTrigger>
+            </Button>;
     }
 
     renderTooltip() {
         return <Tooltip id="tooltip">{controlText[this.props.id]}</Tooltip>;
     }
+
+    refreshState() {
+        const worker = this.props.debuggerView.state.worker;
+        const stackFrame = this.props.debuggerView.state.stackFrame;
+        const method = this["refresh_" + this.props.id];
+        method.bind(this)(worker, stackFrame);
+    }
+
+    refresh_RESUME(worker, stackFrame) {
+        this.setState({enabled: worker && worker.state==="STEPPING"});
+    }
+
+    refresh_PAUSE(worker, stackFrame) {
+        this.setState({enabled: worker && worker.state!=="STEPPING"});
+    }
+
+    refresh_STOP(worker, stackFrame) {
+        this.setState({enabled: worker && worker.state!=="STEPPING"});
+    }
+
+    refresh_STEP_OVER(worker, stackFrame) {
+        this.setState({enabled: stackFrame && stackFrame});
+    }
+
+    refresh_STEP_INTO(worker, stackFrame) {
+        this.setState({enabled: false}); // TODO
+    }
+
+    refresh_STEP_OUT(worker, stackFrame) {
+        this.setState({enabled: stackFrame && stackFrame!==worker.stack[0]});
+    }
 }
+
+const ALL_CONTROL_IDS = [ "RESUME", "PAUSE", "STOP", "STEP_OVER", "STEP_INTO", "STEP_OUT" ];
 
 export default class DebuggerControls extends React.Component {
 
+    refreshState() {
+        ALL_CONTROL_IDS.forEach(id => this[id].refreshState());
+    }
+    
+    
     render() {
         return <ButtonGroup className="debugger-controls">
-            <DebuggerControl id="RESUME" />
-            <DebuggerControl id="PAUSE" />
-            <DebuggerControl id="STOP" />
-            <DebuggerControl id="STEP_OVER" />
-            <DebuggerControl id="STEP_INTO" />
-            <DebuggerControl id="STEP_OUT" />
+            { ALL_CONTROL_IDS.map(id => <DebuggerControl key={id} ref={ref => this[id]=ref} id={id} debuggerView={this.props.debuggerView}/>, this) }
         </ButtonGroup>
     }
 }

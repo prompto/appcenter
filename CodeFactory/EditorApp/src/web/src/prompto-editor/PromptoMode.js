@@ -17,8 +17,12 @@ export default class PromptoMode extends window.ace.acequire("ace/mode/text")
             this.$worker && this.$worker.send("setDialect", [ dialect ] );
         }
 
-        setContent(content) {
-            this.$worker && this.$worker.send("setContent", [ content ] );
+        setContent(content, callback) {
+            this.$worker && this.$worker.call("setContent", [ content ], value => {
+                this.$worker.onValue({ data: value });
+                if(callback)
+                    callback();
+            });
         }
 
         destroy(content) {

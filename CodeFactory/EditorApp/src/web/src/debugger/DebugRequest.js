@@ -24,3 +24,14 @@ export class GetStackRequest extends DebugRequest {
 }
 
 DebugRequest.GET_STACK = GetStackRequest;
+
+
+export class StepOverRequest extends DebugRequest {
+
+    constructor(workerId) {
+        super("STEP_OVER");
+        this.workerId = workerId;
+    }
+}
+
+DebugRequest.STEP_OVER = StepOverRequest;
