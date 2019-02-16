@@ -17,13 +17,8 @@ export default class RemoteDebugger {
 
     constructor(root) {
         this.rootView = root;
-        this.debuggerView = null;
         this.requester = null;
         this.listener = null;
-    }
-
-    setDebuggerView(view) {
-        this.debuggerView = view;
     }
 
     start(projectId, content) {
@@ -55,14 +50,18 @@ export default class RemoteDebugger {
     processConnected(event) {
         console.log("received: " + event.type);
         this.getWorkers(workers=>{
-            this.debuggerView.setWorkers(workers);
+            this.getDebuggerView().setWorkers(workers);
         });
     }
 
-    threadSuspended(event) {
+    workerSuspended(event) {
         console.log("received: " + event.type);
     }
 
+
+    getDebuggerView() {
+        return this.rootView.getDebuggerView();
+    }
 
     getWorkers(callback) {
         this.requester.send(new GetWorkersRequest(), response => callback(response.workers), alert);

@@ -64,8 +64,8 @@ export default class PromptoEditor extends React.Component {
         }
     }
 
-    runMethod(content, runMode) {
-        this.getSession().getMode().runMethod(content, runMode);
+    runTestOrMethod(content, runMode, callback) {
+        this.getSession().getMode().runTestOrMethod(content, runMode, callback);
     }
 
     fetchRunnablePage(content, andThen) {

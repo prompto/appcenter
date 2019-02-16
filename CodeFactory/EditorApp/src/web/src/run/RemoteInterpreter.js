@@ -8,8 +8,9 @@ export default class RemoteInterpreter extends RemoteRunner {
     }
 
     startDebugContent(root, projectId, repo, content) {
-        root.debuggerView.setDebugger(new RemoteDebugger(root));
-        root.debuggerView.debugger.start(projectId, content);
+        const dbg = new RemoteDebugger(root);
+        root.setDebugger(dbg);
+        dbg.start(projectId, content);
     }
 
 }

@@ -186,8 +186,9 @@ export default class PromptoWorker extends Mirror {
     }
 
     prepareCommit() {
+        const callbackId = arguments[arguments.length - 1]; // callbackId is added by ACE
         const declarations = this.$repo.prepareCommit();
-        this.sender.callback(declarations, arguments[0]); // callbackId is added by ACE);
+        this.sender.callback(declarations, callbackId); // callbackId is added by ACE);
     }
 
     commitFailed() {
@@ -205,18 +206,20 @@ export default class PromptoWorker extends Mirror {
         });
     }
 
-    runMethod(content, mode) {
+    runTestOrMethod(content, mode) {
+        const callbackId = arguments[arguments.length - 1]; // callbackId is added by ACE
         const runner = Runners.forMode(mode);
         if(runner)
-            runner.runContent(this.$projectId, this.$repo, content, ()=>this.sender.callback(arguments[2])); // callbackId is added by ACE
+            runner.runContent(this.$projectId, this.$repo, content, ()=>this.sender.callback(null, callbackId));
         else {
             console.log("Unsupported mode: " + mode);
-            this.sender.callback(arguments[2]);
+            this.sender.callback(null, callbackId);
         }
     }
 
 
     fetchRunnablePage(content) {
+        const callbackId = arguments[arguments.length - 1]; // callbackId is added by ACE
         var runnable = { valid: false, content: null };
         var decl = this.$repo.getDeclaration(content);
         if(decl!==null && decl.annotations && decl instanceof prompto.declaration.ConcreteWidgetDeclaration) {
@@ -224,6 +227,6 @@ export default class PromptoWorker extends Mirror {
             if(annotations.length>0 && annotations[0].expression instanceof prompto.literal.TextLiteral)
                 runnable = { valid: true, content: { type: "page", name: annotations[0].expression.value.toString() }};
         }
-        this.sender.callback(runnable, arguments[1]); // callbackId is added by ACE
+        this.sender.callback(runnable, callbackId);
     }
 }

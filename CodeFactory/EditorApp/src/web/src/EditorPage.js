@@ -8,11 +8,8 @@ import NewFileResourceDialog from "./dialogs/NewFileResourceDialog";
 import NewTextResourceDialog from "./dialogs/NewTextResourceDialog";
 import RenameResourceDialog from "./dialogs/RenameResourceDialog";
 import ContentNavigator from './project-tree/ContentNavigator';
+import ContentEditor from './ContentEditor';
 import EditorNavBar from './EditorNavBar';
-import PromptoEditor from './prompto-editor/PromptoEditor';
-import ResourceEditor from './resource-editors/ResourceEditor';
-import BinaryEditor from './resource-editors/BinaryEditor';
-import DebuggerView from './debugger/DebuggerView';
 import Activity from './utils/Activity';
 import fetcher from './utils/Fetcher';
 
@@ -43,10 +40,8 @@ export default class EditorPage extends React.Component {
         this.getProject = this.getProject.bind(this);
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
-        this.promptoEditor = null;
-        this.resourceEditor = null;
-        this.imageDisplayer = null;
-        this.debuggerView = null;
+        this.contentNavigator = null;
+        this.contentEditor = null;
         this.state = { project: null, activity: Activity.Loading, content: null, resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
         this.catalog = new Catalog();
         Mousetrap.bind('command+s', this.commitAndReset);
@@ -68,7 +63,7 @@ export default class EditorPage extends React.Component {
     }
 
     setDialect(dialect) {
-        this.promptoEditor.setDialect(dialect);
+        this.contentEditor.setDialect(dialect);
     }
 
     revert() {
@@ -79,7 +74,7 @@ export default class EditorPage extends React.Component {
 
     commitAndReset() {
         // TODO confirm
-        this.promptoEditor.prepareCommit(this.commitPrepared);
+        this.contentEditor.prepareCommit(this.commitPrepared);
         this.resetServer();
         return false;
     }
@@ -103,12 +98,12 @@ export default class EditorPage extends React.Component {
 
     commitFailed(failure) {
         this.messageArea.setMessage("Commit failed!");
-        this.promptoEditor.commitFailed();
+        this.contentEditor.commitFailed();
     }
 
     commitSuccessful(success) {
         this.messageArea.setMessage("Commit ok!");
-        this.promptoEditor.commitSuccessful();
+        this.contentEditor.commitSuccessful();
         // this.loadResources();
     }
 
@@ -173,7 +168,7 @@ export default class EditorPage extends React.Component {
     }
 
     loadCode(loadDependencies) {
-        this.promptoEditor.setProject(this.projectId, loadDependencies);
+        this.contentEditor.setProject(this.projectId, loadDependencies);
     }
 
     loadDescription() {
@@ -241,12 +236,7 @@ export default class EditorPage extends React.Component {
                     <ContentNavigator ref={ref=>{if(ref)this.contentNavigator=ref;}} root={this} catalog={this.catalog}/>
                 </div>
                 <div className="editor">
-                    <DebuggerView ref={ref=>this.debuggerView=ref} activity={activity}/>
-                    <PromptoEditor ref={ref=>this.promptoEditor=ref} commitAndReset={this.commitAndReset}
-                                   catalogUpdated={this.catalogUpdated} projectUpdated={this.projectUpdated}
-                                   activity={activity} done={()=>this.setState({activity: Activity.Idling})}/>
-                    <ResourceEditor ref={ref=>this.resourceEditor=ref} textEdited={this.textResourceEdited} />
-                    <BinaryEditor ref={ref=>this.binaryEditor=ref} />
+                    <ContentEditor ref={ref=>{if(ref)this.contentEditor=ref;}} root={this} />
                 </div>
             </div>;
     }
@@ -257,12 +247,8 @@ export default class EditorPage extends React.Component {
         if (content === this.state.content)
             return;
         this.setState({content: content}, ()=>{
-            if(this.promptoEditor)
-                this.promptoEditor.setContent(content);
-            if(this.resourceEditor)
-                this.resourceEditor.setContent(content);
-            if(this.binaryEditor)
-                this.binaryEditor.setContent(content);
+            if(this.contentEditor)
+                this.contentEditor.setContent(content);
             if(callback)
                 callback();
         });
@@ -288,7 +274,7 @@ export default class EditorPage extends React.Component {
         else {
             const content = this.state.content;
             if(content.type.toLowerCase()==="prompto") {
-                this.promptoEditor.destroy(content);
+                this.contentEditor.destroyContent(content);
                 this.setEditorContent({ type: "prompto" });
             } else {
                 var res = this.catalog.resourceFromContent(content);
@@ -319,9 +305,24 @@ export default class EditorPage extends React.Component {
     addCode(content, code, dialect) {
         this.setEditorContent(content,
             () => this.navBar.setDialect(dialect,
-                () => this.promptoEditor.setContent({type: "prompto", body: code})));
+                () => this.contentEditor.setContent({type: "prompto", body: code})));
     }
 
+    fetchRunnablePage(content, callback) {
+        this.contentEditor.fetchRunnablePage(content, callback);
+    }
+
+    runTestOrMethod(content, runMode) {
+        this.contentEditor.runTestOrMethod(content, runMode);
+    }
+
+    setDebugger(dbg) {
+        this.contentEditor.setDebugger(dbg);
+    }
+
+    getDebuggerView() {
+        return this.contentEditor.getDebuggerView();
+    }
 
 }
 

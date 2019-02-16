@@ -38,7 +38,7 @@ export default class Launcher {
             if(this.content.subType!=="widget")
                 return checker({ valid: false, content: null }, runner);
             else
-                this.root.promptoEditor.fetchRunnablePage(this.content, runnable => checker(runnable, runner));
+                this.root.fetchRunnablePage(this.content, runnable => checker(runnable, runner));
         }
     }
 
@@ -73,7 +73,7 @@ export default class Launcher {
     runLocalTestOrMethod(content) {
         this.root.setState({activity: Activity.Running});
         print("Running " + content.name + "...");
-        this.root.promptoEditor.runMethod(content, this.runMode);
+        this.root.runTestOrMethod(content, this.runMode);
     }
 
     debugLocalTestOrMethod(content) {

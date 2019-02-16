@@ -12,9 +12,8 @@ export default class DebuggerView extends React.Component {
         this.variablesView = null;
     }
 
-    setDebugger(_debugger) {
-        this.debugger = _debugger;
-        this.debugger.setDebuggerView(this);
+    setDebugger(dbg) {
+        this.debugger = dbg;
     }
 
     setWorkers(workers) {
