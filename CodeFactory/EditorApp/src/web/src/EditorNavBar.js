@@ -44,17 +44,15 @@ export default class EditorNavBar extends React.Component {
     }
 
     stopServer() {
-        this.props.root.killModule();
+        this.props.root.stopServer();
     }
 
     stopRunning() {
-        this.props.root.setState({activity: Activity.Editing});
+        this.props.root.stopRunning();
     }
 
     stopDebugging() {
-        this.props.root.debuggerView.debugger.disconnect();
-        this.props.root.killModule();
-        this.props.root.setState({activity: Activity.Editing});
+        this.props.root.stopDebugging();
     }
 
     clearOutput() {
