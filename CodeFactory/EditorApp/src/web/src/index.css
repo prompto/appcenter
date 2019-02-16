@@ -158,20 +158,53 @@
     margin-top: -100px;
 }
 
-.workers {
+.debugger-left {
     display: block;
     position: relative;
     height: 100%;
-    width: 30%;
+    width: 250px;
     float: left;
+}
+
+.debugger-right {
+    display: block;
+    height: 100%;
+    left: 250px;
+    right: 0px;
+    float: right;
+}
+
+.workers {
+    display: block;
+    position: relative;
+    height: calc(100% - 44px);
+    width: 100%;
     overflow-y: auto;
+}
+
+.debugger-controls {
+    display: block;
+    height: 40px;
+    width: 100%;
+    margin: 2px;
+}
+
+.debugger-control {
+    width: 40px;
+    height: 40px;
+    padding: 4px;
+    background: #F8F8F8;
+}
+
+
+.debugger-control > img {
+    width: 28px;
+    height: 28px;
 }
 
 .variables {
     display: block;
     height: 100%;
-    left: 30%;
-    width: 70%;
-    float: right;
+    width: 100%;
     overflow-y: auto;
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import Activity from "../utils/Activity";
 import WorkersView from './WorkersView';
+import DebuggerControls from './DebuggerControls';
 import VariablesView from './VariablesView';
 
 export default class DebuggerView extends React.Component {
@@ -9,6 +10,7 @@ export default class DebuggerView extends React.Component {
         super(props);
         this.debugger = null;
         this.workersView = null;
+        this.controlsView = null;
         this.variablesView = null;
     }
 
@@ -41,9 +43,14 @@ export default class DebuggerView extends React.Component {
     render() {
         const activity = this.props.activity;
         const style = { display: activity===Activity.Debugging ? "block" : "none", height: "200px"};
-        return <div id="stuff" className="debugger" style={style}>
-            <WorkersView ref={ref=>this.workersView=ref} />
-            <VariablesView ref={ref=>this.variablesView=ref} />
+        return <div className="debugger" style={style}>
+            <div className="debugger-left">
+                <WorkersView ref={ref=>this.workersView=ref} />
+                <DebuggerControls ref={ref=>this.controlsView=ref} />
+            </div>
+            <div className="debugger-right">
+                <VariablesView ref={ref=>this.variablesView=ref} />
+            </div>
         </div>;
     }
 }
