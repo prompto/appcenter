@@ -162,14 +162,14 @@
     display: block;
     position: relative;
     height: 100%;
-    width: 250px;
+    width: 244px;
     float: left;
 }
 
 .debugger-right {
     display: block;
     height: 100%;
-    left: 250px;
+    left: 244px;
     right: 0px;
     float: right;
 }
@@ -180,6 +180,34 @@
     height: calc(100% - 44px);
     width: 100%;
     overflow-y: auto;
+}
+
+.workers > table > thead > tr > th {
+    font-size: small;
+    padding: 2px;
+    border-color: #F0F0F0;
+}
+
+.workers > table > tbody > tr > td {
+    padding: 2px;
+    border-color: #F0F0F0;
+}
+
+.workers > table > tbody > .stack-row > td {
+    padding-left: 10px;
+}
+
+.worker-row {
+    font-size: smaller;
+    font-weight: bold;
+}
+
+.worker-row > td > .glyphicon {
+    padding-top: 2px;
+}
+
+.stack-row {
+    font-size: smaller;
 }
 
 .debugger-controls {

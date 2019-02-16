@@ -1,10 +1,55 @@
 import React from 'react';
+import { Table, Glyphicon } from 'react-bootstrap';
+
+
+class StackRow extends React.Component {
+
+    render() {
+        const stack = this.props.stack;
+        return <tr className="stack-row"><td/><td>{stack.methodName}</td><td/></tr>;
+
+    }
+}
+
+class WorkerRow  extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = { expanded: true };
+    }
+
+    render() {
+        const worker = this.props.worker;
+        const key = "w-" + worker.workerId;
+        if(worker.state==="STEPPING" && worker.stack && worker.stack.length>0) {
+            let idx = 0;
+            return <React.Fragment key={key + "-fragment"}>
+                { this.renderWorker() }
+                { this.state.expanded && worker.stack.map(stack => <StackRow key={key + "-s-" + idx++} stack={stack} />, this) }
+            </React.Fragment>;
+        } else
+            return this.renderWorker();
+    }
+
+    renderWorker() {
+        const worker = this.props.worker;
+        const expand_glyph = this.state.expanded ? "triangle-bottom" : "triangle-right";
+        const state_glyph = worker.state==="STEPPING" ? "pause" : "play";
+        return <tr className="worker-row">
+            <td>{ worker.state==="STEPPING" && <Glyphicon glyph={expand_glyph} onClick={()=>this.setState({expanded: !this.state.expanded})}/> }</td>
+            <td>{worker.name}</td>
+            <td><Glyphicon glyph={state_glyph} /></td>
+        </tr>
+
+    }
+}
+
 
 export default class WorkersView extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { workers: [] };
+        this.state = { workers: [ { workerId: 1, state: "STEPPING", name: "main", stack: [ { methodName: "start_test"}, { methodName: "other" } ] } ] };
         this.eventQueue = [];
     }
 
@@ -54,21 +99,15 @@ export default class WorkersView extends React.Component {
 
     render() {
         return <div className="workers">
-                <ul>
-                    { this.state.workers.map(this.renderWorker, this) }
-                </ul>
+                <Table size="sm">
+                    <thead>
+                        <tr><th key="h1" width="10px"/><th key="h2">Workers</th><th key="h3" width="10px"/></tr>
+                    </thead>
+                    <tbody>
+                    { this.state.workers.map(w => <WorkerRow key={w.workerId} worker={w} />, this) }
+                    </tbody>
+                </Table>
                </div>;
     }
 
-    renderWorker(worker) {
-        if(worker.state==="STEPPING" && worker.stack && worker.stack.length>0) {
-            let idx = 0;
-            return <li key={worker.workerId}>{worker.name + " (" + worker.state + ")"}
-                <ul>
-                    { worker.stack.map(s => <li key={idx++}>{s.methodName}</li>, this) }
-                </ul>
-            </li>;
-        } else
-            return <li key={worker.workerId}>{worker.name + " (" + worker.state + ")"}</li>;
-    }
 }
