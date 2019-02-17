@@ -44,6 +44,19 @@ export default class DebuggerView extends React.Component {
         this.setState({workers: workers}, this.processEventQueue);
     }
 
+
+    workerStartedEvent(event) {
+        const worker = event.worker;
+        const existing = this.findWorkerByWorkerId(worker.workerId);
+        if(!existing) {
+            const workers = this.state.workers;
+            workers.push(worker);
+            this.setState({workers: workers}, () => {
+                this.controlsView.refreshState();
+            });
+        }
+    }
+
     workerSuspendedEvent(event) {
         if (this.state.workers.length > 0)
             this.doWorkerSuspendedEvent(event);

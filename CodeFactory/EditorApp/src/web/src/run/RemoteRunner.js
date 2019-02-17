@@ -17,14 +17,14 @@ export default class RemoteRunner extends Runner {
                     response.data.map(m => print(m));
                 else
                     print(response.data);
-                callback();
+                callback && callback();
             }, error => {
                 print(error);
-                callback();
+                callback && callback();
             });
         }, error => {
             print(error);
-            callback();
+            callback && callback();
         });
     }
 }

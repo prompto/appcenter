@@ -3,6 +3,7 @@ import RemoteRequester from './RemoteRequester';
 import Activity from "../utils/Activity";
 import { GetWorkersRequest, GetStackRequest, StepOverRequest, StepIntoRequest, StepOutRequest, SuspendRequest, ResumeRequest, TerminateRequest } from './DebugRequest';
 import fetcher from '../utils/Fetcher';
+import {print} from "../utils/Utils";
 
 export default class RemoteDebugger {
 
@@ -22,6 +23,7 @@ export default class RemoteDebugger {
     }
 
     start(projectId, content) {
+        this.onServerReadyEvent = event => this.doServerReadyEvent(event, projectId, content);
         fetcher.fetchModulePort(projectId, true, port => this.connect(port), alert);
     }
 
@@ -47,10 +49,39 @@ export default class RemoteDebugger {
         this.rootView.setState({activity: Activity.Debugging});
     }
 
-    processConnectedEvent(event) {
+    serverConnectedEvent(event) {
         this.fetchWorkers(workers=>{
             this.getDebuggerView().setWorkers(workers);
         });
+    }
+
+    serverReadyEvent(event) {
+        this.onServerReadyEvent(event);
+    }
+
+    doServerReadyEvent(event, projectId, content) {
+        this.runRemotely(content);
+    }
+
+    runRemotely(content) {
+        const url = window.location.protocol + "//" + window.location.hostname + ":" + this.requester.port + "/ws/run/" + content.name;
+        const params = { mode: "interpret" };
+        if(content.subType === "method")
+            params.main = true;
+        fetcher.fetchJSON(url, params, response => {
+            if (response.error)
+                print(response.error);
+            else if(response.data instanceof Array)
+                response.data.map(m => print(m));
+            else
+                print(response.data);
+        }, error => {
+            print(error);
+        });
+    }
+
+    workerStartedEvent(event) {
+        this.getDebuggerView().workerStartedEvent(event);
     }
 
     workerSuspendedEvent(event) {

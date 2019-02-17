@@ -1,3 +1,5 @@
+import DebuggedWorker from "./DebuggedWorker";
+
 export default class DebugEvent {
 
     static parse(message) {
@@ -20,10 +22,37 @@ DebugEvent.CONNECTED = class ServerConnectedEvent extends DebugEvent {
     }
 
     execute(listener) {
-        listener.processConnectedEvent(this);
+        listener.serverConnectedEvent(this);
     }
 
 };
+
+
+DebugEvent.READY = class ServerReadyEvent extends DebugEvent {
+
+    constructor(message) {
+        super(message.type);
+    }
+
+    execute(listener) {
+        listener.serverReadyEvent(this);
+    }
+
+};
+
+
+DebugEvent.STARTED = class WorkerStartedEvent extends DebugEvent {
+
+    constructor(message) {
+        super(message.type);
+        this.worker = new DebuggedWorker(message.object);
+    }
+
+    execute(listener) {
+        listener.workerStartedEvent(this);
+    }
+};
+
 
 DebugEvent.SUSPENDED = class WorkerSuspendedEvent extends DebugEvent {
 
