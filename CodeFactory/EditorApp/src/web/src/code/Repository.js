@@ -28,11 +28,10 @@ export default class Repository {
     }
 
     registerLibraryDeclarations(declarations) {
-        var worker = this;
         declarations.forEach(obj => {
             var decl = parse(obj.value.body, obj.value.dialect);
-            decl.register(worker.librariesContext);
-        });
+            decl.register(this.librariesContext);
+        }, this);
     };
 
     publishLibraries() {
@@ -66,10 +65,9 @@ export default class Repository {
 
     registerProjectDeclarations(moduleId, declarations) {
         this.moduleId = moduleId;
-        var worker = this;
         declarations.forEach(obj => {
             var decl = parse(obj.value.body, obj.value.dialect);
-            decl.register(worker.projectContext);
+            decl.register(this.projectContext);
             // prepare for commit
             var module = obj.value.module;
             if (module) {
@@ -77,8 +75,8 @@ export default class Repository {
                 delete obj.value.module.value.dependencies;
                 delete obj.value.module.value.image;
             }
-            worker.registerClean(obj);
-        });
+            this.registerClean(obj);
+        }, this);
     };
 
     getDeclarationBody(content, dialect) {
@@ -92,15 +90,7 @@ export default class Repository {
             return this.projectContext.getRegisteredTest(content.name);
         else if (content.subType === "method") {
             var methodsMap = this.projectContext.getRegisteredDeclaration(content.name);
-            if (content.proto !== null && content.proto !== undefined) {
-                return methodsMap.protos[content.proto];
-            } else {
-                // simply return the first proto
-                for (var proto in methodsMap.protos) {
-                    if (methodsMap.protos.hasOwnProperty(proto))
-                        return methodsMap.protos[proto];
-                }
-            }
+            return content.proto ? methodsMap.protos[content.proto] : methodsMap.getFirst();
         } else
             return this.projectContext.getRegisteredDeclaration(content.name);
     };
@@ -352,5 +342,28 @@ export default class Repository {
             this.projectContext.problemListener = saved_listener;
         }
     };
+
+    locateContent(stackFrame) {
+        let testMethod = this.librariesContext.getRegisteredTest(stackFrame.methodName);
+        if(testMethod)
+            return { type: "Prompto", subType: "test", name: stackFrame.methodName, core: true, main: false };
+        let methodsMap = this.librariesContext.getRegisteredDeclaration(stackFrame.methodName);
+        if(methodsMap) {
+            const method = stackFrame.methodProto ? methodsMap.protos[stackFrame.methodProto] : methodsMap.getFirst();
+            if(method)
+                return { type: "Prompto", subType: "method", name: stackFrame.methodName, proto: stackFrame.methodProto, core: true, main: method.isEligibleAsMain() };
+        }
+        testMethod = this.projectContext.getRegisteredTest(stackFrame.methodName);
+        if(testMethod)
+            return { type: "Prompto", subType: "test", name: stackFrame.methodName, core: false, main: false };
+        methodsMap = this.projectContext.getRegisteredDeclaration(stackFrame.methodName);
+        if(methodsMap) {
+            const method = stackFrame.methodProto ? methodsMap.protos[stackFrame.methodProto] : methodsMap.getFirst();
+            if(method)
+                return { type: "Prompto", subType: "method", name: stackFrame.methodName, proto: stackFrame.methodProto, core: false, main: method.isEligibleAsMain() };
+        }
+        return null;
+    }
+
 
 }

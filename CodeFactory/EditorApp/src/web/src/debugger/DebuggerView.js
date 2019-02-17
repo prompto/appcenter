@@ -25,8 +25,12 @@ export default class DebuggerView extends React.Component {
     }
 
     disconnect() {
-        this.debugger.disconnect();
-        this.debugger = null;
+        this.setState({ workers: [], worker: null, stackFrame: null }, () => {
+            this.debugger.disconnect();
+            this.debugger = null;
+            const promptoEditor = this.props.container.promptoEditor;
+            promptoEditor.stopDebugging();
+        });
     }
 
     processEventQueue() {
@@ -99,12 +103,8 @@ export default class DebuggerView extends React.Component {
         const promptoEditor = this.props.container.promptoEditor;
         const stackFrame = this.state.stackFrame;
         promptoEditor.setProcessing(!stackFrame, () => {
-            if(stackFrame) {
-                const content = { type: "Prompto", subType: "method", name: stackFrame.methodName, proto: stackFrame.methodProto, core: true, main: true };
-                promptoEditor.setContent(content, () => {
-                    promptoEditor.showStackFrame(stackFrame);
-                });
-            }
+            if(stackFrame)
+                promptoEditor.showStackFrame(stackFrame);
         });
     }
 
