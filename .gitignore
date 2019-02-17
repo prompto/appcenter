@@ -11,3 +11,7 @@ seed.yml
 chromedriver_linux64.zip
 chromedriver_mac64.zip
 release.json
+CodeFactory/EditorApp/src/web/node
+CodeFactory/ProjectsApp/src/web/node
+CodeFactory/DataApp/src/web/node
+CodeFactory/tools/node

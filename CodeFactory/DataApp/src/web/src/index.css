@@ -1,0 +1,27 @@
+.navbar-fixed-top {
+  border: 0;
+}
+
+.btn-group > .btn-default {
+  background-image: none;
+}
+
+.navbar-form > .btn-default {
+  background-image: none;
+}
+
+#query-area {
+    padding-top: 5px;
+    margin-top: 50px;
+    border-radius: 0;
+}
+
+#store-type-label {
+    color: white;
+    font-size: larger;
+    font-weight: normal;
+}
+#show-dbids{
+    margin-top: 7px;
+}
+
