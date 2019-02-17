@@ -5,7 +5,7 @@ export default class DebugEvent {
         if(type)
             return new type(message);
         else
-            throw "Unsupported " + message.type;
+            throw new Error("Unsupported " + message.type);
     }
 
     constructor(type) {
@@ -20,7 +20,7 @@ DebugEvent.CONNECTED = class ServerConnectedEvent extends DebugEvent {
     }
 
     execute(listener) {
-        listener.processConnected(this);
+        listener.processConnectedEvent(this);
     }
 
 };
@@ -34,7 +34,7 @@ DebugEvent.SUSPENDED = class WorkerSuspendedEvent extends DebugEvent {
     }
 
     execute(listener) {
-        listener.workerSuspended(this);
+        listener.workerSuspendedEvent(this);
     }
 };
 
@@ -48,7 +48,7 @@ DebugEvent.RESUMED = class WorkerSuspendedEvent extends DebugEvent {
     }
 
     execute(listener) {
-        listener.workerResumed(this);
+        listener.workerResumedEvent(this);
     }
 };
 
@@ -62,7 +62,7 @@ DebugEvent.COMPLETED = class WorkerCompletedEvent extends DebugEvent {
     }
 
     execute(listener) {
-        listener.workerCompleted(this);
+        listener.workerCompletedEvent(this);
     }
 };
 

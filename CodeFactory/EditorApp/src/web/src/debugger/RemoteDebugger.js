@@ -47,22 +47,22 @@ export default class RemoteDebugger {
         this.rootView.setState({activity: Activity.Debugging});
     }
 
-    processConnected(event) {
+    processConnectedEvent(event) {
         this.fetchWorkers(workers=>{
             this.getDebuggerView().setWorkers(workers);
         });
     }
 
-    workerSuspended(event) {
-        this.getDebuggerView().workerSuspended(event);
+    workerSuspendedEvent(event) {
+        this.getDebuggerView().workerSuspendedEvent(event);
     }
 
-    workerResumed(event) {
-        this.getDebuggerView().workerResumed(event);
+    workerResumedEvent(event) {
+        this.getDebuggerView().workerResumedEvent(event);
     }
 
-    workerCompleted(event) {
-        this.getDebuggerView().workerCompleted(event);
+    workerCompletedEvent(event) {
+        this.getDebuggerView().workerCompletedEvent(event);
     }
 
 

@@ -66,6 +66,9 @@
     height: 100%;
 }
 
+.ace-editor-wrapper.debug {
+    height: calc(100% - 200px);
+}
 
 .resource-editor-wrapper {
     position: relative;
@@ -156,6 +159,21 @@
     top: 50%;
     margin-left: -100px;
     margin-top: -100px;
+}
+
+
+#processing {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -100px;
+    margin-top: -100px;
+}
+
+.debugger {
+    height: 200px;
 }
 
 .debugger-left {

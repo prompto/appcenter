@@ -21,7 +21,7 @@ export default class PromptoEditor extends React.Component {
         this.setContent = this.setContent.bind(this);
         this.codeEdited = this.codeEdited.bind(this);
         this.commitAndReset = this.commitAndReset.bind(this);
-        this.state = {display: "block", value: ""};
+        this.state = {value: "", display: true, processing: true};
     }
 
 
@@ -59,20 +59,26 @@ export default class PromptoEditor extends React.Component {
         this.getSession().getMode().setProject(dbId, loadDependencies);
     }
 
-    setContent(content, callback) {
-        const display = (content && content.type.toLowerCase()==="prompto") ? "block" : "none";
-        this.setState({display: display});
-        if(display==="block") {
-            this.getEditor().setReadOnly(this.props.activity===Activity.Debugging  || (content ? content.core : false));
-            const session = this.getSession();
-            session.clearGutterDecorations();
-            session.getMode().setContent(content, () => {
-                session.setScrollTop(0);
-                if(callback)
-                    callback();
-            });
-        }
+    setProcessing(processing, callback) {
+        this.setState({processing: processing}, callback);
     }
+
+    setContent(content, callback) {
+        const display = content && content.type.toLowerCase()==="prompto";
+        this.setState({display: display}, () => {
+            if(display) {
+                this.getEditor().setReadOnly(this.props.activity===Activity.Debugging  || (content ? content.core : false));
+                const session = this.getSession();
+                session.clearGutterDecorations();
+                session.getMode().setContent(content, () => {
+                    session.setScrollTop(0);
+                    if(callback)
+                        callback();
+                });
+            } else if(callback)
+                callback();
+        });
+   }
 
     showStackFrame(stackFrame) {
         this.getEditor().gotoLine(stackFrame.line, 0, true);
@@ -114,13 +120,28 @@ export default class PromptoEditor extends React.Component {
     }
 
     render() {
-        const style = {display: this.state.display};
-        return <div className="ace-editor-wrapper" style={style}>
-                    <AceEditor ref={ref=>{if(ref)this.aceEditor=ref;}} name="prompto-editor"
-                               theme="eclipse" mode="text"
-                               value={this.state.value} onChange={this.codeEdited}
-                               width="100%" height="100%" editorProps={{ $blockScrolling: Infinity }} />
+        return <React.Fragment>
+                { this.renderEditor() }
+                { this.renderProcessing() }
+            </React.Fragment>;
+    }
+
+    renderEditor() {
+        const className = "ace-editor-wrapper" + ( this.props.activity===Activity.Debugging ? " debug" : "");
+        const style = {display: (this.state.display && !this.state.processing) ? "block" : "none" };
+        return <div className={className} style={style}>
+                <AceEditor ref={ref=>{if(ref)this.aceEditor=ref;}} name="prompto-editor"
+                       theme="eclipse" mode="text"
+                       value={this.state.value} onChange={this.codeEdited}
+                       width="100%" height="100%" editorProps={{ $blockScrolling: Infinity }} />
                 </div>;
     }
 
+    renderProcessing() {
+        const className = "ace-editor-wrapper" + ( this.props.activity===Activity.Debugging ? " debug" : "");
+        const style = { display: this.state.processing ? "block" : "none"};
+        return <div className={className} style={style}>
+            <img id="processing" src="img/processing.gif" alt=""/>
+        </div>;
+    }
 }
