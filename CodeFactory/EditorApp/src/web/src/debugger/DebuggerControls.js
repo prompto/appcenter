@@ -75,15 +75,15 @@ class DebuggerControl extends React.Component {
     }
 
     refresh_STEP_OVER(worker, stackFrame) {
-        this.setState({enabled: stackFrame && stackFrame});
+        this.setState({enabled: !!stackFrame});
     }
 
     refresh_STEP_INTO(worker, stackFrame) {
-        this.setState({enabled: false}); // TODO
+        this.setState({enabled: !!stackFrame});
     }
 
     refresh_STEP_OUT(worker, stackFrame) {
-        this.setState({enabled: stackFrame && stackFrame!==worker.stack[0]});
+        this.setState({enabled: !!stackFrame && worker.stack.length>1});
     }
 }
 

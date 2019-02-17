@@ -1,7 +1,7 @@
 import RemoteListener from './RemoteListener';
 import RemoteRequester from './RemoteRequester';
 import Activity from "../utils/Activity";
-import { GetWorkersRequest, GetStackRequest, StepOverRequest } from './DebugRequest';
+import { GetWorkersRequest, GetStackRequest, StepOverRequest, StepIntoRequest } from './DebugRequest';
 import fetcher from '../utils/Fetcher';
 
 export default class RemoteDebugger {
@@ -97,8 +97,8 @@ export default class RemoteDebugger {
     }
 
 
-    stepInto(workerId) {
-
+    stepInto(workerId, callback) {
+        this.requester.send(new StepIntoRequest(workerId), response => callback && callback(), alert);
     }
 
 
