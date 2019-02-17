@@ -1,3 +1,4 @@
+import {print} from "../utils/Utils";
 import fetcher from '../utils/Fetcher';
 import Runner from "./Runner";
 
@@ -11,18 +12,18 @@ export default class RemoteRunner extends Runner {
                 params.main = true;
             fetcher.fetchJSON(fullUrl, params, response => {
                 if (response.error)
-                    console.log(response.error);
+                    print(response.error);
                 else if(response.data instanceof Array)
-                    response.data.map(console.log);
+                    response.data.map(m => print(m));
                 else
-                    console.log(response.data);
+                    print(response.data);
                 callback();
             }, error => {
-                console.log(error);
+                print(error);
                 callback();
             });
         }, error => {
-            console.log(error);
+            print(error);
             callback();
         });
     }
