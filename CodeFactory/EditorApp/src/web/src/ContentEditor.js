@@ -38,7 +38,7 @@ export default class ContentEditor extends React.Component {
         this.promptoEditor.setDialect(dialect);
     }
 
-    commitAndReset(commitPrepared) {
+    prepareCommit(commitPrepared) {
         this.promptoEditor.prepareCommit(commitPrepared);
     }
 
