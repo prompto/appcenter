@@ -46,3 +46,14 @@ export class StepIntoRequest extends DebugRequest {
 }
 
 DebugRequest.STEP_INTO = StepIntoRequest;
+
+
+export class StepOutRequest extends DebugRequest {
+
+    constructor(workerId) {
+        super("STEP_OUT");
+        this.workerId = workerId;
+    }
+}
+
+DebugRequest.STEP_OUT = StepOutRequest;
