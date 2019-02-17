@@ -8,7 +8,6 @@ class StackFrameRow extends React.Component {
         const stackFrame = this.props.stackFrame;
         const className = "stack-frame-row" + (stackFrame===this.props.debuggerView.state.stackFrame ? " active" : "");
         return <tr className={className}><td/><td>{stackFrame.methodName}</td><td/></tr>;
-
     }
 }
 
@@ -57,9 +56,16 @@ export default class WorkersView extends React.Component {
                     </thead>
                     <tbody>
                     { state.workers.map(w => <WorkerRow key={w.workerId} worker={w} debuggerView={this.props.debuggerView}/>, this) }
+                    { this.renderNoWorker(state.workers) }
                     </tbody>
                 </Table>
                </div>;
+    }
+
+    renderNoWorker(workers) {
+        if(workers.length===0) {
+            return <tr className="stack-frame-row"><td/><td><i>No active worker</i></td><td/></tr>;
+        }
     }
 
 }

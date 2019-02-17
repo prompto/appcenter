@@ -21,7 +21,7 @@ export default class ContentEditor extends React.Component {
 
     setContent(content) {
         if(this.promptoEditor)
-            this.promptoEditor.setProcessing(false, () => this.promptoEditor.setContent(content));
+            this.promptoEditor.setDebugMode(null, () => this.promptoEditor.setContent(content));
         if(this.resourceEditor)
             this.resourceEditor.setContent(content);
         if(this.binaryEditor)

@@ -22,7 +22,7 @@ export default class PromptoEditor extends React.Component {
         this.setContent = this.setContent.bind(this);
         this.codeEdited = this.codeEdited.bind(this);
         this.commitAndReset = this.commitAndReset.bind(this);
-        this.state = {value: "", readOnly: false, display: true, processing: false};
+        this.state = {value: "", readOnly: false, display: true, debugMode: null};
     }
 
 
@@ -60,12 +60,12 @@ export default class PromptoEditor extends React.Component {
         this.getSession().getMode().setProject(dbId, loadDependencies);
     }
 
-    setProcessing(processing, callback) {
-        this.setState({processing: processing}, callback);
+    setDebugMode(mode, callback) {
+        this.setState({debugMode: mode}, callback);
     }
 
     stopDebugging() {
-        this.setState({processing: false});
+        this.setState({debugMode: null});
         this.getSession().clearGutterDecorations();
         this.getEditor().setReadOnly(this.state.readOnly);
     }
@@ -136,12 +136,14 @@ export default class PromptoEditor extends React.Component {
         return <React.Fragment>
                 { this.renderEditor() }
                 { this.renderProcessing() }
+                { this.renderIdling() }
             </React.Fragment>;
     }
 
     renderEditor() {
         const className = "ace-editor-wrapper" + ( this.props.activity===Activity.Debugging ? " debug" : "");
-        const style = {display: (this.state.display && !this.state.processing) ? "block" : "none" };
+        const hidden = this.state.debugMode && this.state.debugMode!=="STEPPING";
+        const style = {display: (this.state.display && !hidden) ? "block" : "none" };
         return <div className={className} style={style}>
                 <AceEditor ref={ref=>{if(ref)this.aceEditor=ref;}} name="prompto-editor"
                        theme="eclipse" mode="text"
@@ -152,9 +154,18 @@ export default class PromptoEditor extends React.Component {
 
     renderProcessing() {
         const className = "ace-editor-wrapper" + ( this.props.activity===Activity.Debugging ? " debug" : "");
-        const style = { display: this.state.processing ? "block" : "none"};
+        const style = { display: this.state.debugMode==="PROCESSING" ? "block" : "none"};
         return <div className={className} style={style}>
             <img id="processing" src="img/processing.gif" alt=""/>
+        </div>;
+    }
+
+    renderIdling() {
+        const className = "ace-editor-wrapper" + ( this.props.activity===Activity.Debugging ? " debug" : "");
+        const style = { display: this.state.debugMode==="IDLING" ? "block" : "none"};
+        return <div className={className} style={style}>
+            <img id="idling" src="img/vortex.gif" alt=""/>
+            <div id="idling-text">No code to execute<br/><i>(server is running)</i></div>
         </div>;
     }
 }

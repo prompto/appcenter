@@ -52,14 +52,22 @@ export default class DebuggerView extends React.Component {
     }
 
     doWorkerSuspendedEvent(event) {
-        const workers = this.state.workers;
-        // find corresponding worker
-        const worker = workers.filter(w => w.workerId === event.workerId)[0];
+        const worker = this.findWorkerByWorkerId(event.workerId);
         if (worker) {
             worker.state = event.reason;
-            this.setState({ workers: workers }, () => this.doWorkerSuspended(worker) );
+            this.setState({ workers: this.state.workers }, () => this.doWorkerSuspended(worker) );
         }
     }
+
+    findWorkerByWorkerId(workerId) {
+        const idx = this.findWorkerIndex(workerId);
+        return idx >= 0 ? this.state.workers[idx] : null;
+    }
+
+    findWorkerIndex(workerId) {
+        return this.state.workers.findIndex(w => w.workerId === workerId);
+    }
+
 
     doWorkerSuspended(worker) {
         this.debugger.fetchStack(worker.workerId, stack => {
@@ -81,12 +89,11 @@ export default class DebuggerView extends React.Component {
     }
 
     workerResumedEvent(event) {
-        const workers = this.state.workers;
-        const worker = workers.filter(w => w.workerId === event.workerId)[0];
+        const worker = this.findWorkerByWorkerId(event.workerId);
         if (worker) {
             worker.state = "RUNNING";
             worker.stack = null;
-            this.setState({workers: workers}, () => {
+            this.setState({workers: this.state.workers}, () => {
                 // don't interfere while stepping in another worker
                 if(worker===this.state.worker)
                     this.setState({worker: null, stackFrame: null}, () => {
@@ -102,14 +109,24 @@ export default class DebuggerView extends React.Component {
     displayDebuggedCode() {
         const promptoEditor = this.props.container.promptoEditor;
         const stackFrame = this.state.stackFrame;
-        promptoEditor.setProcessing(!stackFrame, () => {
+        const debugMode = stackFrame ? "STEPPING" : "PROCESSING";
+        promptoEditor.setDebugMode(debugMode, () => {
             if(stackFrame)
                 promptoEditor.showStackFrame(stackFrame);
         });
     }
 
-    workerCompletedEvent(event) {
-        // TODO
+    workerCompletedEvent(event, callback) {
+        const idx = this.findWorkerIndex(event.workerId);
+        if (idx >= 0) {
+            const workers = this.state.workers;
+            workers.splice(idx, 1);
+            this.setState({workers: workers}, () => {
+                const promptoEditor = this.props.container.promptoEditor;
+                const debugMode = workers.length > 0 ? "PROCESSING" : "IDLING" ;
+                promptoEditor.setDebugMode(debugMode, callback);
+            });
+        }
     }
 
     setWorkerStack(workerId, stack, callback) {
@@ -121,17 +138,15 @@ export default class DebuggerView extends React.Component {
 
 
     doSetWorkerStack(workerId, stack, callback) {
-        const workers = this.state.workers;
-        const worker = workers.filter(w => w.workerId === workerId)[0];
+        const worker = this.findWorkerByWorkerId(workerId);
         if (worker) {
             worker.stack = stack;
-            this.setState({workers: workers}, callback);
+            this.setState({workers: this.state.workers}, callback);
         }
     }
 
     setStackFrame(workerId, index, callback) {
-        const workers = this.state.workers;
-        const worker = workers.filter(w => w.workerId === workerId)[0];
+        const worker = this.findWorkerByWorkerId(workerId);
         if (worker && worker.stack && worker.stack.length > index) {
             this.setState({worker: worker, stackFrame: worker.stack[index]}, callback);
         }
