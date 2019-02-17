@@ -3,7 +3,7 @@ import { ButtonGroup, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const controlText = {
     RESUME: "Resume",
-    PAUSE: "Pause",
+    SUSPEND: "Suspend",
     STOP: "Stop",
     STEP_OVER: "Step over",
     STEP_INTO: "Step into",
@@ -12,7 +12,7 @@ const controlText = {
 
 const controlImage = {
     RESUME: "resume.png",
-    PAUSE: "pause.png",
+    SUSPEND: "suspend.png",
     STOP: "stop.png",
     STEP_OVER: "step-over.png",
     STEP_INTO: "step-into.png",
@@ -21,7 +21,7 @@ const controlImage = {
 
 const controlMethod = {
     RESUME: "resume",
-    PAUSE: "pause",
+    SUSPEND: "suspend",
     STOP: "stop",
     STEP_OVER: "stepOver",
     STEP_INTO: "stepInto",
@@ -66,7 +66,7 @@ class DebuggerControl extends React.Component {
         this.setState({enabled: worker && worker.state==="STEPPING"});
     }
 
-    refresh_PAUSE(worker, stackFrame) {
+    refresh_SUSPEND(worker, stackFrame) {
         this.setState({enabled: worker && worker.state!=="STEPPING"});
     }
 
@@ -87,7 +87,7 @@ class DebuggerControl extends React.Component {
     }
 }
 
-const ALL_CONTROL_IDS = [ "RESUME", "PAUSE", "STOP", "STEP_OVER", "STEP_INTO", "STEP_OUT" ];
+const ALL_CONTROL_IDS = [ "RESUME", "SUSPEND", "STOP", "STEP_OVER", "STEP_INTO", "STEP_OUT" ];
 
 export default class DebuggerControls extends React.Component {
 

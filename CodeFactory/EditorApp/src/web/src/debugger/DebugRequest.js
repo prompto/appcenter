@@ -58,6 +58,18 @@ export class StepOutRequest extends DebugRequest {
 
 DebugRequest.STEP_OUT = StepOutRequest;
 
+
+export class SuspendRequest extends DebugRequest {
+
+    constructor(workerId) {
+        super("SUSPEND");
+        this.workerId = workerId;
+    }
+}
+
+DebugRequest.SUSPEND = SuspendRequest;
+
+
 export class ResumeRequest extends DebugRequest {
 
     constructor(workerId) {

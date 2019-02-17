@@ -12,7 +12,7 @@ export default class DebuggerView extends React.Component {
         this.workersView = null;
         this.controlsView = null;
         this.variablesView = null;
-        this.state = { workers: [], worker: null, stackFrame: null };
+        this.state = {workers: [], worker: null, stackFrame: null};
         this.eventQueue = []; // events and request responses are not received in sequence, so need to rebuild sequence
     }
 
@@ -25,7 +25,7 @@ export default class DebuggerView extends React.Component {
     }
 
     disconnect() {
-        this.setState({ workers: [], worker: null, stackFrame: null }, () => {
+        this.setState({workers: [], worker: null, stackFrame: null}, () => {
             this.debugger.disconnect();
             this.debugger = null;
             const promptoEditor = this.props.container.promptoEditor;
@@ -34,7 +34,7 @@ export default class DebuggerView extends React.Component {
     }
 
     processEventQueue() {
-        while(this.eventQueue.length) {
+        while (this.eventQueue.length) {
             const callback = this.eventQueue.shift();
             callback();
         }
@@ -55,7 +55,7 @@ export default class DebuggerView extends React.Component {
         const worker = this.findWorkerByWorkerId(event.workerId);
         if (worker) {
             worker.state = event.reason;
-            this.setState({ workers: this.state.workers }, () => this.doWorkerSuspended(worker) );
+            this.setState({workers: this.state.workers}, () => this.doWorkerSuspended(worker));
         }
     }
 
@@ -79,7 +79,7 @@ export default class DebuggerView extends React.Component {
 
     workerStackRefreshed(worker) {
         // don't interfere while stepping in another worker
-        if(this.state.worker && this.state.worker!==worker)
+        if (this.state.worker && this.state.worker !== worker)
             return;
         this.setStackFrame(worker.workerId, 0, () => {
             this.controlsView.refreshState();
@@ -95,8 +95,8 @@ export default class DebuggerView extends React.Component {
             worker.stack = null;
             this.setState({workers: this.state.workers}, () => {
                 // don't interfere while stepping in another worker
-                if(worker===this.state.worker)
-                    this.setState({worker: null, stackFrame: null}, () => {
+                if (worker === this.state.worker)
+                    this.setState({stackFrame: null}, () => {
                         this.controlsView.refreshState();
                         this.variablesView.refreshState();
                         this.displayDebuggedCode();
@@ -111,7 +111,7 @@ export default class DebuggerView extends React.Component {
         const stackFrame = this.state.stackFrame;
         const debugMode = stackFrame ? "STEPPING" : "PROCESSING";
         promptoEditor.setDebugMode(debugMode, () => {
-            if(stackFrame)
+            if (stackFrame)
                 promptoEditor.showStackFrame(stackFrame);
         });
     }
@@ -120,13 +120,23 @@ export default class DebuggerView extends React.Component {
         const idx = this.findWorkerIndex(event.workerId);
         if (idx >= 0) {
             const workers = this.state.workers;
-            workers.splice(idx, 1);
-            this.setState({workers: workers}, () => {
-                const promptoEditor = this.props.container.promptoEditor;
-                const debugMode = workers.length > 0 ? "PROCESSING" : "IDLING" ;
-                promptoEditor.setDebugMode(debugMode, callback);
-            });
+            const completed = workers.splice(idx, 1)[0];
+            let worker = this.state.worker;
+            let stackFrame = this.state.stackFrame;
+            if (completed === worker) {
+                worker = null;
+                stackFrame = null;
+            }
+            this.setState({workers: workers, worker: worker, stackFrame: stackFrame}, () =>  this.workerCompleted(callback));
         }
+    }
+
+    workerCompleted(callback) {
+        this.controlsView.refreshState();
+        this.variablesView.refreshState();
+        const promptoEditor = this.props.container.promptoEditor;
+        const debugMode = this.state.workers.length > 0 ? "PROCESSING" : "IDLING";
+        promptoEditor.setDebugMode(debugMode, callback);
     }
 
     setWorkerStack(workerId, stack, callback) {
@@ -155,14 +165,14 @@ export default class DebuggerView extends React.Component {
 
     render() {
         const activity = this.props.activity;
-        const style = { display: activity===Activity.Debugging ? "block" : "none"};
+        const style = {display: activity === Activity.Debugging ? "block" : "none"};
         return <div className="debugger" style={style}>
             <div className="debugger-left">
-                <WorkersView ref={ref=>this.workersView=ref} debuggerView={this}/>
-                <DebuggerControls ref={ref=>this.controlsView=ref} debuggerView={this}/>
+                <WorkersView ref={ref => this.workersView = ref} debuggerView={this}/>
+                <DebuggerControls ref={ref => this.controlsView = ref} debuggerView={this}/>
             </div>
             <div className="debugger-right">
-                <VariablesView ref={ref=>this.variablesView=ref} debuggerView={this}/>
+                <VariablesView ref={ref => this.variablesView = ref} debuggerView={this}/>
             </div>
         </div>;
     }

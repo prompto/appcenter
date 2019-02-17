@@ -1,7 +1,7 @@
 import RemoteListener from './RemoteListener';
 import RemoteRequester from './RemoteRequester';
 import Activity from "../utils/Activity";
-import { GetWorkersRequest, GetStackRequest, StepOverRequest, StepIntoRequest, StepOutRequest, ResumeRequest } from './DebugRequest';
+import { GetWorkersRequest, GetStackRequest, StepOverRequest, StepIntoRequest, StepOutRequest, SuspendRequest, ResumeRequest } from './DebugRequest';
 import fetcher from '../utils/Fetcher';
 
 export default class RemoteDebugger {
@@ -82,8 +82,8 @@ export default class RemoteDebugger {
         this.requester.send(new ResumeRequest(workerId), response => callback && callback(), alert);
     }
 
-    pause(workerId) {
-
+    suspend(workerId, callback) {
+        this.requester.send(new SuspendRequest(workerId), response => callback && callback(), alert);
     }
 
 
