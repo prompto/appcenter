@@ -257,7 +257,7 @@
 }
 
 .debugger-line {
-    background-image: url("/img/debugger-line.png");
+    background-image: url("/img/debug/debugger-line.png");
     background-size: contain;
 }
 

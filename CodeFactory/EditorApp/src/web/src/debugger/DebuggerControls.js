@@ -4,7 +4,7 @@ import { ButtonGroup, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 const controlText = {
     RESUME: "Resume",
     SUSPEND: "Suspend",
-    STOP: "Stop",
+    TERMINATE: "Terminate",
     STEP_OVER: "Step over",
     STEP_INTO: "Step into",
     STEP_OUT: "Step out"
@@ -13,7 +13,7 @@ const controlText = {
 const controlImage = {
     RESUME: "resume.png",
     SUSPEND: "suspend.png",
-    STOP: "stop.png",
+    TERMINATE: "terminate.png",
     STEP_OVER: "step-over.png",
     STEP_INTO: "step-into.png",
     STEP_OUT: "step-out.png"
@@ -22,7 +22,7 @@ const controlImage = {
 const controlMethod = {
     RESUME: "resume",
     SUSPEND: "suspend",
-    STOP: "stop",
+    TERMINATE: "terminate",
     STEP_OVER: "stepOver",
     STEP_INTO: "stepInto",
     STEP_OUT: "stepOut"
@@ -46,7 +46,7 @@ class DebuggerControl extends React.Component {
     render() {
         return <Button className="debugger-control" disabled={!this.state.enabled} onClick={this.onClick}>
                 <OverlayTrigger overlay={this.renderTooltip()} trigger={["hover", "focus"]}>
-                    <img src={'img/' + controlImage[this.props.id] } alt=""/>
+                    <img src={'img/debug/' + controlImage[this.props.id] } alt=""/>
                 </OverlayTrigger>
             </Button>;
     }
@@ -70,8 +70,8 @@ class DebuggerControl extends React.Component {
         this.setState({enabled: worker && worker.state!=="STEPPING"});
     }
 
-    refresh_STOP(worker, stackFrame) {
-        this.setState({enabled: worker && worker.state!=="STEPPING"});
+    refresh_TERMINATE(worker, stackFrame) {
+        this.setState({enabled: worker});
     }
 
     refresh_STEP_OVER(worker, stackFrame) {
@@ -87,7 +87,7 @@ class DebuggerControl extends React.Component {
     }
 }
 
-const ALL_CONTROL_IDS = [ "RESUME", "SUSPEND", "STOP", "STEP_OVER", "STEP_INTO", "STEP_OUT" ];
+const ALL_CONTROL_IDS = [ "RESUME", "SUSPEND", "TERMINATE", "STEP_OVER", "STEP_INTO", "STEP_OUT" ];
 
 export default class DebuggerControls extends React.Component {
 

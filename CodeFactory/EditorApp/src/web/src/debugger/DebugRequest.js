@@ -79,3 +79,14 @@ export class ResumeRequest extends DebugRequest {
 }
 
 DebugRequest.RESUME = ResumeRequest;
+
+
+export class TerminateRequest extends DebugRequest {
+
+    constructor(workerId) {
+        super("TERMINATE");
+        this.workerId = workerId;
+    }
+}
+
+DebugRequest.TERMINATE = TerminateRequest;
