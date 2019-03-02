@@ -10,7 +10,7 @@ import prompto.code.ImmutableCodeStore;
 import prompto.code.Module;
 import prompto.code.ModuleType;
 import prompto.utils.Logger;
-import prompto.value.Image;
+import prompto.value.ImageValue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -80,7 +80,7 @@ public class ModuleImporter {
 			return false;
 		logger.info(()->"Importing module: " + module.getName() + " - " + module.getVersion());
 		if(imageResource!=null)
-			module.setImage(Image.fromURL(imageResource).getStorableData());
+			module.setImage(ImageValue.fromURL(imageResource).getStorableData());
 		codeStore.storeModule(module);	
 		if(codeResource!=null)
 			storeAssociatedCode(codeStore, codeResource);

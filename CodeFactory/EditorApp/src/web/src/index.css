@@ -212,8 +212,9 @@
     display: block;
     height: 100%;
     left: 244px;
-    right: 0px;
-    float: right;
+    width: calc(100%-244px-244px);
+    float: left;
+    border-right: 1px solid lightgray;
 }
 
 .workers {
@@ -287,3 +288,54 @@
     width: 100%;
     overflow-y: auto;
 }
+
+.variables > table > thead > tr > th {
+    font-size: small;
+    padding: 2px;
+    border-color: #F0F0F0;
+}
+
+table > tbody > .variable-row > td {
+    padding: 2px;
+    border-color: #F0F0F0;
+}
+
+table > tbody > .variable-row > .variable-expand {
+    padding-top: 2px;
+    width: 14px;
+}
+
+table > tbody > .variable-row > .variable-name {
+    width: 100px;
+    border-right: thin solid #F0F0F0;
+}
+
+table > tbody > .variable-row > .variable-type {
+    width: 60px;
+    border-right: thin solid #F0F0F0;
+}
+
+table > tbody > .variable-row > .variable-value {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+
+.variable-row {
+    font-size: small;
+}
+
+.variable-value > .table {
+    margin-bottom: 0px;
+}
+
+.variable-value > table > thead {
+    display: none;
+}
+
+.variable-value > table > tbody > tr > td {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border-top: unset;
+}
+

@@ -26,6 +26,31 @@ export class GetStackRequest extends DebugRequest {
 DebugRequest.GET_STACK = GetStackRequest;
 
 
+export class GetVariablesRequest extends DebugRequest {
+
+    constructor(workerId, stackFrame) {
+        super("GET_VARIABLES");
+        this.workerId = workerId;
+        this.stackFrame = stackFrame;
+    }
+}
+
+DebugRequest.GET_VARIABLES = GetVariablesRequest;
+
+
+export class GetVariableRequest extends DebugRequest {
+
+    constructor(workerId, stackFrame, variableName) {
+        super("GET_VARIABLE");
+        this.workerId = workerId;
+        this.stackFrame = stackFrame;
+        this.variableName = variableName;
+    }
+}
+
+DebugRequest.GET_VARIABLE = GetVariableRequest;
+
+
 export class StepOverRequest extends DebugRequest {
 
     constructor(workerId) {

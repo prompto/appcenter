@@ -94,11 +94,12 @@ export default class DebuggerView extends React.Component {
         // don't interfere while stepping in another worker
         if (this.state.worker && this.state.worker !== worker)
             return;
-        this.setStackFrame(worker.workerId, 0, () => {
-            this.controlsView.refreshState();
-            this.variablesView.refreshState();
-            this.displayDebuggedCode();
-        });
+        else
+            this.setStackFrame(worker.workerId, 0, () => {
+                this.controlsView.refreshState();
+                this.variablesView.refreshState();
+                this.displayDebuggedCode();
+            });
     }
 
     workerResumedEvent(event) {

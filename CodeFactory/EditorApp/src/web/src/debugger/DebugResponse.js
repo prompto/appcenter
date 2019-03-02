@@ -40,3 +40,23 @@ DebugResponse.GET_STACK = class GetStackResponse extends DebugResponse {
     }
 
 };
+
+
+DebugResponse.GET_VARIABLES = class GetVariablesResponse extends DebugResponse {
+
+    constructor(message) {
+        super(message.type);
+        this.variables = message.object.variables;
+    }
+
+};
+
+
+DebugResponse.GET_VARIABLE = class GetVariableResponse extends DebugResponse {
+
+    constructor(message) {
+        super(message.type);
+        this.variable = message.object.variable;
+    }
+
+};
