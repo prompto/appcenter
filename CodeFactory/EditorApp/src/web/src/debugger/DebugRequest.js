@@ -115,3 +115,14 @@ export class TerminateRequest extends DebugRequest {
 }
 
 DebugRequest.TERMINATE = TerminateRequest;
+
+
+export class InstallBreakpointRequest extends DebugRequest {
+
+    constructor(section) {
+        super("INSTALL_BREAKPOINT");
+        this.section = section;
+    }
+}
+
+DebugRequest.INSTALL_BREAKPOINT = InstallBreakpointRequest;

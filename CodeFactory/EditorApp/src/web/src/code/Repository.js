@@ -365,5 +365,25 @@ export default class Repository {
         return null;
     }
 
+    locateSection(breakpoint) {
+        let declaration = null;
+        if (breakpoint.type === "category")
+            declaration = this.projectContext.getRegisteredDeclaration(breakpoint.name);
+        else if (breakpoint.type === "method") {
+            const methods = this.projectContext.getRegisteredDeclaration(breakpoint.name);
+            if (methods)
+                declaration = methods.protos[breakpoint.proto];
+        } else if (breakpoint.type === "test")
+            declaration = this.projectContext.getRegisteredTest(breakpoint.name);
+        if(declaration==null)
+            return null;
+        let section = declaration.locateSectionAtLine(breakpoint.line);
+        if(section==null)
+            return null;
+        section = new prompto.parser.Section(section).asObject();
+        if(!section.path)
+            section.path = "store:/" + breakpoint.type + "/" + breakpoint.name + (breakpoint.type==="method" ? "/" + breakpoint.proto : "");
+        return section
+    }
 
 }

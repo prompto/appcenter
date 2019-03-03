@@ -3,6 +3,7 @@ import React from 'react';
 import Mousetrap from 'mousetrap';
 import { getParam } from './utils/Utils';
 import Catalog from './code/Catalog';
+import { Breakpoints, LineBreakpoint } from './debugger/Breakpoints';
 import MessageArea from './components/MessageArea';
 import NewFileResourceDialog from "./dialogs/NewFileResourceDialog";
 import NewTextResourceDialog from "./dialogs/NewTextResourceDialog";
@@ -19,7 +20,6 @@ export default class EditorPage extends React.Component {
         super(props);
         this.projectId = getParam("dbId");
         this.projectName = getParam("name");
-        this.specialTypes = new Set(["prompto", "image", "audio", "video", "other"]);
         this.navBar = null;
         this.contentNavigator = null;
         this.loadDescription = this.loadDescription.bind(this);
@@ -40,10 +40,12 @@ export default class EditorPage extends React.Component {
         this.getProject = this.getProject.bind(this);
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
+        this.lineBreakpointUpdated = this.lineBreakpointUpdated.bind(this);
         this.contentNavigator = null;
         this.contentEditor = null;
         this.state = { project: null, activity: Activity.Loading, content: null, resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
         this.catalog = new Catalog();
+        this.breakpoints = new Breakpoints();
         Mousetrap.bind('command+s', this.commitAndReset);
     }
 
@@ -166,6 +168,23 @@ export default class EditorPage extends React.Component {
         }
         this.setCatalog(this.catalog, content, callback);
     }
+
+    lineBreakpointUpdated(row, active, set) {
+        const content = this.state.content || {};
+        if(content.type!=="Prompto")
+            throw new Error("Not editing prompto content!");
+        const breakpoint = new LineBreakpoint(content.subType, content.name, content.proto, row + 1, active); // ace rows start at 0, antlr lines start at 1
+        this.breakpoints.register(breakpoint, set);
+        if(this.state.activity===Activity.Debugging)
+            this.contentEditor.promptoEditor.locateSection(breakpoint, section => {
+                if(section) {
+                    section.breakpoint = active && set;
+                    this.contentEditor.getDebugger().installBreakpoint(section);
+                } else
+                    alert("Could not locate section!");
+            });
+    }
+
 
     loadCode(loadDependencies) {
         this.contentEditor.setProject(this.projectId, loadDependencies);

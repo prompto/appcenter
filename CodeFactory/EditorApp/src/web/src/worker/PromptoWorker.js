@@ -93,6 +93,12 @@ export default class PromptoWorker extends Mirror {
         this.sender.callback(content, callbackId);
     }
 
+    locateSection(breakpoint) {
+        const callbackId = arguments[arguments.length - 1]; // callbackId is added by ACE
+        const section = this.$repo.locateSection(breakpoint);
+        this.sender.callback(section, callbackId);
+    }
+
     destroy(content) {
         this.$value = "";
         const catalog = this.$repo.handleDestroyed(content);

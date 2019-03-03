@@ -1,7 +1,9 @@
 import RemoteListener from './RemoteListener';
 import RemoteRequester from './RemoteRequester';
 import Activity from "../utils/Activity";
-import { GetWorkersRequest, GetStackRequest, GetVariablesRequest, GetVariableRequest, StepOverRequest, StepIntoRequest, StepOutRequest, SuspendRequest, ResumeRequest, TerminateRequest } from './DebugRequest';
+import { GetWorkersRequest, GetStackRequest, GetVariablesRequest, GetVariableRequest,
+        StepOverRequest, StepIntoRequest, StepOutRequest, SuspendRequest, ResumeRequest, TerminateRequest,
+        InstallBreakpointRequest } from './DebugRequest';
 import fetcher from '../utils/Fetcher';
 import {print} from "../utils/Utils";
 
@@ -143,6 +145,10 @@ export default class RemoteDebugger {
 
     stepOut(workerId, callback) {
         this.requester.send(new StepOutRequest(workerId), response => callback && callback(), alert);
+    }
+
+    installBreakpoint(section, callback) {
+        this.requester.send(new InstallBreakpointRequest(section), response => callback && callback(), alert);
     }
 
 

@@ -146,11 +146,6 @@
     width: 664px;
 }
 
-.ace_error-word {
-    position: absolute;
-    border-bottom: 2px dotted red;
-}
-
 #loading {
     width: 200px;
     height: 200px;
@@ -337,5 +332,15 @@ table > tbody > .variable-row > .variable-value {
     padding-top: 0px;
     padding-bottom: 0px;
     border-top: unset;
+}
+
+.ace_error-word {
+    position: absolute;
+    border-bottom: 2px dotted red;
+}
+
+.ace_gutter-cell.ace_breakpoint{
+    background-image: url("/img/debug/active-breakpoint.png");
+    background-size: contain;
 }
 

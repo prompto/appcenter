@@ -22,6 +22,8 @@ export default class PromptoEditor extends React.Component {
         this.setContent = this.setContent.bind(this);
         this.codeEdited = this.codeEdited.bind(this);
         this.commitAndReset = this.commitAndReset.bind(this);
+        this.toggleBreakpoint = this.toggleBreakpoint.bind(this);
+        this.adjustBreakpoints = this.adjustBreakpoints.bind(this);
         this.state = {value: "", readOnly: false, display: true, debugMode: null};
     }
 
@@ -39,11 +41,92 @@ export default class PromptoEditor extends React.Component {
         const session = this.getSession();
         session.setMode(new PromptoMode(this));
         session.setUseWorker(true);
-        this.getEditor().commands.addCommand({
+        session.getDocument().on("change", this.adjustBreakpoints);
+        const editor = this.getEditor();
+        editor.commands.addCommand({
             name: "commit",
             bindKey: { win: "Ctrl-S", mac: "Command-S" },
             exec: this.commitAndReset
         });
+        editor.on("guttermousedown", this.toggleBreakpoint);
+    }
+
+    locateSection(breakpoint, callback) {
+        this.getSession().getMode().locateSection(breakpoint, callback);
+    }
+
+    toggleBreakpoint(click) {
+        const editor = this.getEditor();
+        if (!editor.isFocused())
+            return;
+        const target = click.domEvent.target;
+        if (target.className.indexOf("ace_gutter-cell") === -1)
+            return;
+        if (click.clientX > 25 + target.getBoundingClientRect().left)
+            return;
+        const session = this.getSession();
+        const row = click.getDocumentPosition().row;
+        const breakpoints = session.getBreakpoints();
+        const hasBreakPoint = !!breakpoints[row];
+        if(hasBreakPoint)
+            this.clearBreakpoint(row);
+        else
+            this.setBreakpoint(row);
+        click.stop();
+    }
+
+    setBreakpoint(row) {
+        this.getSession().setBreakpoint(row);
+        this.props.lineBreakpointUpdated(row, true, true);
+    }
+
+    clearBreakpoint(row) {
+        this.getSession().clearBreakpoint(row);
+        this.props.lineBreakpointUpdated(row, true, false);
+    }
+
+    adjustBreakpoints(delta) {
+        if (delta.end.row === delta.start.row)
+            return;
+        const breakpoints = this.getSession().getBreakpoints();
+        if(breakpoints.filter(a => !!a).length===0) // breakpoints has holes, length is irrelevant
+            return;
+        switch(delta.action) {
+            case "insert":
+                this.adjustBreakpointsOnInsert(delta, breakpoints.slice());
+                break
+            case "remove":
+                this.adjustBreakpointsOnRemove(delta, breakpoints.slice());
+                break
+            default:
+                console.log(delta.action + " not handled!");
+        }
+    }
+
+    adjustBreakpointsOnInsert(delta, breakpoints) {
+        const inserted = delta.end.row - delta.start.row;
+        for(let key of breakpoints.keys()) {
+            if(!breakpoints[key])
+                continue;
+            if(key <= delta.start.row)
+                continue;
+            this.clearBreakpoint(key);
+            this.setBreakpoint(key + inserted);
+        }
+    }
+
+    adjustBreakpointsOnRemove(delta, breakpoints) {
+        const removed = delta.end.row - delta.start.row;
+        for(let key of breakpoints.keys()) {
+            if(!breakpoints[key])
+                continue;
+            if(key < delta.start.row)
+                continue;
+            this.clearBreakpoint(key);
+            if(key <= delta.end.row)
+                continue;
+            this.setBreakpoint(key - removed);
+        }
     }
 
     setDialect(dialect) {
