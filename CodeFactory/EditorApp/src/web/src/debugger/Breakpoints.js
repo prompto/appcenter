@@ -29,6 +29,11 @@ export class LineBreakpoint extends Breakpoint {
                 this.line === breakpoint.line);
     }
 
+
+    matchesContent(content) {
+        return content.subType === this.type && content.name === this.name && content.proto === this.proto;
+    }
+
 }
 
 export class Breakpoints {
@@ -53,5 +58,17 @@ export class Breakpoints {
             }
         } else
             this.breakpoints.push({ status: "CREATED", breakpoint: breakpoint });
+    }
+
+    all() {
+        return this.breakpoints.map(b => b.breakpoint);
+    }
+
+    living() {
+        return this.breakpoints.filter(b => b.status!=="DELETED").map(b => b.breakpoint);
+    }
+
+    matchingContent(content) {
+        return this.living().filter(b => b.matchesContent(content));
     }
 }

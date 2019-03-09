@@ -33,10 +33,6 @@ export default class ContentEditor extends React.Component {
             this.contentEditor.promptoEditor.destroy(content);
     }
 
-    getPromptoEditorContent() {
-        return this.promptoEditor.getContent();
-    }
-
     setDialect(dialect) {
         this.promptoEditor.setDialect(dialect);
     }
@@ -81,12 +77,11 @@ export default class ContentEditor extends React.Component {
             <DebuggerView ref={ref=>this.debuggerView=ref||this.debuggerView} activity={activity} container={this}/>
             <PromptoEditor ref={ref=>this.promptoEditor=ref||this.promptoEditor} commitAndReset={root.commitAndReset}
                            catalogUpdated={root.catalogUpdated} projectUpdated={root.projectUpdated}
-                           lineBreakpointUpdated={root.lineBreakpointUpdated}
-                           activity={activity}/>
+                           root={this.props.root} activity={activity}/>
             <ResourceEditor ref={ref=>this.resourceEditor=ref||this.resourceEditor} textEdited={root.textResourceEdited}
-                            activity={activity} />
+                            root={this.props.root} activity={activity} />
             <BinaryEditor ref={ref=>this.binaryEditor=ref||this.binaryEditor}
-                          activity={activity} />
+                          root={this.props.root} activity={activity} />
         </div>
     }
 

@@ -6,6 +6,7 @@ import 'brace/theme/eclipse';
 import 'brace/mode/text';
 import PromptoMode from "./PromptoMode";
 import Activity from "../utils/Activity";
+import {Breakpoints, LineBreakpoint} from "../debugger/Breakpoints";
 
 const EditSession = window.ace.EditSession;
 EditSession.prototype.clearGutterDecorations = function() {
@@ -25,6 +26,7 @@ export default class PromptoEditor extends React.Component {
         this.commitAndReset = this.commitAndReset.bind(this);
         this.toggleBreakpoint = this.toggleBreakpoint.bind(this);
         this.adjustBreakpoints = this.adjustBreakpoints.bind(this);
+        this.breakpoints = new Breakpoints();
         this.state = {value: "", readOnly: false, display: true, debugMode: null};
     }
 
@@ -36,10 +38,6 @@ export default class PromptoEditor extends React.Component {
 
     getSession() {
         return this.getEditor().getSession();
-    }
-
-    getContent() {
-        return this.content || {};
     }
 
     componentDidMount() {
@@ -82,12 +80,12 @@ export default class PromptoEditor extends React.Component {
 
     setBreakpoint(row) {
         this.getSession().setBreakpoint(row);
-        this.props.lineBreakpointUpdated(row, true, true);
+        this.lineBreakpointUpdated(row, true, true);
     }
 
     clearBreakpoint(row) {
         this.getSession().clearBreakpoint(row);
-        this.props.lineBreakpointUpdated(row, true, false);
+        this.lineBreakpointUpdated(row, true, false);
     }
 
     adjustBreakpoints(delta) {
@@ -137,6 +135,33 @@ export default class PromptoEditor extends React.Component {
         }
     }
 
+    lineBreakpointUpdated(row, active, set) {
+        const content = this.content;
+        const breakpoint = new LineBreakpoint(content.subType, content.name, content.proto, row + 1, active); // ace rows start at 0, antlr lines start at 1
+        this.breakpoints.register(breakpoint, set);
+        if(this.props.activity===Activity.Debugging) {
+            this.locateSection(breakpoint, section => {
+                if (section) {
+                    section.breakpoint = active && set;
+                    this.props.root.getDebugger().installBreakpoint(section);
+                } else
+                    alert("Could not locate section!");
+            });
+        }
+    }
+
+    debuggerConnected(dbg) {
+        this.breakpoints.living().forEach(b => {
+            this.locateSection(b, section => {
+                if (section) {
+                    section.breakpoint = true; // for now
+                    dbg.installBreakpoint(section);
+                } else
+                    alert("Could not locate section!");
+            });
+        }, this);
+    }
+
     setDialect(dialect) {
         this.getSession().getMode().setDialect(dialect);
     }
@@ -162,16 +187,21 @@ export default class PromptoEditor extends React.Component {
     }
 
     setContent(content, callback) {
-        this.content = content;
+        if(!this.updateContent(content, callback))
+            return;
         const display = content && content.type.toLowerCase()==="prompto";
         const readOnly = content && content.core;
         this.setState({display: display, readOnly: readOnly}, () => {
             if(display) {
                 this.getEditor().setReadOnly(this.props.activity===Activity.Debugging  || readOnly);
                 const session = this.getSession();
-                session.clearGutterDecorations();
+                session.clearGutterDecorations(); // debugger-line
+                session.clearBreakpoints();
                 session.getMode().setContent(content, () => {
                     session.setScrollTop(0);
+                    this.breakpoints.matchingContent(content).forEach(b => {
+                        session.setBreakpoint(b.line - 1);
+                    });
                     if(callback)
                         callback();
                 });
@@ -180,12 +210,32 @@ export default class PromptoEditor extends React.Component {
         });
    }
 
+   updateContent(content, callback) {
+       if(this.sameContent(content)) {
+           if(callback)
+               callback();
+           return false;
+       }
+       this.content = content; // no state needed
+       return true;
+   }
+
+
+   sameContent(content) {
+        if(content===this.content)
+            return true;
+       if(!content || !this.content || typeof(content) !== typeof(this.content))
+           return false;
+       return Object.getOwnPropertyNames(content).every(name => content[name]===this.content[name]);
+   }
+
    showStackFrame(stackFrame) {
         const session = this.getSession();
         session.getMode().locateContent(stackFrame, content => {
             this.setContent(content, () => {
                 const line = 1 + stackFrame.statementLine - stackFrame.methodLine;
                 this.getEditor().gotoLine(line, 0, true);
+                session.clearGutterDecorations();
                 session.addGutterDecoration(line-1, "debugger-line");
             });
         });
