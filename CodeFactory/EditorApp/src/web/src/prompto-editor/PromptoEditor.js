@@ -17,6 +17,7 @@ export default class PromptoEditor extends React.Component {
 
     constructor(props) {
         super(props);
+        this.content = null;
         this.aceEditor = null;
         this.getSession = this.getSession.bind(this);
         this.setContent = this.setContent.bind(this);
@@ -35,6 +36,10 @@ export default class PromptoEditor extends React.Component {
 
     getSession() {
         return this.getEditor().getSession();
+    }
+
+    getContent() {
+        return this.content || {};
     }
 
     componentDidMount() {
@@ -86,6 +91,9 @@ export default class PromptoEditor extends React.Component {
     }
 
     adjustBreakpoints(delta) {
+        // no edit allowed in debug mode, so no change can affect existing breakpoints
+        if(this.props.activity===Activity.Debugging)
+            return;
         if (delta.end.row === delta.start.row)
             return;
         const breakpoints = this.getSession().getBreakpoints();
@@ -154,6 +162,7 @@ export default class PromptoEditor extends React.Component {
     }
 
     setContent(content, callback) {
+        this.content = content;
         const display = content && content.type.toLowerCase()==="prompto";
         const readOnly = content && content.core;
         this.setState({display: display, readOnly: readOnly}, () => {
@@ -171,11 +180,11 @@ export default class PromptoEditor extends React.Component {
         });
    }
 
-    showStackFrame(stackFrame) {
+   showStackFrame(stackFrame) {
         const session = this.getSession();
         session.getMode().locateContent(stackFrame, content => {
             this.setContent(content, () => {
-                const line = 1 + stackFrame.instructionLine - stackFrame.methodLine;
+                const line = 1 + stackFrame.statementLine - stackFrame.methodLine;
                 this.getEditor().gotoLine(line, 0, true);
                 session.addGutterDecoration(line-1, "debugger-line");
             });

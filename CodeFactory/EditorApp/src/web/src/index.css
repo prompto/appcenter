@@ -252,11 +252,6 @@
     font-size: smaller;
 }
 
-.debugger-line {
-    background-image: url("/img/debug/debugger-line.png");
-    background-size: contain;
-}
-
 .debugger-controls {
     display: block;
     height: 40px;
@@ -343,4 +338,15 @@ table > tbody > .variable-row > .variable-value {
     background-image: url("/img/debug/active-breakpoint.png");
     background-size: contain;
 }
+
+.ace_gutter-cell.debugger-line {
+    background-image: url("/img/debug/debugger-line.png");
+    background-size: contain;
+}
+
+.ace_gutter-cell.ace_breakpoint.debugger-line {
+    background-image: url("/img/debug/debugger-line.png"), url("/img/debug/active-breakpoint.png");
+    background-size: contain;
+}
+
 

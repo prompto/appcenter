@@ -67,7 +67,7 @@ export default class DebuggerView extends React.Component {
     doWorkerSuspendedEvent(event) {
         const worker = this.findWorkerByWorkerId(event.workerId);
         if (worker) {
-            worker.state = event.reason;
+            worker.state = "STEPPING";
             this.setState({workers: this.state.workers}, () => this.doWorkerSuspended(worker));
         }
     }

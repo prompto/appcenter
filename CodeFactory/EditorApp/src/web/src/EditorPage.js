@@ -170,19 +170,27 @@ export default class EditorPage extends React.Component {
     }
 
     lineBreakpointUpdated(row, active, set) {
-        const content = this.state.content || {};
+        const content = this.getPromptoEditorContent();
         if(content.type!=="Prompto")
-            throw new Error("Not editing prompto content!");
+            throw new Error("No prompto content!");
         const breakpoint = new LineBreakpoint(content.subType, content.name, content.proto, row + 1, active); // ace rows start at 0, antlr lines start at 1
         this.breakpoints.register(breakpoint, set);
-        if(this.state.activity===Activity.Debugging)
+        if(this.state.activity===Activity.Debugging) {
             this.contentEditor.promptoEditor.locateSection(breakpoint, section => {
-                if(section) {
+                if (section) {
                     section.breakpoint = active && set;
                     this.contentEditor.getDebugger().installBreakpoint(section);
                 } else
                     alert("Could not locate section!");
             });
+        }
+    }
+
+    getPromptoEditorContent() {
+        if(this.state.activity===Activity.Debugging)
+            return this.contentEditor.getPromptoEditorContent();
+         else
+            return this.state.content || {};
     }
 
 

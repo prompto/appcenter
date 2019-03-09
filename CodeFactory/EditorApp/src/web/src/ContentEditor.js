@@ -33,6 +33,10 @@ export default class ContentEditor extends React.Component {
             this.contentEditor.promptoEditor.destroy(content);
     }
 
+    getPromptoEditorContent() {
+        return this.promptoEditor.getContent();
+    }
+
     setDialect(dialect) {
         this.promptoEditor.setDialect(dialect);
     }
