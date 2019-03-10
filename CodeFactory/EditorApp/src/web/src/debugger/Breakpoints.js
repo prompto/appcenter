@@ -49,10 +49,11 @@ export class LineBreakpoint extends Breakpoint {
                 active: { type: "Boolean", value: this.active },
                 type: { type: "Text", value: this.type },
                 name: { type: "Text", value: this.name },
-                prototype: { type: "Text", value: this.prototype },
                 line: { type: "Integer", value: this.line }
             }
         }
+        if(this.prototype)
+            storable.value.prototype = { type: "Text", value: this.prototype };
         if(this.dbId)
             storable.value.dbId = this.dbId;
         return storable;
