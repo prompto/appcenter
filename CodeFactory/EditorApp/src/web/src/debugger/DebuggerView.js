@@ -3,6 +3,7 @@ import Activity from "../utils/Activity";
 import WorkersView from './WorkersView';
 import DebuggerControls from './DebuggerControls';
 import VariablesView from './VariablesView';
+import BreakpointsView from "./BreakpointsView";
 
 export default class DebuggerView extends React.Component {
 
@@ -12,6 +13,7 @@ export default class DebuggerView extends React.Component {
         this.workersView = null;
         this.controlsView = null;
         this.variablesView = null;
+        this.breakpointsView = null;
         this.state = {workers: [], worker: null, stackFrame: null};
         this.eventQueue = []; // events and request responses are not received in sequence, so need to rebuild sequence
     }
@@ -176,7 +178,6 @@ export default class DebuggerView extends React.Component {
         }
     }
 
-
     render() {
         const activity = this.props.activity;
         const style = {display: activity === Activity.Debugging ? "block" : "none"};
@@ -185,8 +186,12 @@ export default class DebuggerView extends React.Component {
                 <WorkersView ref={ref => this.workersView = ref} debuggerView={this}/>
                 <DebuggerControls ref={ref => this.controlsView = ref} debuggerView={this}/>
             </div>
-            <div className="debugger-right">
+            <div className="debugger-center">
                 <VariablesView ref={ref => this.variablesView = ref} debuggerView={this}/>
+            </div>
+            <div className="debugger-right">
+                <BreakpointsView ref={ref => this.breakpointsView = ref} debuggerView={this}
+                                 breakpoints={this.props.breakpoints} breakpointSelected={this.props.breakpointSelected} />
             </div>
         </div>;
     }

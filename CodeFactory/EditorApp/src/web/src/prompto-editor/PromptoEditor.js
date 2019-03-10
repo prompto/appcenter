@@ -74,6 +74,7 @@ export default class PromptoEditor extends React.Component {
 
     breakpointsLoaded(data) {
         this.breakpoints = new Breakpoints(data);
+        this.props.breakpointsUpdated(this.breakpoints);
     }
 
     saveBreakpoints() {
@@ -168,6 +169,7 @@ export default class PromptoEditor extends React.Component {
         const content = this.content;
         const breakpoint = new LineBreakpoint(content.subType, content.name, content.proto, row + 1, active); // ace rows start at 0, antlr lines start at 1
         this.breakpoints.register(breakpoint, set);
+        this.props.breakpointsUpdated(this.breakpoints);
         if(this.props.activity===Activity.Debugging) {
             this.locateSection(breakpoint, section => {
                 if (section) {

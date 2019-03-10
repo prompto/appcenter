@@ -203,13 +203,20 @@
     border-right: 1px solid lightgray;
 }
 
+.debugger-center {
+    display: block;
+    position: relative;
+    height: 100%;
+    width: calc(100% - 488px);
+    float: left;
+    border-right: 1px solid lightgray;
+}
+
 .debugger-right {
     display: block;
     height: 100%;
-    left: 244px;
-    width: calc(100%-244px-244px);
-    float: left;
-    border-right: 1px solid lightgray;
+    width: 244px;
+    float: right;
 }
 
 .workers {
@@ -240,7 +247,7 @@
 }
 
 .worker-row {
-    font-size: smaller;
+    font-size: small;
     font-weight: bold;
 }
 
@@ -328,6 +335,30 @@ table > tbody > .variable-row > .variable-value {
     padding-bottom: 0px;
     border-top: unset;
 }
+
+.breakpoints {
+    display: block;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.breakpoints > table > thead > tr > th {
+    font-size: small;
+    padding: 2px;
+    border-color: #F0F0F0;
+}
+
+table > tbody > .breakpoint-row > td {
+    padding: 2px;
+    border-color: #F0F0F0;
+}
+
+
+.breakpoint-row {
+    font-size: small;
+}
+
 
 .ace_error-word {
     position: absolute;

@@ -4,6 +4,7 @@ import Activity from "./utils/Activity";
 import ResourceEditor from "./resource-editors/ResourceEditor";
 import BinaryEditor from "./resource-editors/BinaryEditor";
 import React from "react";
+import {Breakpoints} from "./debugger/Breakpoints";
 
 export default class ContentEditor extends React.Component {
 
@@ -13,6 +14,8 @@ export default class ContentEditor extends React.Component {
         this.promptoEditor = null;
         this.resourceEditor = null;
         this.binaryEditor = null;
+        this.state = { breakpoints: new Breakpoints() };
+        this.breakpointsUpdated = this.breakpointsUpdated.bind(this);
     }
 
     setProject(projectId, loadDependencies) {
@@ -63,20 +66,27 @@ export default class ContentEditor extends React.Component {
     }
 
     getDebugger() {
-        return this.getDebuggerView().getDebugger();
+        return this.debuggerView.getDebugger();
     }
 
     getDebuggerView() {
         return this.debuggerView;
     }
 
-    render() {
+    breakpointsUpdated(breakpoints) {
+        this.setState({ breakpoints: breakpoints });
+    }
+
+
+   render() {
         const root = this.props.root;
         const activity = root.state.activity;
         return <div className="container">
-            <DebuggerView ref={ref=>this.debuggerView=ref||this.debuggerView} activity={activity} container={this}/>
+            <DebuggerView ref={ref=>this.debuggerView=ref||this.debuggerView} activity={activity} container={this}
+                          breakpoints={this.state.breakpoints} breakpointSelected={root.breakpointSelected}/>
             <PromptoEditor ref={ref=>this.promptoEditor=ref||this.promptoEditor} commitAndReset={root.commitAndReset}
                            catalogUpdated={root.catalogUpdated} projectUpdated={root.projectUpdated}
+                           breakpointsUpdated={this.breakpointsUpdated}
                            root={this.props.root} activity={activity}/>
             <ResourceEditor ref={ref=>this.resourceEditor=ref||this.resourceEditor} textEdited={root.textResourceEdited}
                             root={this.props.root} activity={activity} />

@@ -372,7 +372,7 @@ export default class Repository {
         else if (breakpoint.type === "method") {
             const methods = this.projectContext.getRegisteredDeclaration(breakpoint.name);
             if (methods)
-                declaration = methods.protos[breakpoint.proto];
+                declaration = methods.protos[breakpoint.prototype];
         } else if (breakpoint.type === "test")
             declaration = this.projectContext.getRegisteredTest(breakpoint.name);
         if(declaration==null)
@@ -382,7 +382,7 @@ export default class Repository {
             return null;
         section = new prompto.parser.Section(section).asObject();
         if(!section.path)
-            section.path = "store:/" + breakpoint.type + "/" + breakpoint.name + (breakpoint.type==="method" ? "/" + breakpoint.proto : "");
+            section.path = "store:/" + breakpoint.type + "/" + breakpoint.name + (breakpoint.type==="method" ? "/" + breakpoint.prototype : "");
         return section
     }
 

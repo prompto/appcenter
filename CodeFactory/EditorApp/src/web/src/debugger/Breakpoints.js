@@ -29,6 +29,13 @@ export class LineBreakpoint extends Breakpoint {
                 this.line === breakpoint.line);
     }
 
+    toString() {
+        return this.name + (this.proto ? "(" + this.proto + ")" : "") + " - line " + this.line;
+    }
+
+    toContent() {
+        return { type: "Prompto", subType: this.type, name: this.name, proto: this.proto };
+    }
 
     matchesContent(content) {
         return content.subType === this.type && content.name === this.name && content.proto === this.proto;
@@ -63,6 +70,7 @@ export class LineBreakpoint extends Breakpoint {
 
 }
 
+// server side attribute is 'prototype'
 Object.defineProperty(LineBreakpoint.prototype, "proto", {
     get: function() {
         return this.prototype;
@@ -75,12 +83,12 @@ Object.defineProperty(LineBreakpoint.prototype, "proto", {
 export class Breakpoints {
 
     constructor(data) {
-        this.breakpoints = data.value.map(b=>{
+        this.breakpoints = data && data.value ? data.value.map(b=>{
             // eslint-disable-next-line
             const type = eval(b.type);
             const breakpoint = new type();
             return { status: "CLEAN", breakpoint: breakpoint.fromStored(b.value)};
-        });
+        }) : [];
     }
 
     register(breakpoint, set) {
@@ -129,12 +137,3 @@ export class Breakpoints {
         return this.living().filter(b => b.matchesContent(content));
     }
 }
-
-/*
-    dbId: this.breakpoints.dbId,
-        module: { type: "Module", value: { dbId: this.projectId.toString() } },
-    breakpoints: { type: }
-}
-}
-}
-*/

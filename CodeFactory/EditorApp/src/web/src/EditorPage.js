@@ -37,6 +37,7 @@ export default class EditorPage extends React.Component {
         this.getProject = this.getProject.bind(this);
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
+        this.breakpointSelected = this.breakpointSelected.bind(this);
         this.contentNavigator = null;
         this.contentEditor = null;
         this.state = { project: null, activity: Activity.Loading, content: null, resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
@@ -166,6 +167,12 @@ export default class EditorPage extends React.Component {
         this.setCatalog(this.catalog, content, callback);
     }
 
+    breakpointSelected(breakpoint) {
+        const content = breakpoint.toContent();
+        this.setEditorContent(content);
+    }
+
+
     loadCode(loadDependencies) {
         this.contentEditor.setProject(this.projectId, loadDependencies);
     }
@@ -190,7 +197,6 @@ export default class EditorPage extends React.Component {
             })
             .catch(error=>alert(error));
     }
-
 
     render() {
         return <div>

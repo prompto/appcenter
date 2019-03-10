@@ -286,10 +286,8 @@ export default class VariablesView extends React.Component {
         if(this.state.stackFrame && this.state.variables.length===0) {
             return <tr className="variable-row">
                     <td/>
-                    <td className="variable-name"><i>No variable</i></td>
-                    <td/>
-                    <td/>
-                </tr>;
+                    <td className="variable-name" colSpan="3"><i>No variable</i></td>
+                 </tr>;
         }
     }
 
@@ -297,9 +295,7 @@ export default class VariablesView extends React.Component {
         if(!this.state.stackFrame) {
             return <tr className="variable-row">
                     <td/>
-                    <td className="variable-name"><i>Worker is running</i></td>
-                    <td/>
-                    <td/>
+                    <td className="variable-name" colSpan="3"><i>Worker is running</i></td>
                 </tr>;
         }
     }
