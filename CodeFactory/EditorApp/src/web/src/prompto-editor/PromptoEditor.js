@@ -7,6 +7,7 @@ import 'brace/mode/text';
 import PromptoMode from "./PromptoMode";
 import Activity from "../utils/Activity";
 import {Breakpoints, LineBreakpoint} from "../debugger/Breakpoints";
+import axios from "axios";
 
 const EditSession = window.ace.EditSession;
 EditSession.prototype.clearGutterDecorations = function() {
@@ -26,7 +27,7 @@ export default class PromptoEditor extends React.Component {
         this.commitAndReset = this.commitAndReset.bind(this);
         this.toggleBreakpoint = this.toggleBreakpoint.bind(this);
         this.adjustBreakpoints = this.adjustBreakpoints.bind(this);
-        this.breakpoints = new Breakpoints();
+        this.breakpoints = null;
         this.state = {value: "", readOnly: false, display: true, debugMode: null};
     }
 
@@ -56,6 +57,34 @@ export default class PromptoEditor extends React.Component {
 
     locateSection(breakpoint, callback) {
         this.getSession().getMode().locateSection(breakpoint, callback);
+    }
+
+
+    loadBreakpoints() {
+        const params = {params: JSON.stringify([{name: "dbId", value: this.projectId}])};
+        axios.get('/ws/run/getModuleBreakpoints', {params: params}).then(resp => {
+            const response = resp.data;
+            if (response.error)
+                alert(response.error);
+            else
+                this.breakpointsLoaded(response.data);
+        });
+
+    }
+
+    breakpointsLoaded(data) {
+        this.breakpoints = new Breakpoints(data);
+    }
+
+    saveBreakpoints() {
+        const edited = this.breakpoints.toStorable(this.projectId);
+        if(!edited || !edited.length)
+            return;
+        const formData = new FormData();
+        formData.append("params", JSON.stringify([{name: "edited", type: "EditedBreakpoint[]", value: edited}]));
+        axios.post('/ws/run/storeBreakpoints', formData)
+            .then(response=>this.loadBreakpoints()) // read dbIds
+            .catch(error=>this.commitFailed(error));
     }
 
     toggleBreakpoint(click) {
@@ -173,7 +202,9 @@ export default class PromptoEditor extends React.Component {
     }
 
     setProject(dbId, loadDependencies) {
+        this.projectId = dbId;
         this.getSession().getMode().setProject(dbId, loadDependencies);
+        this.loadBreakpoints();
     }
 
     setDebugMode(mode, callback) {
@@ -273,6 +304,7 @@ export default class PromptoEditor extends React.Component {
 
     commitSuccessful() {
         this.getSession().getMode().commitSuccessful();
+        this.saveBreakpoints();
     }
 
     render() {

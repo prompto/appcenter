@@ -132,7 +132,7 @@ export default class EditorNavBar extends React.Component {
                     &nbsp;
                     <Button type="button" onClick={()=>this.stopServer()} disabled={this.state.runMode==="LI"}>Shutdown</Button>
                     &nbsp;
-                    <Button type="button" onClick={()=>this.props.root.resetServer()} disabled={this.state.runMode==="LI"}>Reset</Button>
+                    <Button type="button" onClick={()=>this.props.root.clearModuleContext()} disabled={this.state.runMode==="LI"}>Reset</Button>
                 </Navbar.Form>
                 <Navbar.Form pullRight>
                     <Button type="button" onClick={()=>this.props.root.revert()}>Revert</Button>

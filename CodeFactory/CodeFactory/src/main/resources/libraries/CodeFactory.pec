@@ -8,6 +8,50 @@ define lastOpened as storable DateTime attribute
 define CodingSession as storable category with attributes login, module and lastOpened
 define RecentSession as storable CodingSession
 
+define active as storable Boolean attribute
+
+define Breakpoint as storable category with attribute active
+
+define type as storable Text attribute
+define line as storable Integer attribute
+define LineBreakpoint as storable Breakpoint with attributes type, name, prototype and line
+
+define getModuleBreakpoints as method receiving name and version doing:
+	login = getHttpUser
+	if login is nothing:
+		raise NULL_REFERENCE
+	module = fetch one Module where name = name and version = version
+	if module is nothing:
+		raise NULL_REFERENCE
+	return fetch all Breakpoint where module = module
+
+
+define getModuleBreakpoints as method receiving dbId doing:
+	login = getHttpUser
+	if login is nothing:
+		raise NULL_REFERENCE
+	module = fetch one Module where dbId = dbId
+	if module is nothing:
+		raise NULL_REFERENCE
+	return fetch all Breakpoint where module = module
+
+
+define EditStatus as enumerated Text with symbols:
+	CLEAN with "CLEAN" as value
+	CREATED with "CREATED" as value
+	DELETED with "DELETED" as value 
+	DIRTY with "DIRTY" as value
+
+define editStatus as EditStatus attribute
+define breakpoint as storable Breakpoint attribute
+define EditedBreakpoint as category with attributes editStatus and breakpoint
+
+define storeBreakpoints as method receiving EditedBreakpoint[] edited doing:
+	deleted = b1.breakpoint for each b1 in edited filtered with b where b.editStatus = DELETED
+	created = b2.breakpoint for each b2 in edited filtered with b where b.editStatus = CREATED
+	updated = b3.breakpoint for each b3 in edited filtered with b where b.editStatus = DIRTY
+	delete deleted and store created, updated 
+
 define Stuff as storable category with attributes name, version and module
 
 define storable as storable Boolean attribute
@@ -24,13 +68,6 @@ define Resource as storable Stuff with attribute mimeType
 define TextResource as storable Resource with attribute body
 define BinaryResource as storable Resource with attribute data
 
-define EditStatus as enumerated Text with symbols:
-	CLEAN with "CLEAN" as value
-	CREATED with "CREATED" as value
-	DELETED with "DELETED" as value 
-	DIRTY with "DIRTY" as value
-
-define editStatus as EditStatus attribute
 define stuff as Stuff attribute
 
 define EditedStuff as category with attributes editStatus and stuff
@@ -70,6 +107,7 @@ define getModuleDescription as method receiving dbId and Boolean register doing:
 		store recent
 		flush
 	return module
+
 
 
 define getModuleDeclarations as method receiving name and version doing:

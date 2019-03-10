@@ -21,8 +21,6 @@ export default class EditorPage extends React.Component {
         this.projectName = getParam("name");
         this.navBar = null;
         this.contentNavigator = null;
-        this.loadDescription = this.loadDescription.bind(this);
-        this.loadResources = this.loadResources.bind(this);
         this.resourcesLoaded = this.resourcesLoaded.bind(this);
         this.setDialect = this.setDialect.bind(this);
         this.destroy = this.destroy.bind(this);
@@ -31,7 +29,7 @@ export default class EditorPage extends React.Component {
         this.commitPrepared = this.commitPrepared.bind(this);
         this.commitFailed = this.commitFailed.bind(this);
         this.commitSuccessful = this.commitSuccessful.bind(this);
-        this.resetServer = this.resetServer.bind(this);
+        this.clearModuleContext = this.clearModuleContext.bind(this);
         this.textResourceEdited = this.textResourceEdited.bind(this);
         this.renameResource = this.renameResource.bind(this);
         this.addResource = this.addResource.bind(this);
@@ -74,7 +72,7 @@ export default class EditorPage extends React.Component {
     commitAndReset() {
         // TODO confirm
         this.contentEditor.prepareCommit(this.commitPrepared);
-        this.resetServer();
+        this.clearModuleContext();
         return false;
     }
 
@@ -91,6 +89,7 @@ export default class EditorPage extends React.Component {
                 .catch(error=>this.commitFailed(error));
         } else {
             this.messageArea.setMessage("Nothing to commit!");
+            this.contentEditor.commitSuccessful();
         }
 
     }
@@ -103,10 +102,11 @@ export default class EditorPage extends React.Component {
     commitSuccessful(success) {
         this.messageArea.setMessage("Commit ok!");
         this.contentEditor.commitSuccessful();
-        // this.loadResources();
     }
 
-    resetServer() {
+    clearModuleContext() {
+        if(!this.state.activity.isModuleRunning())
+            return;
         fetcher.fetchModuleURL(this.projectId, url => {
             const fullUrl = url + "ws/control/clear-context";
             axios.get(fullUrl);
