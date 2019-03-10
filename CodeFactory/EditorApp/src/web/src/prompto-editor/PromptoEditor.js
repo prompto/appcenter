@@ -266,10 +266,12 @@ export default class PromptoEditor extends React.Component {
         const session = this.getSession();
         session.getMode().locateContent(stackFrame, content => {
             this.setContent(content, () => {
-                const line = 1 + stackFrame.statementLine - stackFrame.methodLine;
+                let line = stackFrame.statementLine;
+                if(!stackFrame.categoryName || !stackFrame.categoryName.length)
+                    line += 1 - stackFrame.methodLine;
                 this.getEditor().gotoLine(line, 0, true);
                 session.clearGutterDecorations();
-                session.addGutterDecoration(line-1, "debugger-line");
+                session.addGutterDecoration(line - 1, "debugger-line");
             });
         });
     }

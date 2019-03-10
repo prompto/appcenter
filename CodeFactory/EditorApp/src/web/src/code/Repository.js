@@ -344,6 +344,32 @@ export default class Repository {
     };
 
     locateContent(stackFrame) {
+        if (stackFrame.categoryName && stackFrame.categoryName.length)
+            return this.locateCategoryContent(stackFrame);
+        else
+            return this.locateMethodContent(stackFrame);
+    }
+
+    locateCategoryContent(stackFrame) {
+        let decl = this.librariesContext.getRegisteredDeclaration(stackFrame.categoryName);
+        if(decl)
+            return {type: "Prompto", subType: this.subTypeFromDeclaration(decl), name: stackFrame.categoryName, core: true};
+        decl = this.projectContext.getRegisteredDeclaration(stackFrame.categoryName);
+        if(decl)
+            return { type: "Prompto", subType: this.subTypeFromDeclaration(decl), name: stackFrame.categoryName, core: false };
+        else
+            return null;
+    }
+
+    subTypeFromDeclaration(decl) {
+        if (decl instanceof prompto.declaration.EnumeratedCategoryDeclaration || decl instanceof prompto.declaration.EnumeratedNativeDeclaration)
+            return "enumeration";
+        else
+            return "category";
+    }
+
+
+    locateMethodContent(stackFrame) {
         let testMethod = this.librariesContext.getRegisteredTest(stackFrame.methodName);
         if(testMethod)
             return { type: "Prompto", subType: "test", name: stackFrame.methodName, core: true, main: false };
