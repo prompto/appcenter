@@ -1,27 +1,19 @@
 import React from 'react';
-import { ListGroupItem, Clearfix, MenuItem } from 'react-bootstrap';
+import { ListGroupItem } from 'react-bootstrap';
 import ResourceItem from './ResourceItem';
 
 export default class BinaryResourceItem extends ResourceItem {
 
     constructor(props) {
         super(props);
-        this.itemClicked = this.itemClicked.bind(this);
         this.select = this.select.bind(this);
     }
 
     render() {
-        const menuStyle = { position: "fixed", display: "block", left: this.state.menuLeft, top: this.state.menuTop, zIndex: 999999 };
-        return <ListGroupItem onClick={this.itemClicked} onContextMenu={this.handleContextMenu}>
+        return <ListGroupItem onClick={this.itemClicked.bind(this)} onContextMenu={this.handleContextMenu}>
             { /* eslint-disable-next-line */ }
             <a href="#">{this.props.resource.value.name}</a>
-            {this.state.contextMenu &&
-            <Clearfix id="item-menu" style={menuStyle}>
-                <ul className="dropdown-menu" style={{display: "block"}}>
-                    <MenuItem href={"#"} onSelect={()=>this.props.root.setState({ resourceToRename: this.props.resource })}>Rename</MenuItem>
-                </ul>
-            </Clearfix>
-            }
+            { this.renderContextMenu() }
         </ListGroupItem>;
     }
 
@@ -39,4 +31,5 @@ export default class BinaryResourceItem extends ResourceItem {
             content.file = resource.value.file;
         this.props.root.setEditorContent(content);
     }
+
 }

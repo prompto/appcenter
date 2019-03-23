@@ -3,15 +3,15 @@ import React from 'react';
 import { Modal, Button, Checkbox, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
 import { ALL_AUTH_METHODS, ID_TO_AUTH_METHOD_MAP } from "../authentication/AuthenticationMethods";
 import { ID_TO_AUTH_SOURCE_MAP } from "../authentication/AuthenticationSources";
+import {closeModal} from "../components/ModalDialog";
+import ModalDialog from "../components/ModalDialog";
 
 export default class AuthenticationSettingsDialog extends React.Component {
 
     constructor(props) {
         super(props);
-        this.getProject = ()=>this.props.root.getProject().value;
         const state = this.getStateFromSettings();
         this.state = { ...state, show: true };
-        this.handleClose = this.handleClose.bind(this);
         this.handleMethod = this.handleMethod.bind(this);
         this.handleSource = this.handleSource.bind(this);
         this.handleSkipAuthInDev = this.handleSkipAuthInDev.bind(this);
@@ -19,7 +19,10 @@ export default class AuthenticationSettingsDialog extends React.Component {
         this.handleUseDefaultWhiteList = this.handleUseDefaultWhiteList.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.saveSettings = this.saveSettings.bind(this);
-        ;
+    }
+
+    getProject() {
+        return this.props.root.getProject().value;
     }
 
     getStateFromSettings() {
@@ -76,11 +79,6 @@ export default class AuthenticationSettingsDialog extends React.Component {
         this.state.source.createDefaults(this);
     }
 
-    handleClose() {
-        this.setState({show: false});
-        this.props.onClose();
-    }
-
     handleMethod(e) {
         const id = e.currentTarget.value;
         const method = ID_TO_AUTH_METHOD_MAP[id];
@@ -111,9 +109,8 @@ export default class AuthenticationSettingsDialog extends React.Component {
 
     handleSave() {
         // load latest full description before updating it
-        const dbId = (this.getProject().dbId.value || module.value.dbId).toString();
         const params = {
-            params: JSON.stringify([{name: "dbId", value: dbId}, {
+            params: JSON.stringify([{name: "dbId", value: this.props.root.projectId}, {
                 name: "register",
                 type: "Boolean",
                 value: false
@@ -138,7 +135,7 @@ export default class AuthenticationSettingsDialog extends React.Component {
         axios.post("/ws/run/storeModule", formData)
             .then(response=>{
                 this.props.root.loadDescription();
-                this.handleClose()
+                closeModal();
             })
             .catch(error=>alert(error));
     }
@@ -147,7 +144,7 @@ export default class AuthenticationSettingsDialog extends React.Component {
     render() {
         const cleanName = this.getProject().name.toLowerCase().replace(/ /g, "-");
         const showWhiteList = this.state.method.id!=="NONE";
-        return <Modal show={this.state.show} onHide={this.handleClose} >
+        return <ModalDialog >
             <Modal.Header closeButton={true}>
                 <Modal.Title>Authentication settings</Modal.Title>
             </Modal.Header>
@@ -169,24 +166,21 @@ export default class AuthenticationSettingsDialog extends React.Component {
                     { showWhiteList &&
                     <FormGroup>
                         <ControlLabel>List resources to <i>NOT</i> protect (white list) in this application:</ControlLabel><br/>
-                        <FormControl componentClass="textarea" value={this.state.whiteList.join("\n")} onChange={this.handleWhiteList}>
-                        </FormControl>
-                        <HelpBlock>
-                            List 1 resource per line.&nbsp;Valid resources are of the form:<br/>
+                        <FormControl componentClass="textarea" value={this.state.whiteList.join("\n")} onChange={this.handleWhiteList} />
+                        <HelpBlock>List 1 resource per line.&nbsp;Valid resources are of the form:<br/>
                             &nbsp;-&nbsp;Exact resource name<br/>
-                            &nbsp;-&nbsp;Path pattern such as: {cleanName}/auth/*<br/>
-                                &nbsp;-&nbsp;Extension pattern such as: *.jpeg
-                            </HelpBlock>
-                            <Checkbox inline checked={this.state.useDefaultWhiteList} onChange={this.handleUseDefaultWhiteList}>Also use default white list</Checkbox>
-                        </FormGroup>
+                            &nbsp;-&nbsp;Path pattern such as: {cleanName} {String.raw`/auth/*`}<br/>
+                            &nbsp;-&nbsp;Extension pattern such as: *.jpeg</HelpBlock>
+                        <Checkbox inline checked={this.state.useDefaultWhiteList} onChange={this.handleUseDefaultWhiteList}>Also use default white list</Checkbox>
+                    </FormGroup>
                     }
                  </form>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={this.handleClose}>Cancel</Button>
+                <Button onClick={closeModal}>Cancel</Button>
                 <Button bsStyle="primary" onClick={this.handleSave}>Save</Button>
             </Modal.Footer>
-        </Modal>;
+        </ModalDialog>;
     }
 
 

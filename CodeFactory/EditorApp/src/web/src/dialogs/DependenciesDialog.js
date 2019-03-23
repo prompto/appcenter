@@ -3,22 +3,26 @@ import React from 'react';
 import { Modal, Button, ControlLabel } from 'react-bootstrap';
 import LibraryList from '../components/LibraryList';
 import DependencyList from '../components/DependencyList';
+import ModalDialog, { closeModal } from "../components/ModalDialog";
 
 export default class DependenciesDialog extends React.Component {
 
     constructor(props) {
         super(props);
         this.allLibraries = [];
-        const project = this.props.root.getProject();
-        const deps = project.value.dependencies.value.filter(d => d!=null).map(d => { return { instance: d.value, label: d.value.name + " - " + d.value.version.value }; } )
+        const project = this.getProject();
+        const deps = project.dependencies.value.filter(d => d!=null).map(d => { return { instance: d.value, label: d.value.name + " - " + d.value.version.value }; } )
         this.state = {show: true, dependencies: deps, libraries: []};
-        this.handleClose = this.handleClose.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.librariesReceived = this.librariesReceived.bind(this);
         this.filterLibraries = this.filterLibraries.bind(this);
         this.saveDependencies = this.saveDependencies.bind(this);
+    }
+
+    getProject() {
+        return this.props.root.getProject().value;
     }
 
     componentDidMount() {
@@ -41,17 +45,10 @@ export default class DependenciesDialog extends React.Component {
     }
 
 
-    handleClose() {
-        this.setState({show: false});
-        this.props.onClose();
-    }
-
     handleSave() {
         // load latest full description before updating
-        const project = this.props.root.getProject();
-        const dbId = (project.value.dbId.value || project.value.dbId).toString();
         const params = {
-            params: JSON.stringify([{name: "dbId", value: dbId}, {
+            params: JSON.stringify([{name: "dbId", value: this.props.root.projectId}, {
                 name: "register",
                 type: "Boolean",
                 value: false
@@ -76,7 +73,7 @@ export default class DependenciesDialog extends React.Component {
         axios.post("/ws/run/storeModule", formData)
             .then(response=>{
                 this.props.root.loadDescription();
-                this.handleClose()
+                closeModal();
             })
             .catch(error=>alert(error));
     }
@@ -97,7 +94,7 @@ export default class DependenciesDialog extends React.Component {
     }
 
     render() {
-        return <Modal show={this.state.show} onHide={this.handleClose} >
+        return <ModalDialog >
             <Modal.Header closeButton={true}>
                 <Modal.Title>Module dependencies</Modal.Title>
             </Modal.Header>
@@ -118,10 +115,10 @@ export default class DependenciesDialog extends React.Component {
                 }
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={this.handleClose}>Cancel</Button>
+                <Button onClick={closeModal}>Cancel</Button>
                 <Button bsStyle="primary" onClick={this.handleSave}>Save</Button>
             </Modal.Footer>
-        </Modal>;
+        </ModalDialog>;
     }
 
 }

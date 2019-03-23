@@ -2,6 +2,7 @@ import { getParam } from '../utils/Utils';
 import React from 'react';
 import { Modal, Button, FormGroup, ControlLabel, InputGroup, FormControl } from 'react-bootstrap';
 import DroppedFileWidget from "../components/DroppedFileWidget";
+import ModalDialog, { closeModal } from "../components/ModalDialog";
 
 export default class NewFileResourceDialog extends React.Component {
 
@@ -9,16 +10,10 @@ export default class NewFileResourceDialog extends React.Component {
         super(props);
         const cleanName = getParam("name").toLowerCase().replace(/ /g, "-");
         this.state = {show: true, folder: cleanName, name: "", file: null};
-        this.handleClose = this.handleClose.bind(this);
         this.handleFolder = this.handleFolder.bind(this);
         this.handleName = this.handleName.bind(this);
         this.handleDrop = this.handleDrop.bind(this);
         this.handleCreate = this.handleCreate.bind(this);
-    }
-
-    handleClose() {
-        this.setState({show: false});
-        this.props.onClose();
     }
 
     render() {
@@ -32,7 +27,7 @@ export default class NewFileResourceDialog extends React.Component {
             justifyContent: 'center'
         };
 
-        return <Modal show={this.state.show} onHide={this.handleClose} bsSize="large" dialogClassName="new-file-resource-dialog">
+        return <ModalDialog bsSize="large" dialogClassName="new-file-resource-dialog">
             <Modal.Header closeButton={true}>
                 <Modal.Title>New {this.props.type.label}</Modal.Title>
             </Modal.Header>
@@ -50,10 +45,10 @@ export default class NewFileResourceDialog extends React.Component {
                 <DroppedFileWidget onDrop={this.handleDrop} style={droppedWidgetStyle}/>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={this.handleClose}>Cancel</Button>
+                <Button onClick={closeModal}>Cancel</Button>
                 <Button id="btnCreate" bsStyle="primary" onClick={this.handleCreate}>Create</Button>
             </Modal.Footer>
-        </Modal>;
+        </ModalDialog>;
     }
 
     handleDrop(file) {
@@ -72,7 +67,7 @@ export default class NewFileResourceDialog extends React.Component {
         const path = this.state.folder + "/" + this.state.name;
         const resource = this.props.type.createBinaryResource(path, this.state.file)
         this.props.root.addResource(resource);
-        this.handleClose();
+        closeModal();
     }
 
 }

@@ -2,13 +2,13 @@ import axios from 'axios';
 import React from 'react';
 import { Modal, FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 import { ID_TO_TYPE_MAP } from '../project-types/ProjectTypes';
+import ModalDialog, { closeModal } from '../components/ModalDialog';
 
 export default class ModifyProjectDialog extends React.Component {
 
     constructor(props) {
         super(props);
         this.type = ID_TO_TYPE_MAP[this.props.module.type];
-        this.handleClose = this.handleClose.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.saveModule = this.saveModule.bind(this);
         this.handleName = this.handleName.bind(this);
@@ -44,10 +44,9 @@ export default class ModifyProjectDialog extends React.Component {
         formData.append("params", JSON.stringify(params));
         this.type.appendFormParameters(formData, true);
         axios.post("/ws/run/storeModule", formData).then(response=>{
-            this.props.viewer.fetchRecentModules();
-            this.props.viewer.fetchAllModules();
+            closeModal();
+            this.props.moduleUpdated();
         }).catch(error=>alert(error));
-        this.handleClose();
     }
 
 
@@ -61,13 +60,8 @@ export default class ModifyProjectDialog extends React.Component {
         this.setState( { description: description } );
     }
 
-    handleClose() {
-        this.setState({show: false});
-        this.props.onClose();
-    }
-
     render() {
-        return <Modal show={this.state.show} onHide={this.handleClose} dialogClassName="rename-project-dialog">
+        return <ModalDialog dialogClassName="rename-project-dialog">
             <Modal.Header closeButton={true}>
                 <Modal.Title>Modify project</Modal.Title>
             </Modal.Header>
@@ -87,10 +81,10 @@ export default class ModifyProjectDialog extends React.Component {
             </Modal.Body>
 
             <Modal.Footer>
-                <Button onClick={this.handleClose}>Cancel</Button>
+                <Button onClick={closeModal}>Cancel</Button>
                 <Button bsStyle="primary" onClick={this.handleSave}>Save</Button>
             </Modal.Footer>
-        </Modal>;
+        </ModalDialog>;
     }
 
 

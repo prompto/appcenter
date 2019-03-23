@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal, Button, FormGroup, ControlLabel, InputGroup, FormControl } from 'react-bootstrap';
+import ModalDialog, { closeModal } from "../components/ModalDialog";
 
 export default class RenameResourceDialog extends React.Component {
 
@@ -12,22 +13,14 @@ export default class RenameResourceDialog extends React.Component {
         const name = resourceName.substring(idx1 + 1, idx2);
         const extension = resourceName.substring(idx2 + 1);
         this.state = {show: true, folder: folder, name: name, extension: extension};
-        this.handleClose = this.handleClose.bind(this);
         this.handleFolder = this.handleFolder.bind(this);
         this.handleName = this.handleName.bind(this);
         this.handleExtension = this.handleExtension.bind(this);
         this.handleRename = this.handleRename.bind(this);
     }
 
-    handleClose() {
-        this.setState({show: false});
-        this.props.onClose();
-    }
-
-
     render() {
-        return <Modal show={this.state.show} onHide={this.handleClose} bsSize="large"
-                      dialogClassName="rename-resource-dialog">
+        return <ModalDialog bsSize="large" dialogClassName="rename-resource-dialog">
             <Modal.Header closeButton={true}>
                 <Modal.Title>Rename resource</Modal.Title>
             </Modal.Header>
@@ -46,10 +39,10 @@ export default class RenameResourceDialog extends React.Component {
                 </form>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={this.handleClose}>Cancel</Button>
+                <Button onClick={closeModal}>Cancel</Button>
                 <Button bsStyle="primary" onClick={this.handleRename}>Rename</Button>
             </Modal.Footer>
-        </Modal>;
+        </ModalDialog>;
     }
 
     handleFolder(event) {
@@ -67,7 +60,7 @@ export default class RenameResourceDialog extends React.Component {
     handleRename(event) {
         const path = this.state.folder + "/" + this.state.name + "." + this.state.extension;
         this.props.root.renameResource(this.props.resource, path);
-        this.handleClose();
+        closeModal();
     }
 
 }

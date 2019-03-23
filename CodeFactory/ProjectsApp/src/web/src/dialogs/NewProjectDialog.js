@@ -2,6 +2,7 @@ import axios from 'axios';
 import React from 'react';
 import { ALL_PROJECT_TYPES, WEB_PROJECT_TYPES, CODE_PROJECT_TYPES } from '../project-types/ProjectTypes';
 import { Modal, FormGroup, FormControl, ControlLabel, ToggleButtonGroup, Button, Thumbnail } from 'react-bootstrap';
+import ModalDialog, {closeModal} from "../components/ModalDialog";
 
 class NewModuleTypeButton extends React.Component {
 
@@ -23,13 +24,12 @@ export default class NewProjectDialog extends React.Component {
 
     constructor(props) {
         super(props);
-        this.handleClose = this.handleClose.bind(this);
         this.handleCreate = this.handleCreate.bind(this);
         this.handleType = this.handleType.bind(this);
         this.handleName = this.handleName.bind(this);
         this.handleDescription = this.handleDescription.bind(this);
         this.checkValidName = this.checkValidName.bind(this);
-        this.state = { show: true, page: 1, type: ALL_PROJECT_TYPES[0], name:"", description: "", validName: false };
+        this.state = { page: 1, type: ALL_PROJECT_TYPES[0], name:"", description: "", validName: false };
     }
 
     handleCreate() {
@@ -41,10 +41,9 @@ export default class NewProjectDialog extends React.Component {
         params = this.state.type.appendPromptoParameters(params);
         formData.append("params", JSON.stringify(params));
         axios.post("/ws/run/" + this.state.type.createMethod, formData).then(response=>{
-            this.props.viewer.fetchRecentModules();
-            this.props.viewer.fetchAllModules();
+            closeModal();
+            this.props.moduleCreated();
         }).catch(error=>alert(error));
-        this.handleClose();
     }
 
 
@@ -65,17 +64,12 @@ export default class NewProjectDialog extends React.Component {
         this.setState( { description: description } );
     }
 
-    handleClose() {
-        this.setState({show: false});
-        this.props.onClose();
-    }
-
     checkValidName() {
         this.setState({validName: this.state.name.length > 0});
     }
 
     render() {
-        return <Modal show={this.state.show} onHide={this.handleClose} bsSize="large" dialogClassName="new-project-dialog">
+        return <ModalDialog bsSize="large" dialogClassName="new-project-dialog">
             <Modal.Header closeButton={true}>
                 <Modal.Title>New project</Modal.Title>
             </Modal.Header>
@@ -112,12 +106,12 @@ export default class NewProjectDialog extends React.Component {
             </Modal.Body>
 
             <Modal.Footer>
-                <Button onClick={this.handleClose}>Cancel</Button>
+                <Button onClick={closeModal}>Cancel</Button>
                 { this.state.page===1 && <Button id="btnNext" bsStyle="primary" onClick={()=>this.setState({page: 2})}>Next</Button> }
                 { this.state.page===2 && <Button onClick={()=>this.setState({page: 1})}>Previous</Button> }
                 { this.state.page===2 && <Button id="btnCreate" bsStyle="primary" disabled={!this.state.validName} onClick={this.handleCreate}>Create</Button> }
             </Modal.Footer>
-        </Modal>;
+        </ModalDialog>;
     }
 
 }

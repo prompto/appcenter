@@ -9,7 +9,6 @@ widget RadioOnChangeCallbackIsCalledPage extends ReactWidget {
 	}
 	
 	Html method render () {
-		state = getState();
 		return <div>
 				<div id="out"></div>
 				<Radio id="radio1" name="radioGroup" onChange={radioChanged}>Hello "Radio 1"!</Checkbox>

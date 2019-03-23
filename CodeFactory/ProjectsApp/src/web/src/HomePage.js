@@ -1,22 +1,19 @@
 import axios from 'axios';
 import React from 'react';
+import { displayModal } from './components/ModalDialog';
 import { Grid, PageHeader } from 'react-bootstrap';
 import ProjectsNavBar from './ProjectsNavBar';
 import ProjectsBrowser from './ProjectsBrowser';
 import NewProjectDialog from './dialogs/NewProjectDialog';
 import ModifyProjectDialog from './dialogs/ModifyProjectDialog';
-
+import DeleteProjectDialog from './dialogs/DeleteProjectDialog';
 
 export default class HomePage extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { dialog: null, module: null, recent: [], all: [] };
+        this.state = { recent: [], all: [] };
         this.newProject = this.newProject.bind(this);
-        this.fetchRecentModules = this.fetchRecentModules.bind(this);
-        this.fetchAllModules = this.fetchAllModules.bind(this);
-        this.modulesReceived = this.modulesReceived.bind(this);
-        this.modifyProject = this.modifyProject.bind(this);
     }
 
     componentDidMount() {
@@ -27,14 +24,14 @@ export default class HomePage extends React.Component {
     fetchRecentModules() {
         const params = { params: JSON.stringify([{"name": "count", "type": "Integer", "value": 8}]) };
         axios.get('/ws/run/getRecentModules',  { params: params }).then(resp => {
-            const modules = this.modulesReceived(resp.data);
+            const modules = this.modulesReceived.bind(this)(resp.data);
             this.setState({recent: modules})
         });
     }
 
     fetchAllModules() {
         axios.get('/ws/run/getAllModules').then(resp => {
-            const modules = this.modulesReceived(resp.data);
+            const modules = this.modulesReceived.bind(this)(resp.data);
             this.setState({all: modules})
         });
     }
@@ -54,28 +51,36 @@ export default class HomePage extends React.Component {
 
     }
 
+    newProject() {
+        displayModal(<NewProjectDialog viewer={this} moduleCreated={this.moduleCreated.bind(this)}/>)
+    }
+
+    moduleCreated() {
+        this.fetchRecentModules();
+        this.fetchAllModules();
+    }
+
     modifyProject(module) {
-        this.setState({dialog: "ModifyProject", module: module});
+        displayModal(<ModifyProjectDialog module={module} moduleUpdated={this.moduleUpdated.bind(this)}/>);
+    }
+
+    moduleUpdated() {
+        this.fetchRecentModules();
+        this.fetchAllModules();
     }
 
     deleteProject(module) {
-        const dbId = (module.value.dbId.value || module.value.dbId).toString()
-        const params = { params: JSON.stringify([{"name": "dbId", "value": dbId}]) };
-        axios.get('/ws/run/deleteModule',  { params: params }).then(resp => {
-            this.fetchRecentModules();
-            this.fetchAllModules();
-        });
+        displayModal(<DeleteProjectDialog module={module} moduleDeleted={this.moduleDeleted.bind(this)}/>);
     }
 
-    newProject() {
-        this.setState({dialog: "NewProject"});
+    moduleDeleted() {
+        this.fetchRecentModules();
+        this.fetchAllModules();
     }
 
     render() {
         return <div>
             <ProjectsNavBar root={this}/>
-            {this.state.dialog==="NewProject" && <NewProjectDialog onClose={()=>this.setState({dialog: null})} viewer={this}/>}
-            {this.state.dialog==="ModifyProject" && <ModifyProjectDialog onClose={()=>this.setState({dialog: null})} viewer={this} module={this.state.module}/>}
             <Grid fluid style={{paddingTop: 16}}>
                 <PageHeader>Recent projects</PageHeader>
                 <ProjectsBrowser root={this} id="recent" modules={this.state.recent}/>

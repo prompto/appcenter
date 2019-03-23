@@ -1,9 +1,12 @@
+import React from 'react';
 import ResourceType from "./ResourceType";
+import NewFileResourceDialog from "../dialogs/NewFileResourceDialog";
+import {displayModal} from "../components/ModalDialog";
 
 export default class BinaryResourceType extends ResourceType {
 
     newResource(root) {
-        root.setState({newFileResourceType: this});
+        displayModal(<NewFileResourceDialog root={root} type={this} />);
     }
 
     createBinaryResource(path, file) {

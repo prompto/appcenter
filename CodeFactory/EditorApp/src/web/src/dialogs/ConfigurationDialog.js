@@ -1,22 +1,29 @@
 import axios from 'axios';
 import React from 'react';
 import { Modal, Button, FormGroup, ControlLabel, FormControl } from 'react-bootstrap';
+import ModalDialog, { closeModal } from "../components/ModalDialog";
 
 export default class ConfigurationDialog extends React.Component {
 
     constructor(props) {
         super(props);
-        this.getProject = ()=>this.props.root.getProject().value;
         const state = this.getStateFromConfig();
-        this.state = { ...state, show: true };
-        this.handleClose = this.handleClose.bind(this);
+        this.state = { ...state };
         this.handleSave = this.handleSave.bind(this);
         this.saveConfig = this.saveConfig.bind(this);
     }
 
+    getProject() {
+        return this.props.root.getProject();
+    }
+
+    getProjectValue() {
+        return this.getProject().value;
+    }
+
     getStateFromConfig() {
         const state = {};
-        const project = this.props.root.getProject();
+        const project = this.getProject();
         const hasStartMethod = project.type==="Batch";
         const hasServerStartMethod = project.type==="Service" || project.type==="WebSite";
         const hasHomePage = project && project.type==="WebSite";
@@ -41,16 +48,10 @@ export default class ConfigurationDialog extends React.Component {
             project.value.homePage = this.state.homePage;
     }
 
-    handleClose() {
-        this.setState({show: false});
-        this.props.onClose();
-    }
-
     handleSave() {
         // load latest full description before updating it
-        const dbId = (this.getProject().dbId.value || this.getProject().dbId).toString();
         const params = {
-            params: JSON.stringify([{name: "dbId", value: dbId}, {
+            params: JSON.stringify([{name: "dbId", value: this.props.root.projectId}, {
                 name: "register",
                 type: "Boolean",
                 value: false
@@ -73,18 +74,18 @@ export default class ConfigurationDialog extends React.Component {
         axios.post("/ws/run/storeModule", formData)
             .then(response=>{
                 this.props.root.loadDescription();
-                this.handleClose()
+                closeModal();
             })
             .catch(error=>alert(error));
     }
 
 
     render() {
-        const project = this.props.root.getProject();
+        const project = this.getProject();
         const hasStartMethod = project.type==="Batch";
         const hasServerStartMethod = project.type==="Service" || project.type==="WebSite";
         const hasHomePage = project && project.type==="WebSite";
-        return <Modal show={this.state.show} onHide={this.handleClose} >
+        return <ModalDialog>
             <Modal.Header closeButton={true}>
                 <Modal.Title>Module configuration</Modal.Title>
             </Modal.Header>
@@ -112,10 +113,10 @@ export default class ConfigurationDialog extends React.Component {
                 </form>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={this.handleClose}>Cancel</Button>
+                <Button onClick={closeModal}>Cancel</Button>
                 <Button bsStyle="primary" onClick={this.handleSave}>Save</Button>
             </Modal.Footer>
-        </Modal>;
+        </ModalDialog>;
     }
 
 

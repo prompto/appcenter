@@ -1,6 +1,7 @@
 import { getParam } from '../utils/Utils';
 import React from 'react';
 import { Modal, Button, FormGroup, ControlLabel, InputGroup, FormControl, HelpBlock } from 'react-bootstrap';
+import ModalDialog, { closeModal } from "../components/ModalDialog";
 
 export default class NewTextResourceDialog extends React.Component {
 
@@ -9,7 +10,6 @@ export default class NewTextResourceDialog extends React.Component {
         const cleanName = getParam("name").toLowerCase().replace(/ /g, "-");
         const typeState = this.props.type.getInitialState();
         this.state = {...typeState, show: true, folder: cleanName, name: '', extension: this.props.type.id.toLowerCase(), canCreate: false};
-        this.handleClose = this.handleClose.bind(this);
         this.handleFolder = this.handleFolder.bind(this);
         this.handleName = this.handleName.bind(this);
         this.handleExtension = this.handleExtension.bind(this);
@@ -19,15 +19,8 @@ export default class NewTextResourceDialog extends React.Component {
         this.checkValidationState = this.checkValidationState.bind(this);
     }
 
-    handleClose() {
-        this.setState({show: false});
-        this.props.onClose();
-    }
-
-
     render() {
-        return <Modal show={this.state.show} onHide={this.handleClose} bsSize="large"
-                      dialogClassName="new-text-resource-dialog">
+        return <ModalDialog bsSize="large" dialogClassName="new-text-resource-dialog">
             <Modal.Header closeButton={true}>
                 <Modal.Title>New {this.props.type.label}</Modal.Title>
             </Modal.Header>
@@ -48,10 +41,10 @@ export default class NewTextResourceDialog extends React.Component {
                 </form>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={this.handleClose}>Cancel</Button>
+                <Button onClick={closeModal}>Cancel</Button>
                 <Button id="btnCreate" bsStyle="primary" disabled={!this.state.canCreate} onClick={this.handleCreate}>Create</Button>
             </Modal.Footer>
-        </Modal>;
+        </ModalDialog>;
     }
 
     getValidationState() {
@@ -91,8 +84,8 @@ export default class NewTextResourceDialog extends React.Component {
     }
 
     handleCreate(event) {
+        closeModal();
         this.props.type.createResources(this.state, this.props.root.addResource, this.props.root.addCode)
-        this.handleClose();
     }
 
 }

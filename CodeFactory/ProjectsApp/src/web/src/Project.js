@@ -44,6 +44,10 @@ export default class Project extends React.Component {
                     <MenuItem href={"#"} onSelect={()=>this.props.root.exportProject(module)}>Export</MenuItem>
                     <MenuItem href={"#"} onSelect={()=>this.props.root.modifyProject(module)}>Modify</MenuItem>
                     <MenuItem href={"#"} onSelect={()=>this.props.root.deleteProject(module)}>Delete</MenuItem>
+                    <MenuItem divider/>
+                    <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>New version...</MenuItem>
+                    <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>Freeze...</MenuItem>
+                    <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>Deploy...</MenuItem>
                 </ul>
             </Clearfix>}
         </Col>;

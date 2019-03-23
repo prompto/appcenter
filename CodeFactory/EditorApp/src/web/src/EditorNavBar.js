@@ -8,6 +8,7 @@ import { ALL_ELEMENT_TYPES } from "./resource-types/ResourceTypes";
 import Defaults from './code/Defaults';
 import Activity from './utils/Activity';
 import Launcher from "./run/Launcher";
+import { displayModal } from "./components/ModalDialog";
 
 const dialectLabels = { "E": "Engly", "O": "Objy", "M": "Monty"};
 const ALL_DIALECTS = ["E", "O", "M"];
@@ -19,7 +20,7 @@ export default class EditorNavBar extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { dialect: Defaults.dialect, runMode: "LI", dialog: null};
+        this.state = { dialect: Defaults.dialect, runMode: "LI"};
         this.setDialect = this.setDialect.bind(this);
         this.setRunMode = this.setRunMode.bind(this);
         this.launch = this.launch.bind(this);
@@ -76,10 +77,7 @@ export default class EditorNavBar extends React.Component {
                 { this.renderOutputWidgets() }
                 { this.renderDebuggerWidgets() }
             </Navbar>
-            { this.state.dialog==="Authentication" && <AuthenticationSettingsDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
-            { this.state.dialog==="Dependencies" && <DependenciesDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
-            { this.state.dialog==="Configuration" && <ConfigurationDialog root={this.props.root} onClose={()=>this.setState({dialog: null})}/>}
-        </div>;
+          </div>;
     }
 
     renderDebuggerWidgets() {
@@ -116,9 +114,9 @@ export default class EditorNavBar extends React.Component {
                 </Navbar.Form>
                 <Navbar.Form pullRight>
                     <DropdownButton id="dialect" title="Settings">
-                        { hasConfiguration && <MenuItem onClick={()=>this.setState({dialog: "Configuration"})}>Configuration</MenuItem> }
-                        <MenuItem onClick={()=>this.setState({dialog: "Dependencies"})}>Dependencies</MenuItem>
-                        { hasServerStartMethod && <MenuItem onClick={()=>this.setState({dialog: "Authentication"})}>Authentication</MenuItem> }
+                        { hasConfiguration && <MenuItem onClick={()=>displayModal(<ConfigurationDialog root={this.props.root} />)}>Configuration</MenuItem> }
+                        <MenuItem onClick={()=>displayModal(<DependenciesDialog root={this.props.root} />)}>Dependencies</MenuItem>
+                        { hasServerStartMethod && <MenuItem onClick={()=>displayModal(<AuthenticationSettingsDialog root={this.props.root} />)}>Authentication</MenuItem> }
                 </DropdownButton>
                 </Navbar.Form>
                 <Navbar.Form pullRight>

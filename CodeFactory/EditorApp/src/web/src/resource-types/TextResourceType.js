@@ -1,5 +1,7 @@
 import React from 'react';
 import ResourceType from './ResourceType';
+import { displayModal } from '../components/ModalDialog';
+import NewTextResourceDialog from "../dialogs/NewTextResourceDialog";
 
 export default class TextResourceType extends ResourceType {
 
@@ -11,7 +13,7 @@ export default class TextResourceType extends ResourceType {
     }
 
     newResource(root) {
-        root.setState({newTextResourceType: this});
+        displayModal(<NewTextResourceDialog root={root} type={this}/>);
     }
 
     getInitialState() {

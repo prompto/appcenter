@@ -4,9 +4,6 @@ import Mousetrap from 'mousetrap';
 import { getParam } from './utils/Utils';
 import Catalog from './code/Catalog';
 import MessageArea from './components/MessageArea';
-import NewFileResourceDialog from "./dialogs/NewFileResourceDialog";
-import NewTextResourceDialog from "./dialogs/NewTextResourceDialog";
-import RenameResourceDialog from "./dialogs/RenameResourceDialog";
 import ContentNavigator from './project-tree/ContentNavigator';
 import ContentEditor from './ContentEditor';
 import EditorNavBar from './EditorNavBar';
@@ -40,7 +37,7 @@ export default class EditorPage extends React.Component {
         this.breakpointSelected = this.breakpointSelected.bind(this);
         this.contentNavigator = null;
         this.contentEditor = null;
-        this.state = { project: null, activity: Activity.Loading, content: null, resourceToRename: null, newFileResourceType: null, newTextResourceType: null };
+        this.state = { project: null, activity: Activity.Loading, content: null };
         this.catalog = new Catalog();
         Mousetrap.bind('command+s', this.commitAndReset);
     }
@@ -207,16 +204,7 @@ export default class EditorPage extends React.Component {
                 { this.renderEditor() }
                 { this.renderOutput() }
             </div>
-            { this.renderDialog() }
         </div>;
-    }
-
-    renderDialog() {
-        return <div>
-                { this.state.newFileResourceType!=null && <NewFileResourceDialog type={this.state.newFileResourceType} root={this} onClose={()=>this.setState({newFileResourceType: null})}/> }
-                { this.state.newTextResourceType!=null && <NewTextResourceDialog type={this.state.newTextResourceType} root={this} onClose={()=>this.setState({newTextResourceType: null})}/> }
-                { this.state.resourceToRename!=null && <RenameResourceDialog resource={this.state.resourceToRename} root={this} onClose={()=>this.setState({resourceToRename: null})}/>}
-            </div>;
     }
 
     renderOutput() {
