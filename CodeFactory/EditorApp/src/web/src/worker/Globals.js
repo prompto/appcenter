@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 const globals = self;
 globals.Honey = {'requirePath': ['..']}; // walk up to js folder
-globals.importScripts("/js/lib/require.js", "/js/lib/prompto.core.bundle.js", "/js/mocks/react-bootstrap-3.js");
+globals.importScripts("/js/lib/require.js", "/js/lib/prompto.core.bundle.js", "js/mocks/react-bootstrap-3.js"); // mocks are relative to ide
 
 const log = function() {
     var e = Array.prototype.slice.call(arguments, 0);
