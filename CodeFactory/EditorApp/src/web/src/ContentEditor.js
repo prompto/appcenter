@@ -77,6 +77,9 @@ export default class ContentEditor extends React.Component {
         this.setState({ breakpoints: breakpoints });
     }
 
+    dependenciesUpdated() {
+        this.promptoEditor.dependenciesUpdated();
+    }
 
    render() {
         const root = this.props.root;

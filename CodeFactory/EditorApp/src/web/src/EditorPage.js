@@ -35,6 +35,7 @@ export default class EditorPage extends React.Component {
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
         this.breakpointSelected = this.breakpointSelected.bind(this);
+        this.dependenciesUpdated = this.dependenciesUpdated.bind(this);
         this.contentNavigator = null;
         this.contentEditor = null;
         this.state = { project: null, activity: Activity.Loading, content: null };
@@ -193,6 +194,11 @@ export default class EditorPage extends React.Component {
                 this.messageArea.setMessage("Server stopped!");
             })
             .catch(error=>alert(error));
+    }
+
+    dependenciesUpdated() {
+        this.loadDescription();
+        this.contentEditor.dependenciesUpdated();
     }
 
     render() {

@@ -26,7 +26,10 @@ export default class PromptoWorker extends Mirror {
         this.markLoading("Project");
         // fake 'library' to ensure libraries are published only once dependencies are loaded
         this.markLoading("%Description%");
-        // load core
+        this.loadCore();
+    }
+
+    loadCore() {
         this.markLoading("Core");
         fetcher.fetchText("prompto/prompto.pec", null, text => {
             this.$repo.registerLibraryCode(text, "E");
@@ -65,7 +68,7 @@ export default class PromptoWorker extends Mirror {
     setProject(projectId, loadDependencies) {
         this.$projectId = projectId;
         this.unpublishProject();
-        this.loadProject(projectId, loadDependencies);
+        this.loadProject(loadDependencies);
     }
 
 
@@ -108,30 +111,36 @@ export default class PromptoWorker extends Mirror {
     }
 
 
-    loadProject(projectId, loadDependencies) {
-        this.fetchModuleDescription(projectId, true, response => {
+    loadProject(loadDependencies) {
+        this.fetchModuleDescription(this.$projectId, true, response => {
             if(response.error)
                 ; // TODO something
             else {
                 this.$project = response.data.value;
-                if(loadDependencies && this.$project.dependencies) {
-                    this.$project.dependencies.value
-                        .filter(dep => dep!=null)
-                        .map(dep=>this.loadDependency(dep.value || dep), this);
-                }
+                if(loadDependencies)
+                    this.loadDependencies();
                 this.markLoaded("%Description%");
             }
         });
-        this.fetchProjectDeclarations(projectId, response => {
+        this.fetchProjectDeclarations(this.$projectId, response => {
             if(response.error)
                 ; // TODO something
             else {
                 const declarations = response.data.value;
-                this.$repo.registerProjectDeclarations(projectId, declarations);
+                this.$repo.registerProjectDeclarations(this.$projectId, declarations);
                 this.markLoaded("Project");
             }
         });
     }
+
+    loadDependencies() {
+        if(this.$project.dependencies) {
+            this.$project.dependencies.value
+                .filter(dep => dep!=null)
+                .map(dep=>this.loadDependency(dep.value || dep), this);
+        }
+    }
+
 
     loadDependency(dependency) {
         this.markLoading(dependency.name);
@@ -144,6 +153,15 @@ export default class PromptoWorker extends Mirror {
                 this.markLoaded(dependency.name);
             }
         });
+    }
+
+    dependenciesUpdated() {
+        this.$repo.clearLibrariesContext();
+        this.markLoading("Project");
+        // fake 'library' to ensure libraries are published only once dependencies are loaded
+        this.markLoading("%Description%");
+        this.loadCore();
+        this.loadProject(true);
     }
 
     fetchModuleDescription(projectId, register, success) {

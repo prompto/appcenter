@@ -34,6 +34,12 @@ export default class Repository {
         }, this);
     };
 
+    clearLibrariesContext() {
+        this.librariesContext = prompto.runtime.Context.newGlobalContext();
+        this.projectContext.setParentContext(this.librariesContext);
+    }
+
+
     publishLibraries() {
         return {
             removed: {},

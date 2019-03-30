@@ -72,7 +72,7 @@ export default class DependenciesDialog extends React.Component {
         formData.append("params", JSON.stringify(params));
         axios.post("/ws/run/storeModule", formData)
             .then(response=>{
-                this.props.root.loadDescription();
+                this.props.root.dependenciesUpdated();
                 closeModal();
             })
             .catch(error=>alert(error));

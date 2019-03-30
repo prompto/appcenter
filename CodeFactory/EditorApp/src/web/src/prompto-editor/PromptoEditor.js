@@ -311,6 +311,10 @@ export default class PromptoEditor extends React.Component {
         this.saveBreakpoints();
     }
 
+    dependenciesUpdated() {
+        this.getSession().getMode().dependenciesUpdated();
+    }
+
     render() {
         return <React.Fragment>
                 { this.renderEditor() }
