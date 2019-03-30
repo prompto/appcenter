@@ -271,8 +271,7 @@ define createHomePageResources as method receiving module and name doing:
 	decl = WidgetDeclaration with widgetName as name, 'v0.0.1' as version, "O" as dialect, body and module
 	body = "header:\n"
 	body = body + "  title: " + module.name + "\n"
-	body = body + "  icon: favicon.ico\n"
-	body = body + "  widgetLibrary: react-bootstrap-3\n"
+	body = body + "  htmlEngine: react-16\n"
 	body = body + "body:\n"
 	body = body + "  widget: " + widgetName + "\n"
 	page = TextResource with name, 'v0.0.1' as version, "text/page" as mimeType, body and module
