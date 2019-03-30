@@ -34,9 +34,8 @@ export default class ModalDialog extends React.Component {
     }
 
     render() {
-        return <Modal show={this.state.show} onHide={this.close}>
-            { this.props.children }
-        </Modal>;
+        const props = { ...this.props, show: this.state.show, onHide: this.close };
+        return React.createElement(Modal, props);
     }
 
     close() {
