@@ -92,13 +92,13 @@ const ALL_CONTROL_IDS = [ "RESUME", "SUSPEND", "TERMINATE", "STEP_OVER", "STEP_I
 export default class DebuggerControls extends React.Component {
 
     refreshState() {
-        ALL_CONTROL_IDS.forEach(id => this[id].refreshState());
+        ALL_CONTROL_IDS.forEach(id => this.refs[id].refreshState());
     }
     
     
     render() {
         return <ButtonGroup className="debugger-controls">
-            { ALL_CONTROL_IDS.map(id => <DebuggerControl key={id} ref={ref => this[id]=ref} id={id} debuggerView={this.props.debuggerView}/>, this) }
+            { ALL_CONTROL_IDS.map(id => <DebuggerControl key={id} ref={id} id={id} debuggerView={this.props.debuggerView}/>, this) }
         </ButtonGroup>
     }
 }

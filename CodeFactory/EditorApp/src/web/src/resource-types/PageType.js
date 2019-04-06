@@ -21,10 +21,10 @@ export default class PageType extends TextResourceType {
     getSampleBody(state) {
         const widgetName = this.computeWidgetName(state.name);
         var sample = "header:\n" +
-            "  title: "+ state.name + '\n' +
-            "  icon: favicon.ico\n";
+            "  title: "+ state.name + '\n';
         if(state.widgetLibrary!=="none")
-            sample += "  widgetLibrary: " + state.widgetLibrary + "\n";
+            sample += "  widgetLibraries:\n" +
+                "  - " + state.widgetLibrary + "\n";
         else
             sample += "  htmlEngine: " + state.htmlEngine + "\n" +
                 "  uiFramework: " + state.uiFramework + "\n"

@@ -5,7 +5,7 @@ const prompto = globals.prompto;
 /* a function for inferring dialect from file extension */
 export const inferDialect = function(path) {
     return path.substring(path.length-2, path.length-1).toUpperCase();
-}
+};
 
 /* a function for getting a new prompto code parser */
 export const newParser = function(input, dialect, listener) {
@@ -15,13 +15,13 @@ export const newParser = function(input, dialect, listener) {
     if(listener)
         parser.addErrorListener(listener);
     return parser;
-}
+};
 
 /* a function for parsing prompto code into declarations */
 export const parse = function(input, dialect, listener) {
     var parser = newParser(input, dialect, listener);
     return parser.parse();
-}
+};
 
 /* a function for producing code from a declaration object */
 export const unparse = function(context, decl, dialect) {
@@ -41,7 +41,7 @@ export const unparse = function(context, decl, dialect) {
     }
     decl.toDialect(writer);
     return writer.toString();
-}
+};
 
 /* a function for translating current input to other dialect */
 export const translate = function(context, data, from, to) {
@@ -50,17 +50,49 @@ export const translate = function(context, data, from, to) {
     var writer = new prompto.utils.CodeWriter(dialect, context.newChildContext());
     decls.toDialect(writer);
     return writer.toString();
-}
+};
 
 /* a utility function to sort by field name */
 export const sortBy = function(a, f) {
     return a.sort(function(i1,i2) {
         return (i1[f]>i2[f]) ? 1 : ((i1[f]<i2[f]) ? -1 : 0);
     });
-}
+};
 
 export const makeValidId = function(name) {
     /*eslint no-useless-escape: "off"*/
     return name.replace(/[ /\.]/g, "_").replace(/[\"\'\(\),]/g,"");
 };
 
+/* use global functions so we can call it on serialized data */
+export const getCodebaseLength = function(codebase) {
+    if(!codebase)
+        return 0;
+    let length = 0;
+    for(var name in codebase) {
+        if(Array.isArray(codebase[name]))
+            length += codebase[name].length;
+    }
+    return length;
+};
+
+export const getFirstCodebaseEntry = function(codebase) {
+    if(!codebase)
+        return null;
+    for(var name in codebase) {
+        if(Array.isArray(codebase[name]) && codebase[name].length > 0)
+            return { key: name, value: codebase[name][0] };
+    }
+    return null;
+};
+
+export const getContentFromEntry = function(entry) {
+    const subType = entry.key==="categories" ? "category" : entry.key.substring(0, entry.key.length-1);
+    let content = { type: "prompto", subType: subType, core: false };
+    if(subType==="method") {
+        content.name = entry.value.name;
+        content.proto = entry.value.protos[0];
+    } else
+        content.name = entry.value;
+    return content;
+}

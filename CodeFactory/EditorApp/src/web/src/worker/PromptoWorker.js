@@ -46,7 +46,7 @@ export default class PromptoWorker extends Mirror {
             const catalog = this.$repo.handleEditContent(value, this.$dialect, errorListener, this.$selectedContent);
             delete this.$selectedContent;
             if (catalog)
-                this.sender.emit("catalogUpdated", catalog);
+                this.sender.emit("contentUpdated", catalog);
         }
         this.$value = value;
         this.sender.emit("annotate", errorListener.problems);

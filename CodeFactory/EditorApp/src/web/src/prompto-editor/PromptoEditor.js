@@ -20,7 +20,6 @@ export default class PromptoEditor extends React.Component {
     constructor(props) {
         super(props);
         this.content = null;
-        this.aceEditor = null;
         this.getSession = this.getSession.bind(this);
         this.setContent = this.setContent.bind(this);
         this.codeEdited = this.codeEdited.bind(this);
@@ -33,7 +32,7 @@ export default class PromptoEditor extends React.Component {
 
 
     getEditor() {
-        return this.aceEditor.editor;
+        return this.refs.AceEditor.editor;
     }
 
 
@@ -292,6 +291,11 @@ export default class PromptoEditor extends React.Component {
         this.props.catalogUpdated(catalog);
     }
 
+    contentUpdated(catalog) {
+        this.props.contentUpdated(catalog);
+    }
+
+
     destroy(content) {
         const session = this.getSession();
         session.getMode().destroy(content);
@@ -328,7 +332,7 @@ export default class PromptoEditor extends React.Component {
         const hidden = this.state.debugMode && this.state.debugMode!=="STEPPING";
         const style = {display: (this.state.display && !hidden) ? "block" : "none" };
         return <div className={className} style={style}>
-                <AceEditor ref={ref=>{if(ref)this.aceEditor=ref;}} name="prompto-editor"
+                <AceEditor ref="AceEditor" name="prompto-editor"
                        theme="eclipse" mode="text"
                        value={this.state.value} onChange={this.codeEdited}
                        width="100%" height="100%" editorProps={{ $blockScrolling: Infinity }} />

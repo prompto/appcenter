@@ -20,14 +20,13 @@ export default class ResourceEditor extends React.Component {
 
     constructor(props) {
         super(props);
-        this.aceEditor = null;
         this.setContent = this.setContent.bind(this);
         this.textEdited = this.textEdited.bind(this);
         this.state = {display: "none", name: "", value: ""};
     }
 
     setContent(content) {
-        const editor = this.aceEditor.editor;
+        const editor = this.refs.AceEditor.editor;
         const session = editor.getSession();
         const currentModeId = this.currentModeId();
         const newModeId = this.computeModeId(content);
@@ -46,7 +45,7 @@ export default class ResourceEditor extends React.Component {
     }
 
     currentModeId() {
-        const aceModeId = this.aceEditor.editor.getSession().getMode().$id;
+        const aceModeId = this.refs.AceEditor.editor.getSession().getMode().$id;
         return aceModeId.split("/")[2];
     }
 
@@ -74,7 +73,7 @@ export default class ResourceEditor extends React.Component {
         const style = {display: this.state.display};
         return <div className="resource-editor-wrapper" style={style} >
                 <div className="ace-editor-wrapper">
-                    <AceEditor ref={ref=>this.aceEditor=ref} name="resource-editor"
+                    <AceEditor ref="AceEditor" name="resource-editor"
                                theme="eclipse" mode="text"
                                value={this.state.value} onChange={this.textEdited}
                                width="100%" height="100%" editorProps={{ $blockScrolling: Infinity }}  />

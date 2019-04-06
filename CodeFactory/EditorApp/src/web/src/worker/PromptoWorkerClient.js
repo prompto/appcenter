@@ -22,7 +22,7 @@ export default class PromptoWorkerClient extends window.ace.acequire("ace/worker
         // done with the hacky stuff
         this.$worker.onmessage = this.messageHook.bind(this);
         this.$editor = editor;
-        this.addEventListeners(["errors", "annotate", "terminate", "value", "catalogUpdated", "inspected"]);
+        this.addEventListeners(["errors", "annotate", "terminate", "value", "catalogUpdated", "contentUpdated", "inspected"]);
         this.attachToDocument(this.getSession().getDocument());
         this.send("setDialect", [ dialect ] );
     }
@@ -104,6 +104,10 @@ export default class PromptoWorkerClient extends window.ace.acequire("ace/worker
 
     onCatalogUpdated(v) {
         this.getSession().getMode().onCatalogUpdated(v.data);
+    }
+
+    onContentUpdated(v) {
+        this.getSession().getMode().onContentUpdated(v.data);
     }
 
     // a utility method to inspect worker data in Firefox/Safari

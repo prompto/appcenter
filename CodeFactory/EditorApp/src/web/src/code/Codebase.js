@@ -2,6 +2,8 @@
 const globals = self || window;
 const prompto = globals.prompto;
 
+import { getCodebaseLength } from './Utils';
+
 /* an object which represents a catalog of declarations, classified by type */
 export default class Codebase {
 
@@ -13,20 +15,7 @@ export default class Codebase {
     }
 
     length() {
-        var length = 0;
-        if (this.attributes)
-            length += this.attributes.length;
-        if (this.categories)
-            length += this.categories.length;
-        if (this.enumerations)
-            length += this.enumerations.length;
-        if (this.methods)
-            length += this.methods.length;
-        if (this.tests)
-            length += this.tests.length;
-        if (this.widgets)
-            length += this.widgets.length;
-        return length;
+        return getCodebaseLength(this);
     }
 
 

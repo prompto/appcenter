@@ -9,12 +9,16 @@ export default class ContentNavigator extends React.Component {
         this.state = {showLibraries: false}
     }
 
+    getProjectTree() {
+        return this.refs.ProjectTree;
+    }
+
     render() {
         return <div className="tree">
             <div className="checkbox">
                 <label><input type="checkbox" id="show-libs" checked={this.state.showLibraries} onChange={this.toggleShowLibraries} />&nbsp;Show libraries</label>
             </div>
-            <ProjectTree ref={ref=>this.projectTree=ref} catalog={this.props.catalog} showLibraries={this.state.showLibraries} root={this.props.root}/>
+            <ProjectTree ref="ProjectTree" catalog={this.props.catalog} showLibraries={this.state.showLibraries} root={this.props.root}/>
         </div>;
     }
 

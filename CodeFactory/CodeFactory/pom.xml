@@ -18,7 +18,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<prompto.version>0.0.54</prompto.version>
+		<prompto.version>0.0.1-SNAPSHOT</prompto.version>
 		<jackson.version>2.9.5</jackson.version>
 		<jetty.version>9.3.3.v20150827</jetty.version>
 		<solr.version>5.4.0</solr.version>
@@ -94,7 +94,28 @@
 					<excludedGroups>prompto.server.SeleniumTests,prompto.utils.ManualTests</excludedGroups>
 				</configuration>
 			</plugin>
+			<!-- delete src/main/web directory to avoid pollution from previous runs --> 
 			<plugin>
+			    <artifactId>maven-clean-plugin</artifactId>
+			    <version>2.5</version>
+			    <executions>
+			      <execution>
+			        <id>clean-web-resources</id>
+			        <phase>clean</phase>
+			        <goals>
+			          <goal>clean</goal>
+			        </goals>
+			        <configuration>
+			         <filesets>
+			            <fileset>
+			              <directory>src/main/web</directory>
+			            </fileset>
+			          </filesets>
+			        </configuration>
+			      </execution>
+			    </executions>
+			  </plugin>
+  			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.0.1</version>
 				<!-- copy web pages to src/main/web -->
@@ -109,7 +130,7 @@
 						<phase>generate-resources</phase>
 						<configuration>
 							<outputDirectory>src/main/web</outputDirectory>
-							<overwrite>true</overwrite>
+							<overwrite>false</overwrite>
 							<resources>
 								<resource>
 									<directory>../ProjectsApp/src/web/build</directory>

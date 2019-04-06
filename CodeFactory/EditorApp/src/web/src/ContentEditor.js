@@ -10,67 +10,63 @@ export default class ContentEditor extends React.Component {
 
     constructor(props) {
         super(props);
-        this.debuggerView = null;
-        this.promptoEditor = null;
-        this.resourceEditor = null;
-        this.binaryEditor = null;
         this.state = { breakpoints: new Breakpoints() };
         this.breakpointsUpdated = this.breakpointsUpdated.bind(this);
     }
 
     setProject(projectId, loadDependencies) {
-        this.promptoEditor.setProject(projectId, loadDependencies);
+        this.refs.PromptoEditor.setProject(projectId, loadDependencies);
     }
 
     setContent(content) {
-        if(this.promptoEditor)
-            this.promptoEditor.setDebugMode(null, () => this.promptoEditor.setContent(content));
-        if(this.resourceEditor)
-            this.resourceEditor.setContent(content);
-        if(this.binaryEditor)
-            this.binaryEditor.setContent(content);
+        if(this.refs.PromptoEditor)
+            this.refs.PromptoEditor.setDebugMode(null, () => this.refs.PromptoEditor.setContent(content));
+        if(this.refs.ResourceEditor)
+            this.refs.ResourceEditor.setContent(content);
+        if(this.refs.BinaryEditor)
+            this.refs.BinaryEditor.setContent(content);
     }
 
     destroyContent(content) {
         if(content.type.toLowerCase()==="prompto")
-            this.contentEditor.promptoEditor.destroy(content);
+            this.refs.PromptoEditor.destroy(content);
     }
 
     setDialect(dialect) {
-        this.promptoEditor.setDialect(dialect);
+        this.refs.PromptoEditor.setDialect(dialect);
     }
 
     prepareCommit(commitPrepared) {
-        this.promptoEditor.prepareCommit(commitPrepared);
+        this.refs.PromptoEditor.prepareCommit(commitPrepared);
     }
 
     commitFailed() {
-        this.promptoEditor.commitFailed();
+        this.refs.PromptoEditor.commitFailed();
     }
 
     commitSuccessful() {
-        this.promptoEditor.commitSuccessful();
+        this.refs.PromptoEditor.commitSuccessful();
     }
 
     runTestOrMethod(content, runMode) {
         const root = this.props.root;
-        this.promptoEditor.runTestOrMethod(content, runMode, ()=>root.setState({activity: Activity.Idling}));
+        this.refs.PromptoEditor.runTestOrMethod(content, runMode, ()=>root.setState({activity: Activity.Idling}));
     }
 
     fetchRunnablePage(content, callback) {
-        this.promptoEditor.fetchRunnablePage(content, callback);
+        this.refs.PromptoEditor.fetchRunnablePage(content, callback);
     }
 
     setDebugger(dbg) {
-        this.debuggerView.setDebugger(dbg);
+        this.refs.DebuggerView.setDebugger(dbg);
     }
 
     getDebugger() {
-        return this.debuggerView.getDebugger();
+        return this.refs.DebuggerView.getDebugger();
     }
 
     getDebuggerView() {
-        return this.debuggerView;
+        return this.refs.DebuggerView;
     }
 
     breakpointsUpdated(breakpoints) {
@@ -78,22 +74,22 @@ export default class ContentEditor extends React.Component {
     }
 
     dependenciesUpdated() {
-        this.promptoEditor.dependenciesUpdated();
+        this.refs.PromptoEditor.dependenciesUpdated();
     }
 
    render() {
         const root = this.props.root;
         const activity = root.state.activity;
         return <div className="container">
-            <DebuggerView ref={ref=>this.debuggerView=ref||this.debuggerView} activity={activity} container={this}
+            <DebuggerView ref="DebuggerView" activity={activity} container={this}
                           breakpoints={this.state.breakpoints} breakpointSelected={root.breakpointSelected}/>
-            <PromptoEditor ref={ref=>this.promptoEditor=ref||this.promptoEditor} commitAndReset={root.commitAndReset}
-                           catalogUpdated={root.catalogUpdated} projectUpdated={root.projectUpdated}
-                           breakpointsUpdated={this.breakpointsUpdated}
+            <PromptoEditor ref="PromptoEditor" commitAndReset={root.commitAndReset}
+                           catalogUpdated={root.catalogUpdated} contentUpdated={root.contentUpdated}
+                           projectUpdated={root.projectUpdated} breakpointsUpdated={this.breakpointsUpdated}
                            root={this.props.root} activity={activity}/>
-            <ResourceEditor ref={ref=>this.resourceEditor=ref||this.resourceEditor} textEdited={root.textResourceEdited}
+            <ResourceEditor ref="ResourceEditor" textEdited={root.textResourceEdited}
                             root={this.props.root} activity={activity} />
-            <BinaryEditor ref={ref=>this.binaryEditor=ref||this.binaryEditor}
+            <BinaryEditor ref="BinaryEditor"
                           root={this.props.root} activity={activity} />
         </div>
     }

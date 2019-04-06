@@ -10,10 +10,6 @@ export default class DebuggerView extends React.Component {
     constructor(props) {
         super(props);
         this.debugger = null;
-        this.workersView = null;
-        this.controlsView = null;
-        this.variablesView = null;
-        this.breakpointsView = null;
         this.state = {workers: [], worker: null, stackFrame: null};
         this.eventQueue = []; // events and request responses are not received in sequence, so need to rebuild sequence
     }
@@ -30,7 +26,7 @@ export default class DebuggerView extends React.Component {
         this.setState({workers: [], worker: null, stackFrame: null}, () => {
             this.debugger.disconnect();
             this.debugger = null;
-            const promptoEditor = this.props.container.promptoEditor;
+            const promptoEditor = this.props.container.getPromptoEditor();
             promptoEditor.stopDebugging();
         });
     }
@@ -54,7 +50,7 @@ export default class DebuggerView extends React.Component {
             const workers = this.state.workers;
             workers.push(worker);
             this.setState({workers: workers}, () => {
-                this.controlsView.refreshState();
+                this.refs.DebuggerControls.refreshState();
             });
         }
     }
@@ -98,8 +94,8 @@ export default class DebuggerView extends React.Component {
             return;
         else
             this.setStackFrame(worker.workerId, 0, () => {
-                this.controlsView.refreshState();
-                this.variablesView.refreshState();
+                this.refs.DebuggerControls.refreshState();
+                this.refs.VariablesView.refreshState();
                 this.displayDebuggedCode();
             });
     }
@@ -113,8 +109,8 @@ export default class DebuggerView extends React.Component {
                 // don't interfere while stepping in another worker
                 if (worker === this.state.worker)
                     this.setState({stackFrame: null}, () => {
-                        this.controlsView.refreshState();
-                        this.variablesView.refreshState();
+                        this.refs.DebuggerControls.refreshState();
+                        this.refs.VariablesView.refreshState();
                         this.displayDebuggedCode();
                     });
 
@@ -123,7 +119,7 @@ export default class DebuggerView extends React.Component {
     }
 
     displayDebuggedCode() {
-        const promptoEditor = this.props.container.promptoEditor;
+        const promptoEditor = this.props.container.getPromptoEditor();
         const stackFrame = this.state.stackFrame;
         const debugMode = stackFrame ? "STEPPING" : "PROCESSING";
         promptoEditor.setDebugMode(debugMode, () => {
@@ -148,9 +144,9 @@ export default class DebuggerView extends React.Component {
     }
 
     workerCompleted(callback) {
-        this.controlsView.refreshState();
-        this.variablesView.refreshState();
-        const promptoEditor = this.props.container.promptoEditor;
+        this.refs.DebuggerControls.refreshState();
+        this.refs.VariablesView.refreshState();
+        const promptoEditor = this.props.container.getPromptoEditor();
         const debugMode = this.state.workers.length > 0 ? "PROCESSING" : "IDLING";
         promptoEditor.setDebugMode(debugMode, callback);
     }
@@ -183,14 +179,14 @@ export default class DebuggerView extends React.Component {
         const style = {display: activity === Activity.Debugging ? "block" : "none"};
         return <div className="debugger" style={style}>
             <div className="debugger-left">
-                <WorkersView ref={ref => this.workersView = ref} debuggerView={this}/>
-                <DebuggerControls ref={ref => this.controlsView = ref} debuggerView={this}/>
+                <WorkersView ref="WorkersView" debuggerView={this}/>
+                <DebuggerControls ref="DebuggerControls" debuggerView={this}/>
             </div>
             <div className="debugger-center">
-                <VariablesView ref={ref => this.variablesView = ref} debuggerView={this}/>
+                <VariablesView ref="VariablesView" debuggerView={this}/>
             </div>
             <div className="debugger-right">
-                <BreakpointsView ref={ref => this.breakpointsView = ref} debuggerView={this}
+                <BreakpointsView ref="BreakpointsView" debuggerView={this}
                                  breakpoints={this.props.breakpoints} breakpointSelected={this.props.breakpointSelected} />
             </div>
         </div>;

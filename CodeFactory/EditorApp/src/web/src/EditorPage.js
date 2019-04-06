@@ -2,6 +2,7 @@ import axios from 'axios';
 import React from 'react';
 import Mousetrap from 'mousetrap';
 import { getParam } from './utils/Utils';
+import { getCodebaseLength, getFirstCodebaseEntry, getContentFromEntry } from './code/Utils';
 import Catalog from './code/Catalog';
 import MessageArea from './components/MessageArea';
 import ContentNavigator from './project-tree/ContentNavigator';
@@ -16,8 +17,6 @@ export default class EditorPage extends React.Component {
         super(props);
         this.projectId = getParam("dbId");
         this.projectName = getParam("name");
-        this.navBar = null;
-        this.contentNavigator = null;
         this.resourcesLoaded = this.resourcesLoaded.bind(this);
         this.setDialect = this.setDialect.bind(this);
         this.destroy = this.destroy.bind(this);
@@ -34,10 +33,9 @@ export default class EditorPage extends React.Component {
         this.getProject = this.getProject.bind(this);
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
+        this.contentUpdated = this.contentUpdated.bind(this);
         this.breakpointSelected = this.breakpointSelected.bind(this);
         this.dependenciesUpdated = this.dependenciesUpdated.bind(this);
-        this.contentNavigator = null;
-        this.contentEditor = null;
         this.state = { project: null, activity: Activity.Loading, content: null };
         this.catalog = new Catalog();
         Mousetrap.bind('command+s', this.commitAndReset);
@@ -59,7 +57,7 @@ export default class EditorPage extends React.Component {
     }
 
     setDialect(dialect) {
-        this.contentEditor.setDialect(dialect);
+        this.refs.ContentEditor.setDialect(dialect);
     }
 
     revert() {
@@ -70,7 +68,7 @@ export default class EditorPage extends React.Component {
 
     commitAndReset() {
         // TODO confirm
-        this.contentEditor.prepareCommit(this.commitPrepared);
+        this.refs.ContentEditor.prepareCommit(this.commitPrepared);
         this.clearModuleContext();
         return false;
     }
@@ -87,20 +85,20 @@ export default class EditorPage extends React.Component {
                 .then(response=>this.commitSuccessful(response))
                 .catch(error=>this.commitFailed(error));
         } else {
-            this.messageArea.setMessage("Nothing to commit!");
-            this.contentEditor.commitSuccessful();
+            this.refs.MessageArea.setMessage("Nothing to commit!");
+            this.refs.ContentEditor.commitSuccessful();
         }
 
     }
 
     commitFailed(failure) {
-        this.messageArea.setMessage("Commit failed!");
-        this.contentEditor.commitFailed();
+        this.refs.MessageArea.setMessage("Commit failed!");
+        this.refs.ContentEditor.commitFailed();
     }
 
     commitSuccessful(success) {
-        this.messageArea.setMessage("Commit ok!");
-        this.contentEditor.commitSuccessful();
+        this.refs.MessageArea.setMessage("Commit ok!");
+        this.refs.ContentEditor.commitSuccessful();
     }
 
     clearModuleContext() {
@@ -165,6 +163,22 @@ export default class EditorPage extends React.Component {
         this.setCatalog(this.catalog, content, callback);
     }
 
+    contentUpdated(delta, callback) {
+        this.catalogUpdated(delta, callback);
+        this.updateCurrentContent(delta);
+    }
+
+    updateCurrentContent(delta) {
+        const length = getCodebaseLength(delta.added);
+        if(length===1) {
+            const entry = getFirstCodebaseEntry(delta.added);
+            const content = getContentFromEntry(entry);
+            if(content)
+                this.setEditorContent(content);
+       }
+    }
+
+
     breakpointSelected(breakpoint) {
         const content = breakpoint.toContent();
         this.setEditorContent(content);
@@ -172,7 +186,7 @@ export default class EditorPage extends React.Component {
 
 
     loadCode(loadDependencies) {
-        this.contentEditor.setProject(this.projectId, loadDependencies);
+        this.refs.ContentEditor.setProject(this.projectId, loadDependencies);
     }
 
     loadDescription() {
@@ -191,20 +205,20 @@ export default class EditorPage extends React.Component {
         const params = { params: JSON.stringify([ {name:"dbId", value: dbId}]) };
         axios.get('/ws/run/killModule', { params: params })
             .then(resp=>{
-                this.messageArea.setMessage("Server stopped!");
+                this.refs.MessageArea.setMessage("Server stopped!");
             })
             .catch(error=>alert(error));
     }
 
     dependenciesUpdated() {
         this.loadDescription();
-        this.contentEditor.dependenciesUpdated();
+        this.refs.ContentEditor.dependenciesUpdated();
     }
 
     render() {
         return <div>
-            <EditorNavBar ref={ref=>this.navBar=ref} root={this}/>
-            <MessageArea ref={ref=>this.messageArea=ref}/>
+            <EditorNavBar ref="EditorNavBar" root={this}/>
+            <MessageArea ref="MessageArea"/>
             <div>
                 { this.renderLoading() }
                 { this.renderEditor() }
@@ -232,10 +246,10 @@ export default class EditorPage extends React.Component {
         const style = { display: activity===Activity.Editing || activity===Activity.Debugging ? "block" : "none"};
         return <div className="content" style={style}>
                 <div className="navigator">
-                    <ContentNavigator ref={ref=>{if(ref)this.contentNavigator=ref;}} root={this} catalog={this.catalog}/>
+                    <ContentNavigator ref="ContentNavigator" root={this} catalog={this.catalog}/>
                 </div>
                 <div className="editor">
-                    <ContentEditor ref={ref=>{if(ref)this.contentEditor=ref;}} root={this} />
+                    <ContentEditor ref="ContentEditor" root={this} />
                 </div>
             </div>;
     }
@@ -246,8 +260,8 @@ export default class EditorPage extends React.Component {
         if (content === this.state.content)
             return;
         this.setState({content: content}, ()=>{
-            if(this.contentEditor)
-                this.contentEditor.setContent(content);
+            if(this.refs.ContentEditor)
+                this.refs.ContentEditor.setContent(content);
             if(callback)
                 callback();
         });
@@ -255,7 +269,7 @@ export default class EditorPage extends React.Component {
 
     setCatalog(catalog, content, callback) {
         this.setState({catalog: catalog}, () => {
-            this.contentNavigator.projectTree.setContentToSelect(content);
+            this.refs.ContentNavigator.getProjectTree().setContentToSelect(content);
             if(callback)
                 callback();
         })
@@ -273,7 +287,7 @@ export default class EditorPage extends React.Component {
         else {
             const content = this.state.content;
             if(content.type.toLowerCase()==="prompto") {
-                this.contentEditor.destroyContent(content);
+                this.refs.ContentEditor.destroyContent(content);
                 this.setEditorContent({ type: "prompto" });
             } else {
                 var res = this.catalog.resourceFromContent(content);
@@ -288,7 +302,7 @@ export default class EditorPage extends React.Component {
     addResource(content, callback) {
         content.value.module =  { type: "Module", value: { dbId: this.projectId.toString() } };
         const delta = { added: { resources: [content]}};
-        const projectTree = this.contentNavigator.projectTree;
+        const projectTree = this.refs.ContentNavigator.getProjectTree();
         if(callback)
             this.catalogUpdated(delta, () => projectTree.showContent(content, callback));
         else
@@ -303,16 +317,16 @@ export default class EditorPage extends React.Component {
 
     addCode(content, code, dialect) {
         this.setEditorContent(content,
-            () => this.navBar.setDialect(dialect,
-                () => this.contentEditor.setContent({type: "prompto", body: code})));
+            () => this.refs.EditorNavBar.setDialect(dialect,
+                () => this.refs.ContentEditor.setContent({type: "prompto", body: code})));
     }
 
     fetchRunnablePage(content, callback) {
-        this.contentEditor.fetchRunnablePage(content, callback);
+        this.refs.ContentEditor.fetchRunnablePage(content, callback);
     }
 
     runTestOrMethod(content, runMode) {
-        this.contentEditor.runTestOrMethod(content, runMode);
+        this.refs.ContentEditor.runTestOrMethod(content, runMode);
     }
 
     stopServer() {
@@ -324,15 +338,15 @@ export default class EditorPage extends React.Component {
     }
 
     setDebugger(dbg) {
-        this.contentEditor.setDebugger(dbg);
+        this.refs.ContentEditor.setDebugger(dbg);
     }
 
     getDebuggerView() {
-        return this.contentEditor.getDebuggerView();
+        return this.refs.ContentEditor.getDebuggerView();
     }
 
     getDebugger() {
-        return this.contentEditor.getDebuggerView().getDebugger();
+        return this.refs.ContentEditor.getDebuggerView().getDebugger();
     }
 
     stopDebugging() {

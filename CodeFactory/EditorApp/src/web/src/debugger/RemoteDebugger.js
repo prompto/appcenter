@@ -49,7 +49,7 @@ export default class RemoteDebugger {
 
     clientConnected() {
         this.rootView.setState({activity: Activity.Debugging});
-        this.rootView.contentEditor.promptoEditor.debuggerConnected(this);
+        this.rootView.getContentEditor().getPromptoEditor().debuggerConnected(this);
     }
 
     serverConnectedEvent(event) {
