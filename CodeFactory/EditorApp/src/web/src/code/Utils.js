@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-const globals = window || self || this;
+const globals = self || this;
 
 /* a function for inferring dialect from file extension */
 export const inferDialect = function(path) {
