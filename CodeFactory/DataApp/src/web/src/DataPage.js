@@ -9,7 +9,7 @@ export default class DataPage extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { query: "", store: "APPS", headers: null, rows: null, totalRows: 0, page: 1, rowsPerPage: 25, showDbId: false, error: "No data" };
+        this.state = { query: "", store: "DATA", headers: null, rows: null, totalRows: 0, page: 1, rowsPerPage: 25, showDbId: false, error: "No data" };
         this.fetchPage = this.fetchPage.bind(this);
         this.fetchFailed = this.fetchFailed.bind(this);
         this.dataFetched = this.dataFetched.bind(this);
@@ -104,13 +104,13 @@ export default class DataPage extends React.Component {
     extractType(value) {
         if(value.type)
             return value.type;
-        else if(typeof(value)==typeof(""))
+        else if(typeof(value)===typeof(""))
             return "Text";
-        else if(typeof(value)==typeof(1.1))
+        else if(typeof(value)===typeof(1.1))
             return "Decimal";
-        else if(typeof(value)==typeof(1))
+        else if(typeof(value)===typeof(1))
             return "Integer";
-        else if(typeof(value)==typeof(true))
+        else if(typeof(value)===typeof(true))
             return "Boolean";
         else
             return "Any";
@@ -126,7 +126,7 @@ export default class DataPage extends React.Component {
             <DataNavBar root={this}/>
             <QueryArea2 id="data-container" root={this}/>
             { this.state.error && <ErrorMessage message={this.state.error}/> }
-            { this.state.error==null && <DataTable root={this}/> }
+            { this.state.error===null && <DataTable root={this}/> }
         </div>;
     }
 

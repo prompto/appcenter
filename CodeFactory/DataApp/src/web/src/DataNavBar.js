@@ -3,6 +3,10 @@ import { Navbar, FormGroup, ControlLabel, DropdownButton, MenuItem } from 'react
 
 export default class DataNavBar extends React.Component {
 
+    storeSelected(key) {
+        this.props.root.setState({store: key.toUpperCase()});
+    }
+
     render() {
         const store = this.props.root.state.store;
         const title = store.substring(0, 1) + store.substring(1).toLowerCase();
@@ -17,11 +21,10 @@ export default class DataNavBar extends React.Component {
                     <FormGroup>
                         <ControlLabel id="store-type-label">Store:&nbsp;</ControlLabel>
                         <DropdownButton id="store-type" title={title}>
-                            <MenuItem active={store==="APPS"} onSelect={()=>this.props.root.setState({store: "APPS"})}>Apps</MenuItem>
-                            <MenuItem active={store==="DATA"} onSelect={()=>this.props.root.setState({store: "DATA"})}>Data</MenuItem>
-                            <MenuItem active={store==="LOGIN"} onSelect={()=>this.props.root.setState({store: "LOGIN"})}>Login</MenuItem>
-                            <MenuItem divider/>
-                            <MenuItem active={store==="TOOLS"} onSelect={()=>this.props.root.setState({store: "TOOLS"})}>Tools</MenuItem>
+                            {["Data", "Apps", "Login"].map(ds =>
+                                <MenuItem key={ds} eventKey={ds} active={store === ds.toUpperCase()}
+                                          onSelect={this.storeSelected.bind(this)}>{ds}</MenuItem>, this)
+                            }
                         </DropdownButton>
                     </FormGroup>
                 </Navbar.Form>
