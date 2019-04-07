@@ -1,6 +1,5 @@
 // eslint-disable-next-line
-const globals = self || window;
-const prompto = globals.prompto;
+const globals = window || self || this;
 
 /* a function for inferring dialect from file extension */
 export const inferDialect = function(path) {
@@ -9,6 +8,7 @@ export const inferDialect = function(path) {
 
 /* a function for getting a new prompto code parser */
 export const newParser = function(input, dialect, listener) {
+    const prompto = globals.prompto;
     var klass = prompto.parser[dialect + "CleverParser"];
     var parser = new klass(input);
     parser.removeErrorListeners();
@@ -25,6 +25,7 @@ export const parse = function(input, dialect, listener) {
 
 /* a function for producing code from a declaration object */
 export const unparse = function(context, decl, dialect) {
+    const prompto = globals.prompto;
     var d = prompto.parser.Dialect[dialect];
     var writer = new prompto.utils.CodeWriter(d, context.newChildContext());
     // avoid throwing since this would stop the translation
@@ -45,6 +46,7 @@ export const unparse = function(context, decl, dialect) {
 
 /* a function for translating current input to other dialect */
 export const translate = function(context, data, from, to) {
+    const prompto = globals.prompto;
     var decls = parse(data, from); // could be cached
     var dialect = prompto.parser.Dialect[to];
     var writer = new prompto.utils.CodeWriter(dialect, context.newChildContext());

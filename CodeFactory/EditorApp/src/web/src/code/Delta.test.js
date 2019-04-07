@@ -1,39 +1,38 @@
-var isNodeJs = typeof window === 'undefined' && typeof importScripts === 'undefined';
-var prompto = prompto;
+import Delta from './Delta';
+import Codebase from './Codebase';
 
-if(typeof prompto === 'undefined') {
-    prompto = isNodeJs ?
-        require("../../../../../../../prompto-javascript/JavaScript-Core/src/test/prompto/parser/PromptoLoader").prompto :
-        require('prompto/index');
-}
+beforeAll(()=>{
+    require('../../../../../CodeFactory/src/main/resources/js/lib/prompto.core.bundle.js');
+    const globals = global || window || self || this;
+    globals.antlr4 = antlr4;
+    globals.prompto = prompto;
+});
 
 
-var Delta = require("./delta").Delta;
-var Codebase = require("./codebase").Codebase;
-
-exports.filterOutDuplicatesAddsSingleProto = function (test) {
+it('filterOutDuplicates preserves added single proto', () => {
     var delta = new Delta();
     delta.removed = new Codebase();
     delta.added = new Codebase();
     delta.added.methods = [{
         name: "test", protos: [{proto: "simple", main: true}]
     }];
-    test.equal(delta.filterOutDuplicates(), 1);
-    test.done();
-};
+    var count = delta.filterOutDuplicates();
+    expect(count).toEqual(1);
+});
 
-exports.filterOutDuplicatesRemovesSingleProto = function (test) {
+
+it('filterOutDuplicates preserves removed single proto', () => {
     var delta = new Delta();
     delta.removed = new Codebase();
     delta.removed.methods = [{
         name: "test", protos: [{proto: "simple", main: true}]
     }];
     delta.added = new Codebase();
-    test.equal(delta.filterOutDuplicates(), 1);
-    test.done();
-};
+    var count = delta.filterOutDuplicates();
+    expect(count).toEqual(1);
+});
 
-exports.filterOutDuplicatesFiltersSingleProto = function (test) {
+it('filterOutDuplicates ignores unchanged single proto', () => {
     var delta = new Delta();
     delta.removed = new Codebase();
     delta.removed.methods = [{
@@ -47,11 +46,12 @@ exports.filterOutDuplicatesFiltersSingleProto = function (test) {
             {proto: "simple", main: true}
         ]
     }];
-    test.equal(delta.filterOutDuplicates(), 0);
-    test.done();
-};
+    var count = delta.filterOutDuplicates();
+    expect(count).toEqual(0);
+});
 
-exports.filterOutDuplicatesAddsAndRemovesDistinctProtos = function (test) {
+
+it('filterOutDuplicates adds and removes distinct protos', () => {
     var delta = new Delta();
     delta.removed = new Codebase();
     delta.removed.methods = [{
@@ -65,11 +65,12 @@ exports.filterOutDuplicatesAddsAndRemovesDistinctProtos = function (test) {
             {proto: "simple2", main: true}
         ]
     }];
-    test.equal(delta.filterOutDuplicates(), 2);
-    test.done();
-};
+    var count = delta.filterOutDuplicates();
+    expect(count).toEqual(2);
+});
 
-exports.filterOutDuplicatesAddsProtoWhenAddingAndRemovingOtherProto = function (test) {
+
+it('filterOutDuplicates adds proto when adding and removing other proto', () => {
     var delta = new Delta();
     delta.removed = new Codebase();
     delta.removed.methods = [{
@@ -84,11 +85,12 @@ exports.filterOutDuplicatesAddsProtoWhenAddingAndRemovingOtherProto = function (
             {proto: "simple2", main: true}
         ]
     }];
-    test.equal(delta.filterOutDuplicates(), 1);
-    test.done();
-};
+    var count = delta.filterOutDuplicates();
+    expect(count).toEqual(1);
+});
 
-exports.filterOutDuplicatesRemovesProtoWhenAddingAndRemovingOtherProto = function (test) {
+
+it('filterOutDuplicates removes proto when adding and removing other proto', () => {
     var delta = new Delta();
     delta.removed = new Codebase();
     delta.removed.methods = [{
@@ -103,9 +105,9 @@ exports.filterOutDuplicatesRemovesProtoWhenAddingAndRemovingOtherProto = functio
             {proto: "simple2", main: true}
         ]
     }];
-    test.equal(delta.filterOutDuplicates(), 1);
-    test.done();
-};
+    var count = delta.filterOutDuplicates();
+    expect(count).toEqual(1);
+});
 
 function createContextWithMethods(methods) {
     var context = prompto.runtime.Context.newGlobalContext();
@@ -124,7 +126,7 @@ function createContextWithMethods(methods) {
 }
 
 
-exports.adjustForMovingProtosPreservesAddedProto = function (test) {
+it('adjustForMovingProtos preserves added proto', () => {
     var context = createContextWithMethods([{name: "test", args: ["simple"]}]);
     var delta = new Delta();
     delta.removed = new Codebase();
@@ -134,13 +136,14 @@ exports.adjustForMovingProtosPreservesAddedProto = function (test) {
             {proto: "(simple)", main: true}
         ]
     }];
-    test.ok(delta.filterOutDuplicates());
+    var count = delta.filterOutDuplicates();
+    expect(count).toEqual(1);
     delta.adjustForMovingProtos(context);
-    test.equal(delta.length(), 1);
-    test.done();
-};
+    count = delta.length()
+    expect(count).toEqual(1);
+});
 
-exports.adjustForMovingProtosPreservesRemovedProto = function (test) {
+it('adjustForMovingProtos preserves removed proto', () => {
     var context = createContextWithMethods([]);
     var delta = new Delta();
     delta.removed = new Codebase();
@@ -150,13 +153,15 @@ exports.adjustForMovingProtosPreservesRemovedProto = function (test) {
         ]
     }];
     delta.added = new Codebase();
-    test.ok(delta.filterOutDuplicates());
+    var count = delta.filterOutDuplicates();
+    expect(count).toEqual(1);
     delta.adjustForMovingProtos(context);
-    test.equal(delta.length(), 1);
-    test.done();
-};
+    count = delta.length()
+    expect(count).toEqual(1);
+});
 
-exports.adjustForMovingProtosPreservesAddedAndRemovedProtos = function (test) {
+
+it('adjustForMovingProtos preserves added and removed protos', () => {
     var context = createContextWithMethods([{name: "test", args: ["(simple2)"]}]);
     var delta = new Delta();
     delta.removed = new Codebase();
@@ -171,13 +176,14 @@ exports.adjustForMovingProtosPreservesAddedAndRemovedProtos = function (test) {
             {proto: "(simple2)", main: true}
         ]
     }];
-    test.ok(delta.filterOutDuplicates());
+    var count = delta.filterOutDuplicates();
+    expect(count).toEqual(2);
     delta.adjustForMovingProtos(context);
-    test.equal(delta.length(), 2);
-    test.done();
-};
+    count = delta.length()
+    expect(count).toEqual(2);
+});
 
-exports.adjustForMovingProtosPreservesExistingProtosWhenMovingProto = function (test) {
+it('adjustForMovingProtos preserves existing protos when moving protos', () => {
     var context = createContextWithMethods([{name: "test", args: ["(simple1)"]},
         {name: "test", args: ["(simple2)"]}]);
     var delta = new Delta();
@@ -187,21 +193,22 @@ exports.adjustForMovingProtosPreservesExistingProtosWhenMovingProto = function (
             {proto: "(simple2)", main: true}
         ]
     }];
-    test.ok(delta.filterOutDuplicates());
+    var count = delta.filterOutDuplicates();
+    expect(count).toEqual(1);
     delta.adjustForMovingProtos(context);
-    test.equal(delta.length(), 2);
-    test.equal(delta.removed.methods.length, 1);
+    count = delta.length()
+    expect(count).toEqual(2);
+    expect(delta.removed.methods.length).toEqual(1);
     var method = delta.removed.methods[0];
-    test.equal(method.name, "test");
-    test.equal(method.protos[0].proto, "(simple1)");
-    test.equal(delta.added.methods.length, 1);
+    expect(method.name).toEqual("test");
+    expect(method.protos[0].proto).toEqual("(simple1)");
+    expect(delta.added.methods.length).toEqual(1);
     method = delta.added.methods[0];
-    test.equal(method.protos[0].proto, "(simple1)");
-    test.equal(method.protos[1].proto, "(simple2)");
-    test.done();
-};
+    expect(method.protos[0].proto).toEqual("(simple1)");
+    expect(method.protos[1].proto).toEqual("(simple2)");
+});
 
-exports.adjustForMovingProtosPreservesExistingProtosWhenRemovingProto = function (test) {
+it('adjustForMovingProtos preserves existing protos when removing proto', () => {
     var context = createContextWithMethods([{name: "test", args: ["(simple2)"]}]);
     var delta = new Delta();
     delta.removed = new Codebase();
@@ -210,17 +217,16 @@ exports.adjustForMovingProtosPreservesExistingProtosWhenRemovingProto = function
             {proto: "(simple1)", main: true}
         ]
     }];
-    test.ok(delta.filterOutDuplicates());
+    var count = delta.filterOutDuplicates();
+    expect(count).toEqual(1);
     delta.adjustForMovingProtos(context);
-    test.equal(delta.length(), 2);
-    test.equal(delta.removed.methods.length, 1);
+    expect(delta.length()).toEqual(2);
+    expect(delta.removed.methods.length).toEqual(1);
     var method = delta.removed.methods[0];
-    test.equal(method.name, "test");
-    test.equal(method.protos[0].proto, "(simple1)");
-    test.equal(method.protos[1].proto, "(simple2)");
-    test.equal(delta.added.methods.length, 1);
+    expect(method.name).toEqual("test");
+    expect(method.protos[0].proto).toEqual("(simple1)");
+    expect(method.protos[1].proto).toEqual("(simple2)");
+    expect(delta.added.methods.length).toEqual(1);
     method = delta.added.methods[0];
-    test.equal(method.protos[0].proto, "(simple2)");
-    test.done();
-};
-
+    expect(method.protos[0].proto).toEqual( "(simple2)");
+});

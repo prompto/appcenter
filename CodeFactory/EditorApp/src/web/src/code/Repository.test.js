@@ -1,21 +1,16 @@
-var isNodeJs = typeof window === 'undefined' && typeof importScripts === 'undefined';
-var prompto = prompto;
+import path from 'path';
+import fs from 'fs';
+import Delta from './Delta';
+import Codebase from './Codebase';
+import Repository from './Repository';
 
-if(typeof prompto === 'undefined') {
-    prompto = isNodeJs ?
-        require("../../../../../../../prompto-javascript/JavaScript-Core/src/test/prompto/parser/PromptoLoader").prompto :
-        require('prompto/index');
-}
+beforeAll(()=>{
+    require('../../../../../CodeFactory/src/main/resources/js/lib/prompto.core.bundle.js');
+    const globals = global || window || self || this;
+    globals.antlr4 = antlr4;
+    globals.prompto = prompto;
+});
 
-
-//noinspection NodeJsCodingAssistanceForCoreModules
-var path = require("path");
-//noinspection NodeJsCodingAssistanceForCoreModules
-var fs = require("fs");
-
-var Delta = require("./delta").Delta;
-var Codebase = require("./codebase").Codebase;
-var Repository = require("./repository").Repository;
 
 function fixPath(filePath) {
     return path.normalize(path.dirname(path.dirname(module.filename)) + "/" + filePath);
@@ -29,27 +24,24 @@ function clearws(text) {
     return text.replace(/(\n|\r|\t)+/g, "");
 }
 
-exports.codeIsLoaded = function (test) {
+it('code is loaded', () => {
     global.Event = function () {}; // referred by web stuff
-    var code = loadText("../prompto/prompto.pec");
+    var code = loadText("../../../src/web/public/prompto/prompto.pec");
     var repo = new Repository();
     repo.registerLibraryCode(code, "E");
-    test.notEqual(repo.librariesContext, null);
-    test.ok(Object.keys(repo.librariesContext.declarations).length > 0);
-    test.done();
-};
+    expect(repo.librariesContext).not.toBeNull();
+    expect(Object.keys(repo.librariesContext.declarations).length > 0).toBeTruthy();
+});
 
-
-exports.creatingAttributeSetsStatusToCREATED = function (test) {
+it('sets status or new attribute to CREATED', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define name as Text attribute", "E", listener);
-    test.equal(delta.added.attributes[0], "name");
-    test.equal(repo.statuses["name"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.added.attributes[0]).toEqual("name");
+    expect(repo.statuses["name"].editStatus).toEqual("CREATED");
+});
 
-exports.creatingASeriesOfAttributeSetsStatusesToCREATED = function (test) {
+it('sets status or new attributes to CREATED', () => {
     var repo = new Repository();
     var inputs = [
         "defin",
@@ -69,26 +61,24 @@ exports.creatingASeriesOfAttributeSetsStatusesToCREATED = function (test) {
         repo.handleEditContent(input, "E", new prompto.problem.ProblemCollector());
     });
     var names = Object.getOwnPropertyNames(repo.statuses);
-    test.equal(names.length, 3);
-    test.equal(repo.statuses["count"].editStatus, "CREATED");
-    test.equal(repo.statuses["xcounts"].editStatus, "CREATED");
-    test.equal(repo.statuses["names"].editStatus, "CREATED");
-    test.done();
-};
+    expect(names.length).toEqual(3);
+    expect(repo.statuses["count"].editStatus).toEqual( "CREATED");
+    expect(repo.statuses["xcounts"].editStatus).toEqual( "CREATED");
+    expect(repo.statuses["names"].editStatus).toEqual( "CREATED");
+});
 
-exports.updatingNewAttributeKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status or new attributes when updating new attribute', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define name as Integer attribute", "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses["name"].editStatus, "CREATED");
-    test.equal(clearws(repo.statuses["name"].stuff.value.body), clearws("define name as Integer attribute"));
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses["name"].editStatus).toEqual("CREATED");
+    expect(clearws(repo.statuses["name"].stuff.value.body)).toEqual(clearws("define name as Integer attribute"));
+});
 
-exports.updatingExistingAttributePreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets DIRTY status when updating existing attribute', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -97,15 +87,13 @@ exports.updatingExistingAttributePreservesDbIdAndSetsStatusToDIRTY = function (t
     repo.statuses["name"].editStatus = "CLEAN";
     repo.statuses["name"].stuff.value.dbId = "Some UUID";
     var delta = repo.handleEditContent("define name as Text attribute", "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses["name"].editStatus, "DIRTY");
-    test.equal(repo.statuses["name"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["name"].stuff.value.body), clearws("define name as Text attribute"));
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses["name"].editStatus).toEqual("DIRTY");
+    expect(repo.statuses["name"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["name"].stuff.value.body)).toEqual(clearws("define name as Text attribute"));
+});
 
-
-exports.changingDialectOfExistingAttributePreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets DIRTY status when changing dialect', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -113,14 +101,13 @@ exports.changingDialectOfExistingAttributePreservesDbIdAndSetsStatusToDIRTY = fu
     repo.statuses["name"].stuff.value.dbId = "Some UUID";
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("attribute name: Text;", "O", listener);
-    test.equal(repo.statuses["name"].editStatus, "DIRTY");
-    test.equal(repo.statuses["name"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["name"].stuff.value.dialect, "O");
-    test.equal(repo.statuses["name"].stuff.value.body, "attribute name: Text;");
-    test.done();
-};
+    expect(repo.statuses["name"].editStatus).toEqual("DIRTY");
+    expect(repo.statuses["name"].stuff.value.dbId).toEqual("Some UUID");
+    expect(repo.statuses["name"].stuff.value.dialect).toEqual("O");
+    expect(repo.statuses["name"].stuff.value.body).toEqual("attribute name: Text;");
+});
 
-exports.selectingThenUpdatingNewAttributeKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status after selecting and updating', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -128,46 +115,25 @@ exports.selectingThenUpdatingNewAttributeKeepsStatusToCREATED = function (test) 
     repo.handleSetContent("define name as Text attribute", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define name as Integer attribute", "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses["name"].editStatus, "CREATED");
-    test.equal(repo.statuses["name"].stuff.value.body, "define name as Integer attribute");
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses["name"].editStatus).toEqual("CREATED");
+    expect(repo.statuses["name"].stuff.value.body).toEqual("define name as Integer attribute");
+});
 
-exports.selectingThenUpdatingExistingAttributePreservesDbIdAndSetsStatusToDIRTY = function (test) {
-    var repo = new Repository();
-    var listener = new prompto.problem.ProblemCollector();
-    repo.handleEditContent("define name as Text attribute", "E", listener);
-    listener = new prompto.problem.ProblemCollector();
-    repo.handleEditContent("define name as Integer attribute", "E", listener);
-    repo.statuses["name"].editStatus = "CLEAN";
-    repo.statuses["name"].stuff.value.dbId = "Some UUID";
-    repo.handleSetContent("define name as Text attribute", "E", listener);
-    listener = new prompto.problem.ProblemCollector();
-    var delta = repo.handleEditContent("define name as Text attribute", "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses["name"].editStatus, "DIRTY");
-    test.equal(repo.statuses["name"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["name"].stuff.value.body, "define name as Text attribute");
-    test.done();
-};
-
-
-exports.renamingNewAttributeKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when renaming new attribute', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define renamed as Text attribute", "E", listener);
-    test.equal(delta.removed.attributes[0], "name");
-    test.equal(delta.added.attributes[0], "renamed");
-    test.equal(repo.statuses["name"], undefined);
-    test.equal(repo.statuses["renamed"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.removed.attributes[0]).toEqual("name");
+    expect(delta.added.attributes[0]).toEqual("renamed");
+    expect(repo.statuses["name"]).toBeUndefined();
+    expect(repo.statuses["renamed"].editStatus).toEqual("CREATED");
+});
 
 
-exports.renamingExistingAttributePreservesDbIdAndStatusToDIRTY = function (test) {
+it('preserves CREATED status when renaming DIRTY attribute', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -175,32 +141,15 @@ exports.renamingExistingAttributePreservesDbIdAndStatusToDIRTY = function (test)
     repo.statuses["name"].stuff.value.dbId = "Some UUID";
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define renamed as Text attribute", "E", listener);
-    test.equal(delta.removed.attributes[0], "name");
-    test.equal(delta.added.attributes[0], "renamed");
-    test.equal(repo.statuses["name"], undefined);
-    test.equal(repo.statuses["renamed"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["renamed"].editStatus, "DIRTY");
-    test.done();
-};
+    expect(delta.removed.attributes[0]).toEqual("name");
+    expect(delta.added.attributes[0]).toEqual("renamed");
+    expect(repo.statuses["name"]).toBeUndefined();
+    expect(repo.statuses["renamed"].stuff.value.dbId).toEqual("Some UUID");
+    expect(repo.statuses["renamed"].editStatus).toEqual("DIRTY");
+});
 
 
-exports.selectingThenRenamingNewAttributeKeepsStatusToCREATED = function (test) {
-    var repo = new Repository();
-    var listener = new prompto.problem.ProblemCollector();
-    repo.handleEditContent("define name as Text attribute", "E", listener);
-    listener = new prompto.problem.ProblemCollector();
-    repo.handleSetContent("define name as Text attribute", "E", listener);
-    listener = new prompto.problem.ProblemCollector();
-    var delta = repo.handleEditContent("define renamed as Text attribute", "E", listener);
-    test.equal(delta.removed.attributes[0], "name");
-    test.equal(delta.added.attributes[0], "renamed");
-    test.equal(repo.statuses["name"], undefined);
-    test.equal(repo.statuses["renamed"].editStatus, "CREATED");
-    test.done();
-};
-
-
-exports.selectingThenRenamingExistingAttributePreservesDbIdAndStatusToDIRTY = function (test) {
+it('preserves dbId and DIRTY status when renaming DIRTY attribute', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -210,55 +159,49 @@ exports.selectingThenRenamingExistingAttributePreservesDbIdAndStatusToDIRTY = fu
     var delta = repo.handleSetContent("define name as Text attribute", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define renamed as Text attribute", "E", listener);
-    test.equal(delta.removed.attributes[0], "name");
-    test.equal(delta.added.attributes[0], "renamed");
-    test.equal(repo.statuses["name"], undefined);
-    test.equal(repo.statuses["renamed"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["renamed"].editStatus, "DIRTY");
-    test.done();
-};
+    expect(delta.removed.attributes[0]).toEqual("name");
+    expect(delta.added.attributes[0]).toEqual("renamed");
+    expect(repo.statuses["name"]).toBeUndefined();
+    expect(repo.statuses["renamed"].stuff.value.dbId).toEqual("Some UUID");
+    expect(repo.statuses["renamed"].editStatus).toEqual("DIRTY");
+});
 
 
-exports.destroyingNewAttributeSetsStatusToDELETED = function (test) {
+it('sets status to DELETED when destroying new attribute', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
-    test.equal(repo.statuses["name"].editStatus, "CREATED");
+    expect(repo.statuses["name"].editStatus).toEqual("CREATED");
     var delta = repo.handleDestroyed({subType: "attribute", name: "name"});
-    test.equal(delta.removed.attributes[0], "name");
-    test.equal(repo.statuses["name"].editStatus, "DELETED");
-    test.done();
-};
+    expect(delta.removed.attributes[0]).toEqual("name");
+    expect(repo.statuses["name"].editStatus).toEqual("DELETED");
+});
 
-
-exports.destroyingExistingAttributeSetsStatusToDELETED = function (test) {
+it('sets status to DELETED when destroying existing attribute', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
     repo.statuses["name"].editStatus = "CLEAN";
     repo.statuses["name"].stuff.value.dbId = "Some UUID";
     var delta = repo.handleDestroyed({subType: "attribute", name: "name"});
-    test.equal(delta.removed.attributes[0], "name");
-    test.equal(repo.statuses["name"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["name"].editStatus, "DELETED");
-    test.done();
-};
+    expect(delta.removed.attributes[0]).toEqual("name");
+    expect(repo.statuses["name"].stuff.value.dbId).toEqual("Some UUID");
+    expect(repo.statuses["name"].editStatus).toEqual("DELETED");
+});
 
 
-exports.selectingThenDestroyingNewAttributeSetsStatusToDELETED = function (test) {
+it('sets status to DELETED when selecting then destroying new attribute', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     repo.handleSetContent("define name as Text attribute", "E", listener);
     var delta = repo.handleDestroyed({subType: "attribute", name: "name"});
-    test.equal(delta.removed.attributes[0], "name");
-    test.equal(repo.statuses["name"].editStatus, "DELETED");
-    test.done();
-};
+    expect(delta.removed.attributes[0]).toEqual("name");
+    expect(repo.statuses["name"].editStatus).toEqual("DELETED");
+});
 
-
-exports.selectingThenDestroyingExistingAttributeSetsStatusToDELETED = function (test) {
+it('sets status to DELETED when selecting then destroying existing attribute', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -267,37 +210,32 @@ exports.selectingThenDestroyingExistingAttributeSetsStatusToDELETED = function (
     listener = new prompto.problem.ProblemCollector();
     repo.handleSetContent("define name as Text attribute", "E", listener);
     var delta = repo.handleDestroyed({subType: "attribute", name: "name"});
-    test.equal(delta.removed.attributes[0], "name");
-    test.equal(repo.statuses["name"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["name"].editStatus, "DELETED");
-    test.done();
-};
+    expect(delta.removed.attributes[0]).toEqual("name");
+    expect(repo.statuses["name"].stuff.value.dbId).toEqual("Some UUID");
+    expect(repo.statuses["name"].editStatus).toEqual("DELETED");
+});
 
-
-exports.creatingCategorySetsStatusToCREATED = function (test) {
+it('sets status of new category to CREATED', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
-    test.equal(delta.added.categories[0], "Xyz");
-    test.equal(repo.statuses["Xyz"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.added.categories[0]).toEqual("Xyz");
+    expect(repo.statuses["Xyz"].editStatus).toEqual("CREATED");
+});
 
 
-exports.updatingNewCategoryKeepsStatusToCREATED = function (test) {
+it('preserves status of new category to CREATED when updating', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define Xyz as category with attribute other", "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses["Xyz"].editStatus, "CREATED");
-    test.equal(clearws(repo.statuses["Xyz"].stuff.value.body), "define Xyz as category with attribute other");
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses["Xyz"].editStatus).toEqual("CREATED");
+    expect(clearws(repo.statuses["Xyz"].stuff.value.body)).toEqual("define Xyz as category with attribute other");
+});
 
-
-exports.updatingExistingCategoryPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when updating existing category', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -305,16 +243,13 @@ exports.updatingExistingCategoryPreservesDbIdAndSetsStatusToDIRTY = function (te
     repo.statuses["Xyz"].stuff.value.dbId = "Some UUID";
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define Xyz as category with attribute other", "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses["Xyz"].editStatus, "DIRTY");
-    test.equal(repo.statuses["Xyz"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["Xyz"].stuff.value.body), "define Xyz as category with attribute other");
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses["Xyz"].editStatus).toEqual("DIRTY");
+    expect(repo.statuses["Xyz"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["Xyz"].stuff.value.body)).toEqual("define Xyz as category with attribute other");
+});
 
-
-
-exports.selectingThenUpdatingNewCategoryKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when selecting then updating category', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -322,14 +257,12 @@ exports.selectingThenUpdatingNewCategoryKeepsStatusToCREATED = function (test) {
     repo.handleSetContent("define Xyz as category with attribute name", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define Xyz as category with attribute other", "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses["Xyz"].editStatus, "CREATED");
-    test.equal(clearws(repo.statuses["Xyz"].stuff.value.body), "define Xyz as category with attribute other");
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses["Xyz"].editStatus).toEqual("CREATED");
+    expect(clearws(repo.statuses["Xyz"].stuff.value.body)).toEqual("define Xyz as category with attribute other");
+});
 
-
-exports.selectingThenUpdatingExistingCategoryPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when selecting then updating existing category', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -339,28 +272,25 @@ exports.selectingThenUpdatingExistingCategoryPreservesDbIdAndSetsStatusToDIRTY =
     repo.handleSetContent("define Xyz as category with attribute name", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define Xyz as category with attribute other", "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses["Xyz"].editStatus, "DIRTY");
-    test.equal(repo.statuses["Xyz"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["Xyz"].stuff.value.body), "define Xyz as category with attribute other");
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses["Xyz"].editStatus).toEqual("DIRTY");
+    expect(repo.statuses["Xyz"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["Xyz"].stuff.value.body)).toEqual("define Xyz as category with attribute other");
+});
 
-exports.renamingNewCategoryKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when renaming new category', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define Abc as category with attribute name", "E", listener);
-    test.equal(delta.removed.categories[0], "Xyz");
-    test.equal(delta.added.categories[0], "Abc");
-    test.equal(repo.statuses["Xyz"], undefined);
-    test.equal(repo.statuses["Abc"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.removed.categories[0]).toEqual("Xyz");
+    expect(delta.added.categories[0]).toEqual("Abc");
+    expect(repo.statuses["Xyz"]).toBeUndefined();
+    expect(repo.statuses["Abc"].editStatus).toEqual("CREATED");
+});
 
-
-exports.renamingExistingCategoryPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when renaming existing category', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -368,17 +298,15 @@ exports.renamingExistingCategoryPreservesDbIdAndSetsStatusToDIRTY = function (te
     repo.statuses["Xyz"].stuff.value.dbId = "Some UUID";
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define Abc as category with attribute other", "E", listener);
-    test.equal(delta.removed.categories[0], "Xyz");
-    test.equal(delta.added.categories[0], "Abc");
-    test.equal(repo.statuses["Xyz"], undefined);
-    test.equal(repo.statuses["Abc"].editStatus, "DIRTY");
-    test.equal(repo.statuses["Abc"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["Abc"].stuff.value.body), "define Abc as category with attribute other");
-    test.done();
-};
+    expect(delta.removed.categories[0]).toEqual("Xyz");
+    expect(delta.added.categories[0]).toEqual("Abc");
+    expect(repo.statuses["Xyz"]).toBeUndefined();
+    expect(repo.statuses["Abc"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["Abc"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["Abc"].stuff.value.body)).toEqual("define Abc as category with attribute other");
+});
 
-
-exports.selectingThenRenamingNewCategoryKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when selecting then renaming new category', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -386,16 +314,13 @@ exports.selectingThenRenamingNewCategoryKeepsStatusToCREATED = function (test) {
     repo.handleSetContent("define Xyz as category with attribute name", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define Abc as category with attribute name", "E", listener);
-    test.equal(delta.removed.categories[0], "Xyz");
-    test.equal(delta.added.categories[0], "Abc");
-    test.equal(repo.statuses["Xyz"], undefined);
-    test.equal(repo.statuses["Abc"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.removed.categories[0]).toEqual("Xyz");
+    expect(delta.added.categories[0]).toEqual("Abc");
+    expect(repo.statuses["Xyz"]).toBeUndefined();
+    expect(repo.statuses["Abc"].editStatus).toEqual( "CREATED");
+});
 
-
-
-exports.selectedThenRenamingExistingCategoryPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when selecting then renaming existing category', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -405,43 +330,38 @@ exports.selectedThenRenamingExistingCategoryPreservesDbIdAndSetsStatusToDIRTY = 
     repo.handleSetContent("define Xyz as category with attribute name", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define Abc as category with attribute other", "E", listener);
-    test.equal(delta.removed.categories[0], "Xyz");
-    test.equal(delta.added.categories[0], "Abc");
-    test.equal(repo.statuses["Xyz"], undefined);
-    test.equal(repo.statuses["Abc"].editStatus, "DIRTY");
-    test.equal(repo.statuses["Abc"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["Abc"].stuff.value.body, "define Abc as category with attribute other");
-    test.done();
-};
+    expect(delta.removed.categories[0]).toEqual("Xyz");
+    expect(delta.added.categories[0]).toEqual("Abc");
+    expect(repo.statuses["Xyz"]).toBeUndefined();
+    expect(repo.statuses["Abc"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["Abc"].stuff.value.dbId).toEqual("Some UUID");
+    expect(repo.statuses["Abc"].stuff.value.body).toEqual("define Abc as category with attribute other");
+});
 
-
-exports.destroyingNewCategorySetsStatusToDELETED = function (test) {
+it('sets status to DELETED when destroying new category', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
-    test.equal(repo.statuses["Xyz"].editStatus, "CREATED");
+    expect(repo.statuses["Xyz"].editStatus).toEqual( "CREATED");
     var delta = repo.handleDestroyed({subType: "category", name: "Xyz"});
-    test.equal(delta.removed.categories[0], "Xyz");
-    test.equal(repo.statuses["Xyz"].editStatus, "DELETED");
-    test.done();
-};
+    expect(delta.removed.categories[0]).toEqual("Xyz");
+    expect(repo.statuses["Xyz"].editStatus).toEqual( "DELETED");
+});
 
 
-exports.destroyingExistingCategoryPreservesDbIdAndSetsStatusToDELETED = function (test) {
+it('preserves dbId and sets status to DELETED when destroying existing category', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
     repo.statuses["Xyz"].editStatus = "CLEAN";
     repo.statuses["Xyz"].stuff.value.dbId = "Some UUID";
     var delta = repo.handleDestroyed({subType: "category", name: "Xyz"});
-    test.equal(delta.removed.categories[0], "Xyz");
-    test.equal(repo.statuses["Xyz"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["Xyz"].editStatus, "DELETED");
-    test.done();
-};
+    expect(delta.removed.categories[0]).toEqual("Xyz");
+    expect(repo.statuses["Xyz"].stuff.value.dbId).toEqual("Some UUID");
+    expect(repo.statuses["Xyz"].editStatus).toEqual( "DELETED");
+});
 
-
-exports.selectingThenDestroyingNewCategorySetsStatusToDELETED = function (test) {
+it('sets status to DELETED when selecting then destroying new category', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -449,13 +369,11 @@ exports.selectingThenDestroyingNewCategorySetsStatusToDELETED = function (test) 
     repo.handleSetContent("define Xyz as category with attribute name", "E", listener);
     repo.registerDestroyed({category: "Xyz"});
     var delta = repo.handleDestroyed({subType: "category", name: "Xyz"});
-    test.equal(delta.removed.categories[0], "Xyz");
-    test.equal(repo.statuses["Xyz"].editStatus, "DELETED");
-    test.done();
-};
+    expect(delta.removed.categories[0]).toEqual("Xyz");
+    expect(repo.statuses["Xyz"].editStatus).toEqual( "DELETED");
+});
 
-
-exports.selectingThenDestroyingExistingCategoryPreservesDbIdAndSetsStatusToDELETED = function (test) {
+it('preserves dbId and sets status to DELETED when selecting then destroying existing category', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define Xyz as category with attribute name", "E", listener);
@@ -464,27 +382,25 @@ exports.selectingThenDestroyingExistingCategoryPreservesDbIdAndSetsStatusToDELET
     listener = new prompto.problem.ProblemCollector();
     repo.handleSetContent("define Xyz as category with attribute name", "E", listener);
     var delta = repo.handleDestroyed({subType: "category", name: "Xyz"});
-    test.equal(delta.removed.categories[0], "Xyz");
-    test.equal(repo.statuses["Xyz"].stuff.value.dbId, "Some UUID");
-    test.equal(repo.statuses["Xyz"].editStatus, "DELETED");
-    test.done();
-};
+    expect(delta.removed.categories[0]).toEqual("Xyz");
+    expect(repo.statuses["Xyz"].stuff.value.dbId).toEqual("Some UUID");
+    expect(repo.statuses["Xyz"].editStatus).toEqual( "DELETED");
+});
 
 
-exports.creatingTestSetsStatusToCREATED = function (test) {
+it('sets status of new test to CREATED', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2', "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses['"simple test"'].editStatus, "CREATED");
-    test.equal(clearws(repo.statuses['"simple test"'].stuff.value.body), clearws('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n'));
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses['"simple test"'].editStatus).toEqual( "CREATED");
+    expect(clearws(repo.statuses['"simple test"'].stuff.value.body)).toEqual(clearws('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n'));
+});
 
 
-exports.selectingThenUpdatingNewTestKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when selecting then updating new test', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
@@ -492,14 +408,12 @@ exports.selectingThenUpdatingNewTestKeepsStatusToCREATED = function (test) {
     repo.handleSetContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2', "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses['"simple test"'].editStatus, "CREATED");
-    test.equal(clearws(repo.statuses['"simple test"'].stuff.value.body), clearws('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n'));
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses['"simple test"'].editStatus).toEqual( "CREATED");
+    expect(clearws(repo.statuses['"simple test"'].stuff.value.body)).toEqual(clearws('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n'));
+});
 
-
-exports.selectingThenUpdatingExistingTestPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when selecting then updating existing test', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
@@ -509,29 +423,25 @@ exports.selectingThenUpdatingExistingTestPreservesDbIdAndSetsStatusToDIRTY = fun
     repo.handleSetContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2', "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses['"simple test"'].editStatus, "DIRTY");
-    test.equal(repo.statuses['"simple test"'].stuff.value.dbId, 'Some UUID');
-    test.equal(clearws(repo.statuses['"simple test"'].stuff.value.body), clearws('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n'));
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses['"simple test"'].editStatus).toEqual("DIRTY");
+    expect(repo.statuses['"simple test"'].stuff.value.dbId).toEqual('Some UUID');
+    expect(clearws(repo.statuses['"simple test"'].stuff.value.body)).toEqual(clearws('define "simple test" as test method doing:\n\ta = 3\nand verifying:\n\ta = 2\n'));
+});
 
-
-exports.renamingNewTestKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when renaming new test', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent('define "renamed test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
-    test.equal(delta.removed.tests[0], '"simple test"');
-    test.equal(delta.added.tests[0], '"renamed test"');
-    test.equal(repo.statuses['"simple test"'], undefined);
-    test.equal(repo.statuses['"renamed test"'].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.removed.tests[0]).toEqual('"simple test"');
+    expect(delta.added.tests[0]).toEqual('"renamed test"');
+    expect(repo.statuses['"simple test"']).toBeUndefined();
+    expect(repo.statuses['"renamed test"'].editStatus).toEqual( "CREATED");
+});
 
-
-exports.renamingExistingTestPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when renaming existing test', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
@@ -539,17 +449,15 @@ exports.renamingExistingTestPreservesDbIdAndSetsStatusToDIRTY = function (test) 
     repo.statuses['"simple test"'].stuff.value.dbId = "Some UUID";
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent('define "renamed test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
-    test.equal(delta.removed.tests[0], '"simple test"');
-    test.equal(delta.added.tests[0], '"renamed test"');
-    test.equal(repo.statuses['"simple test"'], undefined);
-    test.equal(repo.statuses['"renamed test"'].editStatus, "DIRTY");
-    test.equal(repo.statuses['"renamed test"'].stuff.value.dbId, 'Some UUID');
-    test.done();
-};
+    expect(delta.removed.tests[0]).toEqual('"simple test"');
+    expect(delta.added.tests[0]).toEqual('"renamed test"');
+    expect(repo.statuses['"simple test"']).toBeUndefined();
+    expect(repo.statuses['"renamed test"'].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses['"renamed test"'].stuff.value.dbId).toEqual('Some UUID');
+});
 
 
-
-exports.selectingThenRenamingNewTestKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when selecting then renaming new test', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
@@ -557,15 +465,14 @@ exports.selectingThenRenamingNewTestKeepsStatusToCREATED = function (test) {
     repo.handleSetContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent('define "renamed test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
-    test.equal(delta.removed.tests[0], '"simple test"');
-    test.equal(delta.added.tests[0], '"renamed test"');
-    test.equal(repo.statuses['"simple test"'], undefined);
-    test.equal(repo.statuses['"renamed test"'].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.removed.tests[0]).toEqual('"simple test"');
+    expect(delta.added.tests[0]).toEqual('"renamed test"');
+    expect(repo.statuses['"simple test"']).toBeUndefined();
+    expect(repo.statuses['"renamed test"'].editStatus).toEqual( "CREATED");
+});
 
 
-exports.selectingThenRenamingExistingTestPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when selecting then renaming existing test', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
@@ -575,57 +482,49 @@ exports.selectingThenRenamingExistingTestPreservesDbIdAndSetsStatusToDIRTY = fun
     repo.handleSetContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent('define "renamed test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
-    test.equal(delta.removed.tests[0], '"simple test"');
-    test.equal(delta.added.tests[0], '"renamed test"');
-    test.equal(repo.statuses['"simple test"'], undefined);
-    test.equal(repo.statuses['"renamed test"'].editStatus, "DIRTY");
-    test.equal(repo.statuses['"renamed test"'].stuff.value.dbId, 'Some UUID');
-    test.done();
-};
+    expect(delta.removed.tests[0]).toEqual('"simple test"');
+    expect(delta.added.tests[0]).toEqual('"renamed test"');
+    expect(repo.statuses['"simple test"']).toBeUndefined();
+    expect(repo.statuses['"renamed test"'].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses['"renamed test"'].stuff.value.dbId).toEqual('Some UUID');
+});
 
 
-
-exports.destroyingNewTestSetsStatusToDELETED = function (test) {
+it('sets status to DELETED when destroying new test', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
-    test.equal(repo.statuses['"simple test"'].editStatus, "CREATED");
+    expect(repo.statuses['"simple test"'].editStatus).toEqual( "CREATED");
     var delta = repo.handleDestroyed({type: "test", name: '"simple test"'});
-    test.equal(delta.removed.tests[0], '"simple test"');
-    test.equal(repo.statuses['"simple test"'].editStatus, "DELETED");
-    test.done();
-};
+    expect(delta.removed.tests[0]).toEqual('"simple test"');
+    expect(repo.statuses['"simple test"'].editStatus).toEqual( "DELETED");
+});
 
-
-exports.destroyingExistingTestSetsStatusToDELETED = function (test) {
+it('sets status to DELETED when destroying existing test', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
     repo.statuses['"simple test"'].editStatus = "CLEAN";
     repo.statuses['"simple test"'].stuff.value.dbId = "Some UUID";
     var delta = repo.handleDestroyed({type: "test", name: '"simple test"'});
-    test.equal(delta.removed.tests[0], '"simple test"');
-    test.equal(repo.statuses['"simple test"'].editStatus, "DELETED");
-    test.equal(repo.statuses['"simple test"'].stuff.value.dbId, 'Some UUID');
-    test.done();
-};
+    expect(delta.removed.tests[0]).toEqual('"simple test"');
+    expect(repo.statuses['"simple test"'].editStatus).toEqual( "DELETED");
+    expect(repo.statuses['"simple test"'].stuff.value.dbId).toEqual('Some UUID');
+});
 
-
-
-exports.selectingThenDestroyingNewTestSetsStatusToDELETED = function (test) {
+it('sets status to DELETED when selecting then destroying new test', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
     listener = new prompto.problem.ProblemCollector();
     repo.handleSetContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
     var delta = repo.handleDestroyed({type: "test", name: '"simple test"'});
-    test.equal(delta.removed.tests[0], '"simple test"');
-    test.equal(repo.statuses['"simple test"'].editStatus, "DELETED");
-    test.done();
-};
+    expect(delta.removed.tests[0]).toEqual('"simple test"');
+    expect(repo.statuses['"simple test"'].editStatus).toEqual( "DELETED");
+});
 
 
-exports.selectingThenDestroyingExistingTestSetsStatusToDELETED = function (test) {
+it('sets status to DELETED when selecting then destroying existing test', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
@@ -634,40 +533,33 @@ exports.selectingThenDestroyingExistingTestSetsStatusToDELETED = function (test)
     listener = new prompto.problem.ProblemCollector();
     repo.handleSetContent('define "simple test" as test method doing:\n\ta = 2\nand verifying:\n\ta = 2', "E", listener);
     var delta = repo.handleDestroyed({type: "test", name: '"simple test"'});
-    test.equal(delta.removed.tests[0], '"simple test"');
-    test.equal(repo.statuses['"simple test"'].editStatus, "DELETED");
-    test.equal(repo.statuses['"simple test"'].stuff.value.dbId, 'Some UUID');
-    test.done();
-};
+    expect(delta.removed.tests[0]).toEqual('"simple test"');
+    expect(repo.statuses['"simple test"'].editStatus).toEqual( "DELETED");
+    expect(repo.statuses['"simple test"'].stuff.value.dbId).toEqual('Some UUID');
+});
 
-
-
-
-exports.creatingMethodSetsStatusToCREATED = function (test) {
+it('sets status of new method to CREATED', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.added.methods[0].name, "main");
-    test.equal(delta.added.methods[0].protos[0].proto, "");
-    test.equal(repo.statuses["main/"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.added.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].protos[0].proto).toEqual('');
+    expect(repo.statuses["main/"].editStatus).toEqual( "CREATED");
+});
 
-
-exports.updatingNewMethodKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when updating new method', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method doing:\n\ta = 3\n", "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses["main/"].editStatus, "CREATED");
-    test.equal(clearws(repo.statuses["main/"].stuff.value.body), clearws("define main as method doing:\n\ta = 3\n"));
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses["main/"].editStatus).toEqual( "CREATED");
+    expect(clearws(repo.statuses["main/"].stuff.value.body)).toEqual(clearws("define main as method doing:\n\ta = 3\n"));
+});
 
 
-exports.updatingExistingMethodPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when updating existing method', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -675,15 +567,13 @@ exports.updatingExistingMethodPreservesDbIdAndSetsStatusToDIRTY = function (test
     repo.statuses["main/"].stuff.value.dbId = "Some UUID";
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method doing:\n\ta = 3\n", "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses["main/"].editStatus, "DIRTY");
-    test.equal(repo.statuses["main/"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["main/"].stuff.value.body), clearws("define main as method doing:\n\ta = 3\n"));
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses["main/"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["main/"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["main/"].stuff.value.body)).toEqual(clearws("define main as method doing:\n\ta = 3\n"));
+});
 
-
-exports.selectingThenUpdatingNewMethodKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when selecting then updating new method', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -691,14 +581,13 @@ exports.selectingThenUpdatingNewMethodKeepsStatusToCREATED = function (test) {
     repo.handleSetContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method doing:\n\ta = 3\n", "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses["main/"].editStatus, "CREATED");
-    test.equal(clearws(repo.statuses["main/"].stuff.value.body), clearws("define main as method doing:\n\ta = 3\n"));
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses["main/"].editStatus).toEqual( "CREATED");
+    expect(clearws(repo.statuses["main/"].stuff.value.body)).toEqual(clearws("define main as method doing:\n\ta = 3\n"));
+});
 
 
-exports.selectingThenUpdatingExistingMethodPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when selecting then updating existing method', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -708,31 +597,25 @@ exports.selectingThenUpdatingExistingMethodPreservesDbIdAndSetsStatusToDIRTY = f
     repo.handleSetContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method doing:\n\ta = 3\n", "E", listener);
-    test.equal(delta, null);
-    test.equal(repo.statuses["main/"].editStatus, "DIRTY");
-    test.equal(repo.statuses["main/"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["main/"].stuff.value.body), clearws("define main as method doing:\n\ta = 3\n"));
-    test.done();
-};
+    expect(delta).toBeNull();
+    expect(repo.statuses["main/"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["main/"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["main/"].stuff.value.body)).toEqual(clearws("define main as method doing:\n\ta = 3\n"));
+});
 
-
-
-
-exports.renamingNewMethodWith1ProtoKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when renaming new method', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define renamed as method doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.added.methods[0].name, "renamed");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["renamed/"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].name).toEqual("renamed");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["renamed/"].editStatus).toEqual( "CREATED");
+});
 
-
-exports.renamingExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when renaming existing method', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -740,18 +623,15 @@ exports.renamingExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDIRTY = func
     repo.statuses["main/"].stuff.value.dbId = "Some UUID";
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define renamed as method doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.added.methods[0].name, "renamed");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["renamed/"].editStatus, "DIRTY");
-    test.equal(repo.statuses["renamed/"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["renamed/"].stuff.value.body), clearws("define renamed as method doing:\n\ta = 2\n"));
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].name).toEqual("renamed");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["renamed/"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["renamed/"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["renamed/"].stuff.value.body)).toEqual(clearws("define renamed as method doing:\n\ta = 2\n"));
+});
 
-
-
-exports.selectingThenRenamingNewMethodWith1ProtoKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when renaming new method with 1 proto', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -759,15 +639,13 @@ exports.selectingThenRenamingNewMethodWith1ProtoKeepsStatusToCREATED = function 
     repo.handleSetContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define renamed as method doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.added.methods[0].name, "renamed");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["renamed/"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].name).toEqual("renamed");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["renamed/"].editStatus).toEqual( "CREATED");
+});
 
-
-exports.selectingThenrenamingExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when renaming existing method with 1 proto', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -777,33 +655,29 @@ exports.selectingThenrenamingExistingMethodWith1ProtoPreservesDbIdAndSetsStatusT
     repo.handleSetContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define renamed as method doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.added.methods[0].name, "renamed");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["renamed/"].editStatus, "DIRTY");
-    test.equal(repo.statuses["renamed/"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["renamed/"].stuff.value.body), clearws("define renamed as method doing:\n\ta = 2\n"));
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].name).toEqual("renamed");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["renamed/"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["renamed/"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["renamed/"].stuff.value.body)).toEqual(clearws("define renamed as method doing:\n\ta = 2\n"));
+});
 
-exports.updatingProtoOfNewMethodWith1ProtoKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when updating proto of new method with 1 proto', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(delta.added.methods[0].name, "main");
-    test.equal(delta.added.methods[0].protos[0].proto, "Text");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(delta.added.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].protos[0].proto).toEqual("Text");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "CREATED");
+});
 
-
-
-exports.updatingProtoOfExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when updating proto of existing method with 1 proto', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -811,19 +685,17 @@ exports.updatingProtoOfExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDIRTY
     repo.statuses["main/"].stuff.value.dbId = "Some UUID";
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(delta.added.methods[0].name, "main");
-    test.equal(delta.added.methods[0].protos[0].proto, "Text");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["main/Text"].editStatus, "DIRTY");
-    test.equal(repo.statuses["main/Text"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["main/Text"].stuff.value.body), clearws("define main as method receiving Text value doing:\n\ta = 2\n"));
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(delta.added.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].protos[0].proto).toEqual("Text");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["main/Text"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["main/Text"].stuff.value.body)).toEqual(clearws("define main as method receiving Text value doing:\n\ta = 2\n"));
+});
 
-
-exports.selectingThenUpdatingProtoOfNewMethodWith1ProtoKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when selecting then updating proto of new method with 1 proto', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -831,18 +703,16 @@ exports.selectingThenUpdatingProtoOfNewMethodWith1ProtoKeepsStatusToCREATED = fu
     repo.handleSetContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(delta.added.methods[0].name, "main");
-    test.equal(delta.added.methods[0].protos[0].proto, "Text");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(delta.added.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].protos[0].proto).toEqual("Text");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "CREATED");
+});
 
 
-
-exports.changingProtoOfExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when selecting then updating proto of existing method with 1 proto', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -852,19 +722,17 @@ exports.changingProtoOfExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDIRTY
     repo.handleSetContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(delta.added.methods[0].name, "main");
-    test.equal(delta.added.methods[0].protos[0].proto, "Text");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["main/Text"].editStatus, "DIRTY");
-    test.equal(repo.statuses["main/Text"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["main/Text"].stuff.value.body), clearws("define main as method receiving Text value doing:\n\ta = 2\n"));
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(delta.added.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].protos[0].proto).toEqual("Text");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["main/Text"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["main/Text"].stuff.value.body)).toEqual(clearws("define main as method receiving Text value doing:\n\ta = 2\n"));
+});
 
-
-exports.changingProtoOfExistingAbstractMethodWith1ProtoPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when selecting then updating proto of existing abstract method with 1 proto', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define text as Text attribute\ndefine main as abstract method receiving Text value\n", "E", listener);
@@ -874,21 +742,19 @@ exports.changingProtoOfExistingAbstractMethodWith1ProtoPreservesDbIdAndSetsStatu
     repo.handleSetContent("define main as abstract method receiving Text value\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as abstract method receiving text\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos.length, 1);
-    test.equal(delta.removed.methods[0].protos[0].proto, "Text");
-    test.equal(delta.added.methods[0].name, "main");
-    test.equal(delta.added.methods[0].protos.length, 1);
-    test.equal(delta.added.methods[0].protos[0].proto, "text");
-    test.equal(repo.statuses["main/Text"], undefined);
-    test.equal(repo.statuses["main/text"].editStatus, "DIRTY");
-    test.equal(repo.statuses["main/text"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["main/text"].stuff.value.body), clearws("define main as abstract method receiving text\n"));
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos.length).toEqual(1);
+    expect(delta.removed.methods[0].protos[0].proto).toEqual("Text");
+    expect(delta.added.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].protos.length).toEqual(1);
+    expect(delta.added.methods[0].protos[0].proto).toEqual("text");
+    expect(repo.statuses["main/Text"]).toBeUndefined();
+    expect(repo.statuses["main/text"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["main/text"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["main/text"].stuff.value.body)).toEqual(clearws("define main as abstract method receiving text\n"));
+});
 
-
-exports.renamingNewMethodWith2ProtosKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when renaming new method with 2 protos', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -898,18 +764,17 @@ exports.renamingNewMethodWith2ProtosKeepsStatusToCREATED = function (test) {
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define renamed as method doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(delta.added.methods[0].name, "renamed");
-    test.equal(delta.added.methods[0].protos[0].proto, "");
-    test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["renamed/"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(delta.added.methods[0].name).toEqual("renamed");
+    expect(delta.added.methods[0].protos[0].proto).toEqual('');
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "CREATED");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["renamed/"].editStatus).toEqual( "CREATED");
+});
 
 
-exports.renamingExistingMethodWith2ProtosPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when renaming existing method with 2 protos', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -921,20 +786,18 @@ exports.renamingExistingMethodWith2ProtosPreservesDbIdAndSetsStatusToDIRTY = fun
     repo.statuses["main/"].stuff.value.dbId = "Some UUID";
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define renamed as method doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(delta.added.methods[0].name, "renamed");
-    test.equal(delta.added.methods[0].protos[0].proto, "");
-    test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["renamed/"].editStatus, "DIRTY");
-    test.equal(repo.statuses["renamed/"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["renamed/"].stuff.value.body), clearws("define renamed as method doing:\n\ta = 2\n"));
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(delta.added.methods[0].name).toEqual("renamed");
+    expect(delta.added.methods[0].protos[0].proto).toEqual('');
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "CREATED");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["renamed/"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["renamed/"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["renamed/"].stuff.value.body)).toEqual(clearws("define renamed as method doing:\n\ta = 2\n"));
+});
 
-
-exports.selectingThenRenamingNewMethodWith2ProtosKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when selecting then renaming new method with 2 protos', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -946,18 +809,17 @@ exports.selectingThenRenamingNewMethodWith2ProtosKeepsStatusToCREATED = function
     repo.handleSetContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define renamed as method doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(delta.added.methods[0].name, "renamed");
-    test.equal(delta.added.methods[0].protos[0].proto, "");
-    test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["renamed/"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(delta.added.methods[0].name).toEqual("renamed");
+    expect(delta.added.methods[0].protos[0].proto).toEqual('');
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "CREATED");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["renamed/"].editStatus).toEqual( "CREATED");
+});
 
 
-exports.selectingThenRenamingExistingMethodWith2ProtosPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when selecting then renaming existing method with 2 protos', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -971,21 +833,18 @@ exports.selectingThenRenamingExistingMethodWith2ProtosPreservesDbIdAndSetsStatus
     repo.handleSetContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define renamed as method doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(delta.added.methods[0].name, "renamed");
-    test.equal(delta.added.methods[0].protos[0].proto, "");
-    test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["renamed/"].editStatus, "DIRTY");
-    test.equal(repo.statuses["renamed/"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["renamed/"].stuff.value.body), clearws("define renamed as method doing:\n\ta = 2\n"));
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(delta.added.methods[0].name).toEqual("renamed");
+    expect(delta.added.methods[0].protos[0].proto).toEqual('');
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "CREATED");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["renamed/"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["renamed/"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["renamed/"].stuff.value.body)).toEqual(clearws("define renamed as method doing:\n\ta = 2\n"));
+});
 
-
-
-exports.updatingProtoOfNewMethodWith2ProtosKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when updating proto of new method with 2 protos', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -995,18 +854,17 @@ exports.updatingProtoOfNewMethodWith2ProtosKeepsStatusToCREATED = function (test
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method receiving Integer value doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(delta.added.methods[0].name, "main");
-    test.equal(delta.added.methods[0].protos[0].proto, "Integer");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
-    test.equal(repo.statuses["main/Integer"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(delta.added.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].protos[0].proto).toEqual("Integer");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "CREATED");
+    expect(repo.statuses["main/Integer"].editStatus).toEqual( "CREATED");
+});
 
 
-exports.updatingProtoOfExistingMethodWith2ProtosPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when updating proto of existing method with 2 protos', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -1018,21 +876,19 @@ exports.updatingProtoOfExistingMethodWith2ProtosPreservesDbIdAndSetsStatusToDIRT
     repo.statuses["main/"].stuff.value.dbId = "Some UUID";
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method receiving Integer value doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(delta.added.methods[0].name, "main");
-    test.equal(delta.added.methods[0].protos[0].proto, "Integer");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
-    test.equal(repo.statuses["main/Integer"].editStatus, "DIRTY");
-    test.equal(repo.statuses["main/Integer"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["main/Integer"].stuff.value.body), clearws("define main as method receiving Integer value doing:\n\ta = 2"));
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(delta.added.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].protos[0].proto).toEqual("Integer");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "CREATED");
+    expect(repo.statuses["main/Integer"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["main/Integer"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["main/Integer"].stuff.value.body)).toEqual(clearws("define main as method receiving Integer value doing:\n\ta = 2"));
+});
 
 
-
-exports.selectingThenUpdatingProtoOfNewMethodWith2ProtosKeepsStatusToCREATED = function (test) {
+it('preserves CREATED status when selecting then updating proto of new method with 2 protos', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -1044,18 +900,17 @@ exports.selectingThenUpdatingProtoOfNewMethodWith2ProtosKeepsStatusToCREATED = f
     repo.handleSetContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method receiving Integer value doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(delta.added.methods[0].name, "main");
-    test.equal(delta.added.methods[0].protos[0].proto, "Integer");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
-    test.equal(repo.statuses["main/Integer"].editStatus, "CREATED");
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(delta.added.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].protos[0].proto).toEqual("Integer");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "CREATED");
+    expect(repo.statuses["main/Integer"].editStatus).toEqual( "CREATED");
+});
 
 
-exports.selectingThenUpdatingProtoOfExistingMethodWith2ProtosPreservesDbIdAndSetsStatusToDIRTY = function (test) {
+it('preserves dbId and sets status to DIRTY when selecting then updating proto of existing method with 2 protos', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -1069,64 +924,56 @@ exports.selectingThenUpdatingProtoOfExistingMethodWith2ProtosPreservesDbIdAndSet
     repo.handleSetContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define main as method receiving Integer value doing:\n\ta = 2\n", "E", listener);
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(delta.added.methods[0].name, "main");
-    test.equal(delta.added.methods[0].protos[0].proto, "Integer");
-    test.equal(repo.statuses["main/"], undefined);
-    test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
-    test.equal(repo.statuses["main/Integer"].editStatus, "DIRTY");
-    test.equal(repo.statuses["main/Integer"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["main/Integer"].stuff.value.body), clearws("define main as method receiving Integer value doing:\n\ta = 2\n"));
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(delta.added.methods[0].name).toEqual("main");
+    expect(delta.added.methods[0].protos[0].proto).toEqual("Integer");
+    expect(repo.statuses["main/"]).toBeUndefined();
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "CREATED");
+    expect(repo.statuses["main/Integer"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["main/Integer"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["main/Integer"].stuff.value.body)).toEqual(clearws("define main as method receiving Integer value doing:\n\ta = 2\n"));
+});
 
-
-exports.destroyingNewMethodWith1ProtoSetsStatusToDELETED = function (test) {
+it('sets status to DELETED when destroying new method with 1 proto', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
-    test.equal(repo.statuses["main/"].editStatus, "CREATED");
+    expect(repo.statuses["main/"].editStatus).toEqual( "CREATED");
     var delta = repo.handleDestroyed({subType: "method", name: "main", proto: ""});
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(repo.statuses["main/"].editStatus, "DELETED");
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(repo.statuses["main/"].editStatus).toEqual( "DELETED");
+});
 
-
-exports.destroyingExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDELETED = function (test) {
+it('preserves dbId and sets status to DELETED when destroying existing method with 1 proto', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
     repo.statuses["main/"].editStatus = "CLEAN";
     repo.statuses["main/"].stuff.value.dbId = "Some UUID";
     var delta = repo.handleDestroyed({subType: "method", name: "main", proto: ""});
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(repo.statuses["main/"].editStatus, "DELETED");
-    test.equal(repo.statuses["main/"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["main/"].stuff.value.body), clearws("define main as method doing:\n\ta = 2\n"));
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(repo.statuses["main/"].editStatus).toEqual( "DELETED");
+    expect(repo.statuses["main/"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["main/"].stuff.value.body)).toEqual(clearws("define main as method doing:\n\ta = 2\n"));
+});
 
-
-exports.selectingThenDestroyingNewMethodWith1ProtoSetsStatusToDELETED = function (test) {
+it('sets status to DELETED when selecting then destroying new method with 1 proto', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
     listener = new prompto.problem.ProblemCollector();
     repo.handleSetContent("define main as method doing:\n\ta = 2\n", "E", listener);
-    test.equal(repo.statuses["main/"].editStatus, "CREATED");
+    expect(repo.statuses["main/"].editStatus).toEqual( "CREATED");
     var delta = repo.handleDestroyed({subType: "method", name: "main", proto: ""});
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(repo.statuses["main/"].editStatus, "DELETED");
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(repo.statuses["main/"].editStatus).toEqual( "DELETED");
+});
 
-
-exports.selectingThenDestroyingExistingMethodWith1ProtoPreservesDbIdAndSetsStatusToDELETED = function (test) {
+it('preserves dbId and sets status to DELETED when selecting then destroying existing method with 1 proto', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
@@ -1135,16 +982,14 @@ exports.selectingThenDestroyingExistingMethodWith1ProtoPreservesDbIdAndSetsStatu
     listener = new prompto.problem.ProblemCollector();
     repo.handleSetContent("define main as method doing:\n\ta = 2\n", "E", listener);
     var delta = repo.handleDestroyed({subType: "method", name: "main", proto: ""});
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(repo.statuses["main/"].editStatus, "DELETED");
-    test.equal(repo.statuses["main/"].stuff.value.dbId, "Some UUID");
-    test.equal(clearws(repo.statuses["main/"].stuff.value.body), clearws("define main as method doing:\n\ta = 2\n"));
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(repo.statuses["main/"].editStatus).toEqual( "DELETED");
+    expect(repo.statuses["main/"].stuff.value.dbId).toEqual("Some UUID");
+    expect(clearws(repo.statuses["main/"].stuff.value.body)).toEqual(clearws("define main as method doing:\n\ta = 2\n"));
+});
 
-
-exports.destroyingNewMethodWith2ProtosSetsStatusToDELETED = function (test) {
+it('sets status to DELETED when destroying new method with 2 protos', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -1152,17 +997,15 @@ exports.destroyingNewMethodWith2ProtosSetsStatusToDELETED = function (test) {
     repo.handleSetContent("", "E", listener); // new
     listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method doing:\n\ta = 2\n", "E", listener);
-    test.equal(repo.statuses["main/"].editStatus, "CREATED");
+    expect(repo.statuses["main/"].editStatus).toEqual( "CREATED");
     var delta = repo.handleDestroyed({subType: "method", name: "main", proto: ""});
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
-    test.equal(repo.statuses["main/"].editStatus, "DELETED");
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "CREATED");
+    expect(repo.statuses["main/"].editStatus).toEqual( "DELETED");
+});
 
-
-exports.destroyingExistingMethodWith2ProtosPreservesDbIdAndSetsStatusToDELETED = function (test) {
+it('preserves dbId and sets status to DELETED when destroying existing method with 2 protos', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define main as method receiving Text value doing:\n\ta = 2\n", "E", listener);
@@ -1173,16 +1016,15 @@ exports.destroyingExistingMethodWith2ProtosPreservesDbIdAndSetsStatusToDELETED =
     repo.statuses["main/"].editStatus = "CLEAN";
     repo.statuses["main/"].stuff.value.dbId = "Some UUID";
     var delta = repo.handleDestroyed({subType: "method", name: "main", proto: ""});
-    test.equal(delta.removed.methods[0].name, "main");
-    test.equal(delta.removed.methods[0].protos[0].proto, "");
-    test.equal(repo.statuses["main/Text"].editStatus, "CREATED");
-    test.equal(repo.statuses["main/"].editStatus, "DELETED");
-    test.equal(repo.statuses["main/"].stuff.value.dbId, "Some UUID");
-    test.done();
-};
+    expect(delta.removed.methods[0].name).toEqual("main");
+    expect(delta.removed.methods[0].protos[0].proto).toEqual('');
+    expect(repo.statuses["main/Text"].editStatus).toEqual( "CREATED");
+    expect(repo.statuses["main/"].editStatus).toEqual( "DELETED");
+    expect(repo.statuses["main/"].stuff.value.dbId).toEqual("Some UUID");
+});
 
 
-var widgetBody = '@PageWidgetOf("accounts/index.page")' +
+const widgetBody = '@PageWidgetOf("accounts/index.page")' +
 'widget IndexPage extends ReactWidget {' +
 '' +
 '    Document method getInitialState () {' +
@@ -1201,20 +1043,11 @@ var widgetBody = '@PageWidgetOf("accounts/index.page")' +
 '' +
 '}';
 
-exports.storedBodyIsComplete = function (test) {
+it('stores widget body', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent(widgetBody, "O", listener);
-    test.equal(repo.statuses["IndexPage"].editStatus, "CREATED");
-    test.equal(clearws(repo.statuses["IndexPage"].stuff.value.body), clearws(widgetBody));
-    test.done();
-};
+    expect(repo.statuses["IndexPage"].editStatus).toEqual( "CREATED");
+    expect(clearws(repo.statuses["IndexPage"].stuff.value.body)).toEqual(clearws(widgetBody));
+});
 
-
-exports.checkFailureDoesNotPreventRegistering = function (test) {
-    var repo = new Repository();
-    var listener = new prompto.problem.ProblemCollector();
-    repo.handleEditContent("define main as method doing:\n\ta = stuff for each stuff in stuffs\n", "E", listener);
-    repo.statuses["main/"].editStatus = "DIRTY";
-    test.done();
-};

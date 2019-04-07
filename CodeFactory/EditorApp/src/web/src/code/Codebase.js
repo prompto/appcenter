@@ -1,13 +1,19 @@
 import { getCodebaseLength } from './Utils';
 
-// eslint-disable-next-line
-const globals = self || window;
-const prompto = globals.prompto;
+let prompto = null;
+
+/* need a deferred function for testing with Jest */
+function linkPrompto() {
+    // eslint-disable-next-line
+    const globals = global || window || self || this;
+    prompto = globals.prompto;
+}
 
 /* an object which represents a catalog of declarations, classified by type */
 export default class Codebase {
 
     constructor(decls, globalContext, filterContext) {
+        linkPrompto();
         this.readCatalog(globalContext, decls);
         if (filterContext)
             this.filterOutDeclarations(filterContext);

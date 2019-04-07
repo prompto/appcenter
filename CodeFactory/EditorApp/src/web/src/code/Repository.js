@@ -2,9 +2,15 @@ import { parse, unparse, newParser, translate } from './Utils';
 import Codebase from "./Codebase";
 import Delta from "./Delta";
 
-// eslint-disable-next-line
-const globals = self || window;
-const prompto = globals.prompto;
+let prompto = null;
+
+/* need a deferred function for testing with Jest */
+function linkPrompto() {
+    // eslint-disable-next-line
+    const globals = global || window || self || this;
+    prompto = globals.prompto;
+}
+
 
 
 /* a class to maintain an up-to-date copy of the repository */
@@ -12,6 +18,7 @@ const prompto = globals.prompto;
 export default class Repository {
 
     constructor() {
+        linkPrompto();
         this.librariesContext = prompto.runtime.Context.newGlobalContext();
         this.projectContext = prompto.runtime.Context.newGlobalContext();
         this.projectContext.setParentContext(this.librariesContext);
