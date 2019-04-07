@@ -2,7 +2,7 @@ import axios from 'axios';
 import React from 'react';
 import Mousetrap from 'mousetrap';
 import { getParam } from './utils/Utils';
-import { getCodebaseLength, getFirstCodebaseEntry, getContentFromEntry } from './code/Utils';
+import { getFirstCodebaseEntry, getContentFromEntry } from './code/Utils';
 import Catalog from './code/Catalog';
 import MessageArea from './components/MessageArea';
 import ContentNavigator from './project-tree/ContentNavigator';
@@ -152,8 +152,8 @@ export default class EditorPage extends React.Component {
     catalogUpdated(delta, callback) {
         this.catalog.applyDelta(delta);
         let content = null;
-        if(delta.select)
-            content = {type: "Prompto", value: {name: delta.select}};
+        if(delta.selected)
+            content = {type: "Prompto", value: {name: delta.selected}};
         else if(delta.project) {
             if(this.state.activity===Activity.Loading)
                 this.setState({activity: Activity.Editing});
@@ -169,8 +169,7 @@ export default class EditorPage extends React.Component {
     }
 
     updateCurrentContent(delta) {
-        const length = getCodebaseLength(delta.added);
-        if(length===1) {
+        if(delta.editedCount===1 && delta.added) {
             const entry = getFirstCodebaseEntry(delta.added);
             const content = getContentFromEntry(entry);
             if(content)

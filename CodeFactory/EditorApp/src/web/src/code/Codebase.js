@@ -1,8 +1,8 @@
+import { getCodebaseLength } from './Utils';
+
 // eslint-disable-next-line
 const globals = self || window;
 const prompto = globals.prompto;
-
-import { getCodebaseLength } from './Utils';
 
 /* an object which represents a catalog of declarations, classified by type */
 export default class Codebase {

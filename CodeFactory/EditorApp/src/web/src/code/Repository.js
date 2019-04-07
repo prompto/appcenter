@@ -249,7 +249,7 @@ export default class Repository {
     };
 
 
-    handleEditContent(content, dialect, listener, select) {
+    handleEditContent(content, dialect, listener, selected) {
         // analyze what has changed, we'll ignore errors but let's catch them using a temporary listener
         var previousListener = Object.create(listener);
         var old_decls = parse(this.lastSuccess, this.lastDialect, previousListener);
@@ -261,8 +261,11 @@ export default class Repository {
             this.lastSuccess = content;
             this.lastDialect = dialect;
             var catalog = this.updateCodebase(old_decls, new_decls, parser, dialect, listener);
-            if (select && new_decls.length === 1)
-                catalog.select = new_decls[0].name;
+            if(catalog) {
+                if (selected && new_decls.length === 1) // object might have been renamed
+                    catalog.selected = new_decls[0].name;
+                catalog.editedCount = new_decls.length;
+            }
             return catalog;
         } else
             return null;
