@@ -1024,24 +1024,25 @@ it('preserves dbId and sets status to DELETED when destroying existing method wi
 });
 
 
-const widgetBody = '@PageWidgetOf("accounts/index.page")' +
-'widget IndexPage extends ReactWidget {' +
-'' +
-'    Document method getInitialState () {' +
-'        return { view:"Accounts"};' +
-'    }' +
-'' +
-'    Html method render () {' +
-'        state = getState();' +
-'        return <div>' +
-'        <AccountsNavbar/>' +
-'        <AccountsTable visible={state.view == "Accounts"} />' +
-'        <UsersTable visible={state.view == "Users"} />' +
-'        <OrganizationsTable visible={state.view == "Organizations"} />' +
-'        </div>;' +
-'    }' +
-'' +
-'}';
+const widgetBody = String.raw`@PageWidgetOf("accounts/index.page")
+widget IndexPage extends ReactWidget {
+
+    Document method getInitialState () {
+        return { view:"Accounts"};
+    }
+
+    Html method render () {
+        state = getState();
+        return <div>
+            <AccountsNavbar/>
+            <AccountsTable visible={state.view == "Accounts"} />
+            <UsersTable visible={state.view == "Users"} />
+            <OrganizationsTable visible={state.view == "Organizations"} />
+        </div>;
+    }
+
+}
+`;
 
 it('stores widget body', () => {
     var repo = new Repository();
@@ -1049,5 +1050,27 @@ it('stores widget body', () => {
     repo.handleEditContent(widgetBody, "O", listener);
     expect(repo.statuses["IndexPage"].editStatus).toEqual( "CREATED");
     expect(clearws(repo.statuses["IndexPage"].stuff.value.body)).toEqual(clearws(widgetBody));
+});
+
+const widgetTemplate = String.raw`widget $ {
+}
+`;
+
+it('sets status to CREATED when adding new widget to an existing one', ()=> {
+    var repo = new Repository();
+    var listener = new prompto.problem.ProblemCollector();
+    const w1 = widgetTemplate.replace('$', 'Existing');
+    repo.handleEditContent(w1, "O", listener);
+    repo.statuses["Existing"].editStatus = "DIRTY";
+    repo.statuses["Existing"].stuff.value.dbId = "Some UUID";
+    var listener = new prompto.problem.ProblemCollector();
+    repo.handleSetContent(w1, "O", listener);
+    const w2 = widgetTemplate.replace('$', 'Created1');
+    const w3 = widgetTemplate.replace('$', 'Created2');
+    listener = new prompto.problem.ProblemCollector();
+    repo.handleEditContent(w1 + w2 + w3, "O", listener);
+    expect(repo.statuses["Existing"].editStatus).toEqual( "DIRTY");
+    expect(repo.statuses["Created1"].editStatus).toEqual("CREATED");
+    expect(repo.statuses["Created2"].editStatus).toEqual("CREATED");
 });
 
