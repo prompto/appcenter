@@ -12,6 +12,10 @@ export default class ContentEditor extends React.Component {
         super(props);
         this.state = { breakpoints: new Breakpoints() };
         this.breakpointsUpdated = this.breakpointsUpdated.bind(this);
+        this.getResourceEditor = this.getResourceEditor.bind(this);
+        this.getDebuggerView = this.getDebuggerView.bind(this);
+        this.getPromptoEditor = this.getPromptoEditor.bind(this);
+        this.getBinaryEditor = this.getBinaryEditor.bind(this);
     }
 
     setProject(projectId, loadDependencies) {
@@ -65,10 +69,6 @@ export default class ContentEditor extends React.Component {
         return this.refs.DebuggerView.getDebugger();
     }
 
-    getDebuggerView() {
-        return this.refs.DebuggerView;
-    }
-
     breakpointsUpdated(breakpoints) {
         this.setState({ breakpoints: breakpoints });
     }
@@ -93,5 +93,22 @@ export default class ContentEditor extends React.Component {
                           root={this.props.root} activity={activity} />
         </div>
     }
+
+    getDebuggerView() {
+        return this.refs.DebuggerView;
+    }
+
+    getPromptoEditor() {
+        return this.refs.PromptoEditor;
+    }
+
+    getResourceEditor() {
+        return this.refs.ResourceEditor;
+    }
+
+    getBinaryEditor() {
+        return this.refs.BinaryEditor;
+    }
+
 
 }
