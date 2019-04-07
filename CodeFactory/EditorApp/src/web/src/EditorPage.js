@@ -31,6 +31,8 @@ export default class EditorPage extends React.Component {
         this.addResource = this.addResource.bind(this);
         this.addCode = this.addCode.bind(this);
         this.getProject = this.getProject.bind(this);
+        this.getContentEditor = this.getContentEditor.bind(this);
+        this.getContentNavigator = this.getContentNavigator.bind(this);
         this.prepareResourceFiles = this.prepareResourceFiles.bind(this);
         this.catalogUpdated = this.catalogUpdated.bind(this);
         this.contentUpdated = this.contentUpdated.bind(this);
@@ -99,14 +101,16 @@ export default class EditorPage extends React.Component {
     commitSuccessful(success) {
         this.refs.MessageArea.setMessage("Commit ok!");
         this.refs.ContentEditor.commitSuccessful();
+        this.clearModuleContext();
     }
 
     clearModuleContext() {
-        if(!this.state.activity.isModuleRunning())
-            return;
-        fetcher.fetchModuleURL(this.projectId, url => {
-            const fullUrl = url + "ws/control/clear-context";
-            axios.get(fullUrl);
+        fetcher.fetchModuleURL(this.projectId, "READ", url => {
+            // port is 0 if server is not running
+            if(url.indexOf(":0/")<0) {
+                const fullUrl = url + "ws/control/clear-context";
+                axios.get(fullUrl);
+            }
         }, error => alert(error));
     }
 
@@ -214,7 +218,7 @@ export default class EditorPage extends React.Component {
         this.refs.ContentEditor.dependenciesUpdated();
     }
 
-    render() {
+   render() {
         return <div>
             <EditorNavBar ref="EditorNavBar" root={this}/>
             <MessageArea ref="MessageArea"/>
@@ -252,6 +256,16 @@ export default class EditorPage extends React.Component {
                 </div>
             </div>;
     }
+
+    getContentNavigator() {
+        return this.refs.ContentNavigator;
+    }
+
+
+    getContentEditor() {
+        return this.refs.ContentEditor;
+    }
+
 
     setEditorContent(content, callback) {
         if(!content)
