@@ -101,7 +101,7 @@ export default class Launcher {
     }
 
     openWebPage(content) {
-        fetcher.fetchModuleURL(this.root.projectId, url => {
+        fetcher.fetchModuleURL(this.root.projectId, "RUN", url => {
             const fullUrl = url + content.name;
             const tab = window.open(fullUrl, '_blank', '');
             if(tab)

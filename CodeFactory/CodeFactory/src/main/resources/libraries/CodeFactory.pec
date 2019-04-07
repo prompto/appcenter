@@ -149,8 +149,8 @@ define getModuleResources as method receiving dbId doing:
 		raise NULL_REFERENCE
 	return fetch all Resource where module = module
 
-define getModulePort as native method receiving dbId and Boolean debug returning Integer doing:
-	Java: return prompto.codefactory.ModuleProcess.launchIfNeeded(dbId, debug);
+define getModulePort as native method receiving dbId and Text action returning Integer doing:
+	Java: return prompto.codefactory.ModuleProcess.launchIfNeeded(dbId, action);
 
 define killModule as native method receiving dbId doing:
 	Java: prompto.codefactory.ModuleProcess.shutDown(dbId);

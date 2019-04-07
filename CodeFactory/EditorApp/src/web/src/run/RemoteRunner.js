@@ -5,7 +5,7 @@ import Runner from "./Runner";
 export default class RemoteRunner extends Runner {
 
     runRemotely(projectId, mode, content, callback) {
-        fetcher.fetchModuleURL(projectId, url => {
+        fetcher.fetchModuleURL(projectId, "RUN",  url => {
             const fullUrl = url + "ws/run/" + content.name;
             const params = { mode: mode };
             if(content.subType === "method")

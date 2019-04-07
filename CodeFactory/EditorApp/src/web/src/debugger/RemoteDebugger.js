@@ -26,7 +26,7 @@ export default class RemoteDebugger {
 
     start(projectId, content) {
         this.onServerReadyEvent = event => this.doServerReadyEvent(event, projectId, content);
-        fetcher.fetchModulePort(projectId, true, port => this.connect(port), alert);
+        fetcher.fetchModulePort(projectId, "DEBUG", port => this.connect(port), alert);
     }
 
     disconnect() {

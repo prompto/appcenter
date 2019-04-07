@@ -70,14 +70,21 @@ public class ModuleProcess {
 		}
 	}
 	
-	public static Long launchIfNeeded(Object dbId, boolean debug) {
+	public static Long launchIfNeeded(Object dbId, String action) {
 		synchronized(modules) {
 			try {
 				if(dbId instanceof IValue)
 					dbId = ((IValue)dbId).getStorableData();
 				// already launched ?
 				ModuleProcess module = modules.get(dbId);
+				// if no longer alive recreate 
+				if(module!=null && !module.process.isAlive())
+					module = null;
+				if("READ".equals(action)) {
+					return module==null ? new Long(0) : new Long(module.port);
+				}
 				// kill if debug flag differs
+				boolean debug = "DEBUG".equals(action);
 				if(module!=null && debug!=module.isDebug()) {
 					shutDown(dbId);
 					module = null;
