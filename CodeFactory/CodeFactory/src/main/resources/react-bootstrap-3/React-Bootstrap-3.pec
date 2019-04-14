@@ -243,4 +243,12 @@ and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
 
-		
+define DatePicker as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.DatePicker
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define DateChanged as abstract method receiving Date value;
+	
