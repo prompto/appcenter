@@ -50,7 +50,7 @@
 							<goal>yarn</goal>
 						</goals>
 						<configuration>
-							<arguments>install</arguments>
+							<arguments>install --loglevel silent</arguments>
 						</configuration>
 					</execution>
 					<execution>
