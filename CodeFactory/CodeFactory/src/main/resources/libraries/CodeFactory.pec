@@ -331,9 +331,14 @@ define exportModule as method receiving dbId doing:
 		doc.uiFramework = module.uiFramework
 	components = [] as Stuff[]
 	fetched = fetch all mutable Stuff where module = module
+	components = fetched.toList
 	// don't re-export module itself
-	for each component in fetched:
+	for each component in components:
 		component.module = Nothing 
-		components = components + [component]
 	doc.components = components
 	return Blob from doc
+
+define importModule as method receiving Blob blob doing:
+	doc = Document from blob
+	
+	

@@ -162,7 +162,7 @@ public class Application {
 	}
 
 	private static void doImportModule(ICodeStore codeStore, URL url) throws Exception {
-		ModuleImporter importer = new ModuleImporter(url);
+		SampleImporter importer = new SampleImporter(url);
 		importer.importModule(codeStore);
 	}
 
@@ -191,7 +191,7 @@ public class Application {
 		codeStoreLibrary.setVersion(PromptoVersion.parse("1.0.0.0"));
 		codeStoreLibrary.setDescription("Code store model");
 		URL url = Thread.currentThread().getContextClassLoader().getResource("libraries/CodeStore.pec");
-		ModuleImporter importer = new ModuleImporter(codeStoreLibrary, null, url);
+		SampleImporter importer = new SampleImporter(codeStoreLibrary, null, url);
 		importer.importModule(codeStore);
 		Module appStoreLibrary = new Library();
 		appStoreLibrary.setName("AppStore");
@@ -202,7 +202,7 @@ public class Application {
 		dependency.setVersion(codeStoreLibrary.getVersion());
 		appStoreLibrary.setDependencies(Collections.singletonList(dependency));
 		url = Thread.currentThread().getContextClassLoader().getResource("libraries/AppStore.pec");
-		importer = new ModuleImporter(appStoreLibrary, null, url);
+		importer = new SampleImporter(appStoreLibrary, null, url);
 		importer.importModule(codeStore);
 	}
 

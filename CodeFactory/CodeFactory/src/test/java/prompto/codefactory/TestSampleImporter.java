@@ -9,7 +9,7 @@ import prompto.code.Batch;
 import prompto.code.ICodeStore;
 import prompto.code.Thesaurus;
 import prompto.code.WebLibrary;
-import prompto.codefactory.ModuleImporter;
+import prompto.codefactory.SampleImporter;
 import prompto.config.IRuntimeConfiguration;
 import prompto.config.TempDirectories;
 import prompto.intrinsic.PromptoVersion;
@@ -18,7 +18,7 @@ import prompto.runtime.Mode;
 import prompto.runtime.Standalone;
 import prompto.store.memory.MemStore;
 
-public class TestModuleImporter {
+public class TestSampleImporter {
 
 	@Before
 	public void before() throws Exception {
@@ -38,7 +38,7 @@ public class TestModuleImporter {
 
 	@Test
 	public void salesAppIsImported() throws Exception {
-		ModuleImporter importer = new ModuleImporter("samples/Sales/");
+		SampleImporter importer = new SampleImporter("samples/Sales/");
 		importer.importModule(ICodeStore.getInstance());
 		assertTrue(importer.module instanceof Batch);
 		assertNotNull(importer.module.getDbId());
@@ -47,7 +47,7 @@ public class TestModuleImporter {
 
 	@Test
 	public void inventoryAppIsImported() throws Exception {
-		ModuleImporter importer = new ModuleImporter("samples/Inventory/");
+		SampleImporter importer = new SampleImporter("samples/Inventory/");
 		importer.importModule(ICodeStore.getInstance());
 		assertTrue(importer.module instanceof Batch);
 		assertNotNull(importer.module.getDbId());
@@ -56,7 +56,7 @@ public class TestModuleImporter {
 
 	@Test
 	public void soupAppIsImported() throws Exception {
-		ModuleImporter importer = new ModuleImporter("samples/Soup/");
+		SampleImporter importer = new SampleImporter("samples/Soup/");
 		importer.importModule(ICodeStore.getInstance());
 		assertTrue(importer.module instanceof Batch);
 		assertNotNull(importer.module.getDbId());
@@ -65,7 +65,7 @@ public class TestModuleImporter {
 
 	@Test
 	public void myAppIsImported() throws Exception {
-		ModuleImporter importer = new ModuleImporter("samples/MyApp/");
+		SampleImporter importer = new SampleImporter("samples/MyApp/");
 		importer.importModule(ICodeStore.getInstance());
 		assertTrue(importer.module instanceof Batch);
 		assertNotNull(importer.module.getDbId());
@@ -74,7 +74,7 @@ public class TestModuleImporter {
 	
 	@Test
 	public void thesaurusIsImported() throws Exception {
-		ModuleImporter importer = new ModuleImporter("thesaurus/");
+		SampleImporter importer = new SampleImporter("thesaurus/");
 		importer.importModule(ICodeStore.getInstance());
 		assertTrue(importer.module instanceof Thesaurus);
 		assertNotNull(importer.module.getDbId());
@@ -82,7 +82,7 @@ public class TestModuleImporter {
 	
 	@Test
 	public void reactBootstrapIsImported() throws Exception {
-		ModuleImporter importer = new ModuleImporter("react-bootstrap-3/");
+		SampleImporter importer = new SampleImporter("react-bootstrap-3/");
 		importer.importModule(ICodeStore.getInstance());
 		assertTrue(importer.module instanceof WebLibrary);
 		assertNotNull(importer.module.getDbId());

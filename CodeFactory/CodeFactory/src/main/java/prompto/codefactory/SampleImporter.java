@@ -16,7 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ModuleImporter {
+public class SampleImporter {
 
 	static Logger logger = new Logger();
 
@@ -24,17 +24,17 @@ public class ModuleImporter {
 	URL imageResource;
 	URL codeResource;
 	
-	public ModuleImporter(Module module, URL imageResource, URL codeResource) {
+	public SampleImporter(Module module, URL imageResource, URL codeResource) {
 		this.module = module;
 		this.imageResource = imageResource;
 		this.codeResource = codeResource;
 	}
 	
-	public ModuleImporter(String resourcePath) {
+	public SampleImporter(String resourcePath) {
 		this(Thread.currentThread().getContextClassLoader().getResource(resourcePath));
 	}
 	
-	public ModuleImporter(URL url) {
+	public SampleImporter(URL url) {
 		try {
 			JsonNode descriptor = readDescriptor(url);
 			Module module = createModule(descriptor);
