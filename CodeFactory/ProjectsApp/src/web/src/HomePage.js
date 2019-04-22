@@ -14,6 +14,7 @@ export default class HomePage extends React.Component {
         super(props);
         this.state = { recent: [], all: [] };
         this.newProject = this.newProject.bind(this);
+        this.importProject = this.importProject.bind(this);
     }
 
     componentDidMount() {
@@ -76,6 +77,26 @@ export default class HomePage extends React.Component {
     moduleDeleted() {
         this.fetchRecentModules();
         this.fetchAllModules();
+    }
+
+    importProject() {
+        const input = document.createElement("input");
+        input.type = 'file';
+        input.style = { display: "none" };
+        input.accept = ".zip"
+        input.onchange = e => {
+            const file = e.target.files[0];
+            const formData = new FormData();
+            const partName = "@" + file.name;
+            formData.append(partName, file);
+            const blob = { mimeType: file.type, partName: partName };
+            let params = [ { name: "blob", type: "Blob", value: blob } ];
+            formData.append("params", JSON.stringify(params));
+            axios.post("/ws/run/importModule", formData).then(response=>{
+                this.fetchAllModules();
+            }).catch(error=>alert(error));
+        };
+        input.click();
     }
 
     render() {

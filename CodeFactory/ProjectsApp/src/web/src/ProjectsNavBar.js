@@ -20,7 +20,7 @@ export default class ProjectsNavBar extends React.Component {
             <Navbar.Form pullRight>
                 <Button type="button" id="btnNewProject" onClick={this.props.root.newProject} style={btnStyle}>New</Button>
                 &nbsp;
-                <Button type="button" style={btnStyle}>Import</Button>
+                <Button type="button" onClick={this.props.root.importProject} style={btnStyle}>Import</Button>
             </Navbar.Form>
         </Navbar>;
     }

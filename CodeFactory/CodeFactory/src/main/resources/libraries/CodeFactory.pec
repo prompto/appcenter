@@ -292,53 +292,47 @@ define deleteModule as method receiving dbId doing:
 	flush
 
 
-define getModuleTypeName as method receiving module doing:
-	// TODO use reflection once available
-	if module is a Batch:
-		return "Batch"
-	else if module is a Script:
-		return "Script"
-	else if module is a WebSite:
-		return "WebSite"
-	else if module is a Service:
-		return "Service"
-	else if module is a Library:
-		return "Library"
-	else if module is a WebLibrary:
-		return "WebLibrary"
-	else:
-		return "<unknown>"
-
 define exportModule as method receiving dbId doing:
-	module = fetch one Module where dbId = dbId
-	if module is nothing:
-		raise NULL_REFERENCE
 	doc = Document
-	doc.type = getModuleTypeName module
-	doc.name = module.name
-	doc.version = module.version
-	doc.description = module.description
-	doc.image = module.image
-	if module is a Batch:
-		doc.startMethod = module.startMethod
-	else if module is a Service:
-		doc.serverAboutToStartMethod = module.serverAboutToStartMethod
-	if module is a WebSite:
-		doc.homePage = module.homePage
-	if module is a WebLibrary:
-		doc.widgetLibrary = module.widgetLibrary
-		doc.htmlEngine = module.htmlEngine
-		doc.uiFramework = module.uiFramework
-	components = [] as Stuff[]
-	fetched = fetch all mutable Stuff where module = module
-	components = fetched.toList
-	// don't re-export module itself
-	for each component in components:
-		component.module = Nothing 
-	doc.components = components
+	module = fetch one Module where dbId = dbId
+	doc.module = detachModule module
+	components = fetch all mutable Stuff where module = module
+	doc.components =  detachComponents components.toList
 	return Blob from doc
+
+
+define detachModule as method receiving Module module doing:
+	module = mutable module
+	module.dbId = nothing
+	dependencies = [] as Dependency[]
+	for each dependency in module.dependencies:
+		dependency = mutable dependency
+		dependency.dbId = nothing
+		dependencies = dependencies + [dependency]
+	module.dependencies = dependencies 
+	return module
+
+define detachComponents as method receiving Stuff[] stuff doing:
+	components = [] as Stuff[]
+	for each component in stuff:
+		component = mutable component
+		component.dbId = nothing
+		component.module = nothing
+		components = components + [component]
+	return components	
 
 define importModule as method receiving Blob blob doing:
 	doc = Document from blob
+	module = doc.module as Module
+	components = attachComponents with (doc.components as Stuff[]) as stuff and module as module
+	store module, components
+
+define attachComponents as method receiving Stuff[] stuff and Module module doing:
+	components = [] as Stuff[]
+	for each component in stuff:
+		component = mutable component
+		component.module = module
+		components = components + [component]
+	return components	
 	
 	
