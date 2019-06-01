@@ -55,9 +55,12 @@ export default class Launcher {
     doLaunch(runnable) {
         // content is deemed runnable
         const content = runnable.content;
-        if (content.type === "html" || content.type === "page")
-            this.openWebPage(runnable.content);
-        else if(this.runMode.startsWith("L")) {
+        if (content.type === "html" || content.type === "page") {
+            if(this.debug)
+                this.debugWebPage(runnable.content);
+            else
+                this.openWebPage(runnable.content);
+        } else if(this.runMode.startsWith("L")) {
             if(this.debug)
                 this.debugLocalTestOrMethod(content);
             else
@@ -95,6 +98,15 @@ export default class Launcher {
         const runner = Runners.forMode(this.runMode);
         if (runner) {
             runner.startDebugContent(this.root, this.root.projectId, null, content);
+        } else {
+            alert("Unsupported mode: " + this.runMode);
+        }
+    }
+
+    debugWebPage(content) {
+        const runner = Runners.forMode(this.runMode);
+        if (runner) {
+            runner.startDebugContent(this.root, this.root.projectId, null, null, ()=>this.openWebPage(content));
         } else {
             alert("Unsupported mode: " + this.runMode);
         }

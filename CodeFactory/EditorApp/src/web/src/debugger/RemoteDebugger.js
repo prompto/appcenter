@@ -24,8 +24,13 @@ export default class RemoteDebugger {
         this.listener = null;
     }
 
-    start(projectId, content) {
-        this.onServerReadyEvent = event => this.doServerReadyEvent(event, projectId, content);
+    start(projectId, content, callback) {
+        if(content)
+            this.onServerReadyEvent = event => this.doServerReadyEvent(event, projectId, content);
+        else if(callback)
+            this.onServerReadyEvent = event => callback();
+        else
+            this.onServerReadyEvent = event => {};
         fetcher.fetchModulePort(projectId, "DEBUG", port => this.connect(port), alert);
     }
 

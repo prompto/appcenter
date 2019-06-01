@@ -7,10 +7,10 @@ export default class RemoteInterpreter extends RemoteRunner {
         this.runRemotely(projectId, "interpret", content, callback);
     }
 
-    startDebugContent(root, projectId, repo, content) {
+    startDebugContent(root, projectId, repo, content, callback) {
         const dbg = new RemoteDebugger(root);
         root.setDebugger(dbg);
-        dbg.start(projectId, content);
+        dbg.start(projectId, content, callback);
     }
 
 }
