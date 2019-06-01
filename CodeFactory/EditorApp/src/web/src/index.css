@@ -366,17 +366,17 @@ table > tbody > .breakpoint-row > td {
 }
 
 .ace_gutter-cell.ace_breakpoint{
-    background-image: url("/img/debug/active-breakpoint.png");
+    background-image: url("./img/debug/active-breakpoint.png");
     background-size: contain;
 }
 
 .ace_gutter-cell.debugger-line {
-    background-image: url("/img/debug/debugger-line.png");
+    background-image: url("./img/debug/debugger-line.png");
     background-size: contain;
 }
 
 .ace_gutter-cell.ace_breakpoint.debugger-line {
-    background-image: url("/img/debug/debugger-line.png"), url("/img/debug/active-breakpoint.png");
+    background-image: url("./img/debug/debugger-line.png"), url("./img/debug/active-breakpoint.png");
     background-size: contain;
 }
 
