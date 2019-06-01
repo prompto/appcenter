@@ -88,6 +88,8 @@ export default class PromptoEditor extends React.Component {
     }
 
     toggleBreakpoint(click) {
+        if(!this.content)
+            return;
         const editor = this.getEditor();
         if (!editor.isFocused())
             return;
