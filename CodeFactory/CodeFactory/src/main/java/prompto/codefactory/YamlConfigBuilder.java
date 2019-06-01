@@ -90,6 +90,7 @@ public class YamlConfigBuilder {
 		http.setEntry("port", process.getPort());
 		http.deleteEntry("redirectFrom");
 		http.deleteEntry("sendsXAuthorization");
+		http.deleteEntry("authentication");
 		String origin = PromptoServlet.REGISTERED_ORIGIN.get();
 		if(origin!=null) {
 			http.setEntry("allowedOrigins", origin);
