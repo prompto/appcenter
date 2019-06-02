@@ -13,7 +13,7 @@ export default class DebugResponse {
 }
 
 
-DebugResponse.VOID = class VoidResponse extends DebugResponse {
+DebugResponse["VOID"] = class VoidResponse extends DebugResponse {
 
     constructor(message) {
         super(message.type);
@@ -22,7 +22,16 @@ DebugResponse.VOID = class VoidResponse extends DebugResponse {
 };
 
 
-DebugResponse.GET_WORKERS = class GetWorkersResponse extends DebugResponse {
+DebugResponse["GET_STATUS"] = class GetStatusResponse extends DebugResponse {
+
+    constructor(message) {
+        super(message.type);
+        this.status = message.object.status;
+    }
+
+};
+
+DebugResponse["GET_WORKERS"] = class GetWorkersResponse extends DebugResponse {
 
     constructor(message) {
         super(message.type);
@@ -32,7 +41,7 @@ DebugResponse.GET_WORKERS = class GetWorkersResponse extends DebugResponse {
 };
 
 
-DebugResponse.GET_STACK = class GetStackResponse extends DebugResponse {
+DebugResponse["GET_STACK"] = class GetStackResponse extends DebugResponse {
 
     constructor(message) {
         super(message.type);
@@ -42,7 +51,7 @@ DebugResponse.GET_STACK = class GetStackResponse extends DebugResponse {
 };
 
 
-DebugResponse.GET_VARIABLES = class GetVariablesResponse extends DebugResponse {
+DebugResponse["GET_VARIABLES"] = class GetVariablesResponse extends DebugResponse {
 
     constructor(message) {
         super(message.type);
@@ -52,7 +61,7 @@ DebugResponse.GET_VARIABLES = class GetVariablesResponse extends DebugResponse {
 };
 
 
-DebugResponse.GET_VARIABLE = class GetVariableResponse extends DebugResponse {
+DebugResponse["GET_VARIABLE"] = class GetVariableResponse extends DebugResponse {
 
     constructor(message) {
         super(message.type);
