@@ -31,7 +31,7 @@ export default class PromptoWorker extends Mirror {
 
     loadCore() {
         this.markLoading("Core");
-        fetcher.fetchText("prompto/prompto.pec", null, text => {
+        fetcher.getTEXT("prompto/prompto.pec", null, text => {
             this.$repo.registerLibraryCode(text, "E");
             this.markLoaded("Core");
         });
@@ -167,20 +167,20 @@ export default class PromptoWorker extends Mirror {
     fetchModuleDescription(projectId, register, success) {
         const params = [ {name:"dbId", value:projectId.toString()}, {name:"register", type:"Boolean", value:register}];
         const url = '/ws/run/getModuleDescription';
-        fetcher.fetchJSON(url, { params: JSON.stringify(params) }, success);
+        fetcher.getJSON(url, { params: JSON.stringify(params) }, success);
     }
 
     fetchProjectDeclarations(projectId, success) {
         const params = [ {name:"dbId", value:projectId.toString()}];
         const url = '/ws/run/getModuleDeclarations';
-        fetcher.fetchJSON(url, { params: JSON.stringify(params) }, success);
+        fetcher.getJSON(url, { params: JSON.stringify(params) }, success);
     }
 
 
     fetchLibraryDeclarations(name, version, success) {
         const params = [ {name:"name", type:"Text", value:name}, {name:"version", type:version.type, value:version.value} ];
         const url = '/ws/run/getModuleDeclarations';
-        fetcher.fetchJSON(url, { params: JSON.stringify(params) }, success);
+        fetcher.getJSON(url, { params: JSON.stringify(params) }, success);
     }
 
     publishLibraries() {

@@ -22,14 +22,30 @@ class Fetcher {
             return {};
     }
 
-    fetchJSON(url, params, success, errored) {
-        this.fetchText(url, params, text => {
+    postJSON(url, params, success, errored) {
+        this.postTEXT(url, params, text => {
             const json = typeof(text)===typeof('') ? JSON.parse(text) : text; // already transformed by axios
             success(json);
         }, errored);
     }
 
-    fetchText(url, params, success, errored) {
+    postTEXT(url, params, success, errored) {
+        errored = errored || console.log;
+        const config = this.prepareConfig(url);
+        axios.post(url, params, config)
+            .then(resp => this.onSuccess(resp, url, success, errored))
+            .catch(errored);
+    }
+
+
+    getJSON(url, params, success, errored) {
+        this.getTEXT(url, params, text => {
+            const json = typeof(text)===typeof('') ? JSON.parse(text) : text; // already transformed by axios
+            success(json);
+        }, errored);
+    }
+
+    getTEXT(url, params, success, errored) {
         errored = errored || console.log;
         let config = this.prepareConfig(url);
         if(params)

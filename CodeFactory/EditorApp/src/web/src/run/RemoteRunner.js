@@ -1,4 +1,4 @@
-import {print} from "../utils/Utils";
+import { print } from "../utils/Utils";
 import fetcher from '../utils/Fetcher';
 import Runner from "./Runner";
 
@@ -10,7 +10,7 @@ export default class RemoteRunner extends Runner {
             const params = { mode: mode };
             if(content.subType === "method")
                 params.main = true;
-            fetcher.fetchJSON(fullUrl, params, response => {
+            fetcher.getJSON(fullUrl, params, response => {
                 if (response.error)
                     print(response.error);
                 else if(response.data instanceof Array)
