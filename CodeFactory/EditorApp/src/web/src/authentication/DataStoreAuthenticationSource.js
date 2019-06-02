@@ -5,7 +5,7 @@ import AuthenticationSource from './AuthenticationSource';
 export default class DataStoreAuthenticationSource extends AuthenticationSource {
 
     constructor() {
-        super("STORE", "Data store", "Login and password are checked against an encrypted Prompto data store.");
+        super("DataStoreAuthenticationSource", "Data store", "Login and password are checked against an encrypted Prompto data store.");
         this.handleUseTestSourceInDev = this.handleUseTestSourceInDev.bind(this);
         this.handleStoreName = this.handleStoreName.bind(this);
     }

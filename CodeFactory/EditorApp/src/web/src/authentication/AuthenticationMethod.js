@@ -4,8 +4,8 @@ import { ALL_AUTH_SOURCES } from './AuthenticationSources';
 
 export default class AuthenticationMethod {
 
-    constructor(id, label) {
-        this.id = id;
+    constructor(typeName, label) {
+        this.typeName = typeName;
         this.label = label;
         this.disabled = false;
     }
@@ -18,8 +18,8 @@ export default class AuthenticationMethod {
         return <div>
             <FormGroup>
                 <ControlLabel>Select the login/password data source for this application:</ControlLabel><br/>
-                <FormControl componentClass="select" defaultValue={dialog.state.source.id} onChange={dialog.handleSource}>
-                    { ALL_AUTH_SOURCES.map(m=><option key={m.id} value={m.id}
+                <FormControl componentClass="select" defaultValue={dialog.state.source.typeName} onChange={dialog.handleSource}>
+                    { ALL_AUTH_SOURCES.map(m=><option key={m.typeName} value={m.typeName}
                                                       disabled={m.disabled} >{m.label}</option>) }
                 </FormControl>
                 <HelpBlock>{dialog.state.source.help}</HelpBlock>

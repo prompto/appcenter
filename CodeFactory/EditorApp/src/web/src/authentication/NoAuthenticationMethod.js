@@ -3,7 +3,7 @@ import AuthenticationMethod from "./AuthenticationMethod";
 export default class NoAuthenticationMethod extends AuthenticationMethod {
 
     constructor() {
-        super("NONE", "No authentication");
+        super("NoAuthenticationMethod", "No authentication");
     }
 
     renderItems(dialog) {

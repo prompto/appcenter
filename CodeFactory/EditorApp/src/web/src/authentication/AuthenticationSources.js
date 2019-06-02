@@ -10,6 +10,6 @@ export const ALL_AUTH_SOURCES = [
 ];
 
 
-export const ID_TO_AUTH_SOURCE_MAP = {};
+export const NAME_TO_AUTH_SOURCE_MAP = {};
 
-ALL_AUTH_SOURCES.forEach(t => ID_TO_AUTH_SOURCE_MAP[t.id] = t);
+ALL_AUTH_SOURCES.forEach(t => NAME_TO_AUTH_SOURCE_MAP[t.typeName] = t);

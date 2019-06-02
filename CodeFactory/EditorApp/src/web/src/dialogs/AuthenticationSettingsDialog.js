@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React from 'react';
 import { Modal, Button, Checkbox, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
-import { ALL_AUTH_METHODS, ID_TO_AUTH_METHOD_MAP } from "../authentication/AuthenticationMethods";
-import { ID_TO_AUTH_SOURCE_MAP } from "../authentication/AuthenticationSources";
+import { ALL_AUTH_METHODS, NAME_TO_AUTH_METHOD_MAP } from "../authentication/AuthenticationMethods";
+import { NAME_TO_AUTH_SOURCE_MAP } from "../authentication/AuthenticationSources";
 import {closeModal} from "../components/ModalDialog";
 import ModalDialog from "../components/ModalDialog";
 
@@ -29,17 +29,16 @@ export default class AuthenticationSettingsDialog extends React.Component {
         const state = {};
         const settings = (this.getProject().authenticationSettings || {}).value || {};
         if(settings.authenticationMethod && settings.authenticationMethod.type) {
-            /*eslint no-eval: "off"*/
-            state.method = new (eval(settings.authenticationMethod.type))();
+            state.method = NAME_TO_AUTH_METHOD_MAP[settings.authenticationMethod.type];
             state.method.setStateFromValue(settings.authenticationMethod.value, this.state);
         } else
-            state.method = ID_TO_AUTH_METHOD_MAP["NONE"];
+            state.method = NAME_TO_AUTH_METHOD_MAP["NoAuthenticationMethod"];
         state.skipAuthInDev = settings.skipAuthInDev || false;
         if(settings.authenticationSource && settings.authenticationSource.type) {
-            state.source = new (eval(settings.authenticationSource.type))();
+            state.source = NAME_TO_AUTH_SOURCE_MAP[settings.authenticationSource.type];
             state.source.setStateFromValue(settings.authenticationSource.value, this.state);
         } else
-            state.source = ID_TO_AUTH_SOURCE_MAP["STORE"];
+            state.source = NAME_TO_AUTH_SOURCE_MAP["STORE"];
         state.useTestSourceInDev = settings.useTestSourceInDev || false;
         state.useDefaultWhiteList = settings.useDefaultWhiteList || false;
         state.whiteList = (settings.whiteList || {}).value || [];
@@ -47,22 +46,22 @@ export default class AuthenticationSettingsDialog extends React.Component {
     }
 
     setSettingsFromState(settings) {
-        if(this.state.method.id==="NONE") {
+        if(this.state.method.typeName==="NoAuthenticationMethod") {
             settings.authenticationMethod = null;
             settings.authenticationSource = null;
         } else {
             // save method
             const method = settings.authenticationMethod || {};
-            if(method.type!==this.state.method.constructor.name) {
-                method.type = this.state.method.constructor.name;
+            if(method.type!==this.state.method.typeName) {
+                method.type = this.state.method.typeName;
                 method.value = {}; // TODO cleanup orphans on server
             }
             this.state.method.setValueFromState(this.state, method.value);
             settings.authenticationMethod = method;
             // save source
             const source = settings.authenticationSource || {};
-            if(source.type!==this.state.method.constructor.name) {
-                source.type = this.state.source.constructor.name;
+            if(source.type!==this.state.source.typeName) {
+                source.type = this.state.source.typeName;
                 source.value = {}; // TODO cleanup orphans on server
             }
             this.state.source.setValueFromState(this.state, source.value);
@@ -80,8 +79,8 @@ export default class AuthenticationSettingsDialog extends React.Component {
     }
 
     handleMethod(e) {
-        const id = e.currentTarget.value;
-        const method = ID_TO_AUTH_METHOD_MAP[id];
+        const typeName = e.currentTarget.value;
+        const method = NAME_TO_AUTH_METHOD_MAP[typeName];
         method.createDefaults(this);
         this.setState({method: method});
     }
@@ -101,8 +100,8 @@ export default class AuthenticationSettingsDialog extends React.Component {
 
 
     handleSource(e) {
-        const id = e.currentTarget.value;
-        const source = ID_TO_AUTH_SOURCE_MAP[id];
+        const typeName = e.currentTarget.value;
+        const source = NAME_TO_AUTH_SOURCE_MAP[typeName];
         source.createDefaults(this);
         this.setState({source: source});
     }
@@ -143,7 +142,7 @@ export default class AuthenticationSettingsDialog extends React.Component {
 
     render() {
         const cleanName = this.getProject().name.toLowerCase().replace(/ /g, "-");
-        const showWhiteList = this.state.method.id!=="NONE";
+        const showWhiteList = this.state.method.typeName!=="NoAuthenticationMethod";
         return <ModalDialog >
             <Modal.Header closeButton={true}>
                 <Modal.Title>Authentication settings</Modal.Title>
@@ -152,12 +151,12 @@ export default class AuthenticationSettingsDialog extends React.Component {
                 <form>
                     <FormGroup>
                         <ControlLabel>Select the authentication method for this application:</ControlLabel><br/>
-                        <FormControl componentClass="select" defaultValue={this.state.method.id} onChange={this.handleMethod}>
-                            { ALL_AUTH_METHODS.map(m=><option key={m.id} value={m.id}
+                        <FormControl componentClass="select" defaultValue={this.state.method.typeName} onChange={this.handleMethod}>
+                            { ALL_AUTH_METHODS.map(m=><option key={m.typeName} value={m.typeName}
                                                               disabled={m.disabled} >{m.label}</option>) }
                         </FormControl>
                     </FormGroup>
-                    { this.state.method.id !== "NONE" &&
+                    { this.state.method.typeName !== "NoAuthenticationMethod" &&
                     <FormGroup>
                         <Checkbox inline checked={this.state.skipAuthInDev} onChange={this.handleSkipAuthInDev}>Skip authentication for development</Checkbox>
                     </FormGroup>

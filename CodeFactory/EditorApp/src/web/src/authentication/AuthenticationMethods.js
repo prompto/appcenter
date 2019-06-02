@@ -11,6 +11,6 @@ export const ALL_AUTH_METHODS = [
 ];
 
 
-export const ID_TO_AUTH_METHOD_MAP = {};
+export const NAME_TO_AUTH_METHOD_MAP = {};
 
-ALL_AUTH_METHODS.forEach(t => ID_TO_AUTH_METHOD_MAP[t.id] = t);
+ALL_AUTH_METHODS.forEach(t => NAME_TO_AUTH_METHOD_MAP[t.typeName] = t);

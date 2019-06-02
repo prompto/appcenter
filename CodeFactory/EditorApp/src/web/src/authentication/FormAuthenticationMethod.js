@@ -6,7 +6,7 @@ import AuthenticationMethod from './AuthenticationMethod';
 export default class FormAuthenticationMethod extends AuthenticationMethod {
 
     constructor() {
-        super("FORM", "Developer provided form (FORM)");
+        super("FormAuthenticationMethod", "Developer provided form (FORM)");
     }
 
     handleLoginFolder(e, dialog) {

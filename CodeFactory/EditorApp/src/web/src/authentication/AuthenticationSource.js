@@ -1,7 +1,7 @@
 export default class AuthenticationSource {
 
-    constructor(id, label, help) {
-        this.id = id;
+    constructor(typeName, label, help) {
+        this.typeName = typeName;
         this.label = label;
         this.help = help;
         this.disabled = false;
