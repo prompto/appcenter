@@ -1,7 +1,7 @@
 import RemoteListener from './RemoteListener';
 import RemoteRequester from './RemoteRequester';
 import Activity from "../utils/Activity";
-import { GetWorkersRequest, GetStackRequest, GetVariablesRequest, GetVariableRequest,
+import { GetProcessStatusRequest, GetWorkersRequest, GetStackRequest, GetVariablesRequest, GetVariableRequest,
         StepOverRequest, StepIntoRequest, StepOutRequest, SuspendRequest, ResumeRequest, TerminateRequest,
         InstallBreakpointRequest } from './DebugRequest';
 import fetcher from '../utils/Fetcher';
@@ -43,12 +43,17 @@ export default class RemoteDebugger {
     }
 
     connect(port) {
-        const sessionId = RemoteDebugger.generateSessionId();
-        const listener = new RemoteListener(this);
-        listener.connect(port, sessionId, () => {
-            this.listener = listener;
-            this.requester = new RemoteRequester(port);
-            this.clientConnected();
+        // browser is not always able to request authentication when opening a WebSocket
+        // workaround is to call a neutral method to force authentication
+        const requester = new RemoteRequester(port);
+        requester.send(new GetProcessStatusRequest(), () => {
+            const sessionId = RemoteDebugger.generateSessionId();
+            const listener = new RemoteListener(this);
+            listener.connect(port, sessionId, () => {
+                this.listener = listener;
+                this.requester = requester;
+                this.clientConnected();
+            }, alert);
         }, alert);
     }
 
@@ -76,7 +81,7 @@ export default class RemoteDebugger {
         const params = { mode: "interpret" };
         if(content.subType === "method")
             params.main = true;
-        fetcher.fetchJSON(url, params, response => {
+        fetcher.getJSON(url, params, response => {
             if (response.error)
                 print(response.error);
             else if(response.data instanceof Array)

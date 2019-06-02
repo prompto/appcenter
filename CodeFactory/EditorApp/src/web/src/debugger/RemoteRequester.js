@@ -1,4 +1,4 @@
-import axios from 'axios';
+import fetcher from '../utils/Fetcher';
 import DebugResponse from './DebugResponse';
 
 export default class RemoteRequester {
@@ -9,13 +9,9 @@ export default class RemoteRequester {
     }
 
     send(request, success, errored) {
-        axios.post(this.url, { type: request.type, object: request } )
-            .then(response => {
-                const data = typeof(response.data)===typeof("") ? JSON.parse(response.data) : response.data;
-                const debugResponse = DebugResponse.parse(data);
-                success(debugResponse);
-            })
-            .catch(errored);
-
+        fetcher.postJSON(this.url, { type: request.type, object: request }, data => {
+            const debugResponse = DebugResponse.parse(data);
+            success(debugResponse);
+        }, errored);
     }
 }
