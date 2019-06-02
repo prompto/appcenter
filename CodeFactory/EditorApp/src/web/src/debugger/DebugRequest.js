@@ -5,6 +5,15 @@ class DebugRequest {
     }
 }
 
+export class GetProcessStatusRequest extends DebugRequest {
+
+    constructor() {
+        super("GET_PROCESS_STATUS");
+    }
+}
+
+DebugRequest.GET_PROCESS_STATUS = GetProcessStatusRequest;
+
 export class GetWorkersRequest extends DebugRequest {
 
     constructor() {
