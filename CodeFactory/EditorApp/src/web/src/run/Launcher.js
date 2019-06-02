@@ -59,7 +59,7 @@ export default class Launcher {
             if(this.debug)
                 this.debugWebPage(runnable.content);
             else
-                this.openWebPage(runnable.content);
+                this.openWebPage(runnable.content, "RUN");
         } else if(this.runMode.startsWith("L")) {
             if(this.debug)
                 this.debugLocalTestOrMethod(content);
@@ -106,14 +106,14 @@ export default class Launcher {
     debugWebPage(content) {
         const runner = Runners.forMode(this.runMode);
         if (runner) {
-            runner.startDebugContent(this.root, this.root.projectId, null, null, ()=>this.openWebPage(content));
+            runner.startDebugContent(this.root, this.root.projectId, null, null, ()=>this.openWebPage(content, "DEBUG"));
         } else {
             alert("Unsupported mode: " + this.runMode);
         }
     }
 
-    openWebPage(content) {
-        fetcher.fetchModuleURL(this.root.projectId, "RUN", url => {
+    openWebPage(content, mode) {
+        fetcher.fetchModuleURL(this.root.projectId, mode, url => {
             const fullUrl = url + content.name;
             const tab = window.open(fullUrl, '_blank', '');
             if(tab)
