@@ -54,14 +54,9 @@ class LoginPage extends React.Component {
                             <a href="#">Prompto Development Center</a>
                         </Navbar.Brand>
                     </Navbar.Header>
-                    <Nav pullRight>
-                        <NavItem href="/data/index.html" target="_blank">Data</NavItem>
-                        <NavItem href="#" target="_blank">Tutorials</NavItem>
-                        <NavItem href="http://www.prompto.org" target="_blank">Reference</NavItem>
-                    </Nav>
-                </Navbar>
+               </Navbar>
                 <div style={{height: "450px", textAlign: "center"}} className="centered" >
-                    <img src="/img/developer_icon.png" style={imgStyle}/>
+                    <img src="developer_icon.png" style={imgStyle}/>
                     <h2>Welcome to Prompto!</h2>
                 </div>
                 <Modal show={true} onHide={this.handleClose}>
