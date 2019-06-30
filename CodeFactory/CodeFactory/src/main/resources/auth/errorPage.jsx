@@ -24,7 +24,7 @@ class ErrorPage extends React.Component {
                     </Navbar.Header>
                 </Navbar>
                 <div style={{height: "450px", textAlign: "center"}} className="centered" >
-                    <img src="developer_icon.png" style={imgStyle}/>
+                    <img src="/auth/developer_icon.png" style={imgStyle}/>
                     <h2>Sorry that you could not connect!</h2>
                 </div>
            </div>;

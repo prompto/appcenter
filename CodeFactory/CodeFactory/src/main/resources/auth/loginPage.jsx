@@ -56,7 +56,7 @@ class LoginPage extends React.Component {
                     </Navbar.Header>
                </Navbar>
                 <div style={{height: "450px", textAlign: "center"}} className="centered" >
-                    <img src="developer_icon.png" style={imgStyle}/>
+                    <img src="/auth/developer_icon.png" style={imgStyle}/>
                     <h2>Welcome to Prompto!</h2>
                 </div>
                 <Modal show={true} onHide={this.handleClose}>
