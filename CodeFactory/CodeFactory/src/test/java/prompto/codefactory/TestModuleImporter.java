@@ -44,7 +44,7 @@ public class TestModuleImporter {
 		return new IRuntimeConfiguration.Inline()
 			.withApplicationName("test")
 			.withApplicationVersion(PromptoVersion.parse("1.0.0"))
-			.withRuntimeLibs(()->Libraries.getPromptoLibraries(Libraries.class, BaseCodeStore.class, Application.class))
+			.withRuntimeLibs(()->Libraries.getPromptoLibraries(Libraries.class, BaseCodeStore.class, TestModuleImporter.class))
 			.withRuntimeMode(Mode.UNITTEST);
 	}
 	

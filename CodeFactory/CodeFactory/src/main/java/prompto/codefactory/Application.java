@@ -48,14 +48,13 @@ public class Application {
 	}
 	
 	public static void main(String[] args, Mode runtimeMode) throws Throwable {
-		config = loadConfiguration(args);
-		config = config.withServerAboutToStartMethod("serverAboutToStart")
-					.withHttpConfiguration(config.getHttpConfiguration().withSendsXAuthorization(true))
-					.withApplicationName("prompto-factory")
-					.withApplicationVersion(PromptoVersion.parse("1.0.0"))
-					.withResourceURLs(Application.getResourceURLs());
-		if(runtimeMode!=null)
-			config = config.withRuntimeMode(runtimeMode);
+		ICodeFactoryConfiguration config = loadConfiguration(args);
+		config = adjustConfiguration(config, runtimeMode);
+		main(config);
+	}
+	
+	public static void main(ICodeFactoryConfiguration config) throws Throwable {
+		Application.config = config;
 		AppServer.main(config, Application::init); 
 	}
 	
@@ -66,6 +65,17 @@ public class Application {
 		return config.withRuntimeLibs(()->Libraries.getPromptoLibraries(Libraries.class, AppServer.class));
 	}
 
+	public static ICodeFactoryConfiguration adjustConfiguration(ICodeFactoryConfiguration config, Mode runtimeMode) throws Exception {
+		config = config.withServerAboutToStartMethod("serverAboutToStart")
+				.withHttpConfiguration(config.getHttpConfiguration().withSendsXAuthorization(true))
+				.withApplicationName("prompto-factory")
+				.withApplicationVersion(PromptoVersion.parse("1.0.0"))
+				.withResourceURLs(Application.getResourceURLs());
+		if(runtimeMode!=null)
+			config = config.withRuntimeMode(runtimeMode);
+		return config;
+	}
+	
 	
 	private static void init(ICodeFactoryConfiguration config) {
 		initDataServletStores(config);
@@ -74,7 +84,8 @@ public class Application {
 	}
 	
 	private static void initCodeStoreFilter() {
-		Arrays.asList("AppStore", "CodeFactory").forEach(Application::addCodeStoreFilter);
+		if(config.getCodeStoreConfiguration()!=null)
+			Arrays.asList("AppStore", "CodeFactory").forEach(Application::addCodeStoreFilter);
 		
 	}
 	
