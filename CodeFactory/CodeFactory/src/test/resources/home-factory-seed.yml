@@ -1,0 +1,21 @@
+mongoStore: &homeMongoStore
+  factory: prompto.store.mongo.MongoStoreFactory
+  host: 119.237.156.192
+  port: 27017
+  user: prompto
+  secretKey:
+    factory: prompto.security.PlainSecretKeyFactory
+    secret: prompto
+    
+dataStore: 
+  <<: *homeMongoStore
+  dbName: FACTORY-SEED
+
+target:
+  dataStore:
+    <<: *homeMongoStore
+    dbName: FACTORY-APPS
+
+http:
+  port: 8080
+  
