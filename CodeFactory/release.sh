@@ -19,7 +19,7 @@ then
 		 --user ericvergnaud:$(cat password.txt) \
 		 --url https://api.github.com/repos/prompto/prompto-factory/releases
 	release=$?	 
-	if [ release -eq 0 ]
+	if [ $release -eq 0 ]
 	then
 		./copy_home_seed_to_atlas_seed.sh $(cat password.txt)
 	fi
