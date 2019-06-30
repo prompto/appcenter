@@ -18,12 +18,25 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<prompto.version>0.0.64</prompto.version>
+		<prompto.version>0.0.65</prompto.version>
 		<jackson.version>2.9.5</jackson.version>
 		<jetty.version>9.3.3.v20150827</jetty.version>
 		<solr.version>5.4.0</solr.version>
 		<mongo.version>3.4.2</mongo.version>
 	</properties>
+
+    <repositories>
+         <repository>
+             <id>Central</id>
+             <name>Maven Central</name>
+             <url>http://repo.maven.apache.org/maven2</url>
+         </repository>
+         <repository>
+             <id>Nexus</id>
+             <name>Nexus Staging Mirror</name>
+             <url>https://oss.sonatype.org/content/groups/staging/</url>
+         </repository>
+     </repositories>
 
 
 	<build>

@@ -2,6 +2,7 @@ package prompto.codefactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,14 +48,13 @@ public class Application {
 	}
 	
 	public static void main(String[] args, Mode runtimeMode) throws Throwable {
-		config = loadConfiguration(args);
-		config = config.withServerAboutToStartMethod("serverAboutToStart")
-					.withHttpConfiguration(config.getHttpConfiguration().withSendsXAuthorization(true))
-					.withApplicationName("prompto-factory")
-					.withApplicationVersion(PromptoVersion.parse("1.0.0"))
-					.withResourceURLs(Application.getResourceURLs());
-		if(runtimeMode!=null)
-			config = config.withRuntimeMode(runtimeMode);
+		ICodeFactoryConfiguration config = loadConfiguration(args);
+		config = adjustConfiguration(config, runtimeMode);
+		main(config);
+	}
+	
+	public static void main(ICodeFactoryConfiguration config) throws Throwable {
+		Application.config = config;
 		AppServer.main(config, Application::init); 
 	}
 	
@@ -65,13 +65,39 @@ public class Application {
 		return config.withRuntimeLibs(()->Libraries.getPromptoLibraries(Libraries.class, AppServer.class));
 	}
 
+	public static ICodeFactoryConfiguration adjustConfiguration(ICodeFactoryConfiguration config, Mode runtimeMode) throws Exception {
+		config = config.withServerAboutToStartMethod("serverAboutToStart")
+				.withHttpConfiguration(config.getHttpConfiguration().withSendsXAuthorization(true))
+				.withApplicationName("prompto-factory")
+				.withApplicationVersion(PromptoVersion.parse("1.0.0"))
+				.withResourceURLs(Application.getResourceURLs());
+		if(runtimeMode!=null)
+			config = config.withRuntimeMode(runtimeMode);
+		return config;
+	}
+	
 	
 	private static void init(ICodeFactoryConfiguration config) {
 		initDataServletStores(config);
 		initModuleProcessPortRange(config);
+		initCodeStoreFilter();
 	}
 	
-	private static void initModuleProcessPortRange(ICodeFactoryConfiguration config2) {
+	private static void initCodeStoreFilter() {
+		if(config.getCodeStoreConfiguration()!=null)
+			Arrays.asList("AppStore", "CodeFactory").forEach(Application::addCodeStoreFilter);
+		
+	}
+	
+	private static void addCodeStoreFilter(String moduleName) {
+		Object dbId = ICodeStore.getInstance().fetchModuleDbId(moduleName, PromptoVersion.LATEST);
+		if(dbId==null)
+			throw new IllegalStateException("Module not found: " + moduleName);
+		ICodeStore.addModuleDbId(dbId);
+		
+	}
+
+	private static void initModuleProcessPortRange(ICodeFactoryConfiguration config) {
 		try {
 			ITargetConfiguration target = config.getTargetConfiguration();
 			if(target!=null) {
