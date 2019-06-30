@@ -93,7 +93,7 @@ export const getContentFromEntry = function(entry) {
     let content = { type: "prompto", subType: subType, core: false };
     if(subType==="method") {
         content.name = entry.value.name;
-        content.proto = entry.value.protos[0];
+        content.proto = entry.value.protos[0].proto;
     } else
         content.name = entry.value;
     return content;
