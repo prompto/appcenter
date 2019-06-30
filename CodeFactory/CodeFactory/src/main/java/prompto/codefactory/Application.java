@@ -62,7 +62,7 @@ public class Application {
 		Map<String, String> argsMap = CmdLineParser.read(args);
 		IConfigurationReader reader = Standalone.readerFromArgs(argsMap);
 		ICodeFactoryConfiguration config = new CodeFactoryConfiguration(reader, argsMap);
-		return config.withRuntimeLibs(()->Libraries.getPromptoLibraries(Libraries.class, AppServer.class));
+		return config.withRuntimeLibs(()->Libraries.getPromptoLibraries(Libraries.class, AppServer.class, BaseCodeStore.class));
 	}
 
 	public static ICodeFactoryConfiguration adjustConfiguration(ICodeFactoryConfiguration config, Mode runtimeMode) throws Exception {
