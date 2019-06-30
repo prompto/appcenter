@@ -2,6 +2,7 @@ package prompto.codefactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,9 +70,23 @@ public class Application {
 	private static void init(ICodeFactoryConfiguration config) {
 		initDataServletStores(config);
 		initModuleProcessPortRange(config);
+		initCodeStoreFilter();
 	}
 	
-	private static void initModuleProcessPortRange(ICodeFactoryConfiguration config2) {
+	private static void initCodeStoreFilter() {
+		Arrays.asList("AppStore", "CodeFactory").forEach(Application::addCodeStoreFilter);
+		
+	}
+	
+	private static void addCodeStoreFilter(String moduleName) {
+		Object dbId = ICodeStore.getInstance().fetchModuleDbId(moduleName, PromptoVersion.LATEST);
+		if(dbId==null)
+			throw new IllegalStateException("Module not found: " + moduleName);
+		ICodeStore.addModuleDbId(dbId);
+		
+	}
+
+	private static void initModuleProcessPortRange(ICodeFactoryConfiguration config) {
 		try {
 			ITargetConfiguration target = config.getTargetConfiguration();
 			if(target!=null) {
