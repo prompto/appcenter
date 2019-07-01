@@ -68,8 +68,8 @@ public class Application {
 	public static ICodeFactoryConfiguration adjustConfiguration(ICodeFactoryConfiguration config, Mode runtimeMode) throws Exception {
 		config = config.withServerAboutToStartMethod("serverAboutToStart")
 				.withHttpConfiguration(config.getHttpConfiguration().withSendsXAuthorization(true))
-				.withApplicationName("prompto-factory")
-				.withApplicationVersion(PromptoVersion.parse("1.0.0"))
+				.withApplicationName("CodeFactory")
+				.withApplicationVersion(PromptoVersion.LATEST)
 				.withResourceURLs(Application.getResourceURLs());
 		if(runtimeMode!=null)
 			config = config.withRuntimeMode(runtimeMode);
@@ -80,23 +80,8 @@ public class Application {
 	private static void init(ICodeFactoryConfiguration config) {
 		initDataServletStores(config);
 		initModuleProcessPortRange(config);
-		initCodeStoreFilter();
 	}
 	
-	private static void initCodeStoreFilter() {
-		if(config.getCodeStoreConfiguration()!=null)
-			Arrays.asList("AppStore", "CodeFactory").forEach(Application::addCodeStoreFilter);
-		
-	}
-	
-	private static void addCodeStoreFilter(String moduleName) {
-		Object dbId = ICodeStore.getInstance().fetchModuleDbId(moduleName, PromptoVersion.LATEST);
-		if(dbId==null)
-			throw new IllegalStateException("Module not found: " + moduleName);
-		ICodeStore.addModuleDbId(dbId);
-		
-	}
-
 	private static void initModuleProcessPortRange(ICodeFactoryConfiguration config) {
 		try {
 			ITargetConfiguration target = config.getTargetConfiguration();
