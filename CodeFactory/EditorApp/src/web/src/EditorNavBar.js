@@ -1,6 +1,6 @@
 import { getParam } from "./utils/Utils";
 import React from 'react';
-import { Navbar, Nav, NavDropdown, NavItem, MenuItem, DropdownButton, ButtonGroup, Button } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown, MenuItem, DropdownButton, ButtonGroup, Button } from 'react-bootstrap';
 import AuthenticationSettingsDialog from './dialogs/AuthenticationSettingsDialog';
 import DependenciesDialog from './dialogs/DependenciesDialog';
 import ConfigurationDialog from './dialogs/ConfigurationDialog';
