@@ -47,6 +47,8 @@ self.ReactBootstrap = {
     Col: React.Component,
     Clearfix: React.Component,
     Glyphicon: React.Component,
+    Thumbnail: React.Component,
+    PageHeader: React.Component,
     Typeahead: React.Component,
     DatePicker: React.Component
 };

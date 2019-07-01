@@ -250,6 +250,20 @@ and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
 
+define Thumbnail as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Thumbnail
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define PageHeader as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.PageHeader
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
 define Typeahead as native widget with bindings:
 	define category bindings as:
 		JavaScript: ReactBootstrap.Typeahead
