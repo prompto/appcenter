@@ -14,11 +14,12 @@ export default class ProjectsNavBar extends React.Component {
             </Navbar.Header>
             <Nav pullRight>
                 <NavDropdown title="Tools">
-                    <MenuItem href="/data/index.html" target="_blank">Data explorer</MenuItem>
+                    <MenuItem href="/data/index.html" target="DataExplorer">Data explorer</MenuItem>
+                    <MenuItem href="/store/index.page" target="StoreExplorer">Store explorer</MenuItem>
                 </NavDropdown>
                 <NavDropdown title="Help">
-                    <MenuItem href="http://www.prompto.org/?section=tutorials" target="_blank">Tutorials</MenuItem>
-                    <MenuItem href="http://www.prompto.org/?section=libraries" target="_blank">Reference</MenuItem>
+                    <MenuItem href="http://www.prompto.org/?section=tutorials" target="PromptoTutorials">Tutorials</MenuItem>
+                    <MenuItem href="http://www.prompto.org/?section=libraries" target="PromptoReference">Reference</MenuItem>
                 </NavDropdown>
             </Nav>
             <Navbar.Form pullRight>

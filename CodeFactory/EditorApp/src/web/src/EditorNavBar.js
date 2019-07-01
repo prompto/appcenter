@@ -1,6 +1,6 @@
 import { getParam } from "./utils/Utils";
 import React from 'react';
-import { Navbar, Nav, NavItem, MenuItem, DropdownButton, ButtonGroup, Button } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown, NavItem, MenuItem, DropdownButton, ButtonGroup, Button } from 'react-bootstrap';
 import AuthenticationSettingsDialog from './dialogs/AuthenticationSettingsDialog';
 import DependenciesDialog from './dialogs/DependenciesDialog';
 import ConfigurationDialog from './dialogs/ConfigurationDialog';
@@ -71,7 +71,15 @@ export default class EditorNavBar extends React.Component {
                     </Navbar.Brand>
                 </Navbar.Header>
                 <Nav pullRight>
-                    <NavItem href="http://www.prompto.org" target="_blank">Reference</NavItem>
+                    <NavDropdown title="Tools">
+                        <MenuItem href="/" target="ProjectExplorer">Project explorer</MenuItem>
+                        <MenuItem href="/data/index.html" target="DataExplorer">Data explorer</MenuItem>
+                        <MenuItem href="/store/index.page" target="StoreExplorer">Store explorer</MenuItem>
+                    </NavDropdown>
+                    <NavDropdown title="Help">
+                        <MenuItem href="http://www.prompto.org/?section=tutorials" target="PromptoTutorials">Tutorials</MenuItem>
+                        <MenuItem href="http://www.prompto.org/?section=libraries" target="PromptoReference">Reference</MenuItem>
+                    </NavDropdown>
                 </Nav>
                 { this.renderEditWidgets() }
                 { this.renderOutputWidgets() }

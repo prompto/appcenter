@@ -57,7 +57,8 @@ export default class Project extends React.Component {
         const module = this.props.module;
         // TODO find why dbId.value stopped working
         const href = "../ide/index.html?dbId=" + (module.value.dbId.value || module.value.dbId) + "&name=" + module.value.name;
-        window.open(href, "_blank");
+        const name = "Project:" + module.value.name;
+        window["openWindowOrBringItToFront"](href, name);
     }
 
     handleContextMenu(e) {

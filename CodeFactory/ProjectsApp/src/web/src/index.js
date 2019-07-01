@@ -6,6 +6,7 @@ import './index.css';
 import HomePage from './HomePage';
 import * as serviceWorker from './serviceWorker';
 
+window.name = "ProjectExplorer";
 ReactDOM.render(<HomePage />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
