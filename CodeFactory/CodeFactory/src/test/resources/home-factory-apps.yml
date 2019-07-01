@@ -23,3 +23,4 @@ target:
 http:
   port: 8000
   
+runtimeMode: DEVELOPMENT
