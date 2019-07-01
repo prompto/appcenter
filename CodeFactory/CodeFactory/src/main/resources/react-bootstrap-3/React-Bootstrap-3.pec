@@ -159,6 +159,13 @@ and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
 
+define NavDropdown as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.NavDropdown
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
 define NavItem as native widget with bindings:
 	define category bindings as:
 		JavaScript: ReactBootstrap.NavItem
