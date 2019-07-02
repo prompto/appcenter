@@ -2,7 +2,7 @@ import axios from 'axios';
 import React from 'react';
 import { ALL_PROJECT_TYPES, WEB_PROJECT_TYPES, CODE_PROJECT_TYPES } from '../project-types/ProjectTypes';
 import { Modal, FormGroup, FormControl, ControlLabel, ToggleButtonGroup, Button, Thumbnail } from 'react-bootstrap';
-import ModalDialog, {closeModal} from "../components/ModalDialog";
+import { ModalDialog, closeModal} from "../components/ModalDialog";
 
 class NewModuleTypeButton extends React.Component {
 

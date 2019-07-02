@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import ModalDialog, { closeModal } from '../components/ModalDialog';
+import { ModalDialog, closeModal } from '../components/ModalDialog';
 
 
 export default class DeleteProjectDialog extends React.Component {

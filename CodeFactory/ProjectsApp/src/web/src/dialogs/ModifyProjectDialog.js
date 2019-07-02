@@ -2,7 +2,7 @@ import axios from 'axios';
 import React from 'react';
 import { Modal, FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 import { ID_TO_TYPE_MAP } from '../project-types/ProjectTypes';
-import ModalDialog, { closeModal } from '../components/ModalDialog';
+import { ModalDialog, closeModal } from '../components/ModalDialog';
 
 export default class ModifyProjectDialog extends React.Component {
 

@@ -24,7 +24,7 @@ export function displayModal(modal) {
     ReactDOM.render(ReactDOM.createPortal(modal, dialog), container);
 }
 
-export default class ModalDialog extends React.Component {
+export class ModalDialog extends React.Component {
 
     constructor(props) {
         super(props);
