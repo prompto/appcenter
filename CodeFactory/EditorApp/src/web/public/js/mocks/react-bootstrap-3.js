@@ -39,6 +39,7 @@ self.ReactBootstrap = {
     Nav: React.Component,
     NavDropdown: React.Component,
     NavItem: React.Component,
+    ContextMenu: React.Component,
     MenuItem: React.Component,
     Tabs: React.Component,
     Tab: React.Component,

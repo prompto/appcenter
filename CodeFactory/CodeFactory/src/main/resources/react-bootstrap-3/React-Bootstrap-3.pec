@@ -208,6 +208,13 @@ and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();		
 
+define ContextMenu as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.ContextMenu
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
 define MenuItem as native widget with bindings:
 	define category bindings as:
 		JavaScript: ReactBootstrap.MenuItem
