@@ -123,7 +123,63 @@ define ModalTitle as native widget with bindings:
 and methods:
 	define render as method returning Html doing:
 		JavaScript: return this.render();
+
+define Panel as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Panel
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define PanelCollapse as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Panel.Collapse
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define PanelToggle as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Panel.Toggle
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define PanelTitle as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Panel.Title
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define PanelHeading as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Panel.Heading
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
 		
+define PanelBody as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Panel.Body
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define PanelFooter as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.Panel.Footer
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
+define PanelGroup as native widget with bindings:
+	define category bindings as:
+		JavaScript: ReactBootstrap.PanelGroup
+and methods:
+	define render as method returning Html doing:
+		JavaScript: return this.render();
+
 define Navbar as native widget with bindings:
 	define category bindings as:
 		JavaScript: ReactBootstrap.Navbar

@@ -36,6 +36,15 @@ self.ReactBootstrap = {
         Text: React.Component,
         Form: React.Component
     },
+    Panel: {
+       	Collapse: React.Component,
+       	Toggle: React.Component,
+       	Title: React.Component,
+    	Heading: React.Component,
+    	Body: React.Component,
+        Footer: React.Component
+    },
+    PanelGroup: React.Component,
     Nav: React.Component,
     NavDropdown: React.Component,
     NavItem: React.Component,
