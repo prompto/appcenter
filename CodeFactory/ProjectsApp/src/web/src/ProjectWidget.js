@@ -22,22 +22,32 @@ class ContextMenu extends React.Component {
     render() {
         const root = this.props.root;
         const module = this.props.module;
+        const status = module.value.moduleStatus.name;
+        const canModify = status==="ACTIVE";
+        const canPark = status==="ACTIVE" || status==="TAGGED";
+        const canUnpark = status==="PARKED";
+        const canDelete = status==="PARKED";
+        const canVersion = status !== "PROVIDED";
+        const canTag = status==="ACTIVE";
+        const canUntag = status==="TAGGED";
         return <Clearfix>
              <ul className="dropdown-menu" style={{display: "block"}}>
                 <MenuItem href={"#"} onSelect={()=>root.exportProject(module)}>Export</MenuItem>
-                <MenuItem href={"#"} onSelect={()=>root.modifyProject(module)}>Modify</MenuItem>
-                <MenuItem href={"#"} onSelect={()=>root.deleteProject(module)}>Delete</MenuItem>
-                <MenuItem divider/>
-                <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>New version...</MenuItem>
-                <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>Freeze...</MenuItem>
-                <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>Deploy...</MenuItem>
+                 { canModify && <MenuItem href={"#"} onSelect={()=>root.modifyProject(module)}>Modify...</MenuItem> }
+                 { canPark && <MenuItem href={"#"} onSelect={()=>root.parkProject(module)}>Park...</MenuItem> }
+                 { canUnpark && <MenuItem href={"#"} onSelect={()=>root.unparkProject(module)}>Unpark</MenuItem> }
+                 { canDelete && <MenuItem href={"#"} onSelect={()=>root.deleteProject(module)}>Delete...</MenuItem> }
+                 { (canVersion || canTag || canUntag) && <MenuItem divider/> }
+                 { canVersion && <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>New version...</MenuItem> }
+                 { canTag && <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>Freeze...</MenuItem> }
+                 { canUntag && <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>Unfreeze...</MenuItem> }
             </ul>
         </Clearfix>;
     }
 }
 
 
-export default class Project extends React.Component {
+export default class ProjectWidget extends React.Component {
 
     constructor(props) {
         super(props);
