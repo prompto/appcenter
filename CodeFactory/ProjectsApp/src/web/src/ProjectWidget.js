@@ -6,6 +6,9 @@ import ScriptJpg from "./img/script.jpg";
 import ServiceJpg from "./img/service.jpg";
 import WebSiteJpg from "./img/website.jpg";
 import WebLibraryJpg from "./img/weblibrary.jpg";
+import LockedPng from "./img/locked.png";
+import TaggedPng from "./img/tagged.png";
+import ParkedPng from "./img/parked.png";
 import { displayContextMenu } from "./components/ContextMenu";
 
 export const PROJECT_DEFAULT_IMAGES = {
@@ -15,6 +18,11 @@ export const PROJECT_DEFAULT_IMAGES = {
     weblibrary : WebLibraryJpg,
     batch : BatchJpg,
     service : ServiceJpg,
+};
+
+const PROJECT_STATUS_IMAGES = {
+    PROVIDED: LockedPng,
+    TAGGED: TaggedPng
 };
 
 class ContextMenu extends React.Component {
@@ -58,15 +66,21 @@ export default class ProjectWidget extends React.Component {
 
     render() {
         const module = this.props.module;
+        const status = module.value.moduleStatus.name;
+        const statusImg = module.value.parked ? ParkedPng : (PROJECT_STATUS_IMAGES[status] || null);
         const imageSrc = module.value.image || PROJECT_DEFAULT_IMAGES[module.type.toLowerCase()];
         const description = module.value.description || "No description";
         const descClassName = "text-muted" + (description==="No description" ? " placeholder" : "");
+
         return <Col xs={4} sm={2} style={{width: "170px", boxSizing: "content-box" }} onClick={this.handleClick} onContextMenu={this.handleContextMenu}>
-            <Thumbnail src={imageSrc} >
-                <p><strong>{module.value.name}</strong></p>
-                <p><span className="text-muted">{module.value.version.value}</span></p>
-                <span className={descClassName}>{description}</span>
-            </Thumbnail>
+            <div>
+                <Thumbnail src={imageSrc}>
+                    <p><strong>{module.value.name}</strong></p>
+                    <p><span className="text-muted">{module.value.version.value}</span></p>
+                    <span className={descClassName}>{description}</span>
+                </Thumbnail>
+                { statusImg && <img className="status" src={statusImg}/> }
+            </div>
         </Col>;
     }
 

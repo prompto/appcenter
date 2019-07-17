@@ -45,3 +45,11 @@
 .placeholder {
   font-style: italic;
 }
+
+.status {
+  max-width: 24px;
+  max-height: 24px;
+  position: absolute;
+  top: 4px;
+  left: 20px;
+}
