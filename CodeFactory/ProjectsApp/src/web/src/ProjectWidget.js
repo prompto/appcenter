@@ -23,10 +23,11 @@ class ContextMenu extends React.Component {
         const root = this.props.root;
         const module = this.props.module;
         const status = module.value.moduleStatus.name;
+        const parked = module.value.parked || false;
         const canModify = status==="ACTIVE";
-        const canPark = status==="ACTIVE" || status==="TAGGED";
-        const canUnpark = status==="PARKED";
-        const canDelete = status==="PARKED";
+        const canPark = !parked && status!=="PROVIDED";
+        const canUnpark = parked;
+        const canDelete = parked;
         const canVersion = status !== "PROVIDED";
         const canTag = status==="ACTIVE";
         const canUntag = status==="TAGGED";
@@ -39,8 +40,8 @@ class ContextMenu extends React.Component {
                  { canDelete && <MenuItem href={"#"} onSelect={()=>root.deleteProject(module)}>Delete...</MenuItem> }
                  { (canVersion || canTag || canUntag) && <MenuItem divider/> }
                  { canVersion && <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>New version...</MenuItem> }
-                 { canTag && <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>Freeze...</MenuItem> }
-                 { canUntag && <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>Unfreeze...</MenuItem> }
+                 { canTag && <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>Tag...</MenuItem> }
+                 { canUntag && <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>Untag...</MenuItem> }
             </ul>
         </Clearfix>;
     }

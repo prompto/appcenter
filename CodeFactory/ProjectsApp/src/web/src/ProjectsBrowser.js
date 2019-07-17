@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row } from 'react-bootstrap';
-import Project from './Project';
+import ProjectWidget from './ProjectWidget';
 
 export default class ProjectsBrowser extends React.Component {
 
@@ -8,7 +8,7 @@ export default class ProjectsBrowser extends React.Component {
         return <Row>
             {this.props.modules.map( module => {
                 const dbId = module.value.dbId.value || module.value.dbId;
-                return <Project key={dbId} root={this.props.root} module={module} />;
+                return <ProjectWidget key={dbId} root={this.props.root} module={module} />;
             })}
         </Row>;
     }
