@@ -6,34 +6,50 @@ import ProjectsNavBar from './ProjectsNavBar';
 import ProjectsBrowser from './ProjectsBrowser';
 import NewProjectDialog from './dialogs/NewProjectDialog';
 import ModifyProjectDialog from './dialogs/ModifyProjectDialog';
+import ParkProjectDialog from './dialogs/ParkProjectDialog';
 import DeleteProjectDialog from './dialogs/DeleteProjectDialog';
 
 export default class HomePage extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { recent: [], all: [] };
+        this.state = { recent: [], active: [], parked: [], showParked: false };
         this.newProject = this.newProject.bind(this);
         this.importProject = this.importProject.bind(this);
+        this.showParked = this.showParked.bind(this);
+        this.fetchAllModules = this.fetchAllModules.bind(this);
     }
 
     componentDidMount() {
-        this.fetchRecentModules();
         this.fetchAllModules();
     }
 
+    fetchAllModules() {
+        this.fetchRecentModules();
+        this.fetchActiveModules();
+        this.fetchParkedModules();
+    }
+
+
     fetchRecentModules() {
         const params = { params: JSON.stringify([{"name": "count", "type": "Integer", "value": 8}]) };
-        axios.get('/ws/run/getRecentModules',  { params: params }).then(resp => {
+        axios.get('/ws/run/fetchRecentModules',  { params: params }).then(resp => {
             const modules = this.modulesReceived.bind(this)(resp.data);
             this.setState({recent: modules})
         });
     }
 
-    fetchAllModules() {
-        axios.get('/ws/run/getAllModules').then(resp => {
+    fetchActiveModules() {
+        axios.get('/ws/run/fetchActiveModules').then(resp => {
             const modules = this.modulesReceived.bind(this)(resp.data);
-            this.setState({all: modules})
+            this.setState({active: modules})
+        });
+    }
+
+    fetchParkedModules() {
+        axios.get('/ws/run/fetchParkedModules').then(resp => {
+            const modules = this.modulesReceived.bind(this)(resp.data);
+            this.setState({parked: modules})
         });
     }
 
@@ -53,30 +69,25 @@ export default class HomePage extends React.Component {
     }
 
     newProject() {
-        displayModal(<NewProjectDialog viewer={this} moduleCreated={this.moduleCreated.bind(this)}/>)
-    }
-
-    moduleCreated() {
-        this.fetchRecentModules();
-        this.fetchAllModules();
+        displayModal(<NewProjectDialog viewer={this} moduleCreated={this.fetchAllModules}/>)
     }
 
     modifyProject(module) {
-        displayModal(<ModifyProjectDialog module={module} moduleUpdated={this.moduleUpdated.bind(this)}/>);
+        displayModal(<ModifyProjectDialog module={module} moduleUpdated={this.fetchAllModules}/>);
     }
 
-    moduleUpdated() {
-        this.fetchRecentModules();
-        this.fetchAllModules();
+    parkProject(module) {
+        displayModal(<ParkProjectDialog module={module} moduleParked={this.fetchAllModules}/>);
+    }
+
+    unparkProject(module) {
+        const dbId = (module.value.dbId.value || module.value.dbId).toString()
+        const params = { params: JSON.stringify([{"name": "dbId", "value": dbId}]) };
+        axios.get('/ws/run/unparkModule',  { params: params }).then(this.fetchAllModules);
     }
 
     deleteProject(module) {
-        displayModal(<DeleteProjectDialog module={module} moduleDeleted={this.moduleDeleted.bind(this)}/>);
-    }
-
-    moduleDeleted() {
-        this.fetchRecentModules();
-        this.fetchAllModules();
+        displayModal(<DeleteProjectDialog module={module} moduleDeleted={this.fetchAllModules}/>);
     }
 
     importProject() {
@@ -99,14 +110,24 @@ export default class HomePage extends React.Component {
         input.click();
     }
 
+    showParked() {
+        this.setState({showParked: !this.state.showParked});
+    }
+
     render() {
         return <div>
-            <ProjectsNavBar root={this}/>
+            <ProjectsNavBar onNewProject={this.newProject} onImportProject={this.importProject} showParked={this.state.showParked} onShowParked={this.showParked}/>
             <Grid fluid style={{paddingTop: 16}}>
                 <PageHeader>Recent projects</PageHeader>
                 <ProjectsBrowser root={this} id="recent" modules={this.state.recent}/>
                 <PageHeader>All projects</PageHeader>
-                <ProjectsBrowser root={this} id="all" modules={this.state.all}/>
+                <ProjectsBrowser root={this} id="active" modules={this.state.active}/>
+                { this.state.showParked &&
+                    <>
+                        <PageHeader>Parked projects</PageHeader>
+                        <ProjectsBrowser root={this} id="parked" modules={this.state.parked}/>
+                    </>
+                }
             </Grid>
         </div>
     }

@@ -40,6 +40,6 @@ export function displayContextMenu(e, menu) {
     wrapper.style.top = (e.pageY - window.scrollY) + "px";
     wrapper.style.zIndex = 999999;
     container.appendChild(wrapper);
-    ReactDOM.render(ReactDOM.createPortal(menu, wrapper), container);
+    ReactDOM.render(ReactDOM.createPortal(menu, wrapper), wrapper);
 }
 

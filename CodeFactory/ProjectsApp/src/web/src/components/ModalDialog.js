@@ -19,9 +19,9 @@ export function closeModal() {
 
 export function displayModal(modal) {
     const container = document.getElementById("modal");
-    const dialog = document.createElement("div");
-    container.appendChild(dialog);
-    ReactDOM.render(ReactDOM.createPortal(modal, dialog), container);
+    const wrapper = document.createElement("div");
+    container.appendChild(wrapper);
+    ReactDOM.render(ReactDOM.createPortal(modal, wrapper), wrapper);
 }
 
 export class ModalDialog extends React.Component {

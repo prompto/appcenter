@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar, Nav, NavDropdown, MenuItem, Button } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown, MenuItem, Button, Checkbox } from 'react-bootstrap';
 
 const btnStyle = {backgroundImage: "none"};
 
@@ -23,9 +23,11 @@ export default class ProjectsNavBar extends React.Component {
                 </NavDropdown>
             </Nav>
             <Navbar.Form pullRight>
-                <Button type="button" id="btnNewProject" onClick={this.props.root.newProject} style={btnStyle}>New</Button>
+                <Checkbox style={{color: "white"}} inline onChange={this.props.onShowParked}>Show parked</Checkbox>
+                &nbsp;&nbsp;
+                <Button type="button" id="btnNewProject" onClick={this.props.onNewProject} style={btnStyle}>New</Button>
                 &nbsp;
-                <Button type="button" onClick={this.props.root.importProject} style={btnStyle}>Import</Button>
+                <Button type="button" onClick={this.props.onImportProject} style={btnStyle}>Import</Button>
             </Navbar.Form>
         </Navbar>;
     }
