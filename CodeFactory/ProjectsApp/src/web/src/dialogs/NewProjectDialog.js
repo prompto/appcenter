@@ -37,7 +37,8 @@ export default class NewProjectDialog extends React.Component {
         this.state.type.appendFormParameters(formData);
         let params = [
             {name: "name", type: "Text", value: this.state.name},
-            {name: "description", type: "Text", value: this.state.description} ];
+            {name: "description", type: "Text", value: this.state.description}
+            ];
         params = this.state.type.appendPromptoParameters(params);
         formData.append("params", JSON.stringify(params));
         axios.post("/ws/run/" + this.state.type.createMethod, formData).then(response=>{
