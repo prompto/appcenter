@@ -4,7 +4,7 @@ export default class ProjectType {
         this.id = id;
         this.title = title;
         this.image = image;
-        this.disabled = false;
+        this.disabled = false; // until we support this project type
         this.createMethod = createMethod;
     }
 
