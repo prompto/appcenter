@@ -27,7 +27,7 @@ export default class DependenciesDialog extends React.Component {
 
     componentDidMount() {
         const params = { params: JSON.stringify([]) };
-        axios.get('/ws/run/getAllLibraries',  { params: params }).then(resp => {
+        axios.get('/ws/run/fetchAllLibraries',  { params: params }).then(resp => {
             this.librariesReceived(resp.data);
             this.filterLibraries();
         });
