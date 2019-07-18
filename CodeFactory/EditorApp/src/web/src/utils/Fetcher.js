@@ -72,7 +72,7 @@ class Fetcher {
     fetchModulePort(projectId, action, success, errored) {
         const args = [ {name:"dbId", value: projectId}, {name:"action", type: "Text", value: action} ];
         const params = { params: JSON.stringify(args) };
-        axios.get('/ws/run/getModulePort', { params: params })
+        axios.get('/ws/run/fetchModulePort', { params: params })
             .then(resp => {
                 const response = resp.data;
                 if (response.error)

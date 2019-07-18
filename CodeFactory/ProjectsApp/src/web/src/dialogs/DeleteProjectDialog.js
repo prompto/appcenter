@@ -23,7 +23,7 @@ export default class DeleteProjectDialog extends React.Component {
                     <Modal.Title>Delete project?</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    { "Delete project " + this.props.module.value.name + "?"}<br/>
+                    { "Delete project '" + this.props.module.value.name + "'?"}<br/>
                     This cannot be undone!
                 </Modal.Body>
                 <Modal.Footer>

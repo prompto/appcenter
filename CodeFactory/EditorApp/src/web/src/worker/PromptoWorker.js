@@ -166,20 +166,20 @@ export default class PromptoWorker extends Mirror {
 
     fetchModuleDescription(projectId, register, success) {
         const params = [ {name:"dbId", value:projectId.toString()}, {name:"register", type:"Boolean", value:register}];
-        const url = '/ws/run/getModuleDescription';
+        const url = '/ws/run/fetchModuleDescription';
         fetcher.getJSON(url, { params: JSON.stringify(params) }, success);
     }
 
     fetchProjectDeclarations(projectId, success) {
         const params = [ {name:"dbId", value:projectId.toString()}];
-        const url = '/ws/run/getModuleDeclarations';
+        const url = '/ws/run/fetchModuleDeclarations';
         fetcher.getJSON(url, { params: JSON.stringify(params) }, success);
     }
 
 
     fetchLibraryDeclarations(name, version, success) {
         const params = [ {name:"name", type:"Text", value:name}, {name:"version", type:version.type, value:version.value} ];
-        const url = '/ws/run/getModuleDeclarations';
+        const url = '/ws/run/fetchModuleDeclarations';
         fetcher.getJSON(url, { params: JSON.stringify(params) }, success);
     }
 

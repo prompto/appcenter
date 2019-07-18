@@ -7,6 +7,9 @@ import ProjectsBrowser from './ProjectsBrowser';
 import NewProjectDialog from './dialogs/NewProjectDialog';
 import ModifyProjectDialog from './dialogs/ModifyProjectDialog';
 import ParkProjectDialog from './dialogs/ParkProjectDialog';
+import TagProjectDialog from './dialogs/TagProjectDialog';
+import UntagProjectDialog from './dialogs/UntagProjectDialog';
+import NewVersionDialog from './dialogs/NewVersionDialog';
 import DeleteProjectDialog from './dialogs/DeleteProjectDialog';
 
 export default class HomePage extends React.Component {
@@ -86,6 +89,18 @@ export default class HomePage extends React.Component {
         axios.get('/ws/run/unparkModule',  { params: params }).then(this.fetchAllModules);
     }
 
+    tagProject(module) {
+        displayModal(<TagProjectDialog module={module} moduleTagged={this.fetchAllModules}/>);
+    }
+
+    untagProject(module) {
+        displayModal(<UntagProjectDialog module={module} moduleUntagged={this.fetchAllModules}/>);
+    }
+
+    newVersion(module) {
+        displayModal(<NewVersionDialog module={module} versionCreated={this.fetchAllModules}/>);
+    }
+
     deleteProject(module) {
         displayModal(<DeleteProjectDialog module={module} moduleDeleted={this.fetchAllModules}/>);
     }
@@ -120,7 +135,7 @@ export default class HomePage extends React.Component {
             <Grid fluid style={{paddingTop: 16}}>
                 <PageHeader>Recent projects</PageHeader>
                 <ProjectsBrowser root={this} id="recent" modules={this.state.recent}/>
-                <PageHeader>All projects</PageHeader>
+                <PageHeader>Active projects</PageHeader>
                 <ProjectsBrowser root={this} id="active" modules={this.state.active}/>
                 { this.state.showParked &&
                     <>

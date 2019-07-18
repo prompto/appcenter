@@ -4,30 +4,32 @@ import { Modal, Button } from 'react-bootstrap';
 import { ModalDialog, closeModal } from '../components/ModalDialog';
 
 
-export default class ParkProjectDialog extends React.Component {
+export default class TagProjectDialog extends React.Component {
 
 
-    parkModule() {
+    tagModule() {
         const module = this.props.module;
         const dbId = (module.value.dbId.value || module.value.dbId).toString()
         const params = { params: JSON.stringify([{"name": "dbId", "value": dbId}]) };
-        axios.get('/ws/run/parkModule',  { params: params }).then(resp => {
+        axios.get('/ws/run/tagModule',  { params: params }).then(resp => {
             closeModal();
-            this.props.moduleParked(module);
+            this.props.moduleTagged(module);
         });
     }
 
    render() {
         return <ModalDialog>
                 <Modal.Header closeButton={true}>
-                    <Modal.Title>Park project?</Modal.Title>
+                    <Modal.Title>Tag project?</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    { "Park project '" + this.props.module.value.name + "'?"}
+                    Tagging a project makes it eligible for deployment.<br/>
+                    A tagged project can no longer be modified.<br/><br/>
+                    { "Tag project '" + this.props.module.value.name + "'?"}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button bsStyle="primary" onClick={closeModal}>Cancel</Button>
-                    <Button onClick={this.parkModule.bind(this)}>Park</Button>
+                    <Button onClick={this.tagModule.bind(this)}>Tag</Button>
                 </Modal.Footer>
         </ModalDialog>;
     }

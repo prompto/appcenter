@@ -136,7 +136,7 @@ export default class EditorPage extends React.Component {
 
     loadResources(success) {
         const params = {params: JSON.stringify([{name: "dbId", value: this.projectId}])};
-        axios.get('/ws/run/getModuleResources', {params: params}).then(resp => {
+        axios.get('/ws/run/fetchModuleResources', {params: params}).then(resp => {
             const response = resp.data;
             if (response.error)
                 alert(response.error);
@@ -194,7 +194,7 @@ export default class EditorPage extends React.Component {
 
     loadDescription() {
         const params = { params: JSON.stringify([{name: "dbId", value: this.projectId.toString()}, {name: "register", type: "Boolean", value: false}]) };
-        axios.get('/ws/run/getModuleDescription',  { params: params }).then(resp => {
+        axios.get('/ws/run/fetchModuleDescription',  { params: params }).then(resp => {
             const response = resp.data;
             if (response.error)
                 alert(response.error);

@@ -7,7 +7,7 @@ import ServiceJpg from "./img/service.jpg";
 import WebSiteJpg from "./img/website.jpg";
 import WebLibraryJpg from "./img/weblibrary.jpg";
 import LockedPng from "./img/locked.png";
-import TaggedPng from "./img/tagged.png";
+import TaggedPng from "./img/green-light.jpg";
 import ParkedPng from "./img/parked.png";
 import { displayContextMenu } from "./components/ContextMenu";
 
@@ -47,9 +47,9 @@ class ContextMenu extends React.Component {
                  { canUnpark && <MenuItem href={"#"} onSelect={()=>root.unparkProject(module)}>Unpark</MenuItem> }
                  { canDelete && <MenuItem href={"#"} onSelect={()=>root.deleteProject(module)}>Delete...</MenuItem> }
                  { (canVersion || canTag || canUntag) && <MenuItem divider/> }
-                 { canVersion && <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>New version...</MenuItem> }
-                 { canTag && <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>Tag...</MenuItem> }
-                 { canUntag && <MenuItem href={"#"} onSelect={()=>alert("Under construction")}>Untag...</MenuItem> }
+                 { canVersion && <MenuItem href={"#"} onSelect={()=>root.newVersion(module)}>New version...</MenuItem> }
+                 { canTag && <MenuItem href={"#"} onSelect={()=>root.tagProject(module)}>Tag...</MenuItem> }
+                 { canUntag && <MenuItem href={"#"} onSelect={()=>root.untagProject(module)}>Untag...</MenuItem> }
             </ul>
         </Clearfix>;
     }
@@ -79,17 +79,19 @@ export default class ProjectWidget extends React.Component {
                     <p><span className="text-muted">{module.value.version.value}</span></p>
                     <span className={descClassName}>{description}</span>
                 </Thumbnail>
-                { statusImg && <img className="status" src={statusImg}/> }
+                { statusImg && <img alt="" className="status" src={statusImg}/> }
             </div>
         </Col>;
     }
 
     handleClick() {
         const module = this.props.module;
-        // TODO find why dbId.value stopped working
-        const href = "../ide/index.html?dbId=" + (module.value.dbId.value || module.value.dbId) + "&name=" + module.value.name;
-        const name = "Project:" + module.value.name;
-        window["openWindowOrBringItToFront"](href, name);
+        if(module.value.moduleStatus.name==="ACTIVE") {
+            // TODO find why dbId.value stopped working
+            const href = "../ide/index.html?dbId=" + (module.value.dbId.value || module.value.dbId) + "&name=" + module.value.name;
+            const name = "Project:" + module.value.name;
+            window["openWindowOrBringItToFront"](href, name);
+        }
     }
 
     handleContextMenu(e) {

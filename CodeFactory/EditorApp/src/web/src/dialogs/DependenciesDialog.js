@@ -54,7 +54,7 @@ export default class DependenciesDialog extends React.Component {
                 value: false
             }])
         };
-        axios.get('/ws/run/getModuleDescription', {params: params}).then(resp => {
+        axios.get('/ws/run/fetchModuleDescription', {params: params}).then(resp => {
             const response = resp.data;
             if (response.error)
                 alert(response.error);

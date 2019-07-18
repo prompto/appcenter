@@ -61,7 +61,7 @@ export default class PromptoEditor extends React.Component {
 
     loadBreakpoints() {
         const params = {params: JSON.stringify([{name: "dbId", value: this.projectId}])};
-        axios.get('/ws/run/getModuleBreakpoints', {params: params}).then(resp => {
+        axios.get('/ws/run/fetchModuleBreakpoints', {params: params}).then(resp => {
             const response = resp.data;
             if (response.error)
                 alert(response.error);
