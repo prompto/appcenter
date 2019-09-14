@@ -1,0 +1,619 @@
+@WidgetProperties({onClick:MouseEventCallback, componentClass:Html, active:Boolean, disabled:Boolean, block:Boolean, href:Text, type:{values:<"button", "reset", "submit">, help:"Defines HTML button type attribute @defaultValue 'button'", required:true}})
+native widget Button {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Button;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({inline:Boolean, inputRef:{type:WidgetCallback, help:"Attaches a ref to the `<input>` element. Only functions can be used here.```js <Checkbox inputRef={ref => { this.input = ref; }} /> ```"}, disabled:Boolean, title:Text, validationState:{values:<null, "error", "success", "warning">, help:"Only valid if `inline` is not set.", required:true}})
+native widget Checkbox {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Checkbox;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({inline:Boolean, inputRef:{type:WidgetCallback, help:"Attaches a ref to the `<input>` element. Only functions can be used here.```js <Radio inputRef={ref => { this.input = ref; }} /> ```"}, disabled:Boolean, title:Text, validationState:{values:<null, "error", "success", "warning">, help:"Only valid if `inline` is not set.", required:true}})
+native widget Radio {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Radio;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget InputGroup {
+
+	category bindings {
+		JavaScript: ReactBootstrap.InputGroup;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget InputGroupAddon {
+
+	category bindings {
+		JavaScript: ReactBootstrap.InputGroup.Addon;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget InputGroupButton {
+
+	category bindings {
+		JavaScript: ReactBootstrap.InputGroup.Button;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({horizontal:Boolean, inline:Boolean, componentClass:Html})
+native widget Form {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Form;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({controlId:{type:Text, help:"Sets `id` on `<FormControl>` and `htmlFor` on `<FormGroup.Label>`."}, validationState:{values:<null, "error", "success", "warning">, required:true}})
+native widget FormGroup {
+
+	category bindings {
+		JavaScript: ReactBootstrap.FormGroup;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({componentClass:Html, inputRef:{type:WidgetCallback, help:"Attaches a ref to the `<input>` element. Only functions can be used here.```js <FormControl inputRef={ref => { this.input = ref; }} /> ```"}, id:{type:Text, help:"Uses `controlId` from `<FormGroup>` if not explicitly specified."}, type:{type:Text, help:"Only relevant if `componentClass` is `'input'`."}})
+native widget FormControl {
+
+	category bindings {
+		JavaScript: ReactBootstrap.FormControl;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({htmlFor:{type:Text, help:"Uses `controlId` from `<FormGroup>` if not explicitly specified."}, srOnly:Boolean})
+native widget ControlLabel {
+
+	category bindings {
+		JavaScript: ReactBootstrap.ControlLabel;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget HelpBlock {
+
+	category bindings {
+		JavaScript: ReactBootstrap.HelpBlock;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({striped:Boolean, hover:Boolean, responsive:Boolean, condensed:Boolean, bordered:Boolean})
+native widget Table {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Table;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({container:{type:any, help:"@private"}, keyboard:{type:Boolean, help:"Close the modal when escape key is pressed"}, backdrop:{values:<"static", true, false>, help:"Include a backdrop component. Specify 'static' for a backdrop that doesn't trigger an 'onHide' when clicked.", required:true}, backdropClassName:{type:Text, help:"Add an optional extra class name to .modal-backdrop It could end up looking like class='modal-backdrop foo-modal-backdrop in'."}, onExit:{type:Callback, help:"Callback fired right before the Modal transitions out"}, onExited:{type:Callback, help:"Callback fired after the Modal finishes transitioning out"}, show:{type:Boolean, help:"When `true` The modal will show itself."}, autoFocus:{type:Boolean, help:"When `true` The modal will automatically shift focus to itself when it opens, and replace it to the last focused element when it closes.Generally this should never be set to false as it makes the Modal less accessible to assistive technologies, like screen-readers."}, restoreFocus:{type:Boolean, help:"When `true` The modal will restore focus to previously focused element once modal is hidden"}, animation:{type:Boolean, help:"Open and close the Modal with a slide and fade animation."}, onEnter:{type:Callback, help:"Callback fired before the Modal transitions in"}, dialogComponentClass:{type:Html, help:"A Component type that provides the modal content Markup. This is a useful prop when you want to use your own styles and markup to create a custom modal component."}, enforceFocus:{type:Boolean, help:"When `true` The modal will prevent focus from leaving the Modal while open. Consider leaving the default value here, as it is necessary to make the Modal work well with assistive technologies, such as screen readers."}, onEntered:{type:Callback, help:"Callback fired after the Modal finishes transitioning in"}, onHide:{type:Callback, help:"A callback fired when the header closeButton or non-static backdrop is clicked. Required if either are specified."}, onExiting:{type:Callback, help:"Callback fired as the Modal begins to transition out"}, onEntering:{type:Callback, help:"Callback fired as the Modal begins to transition in"}})
+native widget Modal {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Modal;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({dialogClassName:{type:Text, help:"A css class to apply to the Modal dialog DOM node."}})
+native widget ModalDialog {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Modal.Dialog;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({closeLabel:{type:Text, help:"Provides an accessible label for the close button. It is used for Assistive Technology when the label text is not readable."}, closeButton:{type:Boolean, help:"Specify whether the Component should contain a close button"}, onHide:{type:Callback, help:"A Callback fired when the close button is clicked. If used directly inside a Modal component, the onHide will automatically be propagated up to the parent Modal `onHide`."}})
+native widget ModalHeader {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Modal.Header;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({componentClass:Html})
+native widget ModalFooter {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Modal.Footer;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({componentClass:Html})
+native widget ModalBody {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Modal.Body;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({componentClass:Html})
+native widget ModalTitle {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Modal.Title;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({onExit:Callback, footer:Html, onExited:Callback, collapsible:Boolean, onSelect:Callback, onEnter:{type:Callback, help:"From Collapse."}, expanded:Boolean, eventKey:any, panelRole:Text, header:Html, onEntered:Callback, id:<Integer, Text>, onExiting:Callback, onEntering:Callback, defaultExpanded:Boolean, headerRole:Text})
+native widget Panel {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Panel;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget PanelCollapse {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Panel.Collapse;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget PanelToggle {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Panel.Toggle;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget PanelTitle {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Panel.Title;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget PanelHeading {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Panel.Heading;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget PanelBody {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Panel.Body;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget PanelFooter {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Panel.Footer;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({accordion:Boolean, role:Text, activeKey:any, defaultActiveKey:any, onSelect:ItemSelectedCallback})
+native widget PanelGroup {
+
+	category bindings {
+		JavaScript: ReactBootstrap.PanelGroup;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({onToggle:{type:ToggleChangedCallback, help:"A callback fired when the `<Navbar>` body collapses or expands. Fired when a `<Navbar.Toggle>` is clicked and called with the new `expanded` boolean value.@controllable expanded"}, inverse:{type:Boolean, help:"An alternative dark visual style for the Navbar"}, expanded:{type:Boolean, help:"Explicitly set the visiblity of the navbar body @controllable onToggle"}, role:Text, fixedBottom:{type:Boolean, help:"Create a fixed navbar along the bottom of the screen, that scrolls with the page"}, componentClass:{type:Html, help:"Set a custom element for this component."}, collapseOnSelect:{type:Boolean, help:"Sets `expanded` to `false` after the onSelect event of a descendant of a child `<Nav>`. Does nothing if no `<Nav>` or `<Nav>` descendants exist.The onSelect callback should be used instead for more complex operations that need to be executed after the `select` event of `<Nav>` descendants."}, fixedTop:{type:Boolean, help:"Create a fixed navbar along the top of the screen, that scrolls with the page"}, fluid:{type:Boolean, help:"Allow the Navbar to fluidly adjust to the page or container width, instead of at the predefined screen breakpoints"}, staticTop:{type:Boolean, help:"Create a full-width navbar that scrolls away with the page"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a descendant of a child `<Nav>` is selected. Should be used to execute complex closing or other miscellaneous actions desired after selecting a descendant of `<Nav>`. Does nothing if no `<Nav>` or `<Nav>` descendants exist. The callback is called with an eventKey, which is a prop from the selected `<Nav>` descendant, and an event.```js function ( Any eventKey, SyntheticEvent event? ) ``` For basic closing behavior after all `<Nav>` descendant onSelect events in mobile viewports, try using collapseOnSelect.Note: If you are manually closing the navbar using this `OnSelect` prop, ensure that you are setting `expanded` to false and not *toggling* between true and false."}})
+native widget Navbar {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Navbar;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget NavbarBrand {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Navbar.Brand;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget NavbarHeader {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Navbar.Header;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget NavbarText {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Navbar.Text;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({pullLeft:{type:Boolean, help:"Float the Nav to the left. When `navbar` is `true` the appropriate contextual classes are added as well."}, stacked:{type:Boolean, help:"NavItems are be positioned vertically."}, role:{type:Text, help:"ARIA role for the Nav, in the context of a TabContainer, the default will be set to 'tablist', but can be overridden by the Nav when set explicitly.When the role is set to 'tablist' NavItem focus is managed according to the ARIA authoring practices for tabs: https://www.w3.org/TR/2013/WD-wai-aria-practices-20130307/#tabpanel"}, navbar:{type:Boolean, help:"Apply styling an alignment for use in a Navbar. This prop will be set automatically when the Nav is used inside a Navbar."}, activeKey:{type:any, help:"Marks the NavItem with a matching `eventKey` as active. Has a higher precedence over `activeHref`."}, justified:Boolean, pullRight:{type:Boolean, help:"Float the Nav to the right. When `navbar` is `true` the appropriate contextual classes are added as well."}, activeHref:{type:Text, help:"Marks the child NavItem with a matching `href` prop as active."}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a NavItem is selected.```js function ( Any eventKey, SyntheticEvent event? ) ```"}})
+native widget Nav {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Nav;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({children:{type:Html, help:"Override generated docs from <Dropdown>.@private"}, noCaret:Boolean, active:Boolean, title:{type:Html, help:"Toggle props.", required:true}})
+native widget NavDropdown {
+
+	category bindings {
+		JavaScript: ReactBootstrap.NavDropdown;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({onClick:MouseEventCallback, role:Text, eventKey:any, active:Boolean, disabled:Boolean, href:Text, onSelect:Callback})
+native widget NavItem {
+
+	category bindings {
+		JavaScript: ReactBootstrap.NavItem;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget NavbarForm {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Navbar.Form;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({unmountOnExit:{type:Boolean, help:"Unmount tabs (remove it from the DOM) when it is no longer visible"}, bsStyle:{values:<"tabs", "pills">, help:"Navigation style", required:true}, activeKey:{type:any, help:"Mark the Tab with a matching `eventKey` as active.@controllable onSelect"}, id:<Integer, Text>, animation:Boolean, onSelect:{type:ItemSelectedCallback, help:"Callback fired when a Tab is selected.```js function ( Any eventKey, SyntheticEvent event? ) ``` @controllable activeKey"}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount tabs (add them to the DOM)"}})
+native widget Tabs {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Tabs;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({tabClassName:{type:Text, help:"tabClassName is used as className for the associated NavItem"}, disabled:Boolean, title:Html})
+native widget Tab {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Tab;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({bsSize:Text, children:{type:Html, help:"Override generated docs from <Dropdown>.@private"}, noCaret:Boolean, bsStyle:{type:Text, help:"Toggle props."}, title:{type:Html, required:true}})
+native widget DropdownButton {
+
+	category bindings {
+		JavaScript: ReactBootstrap.DropdownButton;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({toggleLabel:{type:Text, help:"Accessible label for the toggle; the value of `title` if not specified."}, onClick:MouseEventCallback, bsSize:Text, children:{type:Html, help:"Override generated docs from <Dropdown>.@private"}, bsStyle:{type:Text, help:"Toggle props."}, href:Text, title:{type:Html, help:"The content of the split button.", required:true}})
+native widget SplitButton {
+
+	category bindings {
+		JavaScript: ReactBootstrap.SplitButton;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget ContextMenu {
+
+	category bindings {
+		JavaScript: ReactBootstrap.ContextMenu;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({onClick:{type:MouseEventCallback, help:"Callback fired when the menu item is clicked."}, divider:{type:Boolean, help:"Styles the menu item as a horizontal rule, providing visual separation between groups of menu items."}, eventKey:{type:any, help:"Value passed to the `onSelect` handler, useful for identifying the selected menu item."}, active:{type:Boolean, help:"Highlight the menu item as active."}, header:{type:Boolean, help:"Styles the menu item as a header label, useful for describing a group of menu items."}, disabled:{type:Boolean, help:"Disable the menu item, making it unselectable."}, href:{type:Text, help:"HTML `href` attribute corresponding to `a.href`."}, onSelect:{type:ItemSelectedCallback, help:"Callback fired when the menu item is selected.```js (eventKey: any, event: Object) => any ```"}})
+native widget MenuItem {
+
+	category bindings {
+		JavaScript: ReactBootstrap.MenuItem;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({componentClass:{type:Html, help:"You can use a custom element for this component"}, fluid:{type:Boolean, help:"Turn any fixed-width grid layout into a full-width layout by this property.Adds `container-fluid` class."}})
+native widget Grid {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Grid;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({componentClass:Html})
+native widget Row {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Row;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({xsPull:{type:Integer, help:"Change the order of grid columns to the left for Extra small devices Phones class-prefix `col-xs-pull-`"}, mdOffset:{type:Integer, help:"Move columns to the right for Medium devices Desktops class-prefix `col-md-offset-`"}, mdHidden:{type:Boolean, help:"Hide column on Medium devices Desktops adds class `hidden-md`"}, componentClass:Html, smHidden:{type:Boolean, help:"Hide column on Small devices Tablets adds class `hidden-sm`"}, smOffset:{type:Integer, help:"Move columns to the right for Small devices Tablets class-prefix `col-sm-offset-`"}, xsHidden:{type:Boolean, help:"Hide column on Extra small devices Phones adds class `hidden-xs`"}, lgPush:{type:Integer, help:"Change the order of grid columns to the right for Large devices Desktops class-prefix `col-lg-push-`"}, lgHidden:{type:Boolean, help:"Hide column on Large devices Desktops adds class `hidden-lg`"}, lgOffset:{type:Integer, help:"Move columns to the right for Large devices Desktops class-prefix `col-lg-offset-`"}, xsPush:{type:Integer, help:"Change the order of grid columns to the right for Extra small devices Phones class-prefix `col-xs-push-`"}, mdPush:{type:Integer, help:"Change the order of grid columns to the right for Medium devices Desktops class-prefix `col-md-push-`"}, md:{type:Integer, help:"The number of columns you wish to span for Medium devices Desktops (≥992px) class-prefix `col-md-`"}, smPush:{type:Integer, help:"Change the order of grid columns to the right for Small devices Tablets class-prefix `col-sm-push-`"}, sm:{type:Integer, help:"The number of columns you wish to span for Small devices Tablets (≥768px) class-prefix `col-sm-`"}, xs:{type:Integer, help:"The number of columns you wish to span for Extra small devices Phones (<768px) class-prefix `col-xs-`"}, lg:{type:Integer, help:"The number of columns you wish to span for Large devices Desktops (≥1200px) class-prefix `col-lg-`"}, xsOffset:{type:Integer, help:"Move columns to the right for Extra small devices Phones class-prefix `col-xs-offset-`"}, mdPull:{type:Integer, help:"Change the order of grid columns to the left for Medium devices Desktops class-prefix `col-md-pull-`"}, smPull:{type:Integer, help:"Change the order of grid columns to the left for Small devices Tablets class-prefix `col-sm-pull-`"}, lgPull:{type:Integer, help:"Change the order of grid columns to the left for Large devices Desktops class-prefix `col-lg-pull-`"}})
+native widget Col {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Col;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({visibleSmBlock:{type:Boolean, help:"Apply clearfix on Small devices Tablets adds class `visible-sm-block`"}, componentClass:Html, visibleLgBlock:{type:Boolean, help:"Apply clearfix on Large devices Desktops adds class `visible-lg-block`"}, visibleMdBlock:{type:Boolean, help:"Apply clearfix on Medium devices Desktops adds class `visible-md-block`"}, visibleXsBlock:{type:Boolean, help:"Apply clearfix on Extra small devices Phones adds class `visible-xs-block`"}})
+native widget Clearfix {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Clearfix;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({glyph:{type:Text, help:"An icon name without 'glyphicon-' prefix. See e.g. http://getbootstrap.com/components/#glyphicons", required:true}})
+native widget Glyphicon {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Glyphicon;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({onError:{type:Callback, help:"onError callback that is passed down to the image inside this component"}, src:{type:Text, help:"src property that is passed down to the image inside this component"}, alt:{type:Text, help:"alt property that is passed down to the image inside this component"}, onLoad:{type:Callback, help:"onLoad callback that is passed down to the image inside this component"}, href:{type:Text, help:"href property that is passed down to the image inside this component"}})
+native widget Thumbnail {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Thumbnail;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget PageHeader {
+
+	category bindings {
+		JavaScript: ReactBootstrap.PageHeader;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget Typeahead {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Typeahead;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget DatePicker {
+
+	category bindings {
+		JavaScript: ReactBootstrap.DatePicker;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+

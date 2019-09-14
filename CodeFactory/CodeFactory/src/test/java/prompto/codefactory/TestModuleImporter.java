@@ -8,18 +8,18 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 
-import prompto.argument.CategoryArgument;
 import prompto.code.BaseCodeStore;
 import prompto.config.IRuntimeConfiguration;
 import prompto.config.TempDirectories;
 import prompto.expression.InstanceExpression;
 import prompto.expression.MethodSelector;
-import prompto.grammar.ArgumentAssignment;
-import prompto.grammar.ArgumentAssignmentList;
+import prompto.grammar.Argument;
+import prompto.grammar.ArgumentList;
 import prompto.grammar.Identifier;
 import prompto.intrinsic.PromptoBinary;
 import prompto.intrinsic.PromptoVersion;
 import prompto.libraries.Libraries;
+import prompto.param.CategoryParameter;
 import prompto.runtime.Context;
 import prompto.runtime.Mode;
 import prompto.runtime.Standalone;
@@ -56,10 +56,10 @@ public class TestModuleImporter {
 		Context context = Standalone.getGlobalContext().newLocalContext();
 		context.registerValue(new Variable(blobId, BlobType.instance()));
 		context.setValue(blobId, blob);
-		ArgumentAssignment assignment = new ArgumentAssignment(new CategoryArgument(BlobType.instance(), blobId), new InstanceExpression(blobId));
-		ArgumentAssignmentList assignments = new ArgumentAssignmentList(Collections.singletonList(assignment));
+		Argument argument = new Argument(new CategoryParameter(BlobType.instance(), blobId), new InstanceExpression(blobId));
+		ArgumentList arguments = new ArgumentList(Collections.singletonList(argument));
 		MethodSelector selector = new MethodSelector(new Identifier("importModule"));
-		MethodCall call = new MethodCall(selector, assignments);
+		MethodCall call = new MethodCall(selector, arguments);
 		call.interpret(context);	
 	}
 
