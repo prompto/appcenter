@@ -61,6 +61,7 @@ public class PropTypesConverter {
 	private static void registerBuiltins(Context context) throws Exception {
 		// dummy callbacks to allow type resolution
 		String code = "abstract method Callback();"
+				+ "abstract method ClickEventCallback();"
 				+ "abstract method MouseEventCallback();"
 				+ "abstract method ItemSelectedCallback();"
 				+ "abstract method ToggleChangedCallback();"

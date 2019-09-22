@@ -17,6 +17,7 @@ import prompto.type.BooleanType;
 import prompto.type.IType;
 import prompto.type.IntegerType;
 import prompto.type.TextType;
+import prompto.utils.StringUtils;
 
 public abstract class PropTypeConverter {
 
@@ -102,13 +103,14 @@ public abstract class PropTypeConverter {
 			break;
 		case "PropTypes.oneOf":
 			if(firstParam instanceof List) {
-				Set<String> values = ((List<?>)firstParam).stream()
+				List<?> source = ((List<?>)firstParam);
+				Set<String> values = source.stream()
 						.map(Object::toString)
+						.map(StringUtils::trimEnclosingQuotes)
+						.filter(s->!"null".equals(s))
 						.collect(Collectors.toSet());
-				if(values.stream().map(String::valueOf).map(s->s.charAt(0)).anyMatch(c->c!='"' && c!='\''))
-					prop.setValidator(new ValueSetValidator(values));
-				else
-					prop.setValidator(new ValueSetValidator(values));
+				prop.setValidator(new ValueSetValidator(values));
+				prop.setRequired(values.size()==source.size());
 			} else
 				System.err.println(method.name);
 			break;
@@ -127,6 +129,7 @@ public abstract class PropTypeConverter {
 		}
 	}
 	
+	
 	private static void propTypeToProperty(String type, Property prop) {
 		if(type.endsWith(".isRequired")) {
 			prop.setRequired(true);
@@ -142,6 +145,8 @@ public abstract class PropTypeConverter {
 				case "PropTypes.func":
 					switch(prop.getName()) {
 					case "onClick":
+						prop.setValidator(MOUSE_CLICKED_VALIDATOR);
+						break;
 					case "onMouseEnter":
 					case "onMouseOver":
 					case "onMouseOut":
