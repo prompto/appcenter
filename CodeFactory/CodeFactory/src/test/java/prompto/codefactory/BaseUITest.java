@@ -19,10 +19,9 @@ public abstract class BaseUITest extends BaseWebTest {
 				"test-local.yml"
 		};
 		ICodeFactoryConfiguration config = Application.loadConfiguration(args);
-		config = Application.adjustConfiguration(config, Mode.UNITTEST);
-		// code store is not populated, so override runtime libs
-		config = config.withCodeStoreConfiguration(null);
-		config = config.withRuntimeLibs(()->Libraries.getPromptoLibraries(Libraries.class, AppServer.class, TestYamlLocal.class));
+		config = Application.adjustConfiguration(config, Mode.UNITTEST)
+				.withCodeStoreConfiguration(null) // code store is not populated, so override runtime libs
+				.withRuntimeLibs(()->Libraries.getPromptoLibraries(Libraries.class, AppServer.class, TestYamlLocal.class));
 		Application.main(config);
 		HTTP_PORT = (int)AppServer.getHttpPort();
 	}
