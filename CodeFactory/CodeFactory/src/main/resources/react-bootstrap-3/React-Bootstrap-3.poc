@@ -1,4 +1,4 @@
-@WidgetProperties({onClick:MouseEventCallback, componentClass:Html, active:Boolean, disabled:Boolean, block:Boolean, href:Text, type:{values:<"button", "reset", "submit">, help:"Defines HTML button type attribute @defaultValue 'button'", required:true}})
+@WidgetProperties({onClick:MouseEventCallback, componentClass:Text, active:Boolean, disabled:Boolean, block:Boolean, href:Text, type:{values:<"button", "reset", "submit">, help:"Defines HTML button type attribute @defaultValue 'button'", required:true}})
 native widget Button {
 
 	category bindings {
@@ -73,7 +73,7 @@ native widget InputGroupButton {
 	
 }
 
-@WidgetProperties({horizontal:Boolean, inline:Boolean, componentClass:Html})
+@WidgetProperties({horizontal:Boolean, inline:Boolean, componentClass:Text})
 native widget Form {
 
 	category bindings {
@@ -99,7 +99,7 @@ native widget FormGroup {
 	
 }
 
-@WidgetProperties({componentClass:Html, inputRef:{type:WidgetCallback, help:"Attaches a ref to the `<input>` element. Only functions can be used here.```js <FormControl inputRef={ref => { this.input = ref; }} /> ```"}, id:{type:Text, help:"Uses `controlId` from `<FormGroup>` if not explicitly specified."}, type:{type:Text, help:"Only relevant if `componentClass` is `'input'`."}})
+@WidgetProperties({componentClass:Text, inputRef:{type:WidgetCallback, help:"Attaches a ref to the `<input>` element. Only functions can be used here.```js <FormControl inputRef={ref => { this.input = ref; }} /> ```"}, id:{type:Text, help:"Uses `controlId` from `<FormGroup>` if not explicitly specified."}, type:{type:Text, help:"Only relevant if `componentClass` is `'input'`."}})
 native widget FormControl {
 
 	category bindings {
@@ -150,7 +150,7 @@ native widget Table {
 	
 }
 
-@WidgetProperties({container:{type:any, help:"@private"}, keyboard:{type:Boolean, help:"Close the modal when escape key is pressed"}, backdrop:{values:<"static", true, false>, help:"Include a backdrop component. Specify 'static' for a backdrop that doesn't trigger an 'onHide' when clicked.", required:true}, backdropClassName:{type:Text, help:"Add an optional extra class name to .modal-backdrop It could end up looking like class='modal-backdrop foo-modal-backdrop in'."}, onExit:{type:Callback, help:"Callback fired right before the Modal transitions out"}, onExited:{type:Callback, help:"Callback fired after the Modal finishes transitioning out"}, show:{type:Boolean, help:"When `true` The modal will show itself."}, autoFocus:{type:Boolean, help:"When `true` The modal will automatically shift focus to itself when it opens, and replace it to the last focused element when it closes.Generally this should never be set to false as it makes the Modal less accessible to assistive technologies, like screen-readers."}, restoreFocus:{type:Boolean, help:"When `true` The modal will restore focus to previously focused element once modal is hidden"}, animation:{type:Boolean, help:"Open and close the Modal with a slide and fade animation."}, onEnter:{type:Callback, help:"Callback fired before the Modal transitions in"}, dialogComponentClass:{type:Html, help:"A Component type that provides the modal content Markup. This is a useful prop when you want to use your own styles and markup to create a custom modal component."}, enforceFocus:{type:Boolean, help:"When `true` The modal will prevent focus from leaving the Modal while open. Consider leaving the default value here, as it is necessary to make the Modal work well with assistive technologies, such as screen readers."}, onEntered:{type:Callback, help:"Callback fired after the Modal finishes transitioning in"}, onHide:{type:Callback, help:"A callback fired when the header closeButton or non-static backdrop is clicked. Required if either are specified."}, onExiting:{type:Callback, help:"Callback fired as the Modal begins to transition out"}, onEntering:{type:Callback, help:"Callback fired as the Modal begins to transition in"}})
+@WidgetProperties({container:{type:any, help:"@private"}, keyboard:{type:Boolean, help:"Close the modal when escape key is pressed"}, backdrop:{values:<"static", true, false>, help:"Include a backdrop component. Specify 'static' for a backdrop that doesn't trigger an 'onHide' when clicked.", required:true}, backdropClassName:{type:Text, help:"Add an optional extra class name to .modal-backdrop It could end up looking like class='modal-backdrop foo-modal-backdrop in'."}, onExit:{type:Callback, help:"Callback fired right before the Modal transitions out"}, onExited:{type:Callback, help:"Callback fired after the Modal finishes transitioning out"}, show:{type:Boolean, help:"When `true` The modal will show itself."}, autoFocus:{type:Boolean, help:"When `true` The modal will automatically shift focus to itself when it opens, and replace it to the last focused element when it closes.Generally this should never be set to false as it makes the Modal less accessible to assistive technologies, like screen-readers."}, restoreFocus:{type:Boolean, help:"When `true` The modal will restore focus to previously focused element once modal is hidden"}, dialogClassName:{type:Text, help:"A css class to apply to the Modal dialog DOM node."}, animation:{type:Boolean, help:"Open and close the Modal with a slide and fade animation."}, onEnter:{type:Callback, help:"Callback fired before the Modal transitions in"}, dialogComponentClass:{type:Text, help:"A Component type that provides the modal content Markup. This is a useful prop when you want to use your own styles and markup to create a custom modal component."}, enforceFocus:{type:Boolean, help:"When `true` The modal will prevent focus from leaving the Modal while open. Consider leaving the default value here, as it is necessary to make the Modal work well with assistive technologies, such as screen readers."}, onEntered:{type:Callback, help:"Callback fired after the Modal finishes transitioning in"}, onHide:{type:Callback, help:"A callback fired when the header closeButton or non-static backdrop is clicked. Required if either are specified."}, onExiting:{type:Callback, help:"Callback fired as the Modal begins to transition out"}, onEntering:{type:Callback, help:"Callback fired as the Modal begins to transition in"}})
 native widget Modal {
 
 	category bindings {
@@ -189,7 +189,7 @@ native widget ModalHeader {
 	
 }
 
-@WidgetProperties({componentClass:Html})
+@WidgetProperties({componentClass:Text})
 native widget ModalFooter {
 
 	category bindings {
@@ -202,7 +202,7 @@ native widget ModalFooter {
 	
 }
 
-@WidgetProperties({componentClass:Html})
+@WidgetProperties({componentClass:Text})
 native widget ModalBody {
 
 	category bindings {
@@ -215,7 +215,7 @@ native widget ModalBody {
 	
 }
 
-@WidgetProperties({componentClass:Html})
+@WidgetProperties({componentClass:Text})
 native widget ModalTitle {
 
 	category bindings {
@@ -228,7 +228,7 @@ native widget ModalTitle {
 	
 }
 
-@WidgetProperties({onExit:Callback, footer:Html, onExited:Callback, collapsible:Boolean, onSelect:Callback, onEnter:{type:Callback, help:"From Collapse."}, expanded:Boolean, eventKey:any, panelRole:Text, header:Html, onEntered:Callback, id:<Integer, Text>, onExiting:Callback, onEntering:Callback, defaultExpanded:Boolean, headerRole:Text})
+@WidgetProperties({onExit:Callback, footer:Text, onExited:Callback, collapsible:Boolean, onSelect:Callback, onEnter:{type:Callback, help:"From Collapse."}, expanded:Boolean, eventKey:any, panelRole:Text, header:Text, onEntered:Callback, id:<Integer, Text>, onExiting:Callback, onEntering:Callback, defaultExpanded:Boolean, headerRole:Text})
 native widget Panel {
 
 	category bindings {
@@ -326,7 +326,7 @@ native widget PanelGroup {
 	
 }
 
-@WidgetProperties({onToggle:{type:ToggleChangedCallback, help:"A callback fired when the `<Navbar>` body collapses or expands. Fired when a `<Navbar.Toggle>` is clicked and called with the new `expanded` boolean value.@controllable expanded"}, inverse:{type:Boolean, help:"An alternative dark visual style for the Navbar"}, expanded:{type:Boolean, help:"Explicitly set the visiblity of the navbar body @controllable onToggle"}, role:Text, fixedBottom:{type:Boolean, help:"Create a fixed navbar along the bottom of the screen, that scrolls with the page"}, componentClass:{type:Html, help:"Set a custom element for this component."}, collapseOnSelect:{type:Boolean, help:"Sets `expanded` to `false` after the onSelect event of a descendant of a child `<Nav>`. Does nothing if no `<Nav>` or `<Nav>` descendants exist.The onSelect callback should be used instead for more complex operations that need to be executed after the `select` event of `<Nav>` descendants."}, fixedTop:{type:Boolean, help:"Create a fixed navbar along the top of the screen, that scrolls with the page"}, fluid:{type:Boolean, help:"Allow the Navbar to fluidly adjust to the page or container width, instead of at the predefined screen breakpoints"}, staticTop:{type:Boolean, help:"Create a full-width navbar that scrolls away with the page"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a descendant of a child `<Nav>` is selected. Should be used to execute complex closing or other miscellaneous actions desired after selecting a descendant of `<Nav>`. Does nothing if no `<Nav>` or `<Nav>` descendants exist. The callback is called with an eventKey, which is a prop from the selected `<Nav>` descendant, and an event.```js function ( Any eventKey, SyntheticEvent event? ) ``` For basic closing behavior after all `<Nav>` descendant onSelect events in mobile viewports, try using collapseOnSelect.Note: If you are manually closing the navbar using this `OnSelect` prop, ensure that you are setting `expanded` to false and not *toggling* between true and false."}})
+@WidgetProperties({onToggle:{type:ToggleChangedCallback, help:"A callback fired when the `<Navbar>` body collapses or expands. Fired when a `<Navbar.Toggle>` is clicked and called with the new `expanded` boolean value.@controllable expanded"}, inverse:{type:Boolean, help:"An alternative dark visual style for the Navbar"}, expanded:{type:Boolean, help:"Explicitly set the visiblity of the navbar body @controllable onToggle"}, role:Text, fixedBottom:{type:Boolean, help:"Create a fixed navbar along the bottom of the screen, that scrolls with the page"}, componentClass:{type:Text, help:"Set a custom element for this component."}, collapseOnSelect:{type:Boolean, help:"Sets `expanded` to `false` after the onSelect event of a descendant of a child `<Nav>`. Does nothing if no `<Nav>` or `<Nav>` descendants exist.The onSelect callback should be used instead for more complex operations that need to be executed after the `select` event of `<Nav>` descendants."}, fixedTop:{type:Boolean, help:"Create a fixed navbar along the top of the screen, that scrolls with the page"}, fluid:{type:Boolean, help:"Allow the Navbar to fluidly adjust to the page or container width, instead of at the predefined screen breakpoints"}, staticTop:{type:Boolean, help:"Create a full-width navbar that scrolls away with the page"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a descendant of a child `<Nav>` is selected. Should be used to execute complex closing or other miscellaneous actions desired after selecting a descendant of `<Nav>`. Does nothing if no `<Nav>` or `<Nav>` descendants exist. The callback is called with an eventKey, which is a prop from the selected `<Nav>` descendant, and an event.```js function ( Any eventKey, SyntheticEvent event? ) ``` For basic closing behavior after all `<Nav>` descendant onSelect events in mobile viewports, try using collapseOnSelect.Note: If you are manually closing the navbar using this `OnSelect` prop, ensure that you are setting `expanded` to false and not *toggling* between true and false."}})
 native widget Navbar {
 
 	category bindings {
@@ -388,7 +388,7 @@ native widget Nav {
 	
 }
 
-@WidgetProperties({children:{type:Html, help:"Override generated docs from <Dropdown>.@private"}, noCaret:Boolean, active:Boolean, title:{type:Html, help:"Toggle props.", required:true}})
+@WidgetProperties({onToggle:{type:any, help:"A callback fired when the Dropdown wishes to change visibility. Called with the requested `open` value, the DOM event, and the source that fired it: `'click'`,`'keydown'`,`'rootClose'`, or `'select'`.```js function(Boolean isOpen, Object event, { String source }) {} ``` @controllable open"}, role:{type:Text, help:"If `'menuitem'`, causes the dropdown to behave like a menu item rather than a menu button."}, componentClass:Text, active:Boolean, pullRight:{type:Boolean, help:"Align the menu to the right side of the Dropdown toggle"}, onMouseEnter:{type:MouseEventCallback, help:"@private"}, title:{type:Text, help:"Toggle props.", required:true}, onMouseLeave:{type:MouseEventCallback, help:"@private"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a menu item is selected.```js (eventKey: any, event: Object) => any ```"}, dropup:{type:Boolean, help:"The menu will open above the dropdown button, instead of below it."}, children:{type:Text, help:"Override generated docs from <Dropdown>.@private"}, noCaret:Boolean, defaultOpen:Boolean, disabled:{type:Boolean, help:"Whether or not component is disabled."}, rootCloseEvent:{values:<"click", "mousedown">, help:"Which event when fired outside the component will cause it to be closed", required:true}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for assistive technologies, such as screen readers.@type {string|number} @required"}, open:{type:Boolean, help:"Whether or not the Dropdown is visible.@controllable onToggle"}})
 native widget NavDropdown {
 
 	category bindings {
@@ -439,7 +439,7 @@ native widget Tabs {
 	
 }
 
-@WidgetProperties({tabClassName:{type:Text, help:"tabClassName is used as className for the associated NavItem"}, disabled:Boolean, title:Html})
+@WidgetProperties({onExit:{type:Callback, help:"Transition onExit callback when animation is not `false`"}, bsClass:{type:Text, help:"If not explicitly specified and rendered in the context of a `<TabContent>`, the `bsClass` of the `<TabContent>` suffixed by `-pane`.If otherwise not explicitly specified, `tab-pane`."}, onExited:{type:Callback, help:"Transition onExited callback when animation is not `false`"}, title:Text, animation:{types:<Boolean, Text>, help:"Use animation when showing or hiding `<TabPane>`s. Use `false` to disable, `true` to enable the default `<Fade>` animation or any `<Transition>` component."}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount the tab (add it to the DOM)"}, onEnter:{type:Callback, help:"Transition onEnter callback when animation is not `false`"}, tabClassName:{type:Text, help:"tabClassName is used as className for the associated NavItem"}, unmountOnExit:{type:Boolean, help:"Unmount the tab (remove it from the DOM) when it is no longer visible"}, eventKey:{type:any, help:"Uniquely identify the `<TabPane>` among its siblings."}, "aria-labelledby":{type:Text, help:"@private * */"}, onEntered:{type:Callback, help:"Transition onEntered callback when animation is not `false`"}, disabled:Boolean, id:{type:Text, help:"@private * */"}, onExiting:{type:Callback, help:"Transition onExiting callback when animation is not `false`"}, onEntering:{type:Callback, help:"Transition onEntering callback when animation is not `false`"}})
 native widget Tab {
 
 	category bindings {
@@ -452,7 +452,7 @@ native widget Tab {
 	
 }
 
-@WidgetProperties({bsSize:Text, children:{type:Html, help:"Override generated docs from <Dropdown>.@private"}, noCaret:Boolean, bsStyle:{type:Text, help:"Toggle props."}, title:{type:Html, required:true}})
+@WidgetProperties({onToggle:{type:any, help:"A callback fired when the Dropdown wishes to change visibility. Called with the requested `open` value, the DOM event, and the source that fired it: `'click'`,`'keydown'`,`'rootClose'`, or `'select'`.```js function(Boolean isOpen, Object event, { String source }) {} ``` @controllable open"}, role:{type:Text, help:"If `'menuitem'`, causes the dropdown to behave like a menu item rather than a menu button."}, componentClass:Text, bsSize:Text, bsStyle:{type:Text, help:"Toggle props."}, pullRight:{type:Boolean, help:"Align the menu to the right side of the Dropdown toggle"}, onMouseEnter:{type:MouseEventCallback, help:"@private"}, title:{type:Text, required:true}, onMouseLeave:{type:MouseEventCallback, help:"@private"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a menu item is selected.```js (eventKey: any, event: Object) => any ```"}, dropup:{type:Boolean, help:"The menu will open above the dropdown button, instead of below it."}, children:{type:Text, help:"Override generated docs from <Dropdown>.@private"}, noCaret:Boolean, defaultOpen:Boolean, disabled:{type:Boolean, help:"Whether or not component is disabled."}, rootCloseEvent:{values:<"click", "mousedown">, help:"Which event when fired outside the component will cause it to be closed", required:true}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for assistive technologies, such as screen readers.@type {string|number} @required"}, open:{type:Boolean, help:"Whether or not the Dropdown is visible.@controllable onToggle"}})
 native widget DropdownButton {
 
 	category bindings {
@@ -465,7 +465,7 @@ native widget DropdownButton {
 	
 }
 
-@WidgetProperties({toggleLabel:{type:Text, help:"Accessible label for the toggle; the value of `title` if not specified."}, onClick:MouseEventCallback, bsSize:Text, children:{type:Html, help:"Override generated docs from <Dropdown>.@private"}, bsStyle:{type:Text, help:"Toggle props."}, href:Text, title:{type:Html, help:"The content of the split button.", required:true}})
+@WidgetProperties({onToggle:{type:any, help:"A callback fired when the Dropdown wishes to change visibility. Called with the requested `open` value, the DOM event, and the source that fired it: `'click'`,`'keydown'`,`'rootClose'`, or `'select'`.```js function(Boolean isOpen, Object event, { String source }) {} ``` @controllable open"}, onClick:MouseEventCallback, role:{type:Text, help:"If `'menuitem'`, causes the dropdown to behave like a menu item rather than a menu button."}, componentClass:Text, bsSize:Text, bsStyle:{type:Text, help:"Toggle props."}, pullRight:{type:Boolean, help:"Align the menu to the right side of the Dropdown toggle"}, onMouseEnter:{type:MouseEventCallback, help:"@private"}, title:{type:Text, help:"The content of the split button.", required:true}, onMouseLeave:{type:MouseEventCallback, help:"@private"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a menu item is selected.```js (eventKey: any, event: Object) => any ```"}, toggleLabel:{type:Text, help:"Accessible label for the toggle; the value of `title` if not specified."}, dropup:{type:Boolean, help:"The menu will open above the dropdown button, instead of below it."}, children:{type:Text, help:"Override generated docs from <Dropdown>.@private"}, defaultOpen:Boolean, disabled:{type:Boolean, help:"Whether or not component is disabled."}, rootCloseEvent:{values:<"click", "mousedown">, help:"Which event when fired outside the component will cause it to be closed", required:true}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for assistive technologies, such as screen readers.@type {string|number} @required"}, href:Text, open:{type:Boolean, help:"Whether or not the Dropdown is visible.@controllable onToggle"}})
 native widget SplitButton {
 
 	category bindings {
@@ -503,7 +503,7 @@ native widget MenuItem {
 	
 }
 
-@WidgetProperties({componentClass:{type:Html, help:"You can use a custom element for this component"}, fluid:{type:Boolean, help:"Turn any fixed-width grid layout into a full-width layout by this property.Adds `container-fluid` class."}})
+@WidgetProperties({componentClass:{type:Text, help:"You can use a custom element for this component"}, fluid:{type:Boolean, help:"Turn any fixed-width grid layout into a full-width layout by this property.Adds `container-fluid` class."}})
 native widget Grid {
 
 	category bindings {
@@ -516,7 +516,7 @@ native widget Grid {
 	
 }
 
-@WidgetProperties({componentClass:Html})
+@WidgetProperties({componentClass:Text})
 native widget Row {
 
 	category bindings {
@@ -529,7 +529,7 @@ native widget Row {
 	
 }
 
-@WidgetProperties({xsPull:{type:Integer, help:"Change the order of grid columns to the left for Extra small devices Phones class-prefix `col-xs-pull-`"}, mdOffset:{type:Integer, help:"Move columns to the right for Medium devices Desktops class-prefix `col-md-offset-`"}, mdHidden:{type:Boolean, help:"Hide column on Medium devices Desktops adds class `hidden-md`"}, componentClass:Html, smHidden:{type:Boolean, help:"Hide column on Small devices Tablets adds class `hidden-sm`"}, smOffset:{type:Integer, help:"Move columns to the right for Small devices Tablets class-prefix `col-sm-offset-`"}, xsHidden:{type:Boolean, help:"Hide column on Extra small devices Phones adds class `hidden-xs`"}, lgPush:{type:Integer, help:"Change the order of grid columns to the right for Large devices Desktops class-prefix `col-lg-push-`"}, lgHidden:{type:Boolean, help:"Hide column on Large devices Desktops adds class `hidden-lg`"}, lgOffset:{type:Integer, help:"Move columns to the right for Large devices Desktops class-prefix `col-lg-offset-`"}, xsPush:{type:Integer, help:"Change the order of grid columns to the right for Extra small devices Phones class-prefix `col-xs-push-`"}, mdPush:{type:Integer, help:"Change the order of grid columns to the right for Medium devices Desktops class-prefix `col-md-push-`"}, md:{type:Integer, help:"The number of columns you wish to span for Medium devices Desktops (≥992px) class-prefix `col-md-`"}, smPush:{type:Integer, help:"Change the order of grid columns to the right for Small devices Tablets class-prefix `col-sm-push-`"}, sm:{type:Integer, help:"The number of columns you wish to span for Small devices Tablets (≥768px) class-prefix `col-sm-`"}, xs:{type:Integer, help:"The number of columns you wish to span for Extra small devices Phones (<768px) class-prefix `col-xs-`"}, lg:{type:Integer, help:"The number of columns you wish to span for Large devices Desktops (≥1200px) class-prefix `col-lg-`"}, xsOffset:{type:Integer, help:"Move columns to the right for Extra small devices Phones class-prefix `col-xs-offset-`"}, mdPull:{type:Integer, help:"Change the order of grid columns to the left for Medium devices Desktops class-prefix `col-md-pull-`"}, smPull:{type:Integer, help:"Change the order of grid columns to the left for Small devices Tablets class-prefix `col-sm-pull-`"}, lgPull:{type:Integer, help:"Change the order of grid columns to the left for Large devices Desktops class-prefix `col-lg-pull-`"}})
+@WidgetProperties({xsPull:{type:Integer, help:"Change the order of grid columns to the left for Extra small devices Phones class-prefix `col-xs-pull-`"}, mdOffset:{type:Integer, help:"Move columns to the right for Medium devices Desktops class-prefix `col-md-offset-`"}, mdHidden:{type:Boolean, help:"Hide column on Medium devices Desktops adds class `hidden-md`"}, componentClass:Text, smHidden:{type:Boolean, help:"Hide column on Small devices Tablets adds class `hidden-sm`"}, smOffset:{type:Integer, help:"Move columns to the right for Small devices Tablets class-prefix `col-sm-offset-`"}, xsHidden:{type:Boolean, help:"Hide column on Extra small devices Phones adds class `hidden-xs`"}, lgPush:{type:Integer, help:"Change the order of grid columns to the right for Large devices Desktops class-prefix `col-lg-push-`"}, lgHidden:{type:Boolean, help:"Hide column on Large devices Desktops adds class `hidden-lg`"}, lgOffset:{type:Integer, help:"Move columns to the right for Large devices Desktops class-prefix `col-lg-offset-`"}, xsPush:{type:Integer, help:"Change the order of grid columns to the right for Extra small devices Phones class-prefix `col-xs-push-`"}, mdPush:{type:Integer, help:"Change the order of grid columns to the right for Medium devices Desktops class-prefix `col-md-push-`"}, md:{type:Integer, help:"The number of columns you wish to span for Medium devices Desktops (≥992px) class-prefix `col-md-`"}, smPush:{type:Integer, help:"Change the order of grid columns to the right for Small devices Tablets class-prefix `col-sm-push-`"}, sm:{type:Integer, help:"The number of columns you wish to span for Small devices Tablets (≥768px) class-prefix `col-sm-`"}, xs:{type:Integer, help:"The number of columns you wish to span for Extra small devices Phones (<768px) class-prefix `col-xs-`"}, lg:{type:Integer, help:"The number of columns you wish to span for Large devices Desktops (≥1200px) class-prefix `col-lg-`"}, xsOffset:{type:Integer, help:"Move columns to the right for Extra small devices Phones class-prefix `col-xs-offset-`"}, mdPull:{type:Integer, help:"Change the order of grid columns to the left for Medium devices Desktops class-prefix `col-md-pull-`"}, smPull:{type:Integer, help:"Change the order of grid columns to the left for Small devices Tablets class-prefix `col-sm-pull-`"}, lgPull:{type:Integer, help:"Change the order of grid columns to the left for Large devices Desktops class-prefix `col-lg-pull-`"}})
 native widget Col {
 
 	category bindings {
@@ -542,7 +542,7 @@ native widget Col {
 	
 }
 
-@WidgetProperties({visibleSmBlock:{type:Boolean, help:"Apply clearfix on Small devices Tablets adds class `visible-sm-block`"}, componentClass:Html, visibleLgBlock:{type:Boolean, help:"Apply clearfix on Large devices Desktops adds class `visible-lg-block`"}, visibleMdBlock:{type:Boolean, help:"Apply clearfix on Medium devices Desktops adds class `visible-md-block`"}, visibleXsBlock:{type:Boolean, help:"Apply clearfix on Extra small devices Phones adds class `visible-xs-block`"}})
+@WidgetProperties({visibleSmBlock:{type:Boolean, help:"Apply clearfix on Small devices Tablets adds class `visible-sm-block`"}, componentClass:Text, visibleLgBlock:{type:Boolean, help:"Apply clearfix on Large devices Desktops adds class `visible-lg-block`"}, visibleMdBlock:{type:Boolean, help:"Apply clearfix on Medium devices Desktops adds class `visible-md-block`"}, visibleXsBlock:{type:Boolean, help:"Apply clearfix on Extra small devices Phones adds class `visible-xs-block`"}})
 native widget Clearfix {
 
 	category bindings {

@@ -18,25 +18,25 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<prompto.version>0.0.68</prompto.version>
+		<prompto.version>0.0.69</prompto.version>
 		<jackson.version>2.9.5</jackson.version>
 		<jetty.version>9.3.3.v20150827</jetty.version>
 		<solr.version>5.4.0</solr.version>
 		<mongo.version>3.4.2</mongo.version>
 	</properties>
 
-    <repositories>
-         <repository>
-             <id>Central</id>
-             <name>Maven Central</name>
-             <url>http://repo.maven.apache.org/maven2</url>
-         </repository>
-         <repository>
-             <id>Nexus</id>
-             <name>Nexus Staging Mirror</name>
-             <url>https://oss.sonatype.org/content/groups/staging/</url>
-         </repository>
-     </repositories>
+	<repositories>
+		<repository>
+			<id>Central</id>
+			<name>Maven Central</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+		</repository>
+		<repository>
+			<id>Nexus</id>
+			<name>Nexus Staging Mirror</name>
+			<url>https://oss.sonatype.org/content/groups/staging/</url>
+		</repository>
+	</repositories>
 
 
 	<build>
@@ -107,32 +107,33 @@
 					<excludedGroups>prompto.server.SeleniumTests,prompto.utils.ManualTests</excludedGroups>
 				</configuration>
 			</plugin>
-			<!-- delete src/main/web directory to avoid pollution from previous runs --> 
+			<!-- delete src/main/web directory to avoid pollution from previous runs -->
 			<plugin>
-			    <artifactId>maven-clean-plugin</artifactId>
-			    <version>2.5</version>
-			    <executions>
-			      <execution>
-			        <id>clean-web-resources</id>
-			        <phase>clean</phase>
-			        <goals>
-			          <goal>clean</goal>
-			        </goals>
-			        <configuration>
-			         <filesets>
-			            <fileset>
-			              <directory>src/main/web</directory>
-			            </fileset>
-			          </filesets>
-			        </configuration>
-			      </execution>
-			    </executions>
-			  </plugin>
-  			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<id>clean-web-resources</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>src/main/web</directory>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.0.1</version>
 				<!-- copy web pages to src/main/web -->
-				<!-- not sure why tests fail when using resources/resource/directory + targetPath -->
+				<!-- not sure why tests fail when using resources/resource/directory 
+					+ targetPath -->
 				<!-- TODO: explore maven-remote-resources-plugin to avoid warnings -->
 				<executions>
 					<execution>
@@ -261,7 +262,7 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongodb-driver</artifactId>
 			<version>${mongo.version}</version>
@@ -316,6 +317,12 @@
 					<artifactId>slf4j-log4j12</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.12.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

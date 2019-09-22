@@ -591,6 +591,13 @@ define getHttpPort as native method returning Integer doing:
 	JavaScript: return self.location.port;
 
 @Inlined
+define ClickEvent as native category with bindings:
+	
+	define category bindings as:
+		JavaScript: Event
+
+
+@Inlined
 define MouseEvent as native category with bindings:
 	
 	define category bindings as:
@@ -631,6 +638,7 @@ and methods:
 		JavaScript: return this.target.value;
 
 
+define ClickEventCallback as abstract method receiving ClickEvent event
 define MouseEventCallback as abstract method receiving MouseEvent event
 define KeyboardEventCallback as abstract method receiving KeyboardEvent event
 define RadioChangedCallback as abstract method receiving RadioChangedEvent event
