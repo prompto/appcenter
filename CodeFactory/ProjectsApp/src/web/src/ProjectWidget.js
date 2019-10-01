@@ -30,7 +30,8 @@ class ContextMenu extends React.Component {
     render() {
         const root = this.props.root;
         const module = this.props.module;
-        const status = module.value.moduleStatus.name;
+        const moduleStatus = module.value.moduleStatus || { name: "ACTIVE" };
+        const status = moduleStatus.name;
         const parked = module.value.parked || false;
         const canModify = status==="ACTIVE";
         const canPark = !parked && status!=="PROVIDED";
