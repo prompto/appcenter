@@ -1,0 +1,8 @@
+http:
+  protocol: https
+  port: 443
+  authentication:
+    source:
+      factory: prompto.security.auth.source.StoredPasswordDigestAuthenticationSourceFactory
+      store:
+        factory: prompto.store.memory.MemStoreFactory

@@ -17,7 +17,6 @@ import prompto.code.QueryableCodeStore;
 import prompto.config.CodeFactoryConfiguration;
 import prompto.config.ICodeFactoryConfiguration;
 import prompto.config.IConfigurationReader;
-import prompto.config.IHttpConfiguration;
 import prompto.config.IPortRangeConfiguration;
 import prompto.config.IStoreConfiguration;
 import prompto.config.ITargetConfiguration;
@@ -119,14 +118,14 @@ public class Application {
 		return target == null ? null : newStore(target.getDataStoreConfiguration());
 	}
 
-	private static IStore fetchLoginStore(ICodeFactoryConfiguration config) throws Throwable {
-		IHttpConfiguration http = config.getHttpConfiguration();
-		if(http==null)
-			return null;
-		IAuthenticationConfiguration auth = http.getAuthenticationConfiguration();
-		if(auth==null)
-			return null;
-		IAuthenticationSourceConfiguration source = auth.getAuthenticationSourceConfiguration();
+	public static IStore fetchLoginStore(ICodeFactoryConfiguration config) throws Throwable {
+		IAuthenticationConfiguration auth = config.getHttpConfiguration()
+			.getAuthenticationConfiguration();
+		return auth==null ? null : fetchLoginStore(auth);
+	}
+
+	private static IStore fetchLoginStore(IAuthenticationConfiguration config) throws Throwable {
+		IAuthenticationSourceConfiguration source = config.getAuthenticationSourceConfiguration();
 		if(source instanceof IStoredAuthenticationSourceConfiguration)
 			return newStore(((IStoredAuthenticationSourceConfiguration)source).getStoreConfiguration());
 		else
