@@ -102,7 +102,7 @@ export default class DataPage extends React.Component {
     }
 
     extractType(value) {
-        if(value.type)
+        if(value && value.type)
             return value.type;
         else if(typeof(value)===typeof(""))
             return "Text";
