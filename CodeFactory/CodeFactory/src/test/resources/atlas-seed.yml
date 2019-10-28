@@ -14,6 +14,10 @@ mongoStore: &atlasMongoStore
     factory: prompto.security.PlainSecretKeyFactory
     secret: Pink-floyd01
     
+codeStore: 
+  <<: *atlasMongoStore
+  dbName: FACTORY
+
 dataStore: 
   <<: *atlasMongoStore
   dbName: SEED-TOOLS
