@@ -23,7 +23,7 @@ public class ReactBootstrap3PropTypes {
 					put("onSelect", ITEM_SELECTED_VALIDATOR);
 				}
 			});
-			put("NavItem", Collections.singletonMap("onSelect", CALLBACK_VALIDATOR)); 
+			put("NavItem", Collections.singletonMap("onSelect", ITEM_SELECTED_VALIDATOR)); 
 			put("Collapse", Collections.singletonMap("getDimensionValue", ANY_TYPE_VALIDATOR)); // TBD: proto is m(dimension, element)
 			put("Tabs", Collections.singletonMap("onSelect", ITEM_SELECTED_VALIDATOR)); 
 			put("TabContainer", new HashMap<String, IPropertyValidator>() {

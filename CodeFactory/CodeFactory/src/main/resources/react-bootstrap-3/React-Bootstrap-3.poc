@@ -401,7 +401,7 @@ native widget NavDropdown {
 	
 }
 
-@WidgetProperties({onClick:ClickEventCallback, role:Text, eventKey:any, active:Boolean, disabled:Boolean, href:Text, onSelect:Callback})
+@WidgetProperties({onClick:ClickEventCallback, role:Text, eventKey:any, active:Boolean, disabled:Boolean, href:Text, onSelect:ItemSelectedCallback})
 native widget NavItem {
 
 	category bindings {
