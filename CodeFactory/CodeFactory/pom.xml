@@ -27,14 +27,19 @@
 
 	<repositories>
 		<repository>
-			<id>Central</id>
-			<name>Maven Central</name>
-			<url>http://repo.maven.apache.org/maven2</url>
-		</repository>
-		<repository>
 			<id>Nexus</id>
 			<name>Nexus Staging Mirror</name>
 			<url>https://oss.sonatype.org/content/groups/staging/</url>
+		</repository>
+		<repository>
+			<id>Nexus</id>
+			<name>Nexus Releases</name>
+			<url>https://oss.sonatype.org/service/local/repositories/releases/content/</url>
+		</repository>
+		<repository>
+			<id>Central</id>
+			<name>Maven Central</name>
+			<url>http://repo.maven.apache.org/maven2</url>
 		</repository>
 	</repositories>
 
