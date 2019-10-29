@@ -27,12 +27,12 @@
 
 	<repositories>
 		<repository>
-			<id>Nexus</id>
+			<id>Staging</id>
 			<name>Nexus Staging Mirror</name>
 			<url>https://oss.sonatype.org/content/groups/staging/</url>
 		</repository>
 		<repository>
-			<id>Nexus</id>
+			<id>Releases</id>
 			<name>Nexus Releases</name>
 			<url>https://oss.sonatype.org/service/local/repositories/releases/content/</url>
 		</repository>
