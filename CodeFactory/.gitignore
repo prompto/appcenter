@@ -2,3 +2,4 @@
 /target/
 /lsof.sh
 /.settings/
+/copy_home_seed_to_atlas_seed.sh
