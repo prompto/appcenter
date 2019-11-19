@@ -34,6 +34,8 @@ self.ReactBootstrap = {
         Brand: React.Component,
         Header: React.Component,
         Text: React.Component,
+        Toggle: React.Component,
+        Collapse: React.Component,
         Form: React.Component
     },
     Panel: {
