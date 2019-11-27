@@ -65,6 +65,8 @@ public class ModulePopulator {
 			((WebLibrary)module).setWidgetLibrary(readText(descriptor, "widgetLibrary"));
 			((WebLibrary)module).setHtmlEngine(readText(descriptor, "htmlEngine"));
 			((WebLibrary)module).setUIFramework(readText(descriptor, "uiFramework"));
+			((WebLibrary)module).setNativeResource(readText(descriptor, "nativeResource"));
+			((WebLibrary)module).setStubResource(readText(descriptor, "stubResource"));
 		}
 	}
 	
