@@ -112,7 +112,7 @@ export default class PromptoWorker extends Mirror {
 
 
     loadProject(loadDependencies) {
-        this.fetchModuleDescription(this.$projectId, true, response => {
+        this.fetchProjectDescription(this.$projectId, true, response => {
             if(response.error)
                 ; // TODO something
             else {
@@ -122,7 +122,7 @@ export default class PromptoWorker extends Mirror {
                 this.markLoaded("%Description%");
             }
         });
-        this.fetchProjectDeclarations(this.$projectId, response => {
+        this.fetchModuleDeclarations(this.$projectId, response => {
             if(response.error)
                 ; // TODO something
             else {
@@ -144,13 +144,20 @@ export default class PromptoWorker extends Mirror {
 
     loadDependency(dependency) {
         this.markLoading(dependency.name);
-        this.fetchLibraryDeclarations(dependency.name, dependency.version, response => {
+        this.fetchModuleDescription(dependency.name, dependency.version, response => {
             if(response.error)
                 ; // TODO something
             else {
-                const declarations = response.data.value;
-                this.$repo.registerLibraryDeclarations(declarations);
-                this.markLoaded(dependency.name);
+                const description = response.data.value;
+                this.fetchModuleDeclarations(description.dbId, response => {
+                    if (response.error)
+                        ; // TODO something
+                    else {
+                        const declarations = response.data.value;
+                        this.$repo.registerLibraryDeclarations(declarations);
+                        this.markLoaded(dependency.name);
+                    }
+                });
             }
         });
     }
@@ -164,24 +171,24 @@ export default class PromptoWorker extends Mirror {
         this.loadProject(true);
     }
 
-    fetchModuleDescription(projectId, register, success) {
+    fetchProjectDescription(projectId, register, success) {
         const params = [ {name:"dbId", value:projectId.toString()}, {name:"register", type:"Boolean", value:register}];
         const url = '/ws/run/fetchModuleDescription';
         fetcher.getJSON(url, { params: JSON.stringify(params) }, success);
     }
 
-    fetchProjectDeclarations(projectId, success) {
-        const params = [ {name:"dbId", value:projectId.toString()}];
+    fetchModuleDescription(name, version, success) {
+        const params = [ {name:"name", type:"Text", value:name}, {name:"version", type:version.type, value:version.value}, {name:"register", type:"Boolean", value:false} ];
+        const url = '/ws/run/fetchModuleDescription';
+        fetcher.getJSON(url, { params: JSON.stringify(params) }, success);
+    }
+
+    fetchModuleDeclarations(moduleId, success) {
+        const params = [ {name:"dbId", value:moduleId.toString()}];
         const url = '/ws/run/fetchModuleDeclarations';
         fetcher.getJSON(url, { params: JSON.stringify(params) }, success);
     }
 
-
-    fetchLibraryDeclarations(name, version, success) {
-        const params = [ {name:"name", type:"Text", value:name}, {name:"version", type:version.type, value:version.value} ];
-        const url = '/ws/run/fetchModuleDeclarations';
-        fetcher.getJSON(url, { params: JSON.stringify(params) }, success);
-    }
 
     publishLibraries() {
         var catalog = this.$repo.publishLibraries();
@@ -226,7 +233,7 @@ export default class PromptoWorker extends Mirror {
     }
 
     commitSuccessful() {
-        this.fetchProjectDeclarations(this.$projectId, response => {
+        this.fetchModuleDeclarations(this.$projectId, response => {
             if (response.error)
                 ; // TODO something
             else {
