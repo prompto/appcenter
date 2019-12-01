@@ -149,6 +149,10 @@ export default class PromptoWorker extends Mirror {
                 ; // TODO something
             else {
                 const description = response.data.value;
+                if(description.stubResource) {
+                    // resource location is absolute
+                    globals.importScripts("/" + description.stubResource);
+                }
                 this.fetchModuleDeclarations(description.dbId, response => {
                     if (response.error)
                         ; // TODO something
