@@ -113,22 +113,26 @@ export default class PromptoWorker extends Mirror {
 
     loadProject(loadDependencies) {
         this.fetchProjectDescription(this.$projectId, true, response => {
-            if(response.error)
+            if (response.error)
                 ; // TODO something
             else {
                 this.$project = response.data.value;
-                if(loadDependencies)
+                if (loadDependencies)
                     this.loadDependencies();
+                if ($project.stubResource) {
+                    // resource location is absolute
+                    globals.importScripts("/" + $project.stubResource);
+                }
                 this.markLoaded("%Description%");
-            }
-        });
-        this.fetchModuleDeclarations(this.$projectId, response => {
-            if(response.error)
-                ; // TODO something
-            else {
-                const declarations = response.data.value;
-                this.$repo.registerProjectDeclarations(this.$projectId, declarations);
-                this.markLoaded("Project");
+                this.fetchModuleDeclarations(this.$projectId, response => {
+                    if (response.error)
+                        ; // TODO something
+                    else {
+                        const declarations = response.data.value;
+                        this.$repo.registerProjectDeclarations(this.$projectId, declarations);
+                        this.markLoaded("Project");
+                    }
+                });
             }
         });
     }
