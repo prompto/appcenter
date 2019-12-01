@@ -228,7 +228,7 @@ native widget ModalTitle {
 	
 }
 
-@WidgetProperties({onExit:Callback, footer:Text, onExited:Callback, collapsible:Boolean, onSelect:Callback, onEnter:{type:Callback, help:"From Collapse."}, expanded:Boolean, eventKey:any, panelRole:Text, header:Text, onEntered:Callback, id:<Integer, Text>, onExiting:Callback, onEntering:Callback, defaultExpanded:Boolean, headerRole:Text})
+@WidgetProperties({onToggle:{type:any, help:"A callback fired when the collapse state changes.@controllable expanded"}, expanded:{type:Boolean, help:"Controls the collapsed/expanded state ofthe Panel. Requires a `Panel.Collapse` or `<Panel.Body collapsible>` child component in order to actually animate out or in.@controllable onToggle"}, eventKey:any, id:{type:Text, help:"An HTML `id` attribute uniquely identifying the Panel component."}})
 native widget Panel {
 
 	category bindings {
@@ -241,6 +241,7 @@ native widget Panel {
 	
 }
 
+@WidgetProperties({onEnter:{type:Callback, help:"Callback fired before the component expands"}, onExit:{type:Callback, help:"Callback fired before the component collapses"}, onExited:{type:Callback, help:"Callback fired after the component has collapsed"}, onEntered:{type:Callback, help:"Callback fired after the component has expanded"}, onExiting:{type:Callback, help:"Callback fired after the component starts to collapse"}, onEntering:{type:Callback, help:"Callback fired after the component starts to expand"}})
 native widget PanelCollapse {
 
 	category bindings {
@@ -253,6 +254,7 @@ native widget PanelCollapse {
 	
 }
 
+@WidgetProperties({onClick:{type:ClickEventCallback, help:"only here to satisfy linting, just the html onClick handler.@private"}, componentClass:{type:Text, help:"You can use a custom element for this component"}})
 native widget PanelToggle {
 
 	category bindings {
@@ -265,6 +267,7 @@ native widget PanelToggle {
 	
 }
 
+@WidgetProperties({componentClass:Text, toggle:{type:Boolean, help:"A convenience prop that renders the Panel.Title as a panel collapse toggle component for the common use-case."}})
 native widget PanelTitle {
 
 	category bindings {
@@ -277,6 +280,7 @@ native widget PanelTitle {
 	
 }
 
+@WidgetProperties({componentClass:Text})
 native widget PanelHeading {
 
 	category bindings {
@@ -289,6 +293,7 @@ native widget PanelHeading {
 	
 }
 
+@WidgetProperties({collapsible:{type:Boolean, help:"A convenience prop that renders a Collapse component around the Body for situations when the parent Panel only contains a single Panel.Body child.renders: ```jsx <Panel.Collapse> <Panel.Body /> </Panel.Collapse> ```", required:true}})
 native widget PanelBody {
 
 	category bindings {
@@ -413,7 +418,7 @@ native widget Nav {
 	
 }
 
-@WidgetProperties({onToggle:{type:any, help:"A callback fired when the Dropdown wishes to change visibility. Called with the requested `open` value, the DOM event, and the source that fired it: `'click'`,`'keydown'`,`'rootClose'`, or `'select'`.```js function(Boolean isOpen, Object event, { String source }) {} ``` @controllable open"}, role:{type:Text, help:"If `'menuitem'`, causes the dropdown to behave like a menu item rather than a menu button."}, componentClass:Text, active:Boolean, pullRight:{type:Boolean, help:"Align the menu to the right side of the Dropdown toggle"}, onMouseEnter:{type:MouseEventCallback, help:"@private"}, title:{type:Text, help:"Toggle props.", required:true}, onMouseLeave:{type:MouseEventCallback, help:"@private"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a menu item is selected.```js (eventKey: any, event: Object) => any ```"}, dropup:{type:Boolean, help:"The menu will open above the dropdown button, instead of below it."}, children:{type:Text, help:"Override generated docs from <Dropdown>.@private"}, noCaret:Boolean, defaultOpen:Boolean, disabled:{type:Boolean, help:"Whether or not component is disabled."}, rootCloseEvent:{values:<"click", "mousedown">, help:"Which event when fired outside the component will cause it to be closed", required:true}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for assistive technologies, such as screen readers.@type {string|number} @required"}, open:{type:Boolean, help:"Whether or not the Dropdown is visible.@controllable onToggle"}})
+@WidgetProperties({onToggle:{type:any, help:"A callback fired when the Dropdown wishes to change visibility. Called with the requested `open` value, the DOM event, and the source that fired it: `'click'`,`'keydown'`,`'rootClose'`, or `'select'`.```js function(Boolean isOpen, Object event, { String source }) {} ``` @controllable open"}, role:{type:Text, help:"If `'menuitem'`, causes the dropdown to behave like a menu item rather than a menu button."}, componentClass:Text, active:Boolean, activeKey:any, pullRight:{type:Boolean, help:"Align the menu to the right side of the Dropdown toggle"}, onMouseEnter:{type:MouseEventCallback, help:"@private"}, title:{type:Text, help:"Toggle props.", required:true}, onMouseLeave:{type:MouseEventCallback, help:"@private"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a menu item is selected.```js (eventKey: any, event: Object) => any ```"}, dropup:{type:Boolean, help:"The menu will open above the dropdown button, instead of below it."}, children:{type:Text, help:"Override generated docs from <Dropdown>.@private"}, noCaret:Boolean, defaultOpen:Boolean, disabled:{type:Boolean, help:"Whether or not component is disabled."}, rootCloseEvent:{values:<"click", "mousedown">, help:"Which event when fired outside the component will cause it to be closed *Note: For custom dropdown components, you will have to pass the `rootCloseEvent` to `<RootCloseWrapper>` in your custom dropdown menu component ([similarly to how it is implemented in `<Dropdown.Menu>`](https://github.com/react-bootstrap/react-bootstrap/blob/v0.31.5/src/DropdownMenu.js#L115-L119)).*", required:true}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for assistive technologies, such as screen readers.@type {string|number} @required"}, open:{type:Boolean, help:"Whether or not the Dropdown is visible.@controllable onToggle"}, activeHref:Text})
 native widget NavDropdown {
 
 	category bindings {
@@ -451,7 +456,7 @@ native widget NavbarForm {
 	
 }
 
-@WidgetProperties({unmountOnExit:{type:Boolean, help:"Unmount tabs (remove it from the DOM) when it is no longer visible"}, bsStyle:{values:<"pills", "tabs">, help:"Navigation style", required:true}, activeKey:{type:any, help:"Mark the Tab with a matching `eventKey` as active.@controllable onSelect"}, id:<Integer, Text>, animation:Boolean, onSelect:{type:ItemSelectedCallback, help:"Callback fired when a Tab is selected.```js function ( Any eventKey, SyntheticEvent event? ) ``` @controllable activeKey"}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount tabs (add them to the DOM)"}})
+@WidgetProperties({unmountOnExit:{type:Boolean, help:"Unmount tabs (remove it from the DOM) when it is no longer visible"}, bsStyle:{values:<"pills", "tabs">, help:"Navigation style", required:true}, defaultActiveKey:{type:any}, activeKey:{type:any, help:"Mark the Tab with a matching `eventKey` as active.@controllable onSelect"}, id:<Integer, Text>, animation:{types:<Boolean, Text>, help:"Sets a default animation strategy. Use `false` to disable, `true` to enable the default `<Fade>` animation, or a react-transition-group v2 `<Transition/>` component."}, onSelect:{type:ItemSelectedCallback, help:"Callback fired when a Tab is selected.```js function ( Any eventKey, SyntheticEvent event? ) ``` @controllable activeKey"}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount tabs (add them to the DOM)"}})
 native widget Tabs {
 
 	category bindings {
@@ -464,7 +469,7 @@ native widget Tabs {
 	
 }
 
-@WidgetProperties({onExit:{type:Callback, help:"Transition onExit callback when animation is not `false`"}, bsClass:{type:Text, help:"If not explicitly specified and rendered in the context of a `<TabContent>`, the `bsClass` of the `<TabContent>` suffixed by `-pane`.If otherwise not explicitly specified, `tab-pane`."}, onExited:{type:Callback, help:"Transition onExited callback when animation is not `false`"}, title:Text, animation:{types:<Text, Boolean>, help:"Use animation when showing or hiding `<TabPane>`s. Use `false` to disable, `true` to enable the default `<Fade>` animation or any `<Transition>` component."}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount the tab (add it to the DOM)"}, onEnter:{type:Callback, help:"Transition onEnter callback when animation is not `false`"}, tabClassName:{type:Text, help:"tabClassName is used as className for the associated NavItem"}, unmountOnExit:{type:Boolean, help:"Unmount the tab (remove it from the DOM) when it is no longer visible"}, eventKey:{type:any, help:"Uniquely identify the `<TabPane>` among its siblings."}, "aria-labelledby":{type:Text, help:"@private * */"}, onEntered:{type:Callback, help:"Transition onEntered callback when animation is not `false`"}, disabled:Boolean, id:{type:Text, help:"@private * */"}, onExiting:{type:Callback, help:"Transition onExiting callback when animation is not `false`"}, onEntering:{type:Callback, help:"Transition onEntering callback when animation is not `false`"}})
+@WidgetProperties({onExit:{type:Callback, help:"Transition onExit callback when animation is not `false`"}, bsClass:{type:Text, help:"If not explicitly specified and rendered in the context of a `<TabContent>`, the `bsClass` of the `<TabContent>` suffixed by `-pane`.If otherwise not explicitly specified, `tab-pane`."}, onExited:{type:Callback, help:"Transition onExited callback when animation is not `false`"}, title:Text, animation:{types:<Boolean, Text>, help:"Use animation when showing or hiding `<TabPane>`s. Use `false` to disable, `true` to enable the default `<Fade>` animation or a react-transition-group v2 `<Transition/>` component."}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount the tab (add it to the DOM)"}, onEnter:{type:Callback, help:"Transition onEnter callback when animation is not `false`"}, tabClassName:{type:Text, help:"tabClassName is used as className for the associated NavItem"}, unmountOnExit:{type:Boolean, help:"Unmount the tab (remove it from the DOM) when it is no longer visible"}, eventKey:{type:any, help:"Uniquely identify the `<TabPane>` among its siblings."}, "aria-labelledby":{type:Text, help:"@private * */"}, onEntered:{type:Callback, help:"Transition onEntered callback when animation is not `false`"}, disabled:Boolean, id:{type:Text, help:"@private * */"}, onExiting:{type:Callback, help:"Transition onExiting callback when animation is not `false`"}, onEntering:{type:Callback, help:"Transition onEntering callback when animation is not `false`"}})
 native widget Tab {
 
 	category bindings {
@@ -477,7 +482,7 @@ native widget Tab {
 	
 }
 
-@WidgetProperties({onToggle:{type:any, help:"A callback fired when the Dropdown wishes to change visibility. Called with the requested `open` value, the DOM event, and the source that fired it: `'click'`,`'keydown'`,`'rootClose'`, or `'select'`.```js function(Boolean isOpen, Object event, { String source }) {} ``` @controllable open"}, role:{type:Text, help:"If `'menuitem'`, causes the dropdown to behave like a menu item rather than a menu button."}, componentClass:Text, bsSize:Text, bsStyle:{type:Text, help:"Toggle props."}, pullRight:{type:Boolean, help:"Align the menu to the right side of the Dropdown toggle"}, onMouseEnter:{type:MouseEventCallback, help:"@private"}, title:{type:Text, required:true}, onMouseLeave:{type:MouseEventCallback, help:"@private"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a menu item is selected.```js (eventKey: any, event: Object) => any ```"}, dropup:{type:Boolean, help:"The menu will open above the dropdown button, instead of below it."}, children:{type:Text, help:"Override generated docs from <Dropdown>.@private"}, noCaret:Boolean, defaultOpen:Boolean, disabled:{type:Boolean, help:"Whether or not component is disabled."}, rootCloseEvent:{values:<"click", "mousedown">, help:"Which event when fired outside the component will cause it to be closed", required:true}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for assistive technologies, such as screen readers.@type {string|number} @required"}, open:{type:Boolean, help:"Whether or not the Dropdown is visible.@controllable onToggle"}})
+@WidgetProperties({onToggle:{type:any, help:"A callback fired when the Dropdown wishes to change visibility. Called with the requested `open` value, the DOM event, and the source that fired it: `'click'`,`'keydown'`,`'rootClose'`, or `'select'`.```js function(Boolean isOpen, Object event, { String source }) {} ``` @controllable open"}, role:{type:Text, help:"If `'menuitem'`, causes the dropdown to behave like a menu item rather than a menu button."}, componentClass:Text, bsSize:Text, bsStyle:{type:Text, help:"Toggle props."}, pullRight:{type:Boolean, help:"Align the menu to the right side of the Dropdown toggle"}, onMouseEnter:{type:MouseEventCallback, help:"@private"}, title:{type:Text, required:true}, onMouseLeave:{type:MouseEventCallback, help:"@private"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a menu item is selected.```js (eventKey: any, event: Object) => any ```"}, dropup:{type:Boolean, help:"The menu will open above the dropdown button, instead of below it."}, children:{type:Text, help:"Override generated docs from <Dropdown>.@private"}, noCaret:Boolean, defaultOpen:Boolean, disabled:{type:Boolean, help:"Whether or not component is disabled."}, rootCloseEvent:{values:<"click", "mousedown">, help:"Which event when fired outside the component will cause it to be closed *Note: For custom dropdown components, you will have to pass the `rootCloseEvent` to `<RootCloseWrapper>` in your custom dropdown menu component ([similarly to how it is implemented in `<Dropdown.Menu>`](https://github.com/react-bootstrap/react-bootstrap/blob/v0.31.5/src/DropdownMenu.js#L115-L119)).*", required:true}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for assistive technologies, such as screen readers.@type {string|number} @required"}, open:{type:Boolean, help:"Whether or not the Dropdown is visible.@controllable onToggle"}})
 native widget DropdownButton {
 
 	category bindings {
@@ -490,7 +495,7 @@ native widget DropdownButton {
 	
 }
 
-@WidgetProperties({onToggle:{type:any, help:"A callback fired when the Dropdown wishes to change visibility. Called with the requested `open` value, the DOM event, and the source that fired it: `'click'`,`'keydown'`,`'rootClose'`, or `'select'`.```js function(Boolean isOpen, Object event, { String source }) {} ``` @controllable open"}, onClick:ClickEventCallback, role:{type:Text, help:"If `'menuitem'`, causes the dropdown to behave like a menu item rather than a menu button."}, componentClass:Text, bsSize:Text, bsStyle:{type:Text, help:"Toggle props."}, pullRight:{type:Boolean, help:"Align the menu to the right side of the Dropdown toggle"}, onMouseEnter:{type:MouseEventCallback, help:"@private"}, title:{type:Text, help:"The content of the split button.", required:true}, onMouseLeave:{type:MouseEventCallback, help:"@private"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a menu item is selected.```js (eventKey: any, event: Object) => any ```"}, toggleLabel:{type:Text, help:"Accessible label for the toggle; the value of `title` if not specified."}, dropup:{type:Boolean, help:"The menu will open above the dropdown button, instead of below it."}, children:{type:Text, help:"Override generated docs from <Dropdown>.@private"}, defaultOpen:Boolean, disabled:{type:Boolean, help:"Whether or not component is disabled."}, rootCloseEvent:{values:<"click", "mousedown">, help:"Which event when fired outside the component will cause it to be closed", required:true}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for assistive technologies, such as screen readers.@type {string|number} @required"}, href:Text, open:{type:Boolean, help:"Whether or not the Dropdown is visible.@controllable onToggle"}})
+@WidgetProperties({onToggle:{type:any, help:"A callback fired when the Dropdown wishes to change visibility. Called with the requested `open` value, the DOM event, and the source that fired it: `'click'`,`'keydown'`,`'rootClose'`, or `'select'`.```js function(Boolean isOpen, Object event, { String source }) {} ``` @controllable open"}, onClick:ClickEventCallback, role:{type:Text, help:"If `'menuitem'`, causes the dropdown to behave like a menu item rather than a menu button."}, componentClass:Text, bsSize:Text, bsStyle:{type:Text, help:"Toggle props."}, pullRight:{type:Boolean, help:"Align the menu to the right side of the Dropdown toggle"}, onMouseEnter:{type:MouseEventCallback, help:"@private"}, title:{type:Text, help:"The content of the split button.", required:true}, onMouseLeave:{type:MouseEventCallback, help:"@private"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a menu item is selected.```js (eventKey: any, event: Object) => any ```"}, toggleLabel:{type:Text, help:"Accessible label for the toggle; the value of `title` if not specified."}, dropup:{type:Boolean, help:"The menu will open above the dropdown button, instead of below it."}, children:{type:Text, help:"Override generated docs from <Dropdown>.@private"}, defaultOpen:Boolean, disabled:{type:Boolean, help:"Whether or not component is disabled."}, rootCloseEvent:{values:<"click", "mousedown">, help:"Which event when fired outside the component will cause it to be closed *Note: For custom dropdown components, you will have to pass the `rootCloseEvent` to `<RootCloseWrapper>` in your custom dropdown menu component ([similarly to how it is implemented in `<Dropdown.Menu>`](https://github.com/react-bootstrap/react-bootstrap/blob/v0.31.5/src/DropdownMenu.js#L115-L119)).*", required:true}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for assistive technologies, such as screen readers.@type {string|number} @required"}, href:Text, open:{type:Boolean, help:"Whether or not the Dropdown is visible.@controllable onToggle"}})
 native widget SplitButton {
 
 	category bindings {
