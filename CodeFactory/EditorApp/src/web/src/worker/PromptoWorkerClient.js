@@ -2,6 +2,7 @@
 import PromptoWorkerThread from "worker-loader!./PromptoWorkerThread";
 import Range from "../ace/Range";
 import { print } from '../utils/Utils';
+import PromptoMarker from "./PromptoMarker";
 
 export default class PromptoWorkerClient extends window.ace.acequire("ace/worker/worker_client")
     .WorkerClient {
@@ -68,29 +69,9 @@ export default class PromptoWorkerClient extends window.ace.acequire("ace/worker
     }
 
     createMarkers(data) {
-        const ranges = this.computeRanges(data);
+        const markers = PromptoMarker.compute(data);
         const session = this.getSession();
-        ranges.forEach(range => session.addMarker(range, "ace_error-word", "text", true));
-    }
-
-    computeRanges(data) {
-        const ranges = [];
-        // avoid overlapping markers which look ugly
-        data.forEach( a => this.mergeRange(ranges, new Range(a.row, a.column, a.endRow, a.endColumn)), this);
-        return ranges;
-    }
-
-    mergeRange(ranges, range) {
-        const mergeable = ranges.filter( r => r.intersects(range) );
-        if( mergeable.length === 0)
-            ranges.push(range);
-        else {
-            // recursively merge first intersecting range
-            const idx = ranges.indexOf(mergeable[0]);
-            const old = ranges.splice(idx, 1)[0];
-            const merged = old.extend(range.start.row, range.start.column).extend(range.end.row, range.end.column);
-            this.mergeRange(ranges, merged);
-        }
+        markers.forEach(marker => session.addMarker(marker, "ace_" + marker.type + "-word", "text", true));
     }
 
     onTerminate() {

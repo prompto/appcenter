@@ -365,6 +365,11 @@ table > tbody > .breakpoint-row > td {
     border-bottom: 2px dotted red;
 }
 
+.ace_warning-word {
+    position: absolute;
+    border-bottom: 2px dotted orange;
+}
+
 .ace_gutter-cell.ace_breakpoint{
     background-image: url("./img/debug/active-breakpoint.png");
     background-size: contain;
