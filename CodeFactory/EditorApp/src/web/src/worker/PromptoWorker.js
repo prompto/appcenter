@@ -119,9 +119,9 @@ export default class PromptoWorker extends Mirror {
                 this.$project = response.data.value;
                 if (loadDependencies)
                     this.loadDependencies();
-                if ($project.stubResource) {
+                if (this.$project.stubResource) {
                     // resource location is absolute
-                    globals.importScripts("/" + $project.stubResource);
+                    globals.importScripts("/" + this.$project.stubResource);
                 }
                 this.markLoaded("%Description%");
                 this.fetchModuleDeclarations(this.$projectId, response => {
