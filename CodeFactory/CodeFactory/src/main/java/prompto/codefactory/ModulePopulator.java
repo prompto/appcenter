@@ -2,6 +2,7 @@ package prompto.codefactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -62,11 +63,20 @@ public class ModulePopulator {
 		@Override
 		public void populate(Module module, JsonNode descriptor) {
 			super.populate(module, descriptor);
-			((WebLibrary)module).setWidgetLibrary(readText(descriptor, "widgetLibrary"));
-			((WebLibrary)module).setHtmlEngine(readText(descriptor, "htmlEngine"));
-			((WebLibrary)module).setUIFramework(readText(descriptor, "uiFramework"));
-			((WebLibrary)module).setNativeResource(readText(descriptor, "nativeResource"));
-			((WebLibrary)module).setStubResource(readText(descriptor, "stubResource"));
+			WebLibrary library = (WebLibrary)module;
+			library.setWidgetLibrary(readText(descriptor, "widgetLibrary"));
+			library.setHtmlEngine(readText(descriptor, "htmlEngine"));
+			library.setUIFramework(readText(descriptor, "uiFramework"));
+			setResource(descriptor, "nativeResource", library.getName(), library::setNativeResource);
+			setResource(descriptor, "stubResource", library.getName(), library::setStubResource);
+		}
+		
+		void setResource(JsonNode descriptor, String fieldName, String moduleName, Consumer<String> setter) {
+			String resourceName = readText(descriptor, fieldName);
+			if(resourceName!=null) {
+				String fullName = moduleName.toLowerCase().replaceAll(" ", "-") + "/" + resourceName;
+				setter.accept(fullName);
+			}
 		}
 	}
 	
