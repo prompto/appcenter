@@ -1,9 +1,5 @@
-import { identifierize } from '../utils';
 import React from 'react';
-import { FormGroup, ControlLabel, FormControl, Radio } from 'react-bootstrap';
 import ProjectType from './ProjectType';
-import WebServiceParameters from './WebServiceParameters';
-import DroppedFileWidget from '../components/DroppedFileWidget';
 import WebSiteJpg from "../img/website.jpg";
 import WebSiteParameters from "./WebSiteParameters";
 

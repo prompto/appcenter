@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormGroup, ControlLabel, FormControl } from 'react-bootstrap';
 import ProjectType from './ProjectType';
 import WebLibraryJpg from "../img/weblibrary.jpg";
 import WebLibraryParameters from "./WebLibraryParameters";

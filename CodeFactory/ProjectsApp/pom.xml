@@ -33,7 +33,7 @@
 				<version>1.7.6</version>
 				<configuration>
 					<nodeVersion>v11.7.0</nodeVersion>
-					<yarnVersion>v1.13.0</yarnVersion>
+					<yarnVersion>v1.15.2</yarnVersion>
 					<workingDirectory>src/web</workingDirectory>
 					<installDirectory>../tools</installDirectory>
 				</configuration>

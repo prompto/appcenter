@@ -13,9 +13,6 @@
 	<packaging>jar</packaging>
 	<description>A web site for creating Prompto applications</description>
 
-	<name>Core</name>
-	<url>http://maven.apache.org</url>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<prompto.version>0.0.78</prompto.version>
