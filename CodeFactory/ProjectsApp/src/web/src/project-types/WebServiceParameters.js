@@ -1,6 +1,6 @@
 import BatchParameters from './BatchParameters';
 
-export default class ServiceParameters extends BatchParameters {
+export default class WebServiceParameters extends BatchParameters {
 
     constructor(props) {
         super(props);

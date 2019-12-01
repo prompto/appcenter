@@ -108,10 +108,7 @@ export default class EditorNavBar extends React.Component {
 
     renderEditWidgets() {
         const project = this.props.root.getProject();
-        const hasStartMethod = project && project.type==="Batch";
-        const hasServerStartMethod = project && (project.type==="Service" || project.type==="WebSite");
-        const hasHomePage = project && project.type==="WebSite";
-        const hasConfiguration = hasStartMethod || hasServerStartMethod || hasHomePage;
+        const hasConfiguration = project && (project.hasStartMethod() || project.hasServerStartMethod() || project.hasHomePage() || project.hasResources());
         const activity = this.props.root.state.activity;
         const style = {display: activity===Activity.Editing ? "block" : "none"};
         return <div style={style}>
@@ -124,7 +121,7 @@ export default class EditorNavBar extends React.Component {
                     <DropdownButton id="dialect" title="Settings">
                         { hasConfiguration && <MenuItem onClick={()=>displayModal(<ConfigurationDialog root={this.props.root} />)}>Configuration</MenuItem> }
                         <MenuItem onClick={()=>displayModal(<DependenciesDialog root={this.props.root} />)}>Dependencies</MenuItem>
-                        { hasServerStartMethod && <MenuItem onClick={()=>displayModal(<AuthenticationSettingsDialog root={this.props.root} />)}>Authentication</MenuItem> }
+                        { project && project.hasServerStartMethod() && <MenuItem onClick={()=>displayModal(<AuthenticationSettingsDialog root={this.props.root} />)}>Authentication</MenuItem> }
                 </DropdownButton>
                 </Navbar.Form>
                 <Navbar.Form pullRight>

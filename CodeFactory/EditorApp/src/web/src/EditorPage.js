@@ -10,6 +10,7 @@ import ContentEditor from './ContentEditor';
 import EditorNavBar from './EditorNavBar';
 import Activity from './utils/Activity';
 import fetcher from './utils/Fetcher';
+import Project from "./Project";
 
 export default class EditorPage extends React.Component {
 
@@ -199,7 +200,7 @@ export default class EditorPage extends React.Component {
             if (response.error)
                 alert(response.error);
             else
-                this.setState({project: response.data});
+                this.setState({project: new Project(response.data)});
         });
     }
 

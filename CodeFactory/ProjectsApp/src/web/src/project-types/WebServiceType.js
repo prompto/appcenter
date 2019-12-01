@@ -1,6 +1,6 @@
 import React from 'react';
 import ProjectType from './ProjectType';
-import ServiceParameters from './ServiceParameters';
+import WebServiceParameters from './WebServiceParameters';
 import ServiceJpg from "../img/service.jpg";
 
 export default class WebServiceType extends ProjectType {
@@ -12,7 +12,7 @@ export default class WebServiceType extends ProjectType {
     }
 
     renderParameters(dialog, forRename) {
-        return <ServiceParameters ref={ref=>this.params=ref} dialog={dialog} forRename={forRename || false}/>;
+        return <WebServiceParameters ref={ref=>this.params=ref} dialog={dialog} forRename={forRename || false}/>;
     }
 
     appendPromptoParameters(list) {
