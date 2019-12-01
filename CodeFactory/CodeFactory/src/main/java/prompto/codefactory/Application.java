@@ -2,8 +2,8 @@ package prompto.codefactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -150,8 +150,8 @@ public class Application {
 		try {
 			ICodeStore codeStore = codeStoreUsingDataStore();
 			createResourceLibraries(codeStore, "thesaurus/", "react-bootstrap-3/");
-			if(isToolsDataStore())
-				createToolsLibraries(codeStore);
+			if(isSeedDataStore())
+				createSeedLibraries(codeStore);
 		} catch(Throwable t) {
 			t.printStackTrace();
 		}
@@ -194,29 +194,26 @@ public class Application {
 	}
 	
 
-	private static void createToolsLibraries(ICodeStore codeStore) throws Exception {
-		Module codeStoreLibrary = new Library();
-		codeStoreLibrary.setName("CodeStore");
-		codeStoreLibrary.setVersion(PromptoVersion.parse("1.0.0.0"));
-		codeStoreLibrary.setDescription("Code store model");
-		URL url = Thread.currentThread().getContextClassLoader().getResource("libraries/CodeStore.pec");
-		SampleImporter importer = new SampleImporter(codeStoreLibrary, null, url);
-		importer.importModule(codeStore);
-		Module appStoreLibrary = new Library();
-		appStoreLibrary.setName("AppStore");
-		appStoreLibrary.setVersion(PromptoVersion.parse("1.0.0.0"));
-		appStoreLibrary.setDescription("App store model");
-		Dependency dependency = new Dependency();
-		dependency.setName(codeStoreLibrary.getName());
-		dependency.setVersion(codeStoreLibrary.getVersion());
-		appStoreLibrary.setDependencies(Collections.singletonList(dependency));
-		url = Thread.currentThread().getContextClassLoader().getResource("libraries/AppStore.pec");
-		importer = new SampleImporter(appStoreLibrary, null, url);
+	private static void createSeedLibraries(ICodeStore codeStore) throws Exception {
+		PromptoVersion version = PromptoVersion.parse("1.0.0.0");
+		createSeedLibrary(codeStore, "CodeStore", "Code store model", version, "libraries/CodeStore.pec");
+		createSeedLibrary(codeStore, "AppStore", "App store model", version, "libraries/AppStore.pec", new Dependency("CodeStore", version));
+	}
+	
+	private static void createSeedLibrary(ICodeStore codeStore, String name, String description, PromptoVersion version, String resource, Dependency ...dependencies ) throws Exception {
+		Module library = new Library();
+		library.setName(name);
+		library.setDescription(description);
+		library.setVersion(version);
+		if(dependencies!=null && dependencies.length>0)
+			library.setDependencies(Arrays.asList(dependencies));
+		URL url = Thread.currentThread().getContextClassLoader().getResource(resource);
+		SampleImporter importer = new SampleImporter(library, url);
 		importer.importModule(codeStore);
 	}
 
-	private static boolean isToolsDataStore() {
-		return config.getDataStoreConfiguration().getDbName().toLowerCase().contains("tools");
+	private static boolean isSeedDataStore() {
+		return config.getDataStoreConfiguration().getDbName().equals("tools");
 	}
 
 

@@ -22,7 +22,7 @@ import prompto.grammar.Annotation;
 import prompto.grammar.Identifier;
 import prompto.literal.DictEntryList;
 import prompto.property.IPropertyValidator;
-import prompto.utils.StringUtils;
+import prompto.utils.StreamUtils;
 import prompto.utils.prop_types_extractor.PropTypesConverter.PropTypesMap;
 
 public abstract class PropTypesExtractor {
@@ -44,7 +44,7 @@ public abstract class PropTypesExtractor {
 
 	private static void extractPropTypes(File widget_file, String path, PropTypesMap propertyMap) throws IOException {
 		try(InputStream input = new FileInputStream(widget_file)) {
-			String content = StringUtils.stringFromStream(input);
+			String content = StreamUtils.readString(input);
 			List<String> lines = Arrays.asList(content.split("\n"));
 			String widgetName = extractWidgetName(lines);
 			String propTypesName = widgetName==null ? null : extractPropTypesName(lines, widgetName);

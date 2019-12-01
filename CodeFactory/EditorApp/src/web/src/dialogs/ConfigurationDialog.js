@@ -24,28 +24,32 @@ export default class ConfigurationDialog extends React.Component {
     getStateFromConfig() {
         const state = {};
         const project = this.getProject();
-        const hasStartMethod = project.type==="Batch";
-        const hasServerStartMethod = project.type==="Service" || project.type==="WebSite";
-        const hasHomePage = project && project.type==="WebSite";
-        if(hasStartMethod)
-            state.startMethod = project.value.startMethod;
-        if(hasServerStartMethod)
-            state.serverAboutToStartMethod = project.value.serverAboutToStartMethod;
-        if(hasHomePage)
-            state.homePage = project.value.homePage;
+        if(project) {
+            if (project.hasStartMethod())
+                state.startMethod = project.value.startMethod;
+            if (project.hasServerStartMethod())
+                state.serverAboutToStartMethod = project.value.serverAboutToStartMethod;
+            if (project.hasHomePage())
+                state.homePage = project.value.homePage;
+            if (project.hasResources()) {
+                state.nativeResource = project.value.nativeResource;
+                state.stubResource = project.value.stubResource;
+            }
+        }
         return state;
     }
 
     setConfigFromState(project) {
-        const hasStartMethod = project.type==="Batch";
-        const hasServerStartMethod = project.type==="Service" || project.type==="WebSite";
-        const hasHomePage = project && project.type==="WebSite";
-        if(hasStartMethod)
+        if(project.hasStartMethod())
             project.value.startMethod = this.state.startMethod;
-        if(hasServerStartMethod)
+        if(project.hasServerStartMethod())
             project.value.serverAboutToStartMethod = this.state.serverAboutToStartMethod;
-        if(hasHomePage)
+        if(project.hasHomePage())
             project.value.homePage = this.state.homePage;
+        if(project.hasResources()) {
+            project.value.nativeResource = this.state.nativeResource;
+            project.value.stubResource = this.state.stubResource;
+        }
     }
 
     handleSave() {
@@ -82,34 +86,42 @@ export default class ConfigurationDialog extends React.Component {
 
     render() {
         const project = this.getProject();
-        const hasStartMethod = project.type==="Batch";
-        const hasServerStartMethod = project.type==="Service" || project.type==="WebSite";
-        const hasHomePage = project && project.type==="WebSite";
         return <ModalDialog>
             <Modal.Header closeButton={true}>
                 <Modal.Title>Module configuration</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <form>
-                    { hasStartMethod &&
+                    { project && project.hasStartMethod() &&
                     <FormGroup>
                         <ControlLabel>Select the start method for this application:</ControlLabel><br/>
                         <FormControl type="text" onChange={e => this.setState({startMethod: e.currentTarget.value})} value={this.state.startMethod || ""}/>
                     </FormGroup>
                     }
-                    { hasServerStartMethod &&
+                    { project && project.hasServerStartMethod() &&
                     <FormGroup>
                         <ControlLabel>Select the method to run when server is launched:</ControlLabel><br/>
                         <FormControl type="text" onChange={e => this.setState({serverAboutToStartMethod: e.currentTarget.value})} value={this.state.serverAboutToStartMethod || ""}/>
                     </FormGroup>
                     }
-                    { hasHomePage &&
+                    { project && project.hasHomePage() &&
                     <FormGroup>
                         <ControlLabel>Select the home page:</ControlLabel><br/>
                         <FormControl type="text" onChange={e => this.setState({homePage: e.currentTarget.value})} value={this.state.homePage || ""}/>
                     </FormGroup>
                     }
-
+                    { project && project.hasResources() &&
+                    <FormGroup>
+                        <ControlLabel>Select the native resource for this web library:</ControlLabel><br/>
+                        <FormControl type="text" onChange={e => this.setState({nativeResource: e.currentTarget.value})} value={this.state.nativeResource || ""}/>
+                    </FormGroup>
+                    }
+                    { project && project.hasResources() &&
+                    <FormGroup>
+                        <ControlLabel>Select the stub resource for this web library:</ControlLabel><br/>
+                        <FormControl type="text" onChange={e => this.setState({stubResource: e.currentTarget.value})} value={this.state.stubResource || ""}/>
+                    </FormGroup>
+                    }
                 </form>
             </Modal.Body>
             <Modal.Footer>
