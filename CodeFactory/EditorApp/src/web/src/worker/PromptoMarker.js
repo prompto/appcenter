@@ -19,7 +19,7 @@ export default class PromptoMarker extends Range {
             return this;
         const start = (cmp === -1) ? {row: row, column: column} : this.start;
         const end = (cmp === 1) ? {row: row, column: column} : this.end;
-        return new PromptoMarker(start.row, start.column, start.row, start.column, this.type);
+        return new PromptoMarker(start.row, start.column, end.row, end.column, this.type);
     }
 
     mergeInto(merged) {

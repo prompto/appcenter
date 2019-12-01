@@ -1,6 +1,5 @@
 // eslint-disable-next-line
 import PromptoWorkerThread from "worker-loader!./PromptoWorkerThread";
-import Range from "../ace/Range";
 import { print } from '../utils/Utils';
 import PromptoMarker from "./PromptoMarker";
 
