@@ -337,7 +337,7 @@ export default class PromptoEditor extends React.Component {
                 <AceEditor ref="AceEditor" name="prompto-editor"
                        theme="eclipse" mode="text"
                        value={this.state.value} onChange={this.codeEdited}
-                       width="100%" height="100%" editorProps={{ $blockScrolling: Infinity }} />
+                       width="100%" height="100%" editorProps={{ $blockScrolling: Infinity, enableLiveAutocompletion: true }} />
                 </div>;
     }
 

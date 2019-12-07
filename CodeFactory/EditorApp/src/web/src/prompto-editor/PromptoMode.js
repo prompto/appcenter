@@ -1,6 +1,7 @@
 /*eslint-disable no-alert, no-console */
 import 'brace/mode/text';
 import PromptoHighlightRules from './PromptoHighlightRules';
+import PromptoBehaviour from './PromptoBehaviour';
 import PromptoWorkerClient from '../worker/PromptoWorkerClient';
 import Defaults from "../code/Defaults";
 
@@ -10,10 +11,13 @@ export default class PromptoMode extends window.ace.acequire("ace/mode/text")
             super();
             this.$id = "ace/mode/prompto";
             this.$editor = editor;
+            this.$dialect = "O";
             this.HighlightRules = PromptoHighlightRules;
+            this.$behaviour = new PromptoBehaviour();
         }
 
         setDialect(dialect) {
+            this.$dialect = dialect;
             this.$worker && this.$worker.send("setDialect", [ dialect ] );
         }
 
