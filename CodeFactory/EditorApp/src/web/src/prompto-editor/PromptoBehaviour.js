@@ -11,13 +11,13 @@ function initContext(editor) {
     context = contextCache[id];
     if(!context)
         context = {
-            autoInsertedBrackets: 0,
+            autoInsertedClosings: 0,
             autoInsertedRow: -1,
-            autoInsertedLineEnd: "",
-            maybeInsertedBrackets: 0,
+            autoInsertedLineEnd: "" /*,
+            maybeInsertedClosings: 0,
             maybeInsertedRow: -1,
             maybeInsertedLineStart: "",
-            maybeInsertedLineEnd: ""
+            maybeInsertedLineEnd: "" */
         };
     contextCache[id] = context;
     return context;
@@ -43,7 +43,40 @@ export default class PromptoBehaviour extends window.ace.acequire("ace/mode/beha
 
     constructor(options) {
         super(options);
+        this.add("newline", "insertion", this.onNewLineInsertion.bind(this));
         this.add("enclosing", "insertion", this.onEnclosingInsertion.bind(this));
+        this.add("enclosing", "deletion", this.onEnclosingDeletion.bind(this));
+    }
+
+    onNewLineInsertion(state, action, editor, session, text) {
+        if(text==='\n') {
+            const tabString = session.getTabString();
+            const cursor = editor.getCursorPosition();
+            const line = session.doc.getLine(cursor.row);
+            const indent = line.match(/^\s*/)[0];
+            let column = cursor.column - 1;
+            let lastChar = line[column];
+            while(lastChar===' ' && column > 0)
+                lastChar = line[--column];
+            const dialect = session.getMode().$dialect;
+            if(dialect==="O") {
+                if(lastChar==='{') {
+                    const start = (indent + tabString).length;
+                    return {
+                        text: text + indent + tabString + text + indent,
+                        selection: [1, start, 1, start + 1]
+                    };
+                }
+            } else {
+                if(lastChar===':') {
+                    const start = (indent + tabString).length;
+                    return {
+                        text: text + indent + tabString ,
+                        selection: [1, start, 1, start + 1]
+                    };
+                }
+            }
+        }
     }
 
     onEnclosingInsertion(state, action, editor, session, text) {
@@ -62,9 +95,9 @@ export default class PromptoBehaviour extends window.ace.acequire("ace/mode/beha
             }
         } else if (RIGHT_LEFT[text]) {
             initContext(editor);
-            var cursor = editor.getCursorPosition();
-            var line = session.doc.getLine(cursor.row);
-            var rightChar = line.substring(cursor.column, cursor.column + 1);
+            const cursor = editor.getCursorPosition();
+            const line = session.doc.getLine(cursor.row);
+            const rightChar = line.substring(cursor.column, cursor.column + 1);
             if (rightChar === text) {
                 var matching = session.$findOpeningBracket(text, {column: cursor.column + 1, row: cursor.row});
                 if (matching !== null && this.isAutoInsertedClosing(cursor, line, text)) {
@@ -78,21 +111,51 @@ export default class PromptoBehaviour extends window.ace.acequire("ace/mode/beha
         }
     }
 
+    onEnclosingDeletion(state, action, editor, session, range) {
+        var selected = session.doc.getTextRange(range);
+        if (!range.isMultiLine() && LEFT_RIGHT[selected]) {
+            initContext(editor);
+            var line = session.doc.getLine(range.start.row);
+            var rightChar = line.substring(range.start.column + 1, range.start.column + 2);
+            if (rightChar === LEFT_RIGHT[selected]) {
+                range.end.column++;
+                return range;
+            }
+        }
+    }
+
     isSaneInsertion(editor, session) {
         return true;
+        /*
+        const cursor = editor.getCursorPosition();
+        const line = session.doc.getLine(cursor.row);
+        const rightChar = line.substring(cursor.column, cursor.column + 1);
+        // Only insert in front of whitespace
+        return rightChar==="" || rightChar===" ";
+        */
     }
 
-    recordAutoInsert(editor, session, text) {
-
+    recordAutoInsert(editor, session, closing) {
+        const cursor = editor.getCursorPosition();
+        const line = session.doc.getLine(cursor.row);
+        // Reset previous state if text or context changed too much
+        if (!this.isAutoInsertedClosing(cursor, line, context.autoInsertedLineEnd[0]))
+            context.autoInsertedClosings = 0;
+        context.autoInsertedRow = cursor.row;
+        context.autoInsertedLineEnd = closing + line.substr(cursor.column);
+        context.autoInsertedClosings++;
     }
+
+    isAutoInsertedClosing(cursor, line, closing) {
+        return context.autoInsertedClosings > 0 &&
+            cursor.row === context.autoInsertedRow &&
+            closing === context.autoInsertedLineEnd[0] &&
+            line.substr(cursor.column) === context.autoInsertedLineEnd;
+    };
 
     popAutoInsertedClosing() {
-
+        context.autoInsertedLineEnd = context.autoInsertedLineEnd.substr(1);
+        context.autoInsertedClosings--;
     }
-
-    isAutoInsertedClosing(cursor, line, text) {
-        return true; // TODO
-    }
-
 
 }
