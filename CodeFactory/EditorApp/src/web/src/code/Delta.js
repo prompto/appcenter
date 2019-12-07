@@ -60,6 +60,7 @@ export default class Delta {
         else if (field === "enumerations")
             fn = (a, b) => this.filterOutDuplicatesInLists(a, b, "name");
         var length = fn.bind(this)(this.removed[field], this.added[field]);
+        // clean up empty lists
         if (this.removed[field] && !this.removed[field].length)
             delete this.removed[field];
         if (this.added[field] && !this.added[field].length)

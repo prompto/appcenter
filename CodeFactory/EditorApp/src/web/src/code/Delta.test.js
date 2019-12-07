@@ -1,8 +1,10 @@
 import Delta from './Delta';
 import Codebase from './Codebase';
+import antlr4 from 'antlr4';
+import prompto from 'prompto';
 
 beforeAll(()=>{
-    require('../../../../../CodeFactory/src/main/resources/js/lib/prompto.core.bundle.js');
+    // jest.requireActual('../../../../../CodeFactory/src/main/resources/js/lib/prompto.core.bundle.js');
     const globals = global || window || self || this;
     globals.antlr4 = antlr4;
     globals.prompto = prompto;
@@ -112,14 +114,14 @@ it('filterOutDuplicates removes proto when adding and removing other proto', () 
 function createContextWithMethods(methods) {
     var context = prompto.runtime.Context.newGlobalContext();
     methods.map(function (method) {
-        var args = new prompto.grammar.ArgumentList();
-        method.args.map(function (name) {
+        var params = new prompto.param.ParameterList();
+        method.parameters.map(function (name) {
             var id = new prompto.grammar.Identifier(name);
-            var arg = new prompto.argument.AttributeArgument(id);
-            args.push(arg);
+            var param = new prompto.param.AttributeParameter(id);
+            params.push(param);
         });
         var id = new prompto.grammar.Identifier(method.name);
-        var decl = new prompto.declaration.ConcreteMethodDeclaration(id, args);
+        var decl = new prompto.declaration.ConcreteMethodDeclaration(id, params);
         decl.register(context);
     });
     return context;
@@ -127,7 +129,7 @@ function createContextWithMethods(methods) {
 
 
 it('adjustForMovingProtos preserves added proto', () => {
-    var context = createContextWithMethods([{name: "test", args: ["simple"]}]);
+    var context = createContextWithMethods([{name: "test", parameters: ["simple"]}]);
     var delta = new Delta();
     delta.removed = new Codebase();
     delta.added = new Codebase();
@@ -162,7 +164,7 @@ it('adjustForMovingProtos preserves removed proto', () => {
 
 
 it('adjustForMovingProtos preserves added and removed protos', () => {
-    var context = createContextWithMethods([{name: "test", args: ["(simple2)"]}]);
+    var context = createContextWithMethods([{name: "test", parameters: ["(simple2)"]}]);
     var delta = new Delta();
     delta.removed = new Codebase();
     delta.removed.methods = [{
@@ -184,8 +186,8 @@ it('adjustForMovingProtos preserves added and removed protos', () => {
 });
 
 it('adjustForMovingProtos preserves existing protos when moving protos', () => {
-    var context = createContextWithMethods([{name: "test", args: ["(simple1)"]},
-        {name: "test", args: ["(simple2)"]}]);
+    var context = createContextWithMethods([{name: "test", parameters: ["(simple1)"]},
+        {name: "test", parameters: ["(simple2)"]}]);
     var delta = new Delta();
     delta.added = new Codebase();
     delta.added.methods = [{
@@ -209,7 +211,7 @@ it('adjustForMovingProtos preserves existing protos when moving protos', () => {
 });
 
 it('adjustForMovingProtos preserves existing protos when removing proto', () => {
-    var context = createContextWithMethods([{name: "test", args: ["(simple2)"]}]);
+    var context = createContextWithMethods([{name: "test", parameters: ["(simple2)"]}]);
     var delta = new Delta();
     delta.removed = new Codebase();
     delta.removed.methods = [{
