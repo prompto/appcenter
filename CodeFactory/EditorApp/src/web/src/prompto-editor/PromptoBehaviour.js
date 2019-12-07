@@ -46,6 +46,7 @@ export default class PromptoBehaviour extends window.ace.acequire("ace/mode/beha
         this.add("newline", "insertion", this.onNewLineInsertion.bind(this));
         this.add("enclosing", "insertion", this.onEnclosingInsertion.bind(this));
         this.add("enclosing", "deletion", this.onEnclosingDeletion.bind(this));
+        this.add("tag", "insertion", this.onTagInsertion.bind(this));
     }
 
     onNewLineInsertion(state, action, editor, session, text) {
@@ -54,27 +55,32 @@ export default class PromptoBehaviour extends window.ace.acequire("ace/mode/beha
             const cursor = editor.getCursorPosition();
             const line = session.doc.getLine(cursor.row);
             const indent = line.match(/^\s*/)[0];
-            let column = cursor.column - 1;
-            let lastChar = line[column];
+            let column = cursor.column;
+            let lastChar = line[--column];
             while(lastChar===' ' && column > 0)
                 lastChar = line[--column];
             const dialect = session.getMode().$dialect;
-            if(dialect==="O") {
-                if(lastChar==='{') {
+            if(dialect==="O" && lastChar==='{') {
+                const start = (indent + tabString).length;
+                return {
+                    text: text + indent + tabString + text + indent,
+                    selection: [1, start, 1, start]
+                };
+            } else if(dialect!=="O" && lastChar===':') {
+                const start = (indent + tabString).length;
+                return {
+                    text: text + indent + tabString,
+                    selection: [1, start, 1, start]
+                };
+            } else  {
+                const chars = line.substring(cursor.column - 1, cursor.column + 2);
+                if(chars==='></') {
                     const start = (indent + tabString).length;
                     return {
                         text: text + indent + tabString + text + indent,
-                        selection: [1, start, 1, start + 1]
+                        selection: [1, start, 1, start]
                     };
-                }
-            } else {
-                if(lastChar===':') {
-                    const start = (indent + tabString).length;
-                    return {
-                        text: text + indent + tabString ,
-                        selection: [1, start, 1, start + 1]
-                    };
-                }
+               }
             }
         }
     }
@@ -156,6 +162,22 @@ export default class PromptoBehaviour extends window.ace.acequire("ace/mode/beha
     popAutoInsertedClosing() {
         context.autoInsertedLineEnd = context.autoInsertedLineEnd.substr(1);
         context.autoInsertedClosings--;
+    }
+
+    onTagInsertion(state, action, editor, session, text) {
+        if(text==='>') {
+            const cursor = editor.getCursorPosition();
+            const section = session.doc.getLine(cursor.row).substring(0, cursor.column) + text;
+            const matches = section.match(/(<([a-zA-Z][-\w]*)>)/g);
+            let tag = matches && matches[matches.length - 1];
+            if(tag && section.endsWith(tag)) {
+                tag = tag.substring(1, tag.length-1);
+                return {
+                    text: '></' + tag + '>',
+                    selection: [1, 1]
+                };
+            }
+        }
     }
 
 }
