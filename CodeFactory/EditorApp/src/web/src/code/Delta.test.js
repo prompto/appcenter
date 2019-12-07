@@ -1,10 +1,8 @@
 import Delta from './Delta';
 import Codebase from './Codebase';
-import antlr4 from 'antlr4';
-import prompto from 'prompto';
 
 beforeAll(()=>{
-    // jest.requireActual('../../../../../CodeFactory/src/main/resources/js/lib/prompto.core.bundle.js');
+    jest.requireActual("../../../../../../../prompto-javascript/JavaScript-Core/src/main");
     const globals = global || window || self || this;
     globals.antlr4 = antlr4;
     globals.prompto = prompto;

@@ -329,7 +329,7 @@ export default class Repository {
 
     updateRenamed(changedIdsCount, old_decls, new_decls, parser, dialect) {
         // special case when changing id of a declaration, try connect to the previous version
-        if (changedIdsCount !== 2 || old_decls.length == 0 || new_decls.length !== old_decls.length)
+        if (changedIdsCount !== 2 || old_decls.length === 0 || new_decls.length !== old_decls.length)
             return false;
         // locate new declaration, for which there is no existing status entry
         var decls_with_status = new_decls.filter(decl => {
