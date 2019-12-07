@@ -3,9 +3,10 @@ import fs from 'fs';
 import Delta from './Delta';
 import Codebase from './Codebase';
 import Repository from './Repository';
+import antlr4 from 'antlr4';
+import prompto from 'prompto';
 
 beforeAll(()=>{
-    require('../../../../../CodeFactory/src/main/resources/js/lib/prompto.core.bundle.js');
     const globals = global || window || self || this;
     globals.antlr4 = antlr4;
     globals.prompto = prompto;
@@ -24,7 +25,7 @@ function clearws(text) {
     return text.replace(/(\n|\r|\t)+/g, "");
 }
 
-it('code is loaded', () => {
+test.skip('code is loaded', () => {
     global.Event = function () {}; // referred by web stuff
     var code = loadText("../../../src/web/public/prompto/prompto.pec");
     var repo = new Repository();
@@ -33,7 +34,7 @@ it('code is loaded', () => {
     expect(Object.keys(repo.librariesContext.declarations).length > 0).toBeTruthy();
 });
 
-it('sets status or new attribute to CREATED', () => {
+it('sets status of new attribute to CREATED', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     var delta = repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -41,7 +42,7 @@ it('sets status or new attribute to CREATED', () => {
     expect(repo.statuses["name"].editStatus).toEqual("CREATED");
 });
 
-it('sets status or new attributes to CREATED', () => {
+it('sets status of new attributes to CREATED', () => {
     var repo = new Repository();
     var inputs = [
         "defin",
@@ -67,7 +68,7 @@ it('sets status or new attributes to CREATED', () => {
     expect(repo.statuses["names"].editStatus).toEqual( "CREATED");
 });
 
-it('preserves CREATED status or new attributes when updating new attribute', () => {
+it('preserves CREATED status of new attribute when updating it', () => {
     var repo = new Repository();
     var listener = new prompto.problem.ProblemCollector();
     repo.handleEditContent("define name as Text attribute", "E", listener);
@@ -1072,5 +1073,19 @@ it('sets status to CREATED when adding new widget to an existing one', ()=> {
     expect(repo.statuses["Existing"].editStatus).toEqual( "DIRTY");
     expect(repo.statuses["Created1"].editStatus).toEqual("CREATED");
     expect(repo.statuses["Created2"].editStatus).toEqual("CREATED");
+});
+
+it('raises error when duplicating declaration', ()=> {
+    var repo = new Repository();
+    var listener = new prompto.problem.ProblemCollector();
+    const w1 = widgetTemplate.replace('$', 'SomeWidget');
+    repo.handleEditContent(w1, "O", listener);
+    repo.statuses["SomeWidget"].editStatus = "DIRTY";
+    repo.statuses["SomeWidget"].stuff.value.dbId = "Some UUID";
+    var listener = new prompto.problem.ProblemCollector();
+    repo.handleSetContent("", "O", listener);
+    var listener = new prompto.problem.ProblemCollector();
+    repo.handleEditContent(w1, "O", listener); // insert a duplicate
+    expect(listener.problems.length).toEqual(1);
 });
 

@@ -208,7 +208,7 @@ export default class Repository {
     };
 
 
-    prepareCommit = function () {
+    prepareCommit() {
         var edited = [];
         for (var id in this.statuses) {
             if (this.statuses.hasOwnProperty(id) && this.statuses[id].editStatus !== "CLEAN")
@@ -239,7 +239,7 @@ export default class Repository {
             return delta.getContent();
         } else
             return null;
-    };
+    }
 
 
     handleSetContent(content, dialect, listener) {
@@ -253,7 +253,7 @@ export default class Repository {
         }
         this.lastSuccess = content; // assume registered content is always parsed successfully
         this.lastDialect = dialect;
-    };
+    }
 
 
     handleEditContent(content, dialect, listener, selected) {
@@ -263,7 +263,9 @@ export default class Repository {
         // always annotate new content
         var parser = newParser(content, dialect, listener);
         var new_decls = parser.parse();
-        // only update codebase if syntax is correct
+        // look for duplicates
+        this.checkDuplicates(old_decls, new_decls, listener);
+        // only update codebase if syntax is correct and there is no foreseeable damage
         if (listener.problems.length === 0) {
             this.lastSuccess = content;
             this.lastDialect = dialect;
@@ -276,62 +278,41 @@ export default class Repository {
             return catalog;
         } else
             return null;
-    };
+    }
 
+
+    checkDuplicates(old_decls, new_decls, listener) {
+        return new_decls.some(decl => {
+            if(this.isDuplicate(decl, old_decls)) {
+                listener.reportDuplicate(decl.name, decl);
+                return true;
+            } else
+                return false;
+        }, this);
+    }
+
+
+    isDuplicate(decl, old_decls) {
+        // if updating an existing declaration, not a duplicate
+        // TODO refine for method protos
+        if(old_decls.some(old => old.name === decl.name))
+            return false;
+        const existing = this.projectContext.getRegisteredDeclaration(decl.name);
+        if(existing instanceof prompto.runtime.MethodDeclarationMap) {
+            if(decl instanceof prompto.declaration.BaseMethodDeclaration)
+                return existing.hasProto(decl.getProto());
+            else
+                return true;
+        }
+        return !!existing;
+    }
 
     updateCodebase(old_decls, new_decls, parser, dialect, listener) {
         var delta = new Delta();
         delta.removed = new Codebase(old_decls, this.projectContext, this.librariesContext);
         delta.added = new Codebase(new_decls, this.projectContext, this.librariesContext);
         var changedIdsCount = delta.filterOutDuplicates();
-        var handled = false;
-        // special case when changing id of a declaration, try connect to the previous version
-        if (changedIdsCount === 2 && old_decls.length > 0 && new_decls.length === old_decls.length) {
-            // locate new declaration, for which there is no existing status entry
-            var decls_with_status = new_decls.filter(decl => {
-                var id = this.idFromDecl(decl);
-                var status = this.statuses[id] || null;
-                return status === null;
-            }, this);
-            if (decls_with_status.length === 1) {
-                var new_decl = decls_with_status[0];
-                var new_id = this.idFromDecl(new_decl);
-                var new_status = this.statuses[new_id];
-                // locate corresponding old declaration
-                var orphan_decls = old_decls.filter(function (decl) {
-                    var id = this.idFromDecl(decl);
-                    return new_decls.filter(function (decl) {
-                        return id === this.idFromDecl(decl);
-                    }, this).length === 0;
-                }, this);
-                if (orphan_decls.length === 1) {
-                    var old_decl = orphan_decls[0];
-                    var old_id = this.idFromDecl(old_decl);
-                    var old_status = this.statuses[old_id];
-                    // all ok, move the object
-                    if (old_status && !new_status) {
-                        // update statuses
-                        this.statuses[new_id] = this.statuses[old_id];
-                        delete this.statuses[old_id];
-                        // update status obj
-                        new_status = old_status;
-                        if (new_status.editStatus !== "CREATED") // don't overwrite
-                            new_status.editStatus = "DIRTY";
-                        // update declaration obj
-                        new_status.stuff.type = new_decl.getDeclarationType() + "Declaration";
-                        var decl_obj = new_status.stuff.value;
-                        decl_obj.name = new_decl.name;
-                        decl_obj.dialect = dialect;
-                        decl_obj.body = new_decl.fetchBody(parser);
-                        if (new_decl.getProto !== undefined)
-                            decl_obj.prototype = new_decl.getProto();
-                        if (new_decl.storable !== undefined)
-                            decl_obj.storable = new_decl.storable;
-                        handled = true;
-                    }
-                }
-            }
-        }
+        var handled = this.updateRenamed(changedIdsCount, old_decls, new_decls, parser, dialect);
         this.updateAppContext(old_decls, new_decls, listener);
         if (!handled) {
             // either no change in ids, or more than one
@@ -346,6 +327,58 @@ export default class Repository {
             return null; // no UI update required
     };
 
+    updateRenamed(changedIdsCount, old_decls, new_decls, parser, dialect) {
+        // special case when changing id of a declaration, try connect to the previous version
+        if (changedIdsCount !== 2 || old_decls.length == 0 || new_decls.length !== old_decls.length)
+            return false;
+        // locate new declaration, for which there is no existing status entry
+        var decls_with_status = new_decls.filter(decl => {
+            var id = this.idFromDecl(decl);
+            var status = this.statuses[id] || null;
+            return status === null;
+        }, this);
+        if (decls_with_status.length === 1) {
+            var new_decl = decls_with_status[0];
+            var new_id = this.idFromDecl(new_decl);
+            var new_status = this.statuses[new_id];
+            // locate corresponding old declaration
+            var orphan_decls = old_decls.filter(function (decl) {
+                var id = this.idFromDecl(decl);
+                return new_decls.filter(function (decl) {
+                    return id === this.idFromDecl(decl);
+                }, this).length === 0;
+            }, this);
+            if (orphan_decls.length === 1) {
+                var old_decl = orphan_decls[0];
+                var old_id = this.idFromDecl(old_decl);
+                var old_status = this.statuses[old_id];
+                // all ok, move the object
+                if (old_status && !new_status) {
+                    // update statuses
+                    this.statuses[new_id] = this.statuses[old_id];
+                    delete this.statuses[old_id];
+                    // update status obj
+                    new_status = old_status;
+                    if (new_status.editStatus !== "CREATED") // don't overwrite
+                        new_status.editStatus = "DIRTY";
+                    // update declaration obj
+                    new_status.stuff.type = new_decl.getDeclarationType() + "Declaration";
+                    var decl_obj = new_status.stuff.value;
+                    decl_obj.name = new_decl.name;
+                    decl_obj.dialect = dialect;
+                    decl_obj.body = new_decl.fetchBody(parser);
+                    if (new_decl.getProto !== undefined)
+                        decl_obj.prototype = new_decl.getProto();
+                    if (new_decl.storable !== undefined)
+                        decl_obj.storable = new_decl.storable;
+                    return true;
+                }
+            }
+        }
+        // done
+        return false;
+    }
+
     updateAppContext(old_decls, new_decls, listener) {
         old_decls.unregister(this.projectContext); // TODO: manage damage on objects referring to these
         new_decls.unregister(this.projectContext); // avoid duplicate declaration errors
@@ -357,7 +390,7 @@ export default class Repository {
         } finally {
             this.projectContext.problemListener = saved_listener;
         }
-    };
+    }
 
     locateContent(stackFrame) {
         if (stackFrame.categoryName && stackFrame.categoryName.length)
