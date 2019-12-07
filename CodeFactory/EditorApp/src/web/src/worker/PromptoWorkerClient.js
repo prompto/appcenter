@@ -78,8 +78,13 @@ export default class PromptoWorkerClient extends window.ace.acequire("ace/worker
     }
 
     onValue(v) {
-        this.getSession().setValue(v.data);
-        this.getEditor().focus();
+        const session = this.getSession();
+        const changed = session.getValue()!==v.data;
+        if(changed) {
+            session.setValue(v.data);
+            this.getEditor().focus();
+        }
+        return changed;
     }
 
     onCatalogUpdated(v) {

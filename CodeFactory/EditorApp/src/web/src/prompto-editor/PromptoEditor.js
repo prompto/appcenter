@@ -231,8 +231,9 @@ export default class PromptoEditor extends React.Component {
                 const session = this.getSession();
                 session.clearGutterDecorations(); // debugger-line
                 session.clearBreakpoints();
-                session.getMode().setContent(content, () => {
-                    session.setScrollTop(0);
+                session.getMode().setContent(content, changed => {
+                    if(changed)
+                        session.setScrollTop(0);
                     this.breakpoints.matchingContent(content).forEach(b => {
                         session.setBreakpoint(b.line - 1);
                     });

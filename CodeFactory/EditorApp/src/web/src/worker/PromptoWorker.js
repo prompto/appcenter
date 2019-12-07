@@ -38,15 +38,19 @@ export default class PromptoWorker extends Mirror {
     }
 
     onUpdate() {
+        delete this.$created;
         var value = this.doc.getValue();
         var errorListener = new globals.AnnotatingErrorListener();
         if(value === this.$value && !this.$selectedContent)
             this.$repo.handleSetContent(value, this.$dialect, errorListener);
         else {
-            const catalog = this.$repo.handleEditContent(value, this.$dialect, errorListener, this.$selectedContent);
+            const delta = this.$repo.handleEditContent(value, this.$dialect, errorListener, this.$selectedContent);
             delete this.$selectedContent;
-            if (catalog)
-                this.sender.emit("contentUpdated", catalog);
+            if (delta) {
+                if(delta.created)
+                    this.$created = delta.created;
+                this.sender.emit("contentUpdated", delta);
+            }
         }
         this.$value = value;
         this.sender.emit("annotate", errorListener.problems);
@@ -80,13 +84,16 @@ export default class PromptoWorker extends Mirror {
             this.$selectedContent = false;
             this.$core = false;
         } else if(content.name) {
-            this.$value = this.$repo.getDeclarationBody(content, this.$dialect);
+            // don't replace newly created declaration body
+            if(content.name !== this.$created)
+                this.$value = this.$repo.getDeclarationBody(content, this.$dialect);
             this.$core = content.core || false;
         } else {
             this.$value = content.body || "";
             this.$selectedContent = (content.body || null) !== null;
             this.$core = false;
         }
+        delete this.$created;
         this.sender.callback(this.$value, callbackId);
     }
 
@@ -104,9 +111,9 @@ export default class PromptoWorker extends Mirror {
 
     destroy(content) {
         this.$value = "";
-        const catalog = this.$repo.handleDestroyed(content);
-        if(catalog)
-            this.sender.emit("catalogUpdated", catalog);
+        const delta = this.$repo.handleDestroyed(content);
+        if(delta)
+            this.sender.emit("catalogUpdated", delta.getContent());
         this.sender.emit("value", this.$value);
     }
 

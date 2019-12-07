@@ -236,7 +236,7 @@ export default class Repository {
             var delta = new Delta();
             delta.removed = new Codebase(decls, this.librariesContext);
             delta.filterOutDuplicates();
-            return delta.getContent();
+            return delta;
         } else
             return null;
     }
@@ -269,13 +269,17 @@ export default class Repository {
         if (listener.problems.length === 0) {
             this.lastSuccess = content;
             this.lastDialect = dialect;
-            var catalog = this.updateCodebase(old_decls, new_decls, parser, dialect, listener);
-            if(catalog) {
+            var delta = this.updateCodebase(old_decls, new_decls, parser, dialect, listener);
+            if(delta) {
+                var $delta = delta.getContent();
                 if (selected && new_decls.length === 1) // object might have been renamed
-                    catalog.selected = new_decls[0].name;
-                catalog.editedCount = new_decls.length;
-            }
-            return catalog;
+                    $delta.selected = new_decls[0].name;
+                $delta.editedCount = new_decls.length;
+                if(old_decls.length<=1 && new_decls.length===1)
+                    $delta.created = new_decls[0].name;
+                return $delta;
+            } else
+                return null;
         } else
             return null;
     }
@@ -322,7 +326,7 @@ export default class Repository {
         }
         if (changedIdsCount !== 0) {
             delta.adjustForMovingProtos(this.projectContext);
-            return delta.getContent();
+            return delta;
         } else
             return null; // no UI update required
     };

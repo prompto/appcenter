@@ -23,9 +23,9 @@ export default class PromptoMode extends window.ace.acequire("ace/mode/text")
 
         setContent(content, callback) {
             this.$worker && this.$worker.call("setContent", [ content ], value => {
-                this.$worker.onValue({ data: value });
+                const changed = this.$worker.onValue({ data: value });
                 if(callback)
-                    callback();
+                    callback(changed);
             });
         }
 
