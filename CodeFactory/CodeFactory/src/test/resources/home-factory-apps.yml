@@ -21,6 +21,6 @@ target:
     dbName: FACTORY-DATA
 
 http:
-  port: 8000
+  port: 8080
   
 runtimeMode: DEVELOPMENT
