@@ -9,7 +9,7 @@ import org.openqa.selenium.WebElement;
 
 import prompto.declaration.DeclarationList;
 import prompto.parser.OCleverParser;
-import prompto.runtime.Standalone;
+import prompto.runtime.ApplicationContext;
 import prompto.server.HeadlessTests;
 
 @Category(HeadlessTests.class)
@@ -44,6 +44,6 @@ public class TestProjectsBrowser extends BaseUITest {
 	private void registerServerCode() throws Exception {
 		OCleverParser parser = new OCleverParser(SERVER_CODE);
 		DeclarationList decls = parser.parse_declaration_list();
-		decls.register(Standalone.getGlobalContext());
+		decls.register(ApplicationContext.get());
 	}
 }
