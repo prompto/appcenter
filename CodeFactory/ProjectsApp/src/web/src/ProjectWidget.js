@@ -69,7 +69,7 @@ export default class ProjectWidget extends React.Component {
         const module = this.props.module;
         const status = module.value.moduleStatus.name;
         const statusImg = module.value.parked ? ParkedPng : (PROJECT_STATUS_IMAGES[status] || null);
-        const imageSrc = module.value.image || PROJECT_DEFAULT_IMAGES[module.type.toLowerCase()];
+        const imageSrc = module.value.image ? module.value.image.value.url : PROJECT_DEFAULT_IMAGES[module.type.toLowerCase()];
         const description = module.value.description || "No description";
         const descClassName = "text-muted" + (description==="No description" ? " placeholder" : "");
 
