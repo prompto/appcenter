@@ -228,7 +228,7 @@ native widget ModalTitle {
 	
 }
 
-@WidgetProperties({onToggle:{type:any, help:"A callback fired when the collapse state changes.@controllable expanded"}, expanded:{type:Boolean, help:"Controls the collapsed/expanded state ofthe Panel. Requires a `Panel.Collapse` or `<Panel.Body collapsible>` child component in order to actually animate out or in.@controllable onToggle"}, eventKey:any, id:{type:Text, help:"An HTML `id` attribute uniquely identifying the Panel component."}})
+@WidgetProperties({onToggle:{type:ToggleChangedCallback, help:"A callback fired when the collapse state changes.@controllable expanded"}, expanded:{type:Boolean, help:"Controls the collapsed/expanded state ofthe Panel. Requires a `Panel.Collapse` or `<Panel.Body collapsible>` child component in order to actually animate out or in.@controllable onToggle"}, eventKey:any, id:{type:Text, help:"An HTML `id` attribute uniquely identifying the Panel component."}})
 native widget Panel {
 
 	category bindings {
@@ -615,6 +615,57 @@ native widget PageHeader {
 
 	category bindings {
 		JavaScript: ReactBootstrap.PageHeader;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+native widget ButtonToolbar {
+
+	category bindings {
+		JavaScript: ReactBootstrap.ButtonToolbar;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({vertical:Boolean, justified:Boolean, block:{type:Boolean, help:"Display block buttons; only useful when used with the 'vertical' prop.@type {bool}"}})
+native widget ButtonGroup {
+
+	category bindings {
+		JavaScript: ReactBootstrap.ButtonGroup;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({onChange:{type:any, help:"Callback fired when a button is pressed, depending on whether the `type` is `'radio'` or `'checkbox'`, `onChange` will be called with the value or array of active values @controllable values"}, name:{type:Text, help:"An HTML `<input>` name for each child button.__Required if `type` is set to `'radio'`__"}, type:{values:<"checkbox", "radio">, help:"The input `type` of the rendered buttons, determines the toggle behavior of the buttons", required:true}, value:{type:any, help:"The value, or array of values, of the active (pressed) buttons @controllable onChange"}})
+native widget ToggleButtonGroup {
+
+	category bindings {
+		JavaScript: ReactBootstrap.ToggleButtonGroup;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({onChange:{type:any, help:"[onChange description]"}, name:{type:Text, help:"The HTML input name, used to group like checkboxes or radio buttons together semantically"}, checked:{type:Boolean, help:"The checked state of the input, managed by `<ToggleButtonGroup>`` automatically"}, disabled:{type:Boolean, help:"The disabled state of both the label and input"}, type:{values:<"checkbox", "radio">, help:"The `<input>` `type` @type {[type]}", required:true}, value:{type:any, help:"The value of the input, and unique identifier in the ToggleButtonGroup", required:true}})
+native widget ToggleButton {
+
+	category bindings {
+		JavaScript: ReactBootstrap.ToggleButton;
 	}
 	
 	Html method render () {

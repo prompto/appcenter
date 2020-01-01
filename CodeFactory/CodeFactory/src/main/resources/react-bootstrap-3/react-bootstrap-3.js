@@ -61,6 +61,10 @@ self.ReactBootstrap = {
     Glyphicon: React.Component,
     Thumbnail: React.Component,
     PageHeader: React.Component,
+	ButtonToolbar: React.Component,
+	ButtonGroup: React.Component,
+	ToggleButtonGroup: React.Component,
+	ToggleButton: React.Component,
     Typeahead: React.Component,
     DatePicker: React.Component
 };
