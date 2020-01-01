@@ -35,7 +35,8 @@ export default class DependenciesDialog extends React.Component {
     }
 
     librariesReceived(response) {
-        this.allLibraries = response.data.value.map(l => { return { instance: l.value, label: l.value.name + " - " + l.value.version.value }; });
+        const cursor = response.data.value;
+        this.allLibraries = cursor.items.map(l => { return { instance: l.value, label: l.value.name + " - " + l.value.version.value }; });
     }
 
 
