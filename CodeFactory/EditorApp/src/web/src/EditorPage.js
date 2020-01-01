@@ -141,8 +141,10 @@ export default class EditorPage extends React.Component {
             const response = resp.data;
             if (response.error)
                 alert(response.error);
-            else
-                this.resourcesLoaded(response.data.value, success);
+            else {
+                const cursor = response.data.value;
+                this.resourcesLoaded(cursor.items, success);
+            }
         });
     }
 

@@ -135,8 +135,8 @@ export default class PromptoWorker extends Mirror {
                     if (response.error)
                         ; // TODO something
                     else {
-                        const declarations = response.data.value;
-                        this.$repo.registerProjectDeclarations(this.$projectId, declarations);
+                        const cursor = response.data.value;
+                        this.$repo.registerProjectDeclarations(this.$projectId, cursor.items);
                         this.markLoaded("Project");
                     }
                 });
@@ -168,8 +168,8 @@ export default class PromptoWorker extends Mirror {
                     if (response.error)
                         ; // TODO something
                     else {
-                        const declarations = response.data.value;
-                        this.$repo.registerLibraryDeclarations(declarations);
+                        const cursor = response.data.value;
+                        this.$repo.registerLibraryDeclarations(cursor.items);
                         this.markLoaded(dependency.name);
                     }
                 });
@@ -252,8 +252,8 @@ export default class PromptoWorker extends Mirror {
             if (response.error)
                 ; // TODO something
             else {
-                const declarations = response.data.value;
-                this.$repo.registerCommitted(declarations);
+                const cursor = response.data.value;
+                this.$repo.registerCommitted(cursor.items);
              }
         });
     }

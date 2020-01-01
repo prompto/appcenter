@@ -65,14 +65,16 @@ export default class PromptoEditor extends React.Component {
             const response = resp.data;
             if (response.error)
                 alert(response.error);
-            else
-                this.breakpointsLoaded(response.data);
+            else {
+                const cursor = response.data.value;
+                this.breakpointsLoaded(cursor);
+            }
         });
 
     }
 
-    breakpointsLoaded(data) {
-        this.breakpoints = new Breakpoints(data);
+    breakpointsLoaded(cursor) {
+        this.breakpoints = new Breakpoints(cursor.items);
         this.props.breakpointsUpdated(this.breakpoints);
     }
 
