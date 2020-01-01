@@ -87,7 +87,7 @@ export default class ProjectWidget extends React.Component {
 
     handleClick() {
         const module = this.props.module;
-        if(module.value.moduleStatus.name==="ACTIVE") {
+        if(module.value.moduleStatus.name==="ACTIVE" || window.location.protocol==="http:") {
             // TODO find why dbId.value stopped working
             const href = "../ide/index.html?dbId=" + (module.value.dbId.value || module.value.dbId) + "&name=" + module.value.name;
             const name = "Project:" + module.value.name;
