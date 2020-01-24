@@ -2,6 +2,7 @@ import axios from 'axios';
 import React from 'react';
 import { Modal, Button, FormGroup, ControlLabel, FormControl } from 'react-bootstrap';
 import ModalDialog, { closeModal } from "../components/ModalDialog";
+import Project from "../Project";
 
 export default class ConfigurationDialog extends React.Component {
 
@@ -70,7 +71,8 @@ export default class ConfigurationDialog extends React.Component {
         });
     }
 
-    saveConfig(project) {
+    saveConfig(data) {
+        const project = new Project(data);
         this.setConfigFromState(project);
         const formData = new FormData();
         const params = [ {name: "module", type: project.type, value: project.value} ];
