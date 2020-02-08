@@ -7,5 +7,5 @@ jdk:
 before_script:
   - cd CodeFactory
 script:
-  - mvn install -B -V -q -e # -DskipTests=true
+  - mvn install -B -V -q -e -X # -DskipTests=true
   
