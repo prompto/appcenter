@@ -87,7 +87,8 @@ export default class ContentEditor extends React.Component {
                            catalogUpdated={root.catalogUpdated} contentUpdated={root.contentUpdated}
                            projectUpdated={root.projectUpdated} breakpointsUpdated={this.breakpointsUpdated}
                            root={this.props.root} activity={activity}/>
-            <ResourceEditor ref="ResourceEditor" textEdited={root.textResourceEdited}
+            <ResourceEditor ref="ResourceEditor" commitAndReset={root.commitAndReset}
+                            textEdited={root.textResourceEdited}
                             root={this.props.root} activity={activity} />
             <BinaryEditor ref="BinaryEditor"
                           root={this.props.root} activity={activity} />

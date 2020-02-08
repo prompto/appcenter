@@ -13,6 +13,7 @@ import 'brace/mode/javascript';
 import 'brace/mode/jsx';
 
 import { ID_TO_TYPE_MAP, TEXT_RESOURCE_TYPES } from '../resource-types/ResourceTypes';
+import PromptoMode from "../prompto-editor/PromptoMode";
 
 const TextTypes = new Set(TEXT_RESOURCE_TYPES.map(t=>t.id));
 
@@ -22,12 +23,36 @@ export default class ResourceEditor extends React.Component {
         super(props);
         this.setContent = this.setContent.bind(this);
         this.textEdited = this.textEdited.bind(this);
+        this.commitAndReset = this.commitAndReset.bind(this);
         this.state = {display: "none", name: "", value: ""};
     }
 
+
+    getEditor() {
+        return this.refs.AceEditor.editor;
+    }
+
+    getSession() {
+        return this.getEditor().getSession();
+    }
+
+    componentDidMount() {
+        const editor = this.getEditor();
+        editor.commands.addCommand({
+            name: "commit",
+            bindKey: { win: "Ctrl-S", mac: "Command-S" },
+            exec: this.commitAndReset
+        });
+    }
+
+    commitAndReset() {
+        this.props.commitAndReset();
+        return true;
+    }
+
     setContent(content) {
-        const editor = this.refs.AceEditor.editor;
-        const session = editor.getSession();
+        const editor = this.getEditor();
+        const session = this.getSession();
         const currentModeId = this.currentModeId();
         const newModeId = this.computeModeId(content);
         if(newModeId && currentModeId !== newModeId) {
@@ -45,7 +70,7 @@ export default class ResourceEditor extends React.Component {
     }
 
     currentModeId() {
-        const aceModeId = this.refs.AceEditor.editor.getSession().getMode().$id;
+        const aceModeId = this.getSession().getMode().$id;
         return aceModeId.split("/")[2];
     }
 
