@@ -5,6 +5,5 @@
 	"description" : "Built-in widgets",
 	"widgetLibrary" : "react-bootstrap-3",
 	"codeResource" : "React-Bootstrap-3.poc",
-	"stubResource" : "react-bootstrap-3.js",
-	"dependencies" : [ { "name" : "Thesaurus", "version" : "1.0.0" } ]
+	"stubResource" : "react-bootstrap-3.js"
 }
