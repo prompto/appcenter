@@ -50,7 +50,7 @@ public class TestModuleImporter {
 	}
 	
 	@Test
-	public void tripGuruModulIsImported() throws Exception {
+	public void tripGuruModuleIsImported() throws Exception {
 		BlobValue blob = getResourceAsBlob("modules/TripGuru.zip");
 		assertNotNull(blob);
 		Identifier blobId = new Identifier("blob");

@@ -76,7 +76,7 @@ public class TestSampleImporter {
 	
 	@Test
 	public void thesaurusIsImported() throws Exception {
-		SampleImporter importer = new SampleImporter("thesaurus/");
+		SampleImporter importer = new SampleImporter("libraries/thesaurus/");
 		importer.importModule(ICodeStore.getInstance());
 		assertTrue(importer.module instanceof Thesaurus);
 		assertNotNull(importer.module.getDbId());
@@ -84,7 +84,7 @@ public class TestSampleImporter {
 	
 	@Test
 	public void reactBootstrapIsImported() throws Exception {
-		SampleImporter importer = new SampleImporter("react-bootstrap-3/");
+		SampleImporter importer = new SampleImporter("libraries/react-bootstrap-3/");
 		importer.importModule(ICodeStore.getInstance());
 		assertTrue(importer.module instanceof WebLibrary);
 		assertNotNull(importer.module.getDbId());

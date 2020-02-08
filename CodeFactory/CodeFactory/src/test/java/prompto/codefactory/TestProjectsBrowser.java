@@ -2,6 +2,7 @@ package prompto.codefactory;
 
 import static org.junit.Assert.*;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.openqa.selenium.By;
@@ -12,6 +13,7 @@ import prompto.parser.OCleverParser;
 import prompto.runtime.ApplicationContext;
 import prompto.server.HeadlessTests;
 
+@Ignore("Resources moved to DB, need to change strategy")
 @Category(HeadlessTests.class)
 public class TestProjectsBrowser extends BaseUITest {
 

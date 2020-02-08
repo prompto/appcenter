@@ -46,7 +46,7 @@ export default class EditorPage extends React.Component {
         this.dependenciesUpdated = this.dependenciesUpdated.bind(this);
         this.state = { project: null, activity: Activity.Loading, content: null };
         this.catalog = new Catalog();
-        Mousetrap.bind('command+s', this.commitAndReset);
+        Mousetrap.bind('command+s', this.commit);
     }
 
     getProject() {

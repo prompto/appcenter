@@ -65,7 +65,9 @@ public class Application {
 
 	public static ICodeFactoryConfiguration adjustConfiguration(ICodeFactoryConfiguration config, Mode runtimeMode) throws Exception {
 		config = config.withServerAboutToStartMethod("serverAboutToStart")
-				.withHttpConfiguration(config.getHttpConfiguration().withSendsXAuthorization(true))
+				.withHttpConfiguration(config.getHttpConfiguration()
+						.withWelcomePage("/projects/index.page")
+						.withSendsXAuthorization(true))
 				.withApplicationName("CodeFactory")
 				.withApplicationVersion(PromptoVersion.LATEST)
 				.withResourceURLs(Application.getResourceURLs());
@@ -149,7 +151,7 @@ public class Application {
 	public static void createLibraries() {
 		try {
 			ICodeStore codeStore = codeStoreUsingDataStore();
-			createResourceLibraries(codeStore, "thesaurus/", "react-bootstrap-3/");
+			createResourceLibraries(codeStore, "thesaurus/", "react-bootstrap-3/", "react-file-uploader/");
 			if(isSeedDataStore())
 				createSeedLibraries(codeStore);
 		} catch(Throwable t) {
@@ -160,9 +162,13 @@ public class Application {
 	
 	private static void createResourceLibraries(ICodeStore codeStore, String ... resources) throws Exception {
 		for(String resource : resources) {
-			URL url = Thread.currentThread().getContextClassLoader().getResource(resource);
-			doImportModule(codeStore, url);
+			createResourceLibrary(codeStore, resource);
 		}
+	}
+
+	private static void createResourceLibrary(ICodeStore codeStore, String resource) throws Exception {
+		URL url = Thread.currentThread().getContextClassLoader().getResource("libraries/" + resource);
+		doImportModule(codeStore, url);
 	}
 
 	private static ICodeStore codeStoreUsingDataStore() {

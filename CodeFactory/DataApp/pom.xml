@@ -30,10 +30,10 @@
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.7.6</version>
+				<version>1.9.1</version>
 				<configuration>
-					<nodeVersion>v11.7.0</nodeVersion>
-					<yarnVersion>v1.15.2</yarnVersion>
+					<nodeVersion>v12.15.0</nodeVersion>
+					<yarnVersion>v1.22.0</yarnVersion>
 					<workingDirectory>src/web</workingDirectory>
 					<installDirectory>../tools</installDirectory>
 				</configuration>
