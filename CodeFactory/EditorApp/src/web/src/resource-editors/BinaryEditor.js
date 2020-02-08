@@ -13,7 +13,8 @@ export default class BinaryEditor extends React.Component {
             this.setState({display: "none"});
         else {
             const preview = content.file === this.state.file ? this.state.preview : null;
-            this.setState({display: "block", preview: preview, file: content.file, source: content.data, name: content.name}, ()=>{
+            const source = content.data ? content.data.value.url : null;
+            this.setState({display: "block", preview: preview, file: content.file, source: source, name: content.name}, ()=>{
                 if(this.state.file && !this.state.preview)
                     this.loadPreview();
             });

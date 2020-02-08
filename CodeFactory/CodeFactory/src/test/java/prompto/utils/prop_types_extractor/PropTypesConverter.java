@@ -45,7 +45,7 @@ public class PropTypesConverter {
 	}
 
 	private static void writeWidgetDeclarations(File file, DeclarationList decls) throws Exception {
-		Context context = Context.newGlobalContext();
+		Context context = Context.newGlobalsContext();
 		registerBuiltins(context);
 		CodeWriter writer = new CodeWriter(Dialect.O, context);
 		decls.toDialect(writer);

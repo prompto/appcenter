@@ -60,8 +60,12 @@ export default class HomePage extends React.Component {
         if(response.error) {
             alert(response.error);
             return [];
+        } else if(response.data.type.startsWith("Cursor<")) {
+            const cursor = response.data.value;
+            return cursor.items;
         } else
             return response.data.value;
+
     }
 
     exportProject(module) {

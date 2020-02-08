@@ -17,7 +17,7 @@ import de.flapdoodle.embed.process.runtime.Network;
 
 public abstract class LocalMongo {
 
-	static final String REPO = "/Users/ericvergnaud/Development/prompto/mongo";
+	static final String REPO = "/Users/ericvergnaud/Development/prompto/mongo-seed";
 
 	public static void main(String[] args) throws Throwable {
 		startMongo(REPO, 27017, false);

@@ -83,8 +83,8 @@ Object.defineProperty(LineBreakpoint.prototype, "proto", {
 
 export class Breakpoints {
 
-    constructor(data) {
-        this.breakpoints = data && data.value ? data.value.map(b=>{
+    constructor(records) {
+        this.breakpoints = records ? records.map(b=>{
             // eslint-disable-next-line
             const type = eval(b.type);
             const breakpoint = new type();

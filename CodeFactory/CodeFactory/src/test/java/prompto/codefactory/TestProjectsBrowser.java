@@ -2,6 +2,7 @@ package prompto.codefactory;
 
 import static org.junit.Assert.*;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.openqa.selenium.By;
@@ -9,9 +10,10 @@ import org.openqa.selenium.WebElement;
 
 import prompto.declaration.DeclarationList;
 import prompto.parser.OCleverParser;
-import prompto.runtime.Standalone;
+import prompto.runtime.ApplicationContext;
 import prompto.server.HeadlessTests;
 
+@Ignore("Resources moved to DB, need to change strategy")
 @Category(HeadlessTests.class)
 public class TestProjectsBrowser extends BaseUITest {
 
@@ -44,6 +46,6 @@ public class TestProjectsBrowser extends BaseUITest {
 	private void registerServerCode() throws Exception {
 		OCleverParser parser = new OCleverParser(SERVER_CODE);
 		DeclarationList decls = parser.parse_declaration_list();
-		decls.register(Standalone.getGlobalContext());
+		decls.register(ApplicationContext.get());
 	}
 }

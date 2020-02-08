@@ -97,6 +97,15 @@ define password as Text attribute
 // users typically have an email  
 define email as storable Text attribute with value index
 
+define Category as native category with attribute name, and bindings:
+
+	define category bindings as:
+		Java: prompto.declaration.CategoryDeclaration
+		C#: prompto.declaration.CategoryDeclaration
+		Python2: CategoryDeclaration from module: prompto.declaration.CategoryDeclaration
+		Python3: CategoryDeclaration from module: prompto.declaration.CategoryDeclaration
+		JavaScript: CategoryDeclaration from module: prompto/declaration/CategoryDeclaration.js
+
 define getCurrentCloud as native method returning Text doing:
 	Java: return prompto.cloud.Cloud.current().name();
 
@@ -165,7 +174,7 @@ define parseVersion as native method receiving Text text returning Version doing
 	C#: return prompto.value.Version.Parse(text);
 	Python2: return Version.Parse(text) from module: prompto.value.Version
 	Python3: return Version.Parse(text) from module: prompto.value.Version
-	JavaScript: return Version.Parse(text); from module: prompto/intrinsic/Version.js
+	JavaScript: return Version.parse(text); from module: prompto/intrinsic/Version.js
 
 
 define parsePeriod as native method receiving Text text returning Period doing:
@@ -729,7 +738,42 @@ define ReactWidget as widget with methods:
 	define forceRender as method doing:
 		forceReactWidgetRender self
 
+define WidgetCallback as abstract method receiving any ref
+
 define alert as native method receiving Text text doing:
 	JavaScript: alert(text);
 
-define WidgetCallback as abstract method receiving any ref
+define openBrowser as native method receiving Text url, Text name = Nothing and Text methodName = "open" doing:
+	JavaScript: openBrowser(methodName, url, name); from module: prompto/internet/Browser.js
+
+@Inlined
+define FileRef as native category with bindings:
+
+	define category bindings as:
+		JavaScript: FileRef from module: prompto/internet/FileRef.js
+
+and methods: 
+
+	define getName as method returning Text doing:
+		JavaScript: return this.file.name;
+	
+	define getMimeType as method returning Text doing:
+		JavaScript: return this.file.type;
+
+	define getSize as method returning Integer doing:
+		JavaScript: return this.file.size;
+
+	define readText as method returning Text doing:
+		JavaScript: return this.file.text();
+
+	define readImage as method returning Image doing:
+		JavaScript: return this.readImage();
+
+	define readBlob as method returning Blob doing:
+		JavaScript: return this.readBlob();
+
+define FileRefCallback as abstract method receiving FileRef file
+ 
+define selectFile as native method receiving FileRefCallback callback and Text<> mimeTypes = nothing doing:
+	JavaScript: selectFileRef(callback, mimeTypes); from module: prompto/internet/FileRef.js
+

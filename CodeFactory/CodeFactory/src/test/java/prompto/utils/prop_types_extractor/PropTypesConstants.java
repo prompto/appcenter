@@ -26,6 +26,7 @@ public class PropTypesConstants {
 	public static final IPropertyValidator ITEM_SELECTED_VALIDATOR = new TypeValidator(new CategoryType(new Identifier("ItemSelectedCallback")));
 	public static final IPropertyValidator PAGE_SELECTED_VALIDATOR = new TypeValidator(new CategoryType(new Identifier("PageSelectedCallback")));
 	public static final IPropertyValidator TOGGLE_CHANGED_VALIDATOR = new TypeValidator(new CategoryType(new Identifier("ToggleChangedCallback")));
+	public static final IPropertyValidator TOGGLE_KEY_CHANGED_VALIDATOR = new TypeValidator(new CategoryType(new Identifier("ToggleKeyChangedCallback")));
 	public static final IPropertyValidator MOUSE_CLICKED_VALIDATOR = new TypeValidator(new CategoryType(new Identifier("ClickEventCallback")));
 	public static final IPropertyValidator MOUSE_CHANGED_VALIDATOR = new TypeValidator(new CategoryType(new Identifier("MouseEventCallback")));
 	public static final IPropertyValidator KEYBOARD_CHANGED_VALIDATOR = new TypeValidator(new CategoryType(new Identifier("KeyboardEventCallback")));

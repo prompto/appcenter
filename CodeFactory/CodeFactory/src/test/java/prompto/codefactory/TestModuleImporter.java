@@ -20,6 +20,7 @@ import prompto.intrinsic.PromptoBinary;
 import prompto.intrinsic.PromptoVersion;
 import prompto.libraries.Libraries;
 import prompto.param.CategoryParameter;
+import prompto.runtime.ApplicationContext;
 import prompto.runtime.Context;
 import prompto.runtime.Mode;
 import prompto.runtime.Standalone;
@@ -53,7 +54,7 @@ public class TestModuleImporter {
 		BlobValue blob = getResourceAsBlob("modules/TripGuru.zip");
 		assertNotNull(blob);
 		Identifier blobId = new Identifier("blob");
-		Context context = Standalone.getGlobalContext().newLocalContext();
+		Context context = ApplicationContext.get().newLocalContext();
 		context.registerValue(new Variable(blobId, BlobType.instance()));
 		context.setValue(blobId, blob);
 		Argument argument = new Argument(new CategoryParameter(BlobType.instance(), blobId), new InstanceExpression(blobId));

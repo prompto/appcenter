@@ -1,0 +1,12 @@
+@WidgetProperties({preview: Image, dragLabel:Text, dropLabel:Text, onDrop:FileRefCallback})
+native widget FileUploader {
+
+	category bindings {
+		JavaScript: DroppedFileWidget.default;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}

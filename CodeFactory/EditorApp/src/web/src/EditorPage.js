@@ -41,7 +41,7 @@ export default class EditorPage extends React.Component {
         this.dependenciesUpdated = this.dependenciesUpdated.bind(this);
         this.state = { project: null, activity: Activity.Loading, content: null };
         this.catalog = new Catalog();
-        Mousetrap.bind('command+s', this.commitAndReset);
+        Mousetrap.bind('command+s', this.commit);
     }
 
     getProject() {
@@ -120,8 +120,14 @@ export default class EditorPage extends React.Component {
             let stuff = res.value.stuff;
             if(stuff.type==="BinaryResource" && stuff.value.file) {
                 stuff = Object.assign({}, stuff);
-                stuff.value.data = { mimeType: stuff.value.file.type, partName: "@" + stuff.value.file.name };
-                formData.append(stuff.value.data.partName, stuff.value.file);
+                stuff.value.data = {
+                    type: stuff.value.file.type.startsWith("image/") ? "Image" : "Blob",
+                    value: {
+                        mimeType: stuff.value.file.type,
+                        partName: "@" + stuff.value.file.name
+                    }
+                };
+                formData.append(stuff.value.data.value.partName, stuff.value.file);
                 delete stuff.value.file;
                 res.value.stuff = stuff;
             }
@@ -141,8 +147,10 @@ export default class EditorPage extends React.Component {
             const response = resp.data;
             if (response.error)
                 alert(response.error);
-            else
-                this.resourcesLoaded(response.data.value, success);
+            else {
+                const cursor = response.data.value;
+                this.resourcesLoaded(cursor.items, success);
+            }
         });
     }
 

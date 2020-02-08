@@ -74,7 +74,7 @@ export default class EditorNavBar extends React.Component {
                     <NavDropdown id="tools" title="Tools">
                         <MenuItem href="/" target="ProjectExplorer">Project explorer</MenuItem>
                         <MenuItem href="/data/index.html" target="DataExplorer">Data explorer</MenuItem>
-                        <MenuItem href="/store/index.page" target="StoreExplorer">Store explorer</MenuItem>
+                        <MenuItem href="/stores/index.page" target="StoreExplorer">Store explorer</MenuItem>
                     </NavDropdown>
                     <NavDropdown id="help" title="Help">
                         <MenuItem href="http://www.prompto.org/?section=tutorials" target="PromptoTutorials">Tutorials</MenuItem>

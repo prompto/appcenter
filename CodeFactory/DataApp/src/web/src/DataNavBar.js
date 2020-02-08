@@ -19,7 +19,7 @@ export default class DataNavBar extends React.Component {
             <Nav pullRight>
                 <NavDropdown title="Tools">
                     <MenuItem href="/" target="ProjectExplorer">Project explorer</MenuItem>
-                    <MenuItem href="/store/index.page" target="StoreExplorer">Store explorer</MenuItem>
+                    <MenuItem href="/stores/index.page" target="StoreExplorer">Store explorer</MenuItem>
                 </NavDropdown>
                 <NavDropdown title="Help">
                     <MenuItem href="http://www.prompto.org/?section=tutorials" target="PromptoTutorials">Tutorials</MenuItem>

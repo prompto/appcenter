@@ -126,17 +126,21 @@ export default class PromptoWorker extends Mirror {
                 this.$project = response.data.value;
                 if (loadDependencies)
                     this.loadDependencies();
-                if (this.$project.stubResource) {
+                if (this.$project.stubResource) try {
                     // resource location is absolute
-                    globals.importScripts("/" + this.$project.stubResource);
+                    globals.importScripts("/stub?moduleId=" + this.$project.dbId + "&resourceName=" + this.$project.stubResource);
+                } catch(e) {
+                    // TODO something
+                    const trace = e.stack;
+                    console.error(trace);
                 }
                 this.markLoaded("%Description%");
                 this.fetchModuleDeclarations(this.$projectId, response => {
                     if (response.error)
                         ; // TODO something
                     else {
-                        const declarations = response.data.value;
-                        this.$repo.registerProjectDeclarations(this.$projectId, declarations);
+                        const cursor = response.data.value;
+                        this.$repo.registerProjectDeclarations(this.$projectId, cursor.items);
                         this.markLoaded("Project");
                     }
                 });
@@ -159,17 +163,23 @@ export default class PromptoWorker extends Mirror {
             if(response.error)
                 ; // TODO something
             else {
-                const description = response.data.value;
-                if(description.stubResource) {
-                    // resource location is absolute
-                    globals.importScripts("/" + description.stubResource);
+                const library = response.data.value;
+                if(library.stubResource) {
+                    try {
+                        // resource location is absolute
+                        globals.importScripts("/stub?moduleId=" + library.dbId + "&resourceName=" + library.stubResource);
+                    } catch(e) {
+                        // TODO something
+                        const trace = e.stack;
+                        console.error(trace);
+                    }
                 }
-                this.fetchModuleDeclarations(description.dbId, response => {
+                this.fetchModuleDeclarations(library.dbId, response => {
                     if (response.error)
                         ; // TODO something
                     else {
-                        const declarations = response.data.value;
-                        this.$repo.registerLibraryDeclarations(declarations);
+                        const cursor = response.data.value;
+                        this.$repo.registerLibraryDeclarations(cursor.items);
                         this.markLoaded(dependency.name);
                     }
                 });
@@ -252,8 +262,8 @@ export default class PromptoWorker extends Mirror {
             if (response.error)
                 ; // TODO something
             else {
-                const declarations = response.data.value;
-                this.$repo.registerCommitted(declarations);
+                const cursor = response.data.value;
+                this.$repo.registerCommitted(cursor.items);
              }
         });
     }

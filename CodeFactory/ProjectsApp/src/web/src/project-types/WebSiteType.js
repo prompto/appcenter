@@ -22,7 +22,7 @@ export default class WebSiteType extends ProjectType {
         const state = this.params.state;
         if (state.iconFile) {
             const partName = "@" + state.iconFile.name;
-            module.value.image = { mimeType: state.iconFile.type, partName: partName };
+            module.value.image = { type: "Image", value: { mimeType: state.iconFile.type, partName: partName } };
         }
     }
 
@@ -39,7 +39,7 @@ export default class WebSiteType extends ProjectType {
         let image = null;
         if(state.iconFile) {
             const partName = "@" + state.iconFile.name;
-            image = { mimeType: state.iconFile.type, partName: partName };
+            image = { type: "Image", value: { mimeType: state.iconFile.type, partName: partName } };
         };
         const params = [
             {name: "image", type: "Image", value: image},

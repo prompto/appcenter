@@ -14,7 +14,12 @@ public class ReactBootstrap3PropTypes {
 	public static Map<String, Map<String, IPropertyValidator>> VALIDATORS = new HashMap<String, Map<String, IPropertyValidator>>() {
 		{
 			put("CarouselItem", Collections.singletonMap("onAnimateOutEnd", CALLBACK_VALIDATOR));
-			put("Panel", Collections.singletonMap("onSelect", CALLBACK_VALIDATOR));
+			put("Panel", new HashMap<String, IPropertyValidator>() {
+				{
+					put("onToggle", TOGGLE_CHANGED_VALIDATOR);
+					put("onSelect", CALLBACK_VALIDATOR);
+				}
+			});
 			put("PanelGroup", Collections.singletonMap("onSelect", ITEM_SELECTED_VALIDATOR));
 			put("PaginationButton", Collections.singletonMap("onSelect", CALLBACK_VALIDATOR));
 			put("Navbar", new HashMap<String, IPropertyValidator>() {
