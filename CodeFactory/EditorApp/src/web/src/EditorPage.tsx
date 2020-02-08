@@ -14,7 +14,12 @@ import Project from "./Project";
 
 export default class EditorPage extends React.Component {
 
-    constructor(props) {
+    projectId: string | null;
+    projectName: string | null;
+    state: { project: any | null, activity: Activity, content: any | null };
+    catalog: Catalog;
+
+    constructor(props:any) {
         super(props);
         this.projectId = getParam("dbId");
         this.projectName = getParam("name");
@@ -53,30 +58,30 @@ export default class EditorPage extends React.Component {
             alert("Missing project ID in URL!")
         else {
             this.loadDescription();
-            this.loadResources();
+            this.loadResources(null);
             this.loadCode(true);
             document.title = "Project: " + this.projectName;
         }
     }
 
-    setDialect(dialect) {
-        this.refs.ContentEditor.setDialect(dialect);
+    setDialect(dialect: any) {
+        this.getContentEditor().setDialect(dialect);
     }
 
     revert() {
         // TODO confirm
-        this.loadResources();
+        this.loadResources(null);
         this.loadCode(false);
     }
 
     commitAndReset() {
         // TODO confirm
-        this.refs.ContentEditor.prepareCommit(this.commitPrepared);
+        this.getContentEditor().prepareCommit(this.commitPrepared);
         this.clearModuleContext();
         return false;
     }
 
-    commitPrepared(declarations) {
+    commitPrepared(declarations: any[]) {
         let resources = this.catalog.prepareCommit();
         if((declarations && declarations.length) || (resources && resources.length)) {
             const formData = new FormData();
@@ -88,8 +93,8 @@ export default class EditorPage extends React.Component {
                 .then(response=>this.commitSuccessful(response))
                 .catch(error=>this.commitFailed(error));
         } else {
-            this.refs.MessageArea.setMessage("Nothing to commit!");
-            this.refs.ContentEditor.commitSuccessful();
+            this.getMessageArea().setMessage("Nothing to commit!");
+            this.getContentEditor().commitSuccessful();
         }
 
     }
@@ -272,9 +277,13 @@ export default class EditorPage extends React.Component {
 
 
     getContentEditor() {
-        return this.refs.ContentEditor;
+        return this.refs.ContentEditor as ContentEditor;
     }
 
+
+    getMessageArea() {
+        return this.refs.MessageArea as MessageArea;
+    }
 
     setEditorContent(content, callback) {
         if(!content)
