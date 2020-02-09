@@ -1,0 +1,14 @@
+localMongoStore: &localMongoStore
+  factory: prompto.store.mongo.MongoStoreFactory
+  host: localhost
+  port: 27017
+
+http:
+  protocol: https
+  port: 443
+  authentication:
+    source:
+      factory: prompto.security.auth.source.StoredPasswordDigestAuthenticationSourceFactory
+      store:
+        <<: *localMongoStore
+        dbName: SEED-LOGIN

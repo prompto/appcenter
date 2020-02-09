@@ -7,6 +7,10 @@ mongoStore: &homeMongoStore
     factory: prompto.security.PlainSecretKeyFactory
     secret: prompto
     
+codeStore: 
+  <<: *homeMongoStore
+  dbName: FACTORY-SEED
+
 dataStore: 
   <<: *homeMongoStore
   dbName: APPS

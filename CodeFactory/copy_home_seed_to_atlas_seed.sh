@@ -1,2 +1,2 @@
 #!/bin/bash
-./mongo_copy.sh "atlas" "FACTORY-SEED" "local" "FACTORY"
+./mongo_copy.sh "home" "FACTORY-SEED" "atlas" "FACTORY"
