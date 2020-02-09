@@ -258,8 +258,7 @@ export default class Repository {
 
     handleEditContent(content, dialect, listener, selected) {
         // analyze what has changed, we'll ignore errors but let's catch them using a temporary listener
-        var previousListener = Object.create(listener);
-        var old_decls = parse(this.lastSuccess, this.lastDialect, previousListener);
+        var old_decls = parse(this.lastSuccess, this.lastDialect, new prompto.problem.ProblemCollector());
         // always annotate new content
         var parser = newParser(content, dialect, listener);
         var new_decls = parser.parse();
