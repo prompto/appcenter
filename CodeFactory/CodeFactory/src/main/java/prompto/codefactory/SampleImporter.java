@@ -3,9 +3,13 @@ package prompto.codefactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Paths;
+import java.nio.file.spi.FileSystemProvider;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 
 import prompto.code.ICodeStore;
 import prompto.code.ImmutableCodeStore;
@@ -110,6 +114,7 @@ public class SampleImporter {
 	}
 	
 	private void storeResource(ICodeStore codeStore, URL resourceUrl) throws Exception {
+		initializeJarFileSystem(resourceUrl.toURI());
 		String fileName = Paths.get(resourceUrl.toURI()).getFileName().toString();
 		String fullName = module.getName().toLowerCase().replaceAll(" ", "-") + "/" + fileName;
 		TextResource resource = new TextResource();
@@ -121,5 +126,19 @@ public class SampleImporter {
 		codeStore.storeResource(resource, module.getDbId());
 	}
 
+	private void initializeJarFileSystem(URI uri) throws IOException {
+		if("jar".equals(uri.getScheme())) {
+		  for (FileSystemProvider provider: FileSystemProvider.installedProviders()) {
+		        if (provider.getScheme().equalsIgnoreCase("jar")) {
+		            try {
+		                provider.getFileSystem(uri);
+		            } catch (FileSystemNotFoundException e) {
+		                // in this case we need to initialize it first:
+		                provider.newFileSystem(uri, Collections.emptyMap());
+		            }
+		        }
+		    }
+		}
+	}
 
 }
