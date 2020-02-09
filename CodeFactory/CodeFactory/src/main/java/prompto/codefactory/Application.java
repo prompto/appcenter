@@ -13,6 +13,7 @@ import prompto.code.ICodeStore;
 import prompto.code.ImmutableCodeStore;
 import prompto.code.Library;
 import prompto.code.Module;
+import prompto.code.ModuleStatus;
 import prompto.code.QueryableCodeStore;
 import prompto.config.CodeFactoryConfiguration;
 import prompto.config.ICodeFactoryConfiguration;
@@ -211,6 +212,7 @@ public class Application {
 		library.setName(name);
 		library.setDescription(description);
 		library.setVersion(version);
+		library.setModuleStatus(ModuleStatus.PROVIDED);
 		if(dependencies!=null && dependencies.length>0)
 			library.setDependencies(Arrays.asList(dependencies));
 		URL url = Thread.currentThread().getContextClassLoader().getResource(resource);

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import prompto.code.Batch;
 import prompto.code.Dependency;
 import prompto.code.Module;
+import prompto.code.ModuleStatus;
 import prompto.code.Service;
 import prompto.code.WebLibrary;
 import prompto.intrinsic.PromptoVersion;
@@ -26,6 +27,9 @@ public class ModulePopulator {
 		module.setName(readText(descriptor, "name"));
 		module.setVersion(PromptoVersion.parse(readText(descriptor, "version")));
 		module.setDescription(readText(descriptor, "description"));
+		String value = readText(descriptor, "moduleStatus");
+		ModuleStatus moduleStatus = value==null ? ModuleStatus.PROVIDED : ModuleStatus.valueOf(value);
+		module.setModuleStatus(moduleStatus);
 		JsonNode dependencies = descriptor.get("dependencies");
 		if(dependencies!=null)
 			module.setDependencies(populateDependencies(dependencies));
