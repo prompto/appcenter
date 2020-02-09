@@ -11,8 +11,9 @@ export default class DependenciesDialog extends React.Component {
         super(props);
         this.allLibraries = [];
         const project = this.getProject();
-        const deps = project.dependencies.value.filter(d => d!=null).map(d => { return { instance: d.value, label: d.value.name + " - " + d.value.version.value }; } )
-        this.state = {show: true, dependencies: deps, libraries: []};
+        let  dependencies = project.dependencies || { type: "Dependency[]", value: [] };
+        dependencies = dependencies.value.filter(d => d!=null).map(d => { return { instance: d.value, label: d.value.name + " - " + d.value.version.value }; } );
+        this.state = {show: true, dependencies: dependencies, libraries: []};
         this.handleSave = this.handleSave.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
@@ -67,7 +68,7 @@ export default class DependenciesDialog extends React.Component {
 
     saveDependencies(project) {
         const dependencies = this.state.dependencies.map(dep=>{ return {type: "Dependency", value: dep.instance }});
-        project.value.dependencies.value = dependencies;
+        project.value.dependencies = { type: "Dependency[]", value: dependencies };
         const formData = new FormData();
         const params = [ {name: "module", type: project.type, value: project.value} ];
         formData.append("params", JSON.stringify(params));

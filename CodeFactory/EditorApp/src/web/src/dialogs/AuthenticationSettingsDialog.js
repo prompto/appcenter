@@ -38,7 +38,7 @@ export default class AuthenticationSettingsDialog extends React.Component {
             state.source = NAME_TO_AUTH_SOURCE_MAP[settings.authenticationSource.type];
             state.source.setStateFromValue(settings.authenticationSource.value, this.state);
         } else
-            state.source = NAME_TO_AUTH_SOURCE_MAP["STORE"];
+            state.source = NAME_TO_AUTH_SOURCE_MAP["DataStoreAuthenticationSource"];
         state.useTestSourceInDev = settings.useTestSourceInDev || false;
         state.useDefaultWhiteList = settings.useDefaultWhiteList || false;
         state.whiteList = (settings.whiteList || {}).value || [];
