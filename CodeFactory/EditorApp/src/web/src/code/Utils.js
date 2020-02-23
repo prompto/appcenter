@@ -91,10 +91,16 @@ export const getFirstCodebaseEntry = function(codebase) {
 export const getContentFromEntry = function(entry) {
     const subType = entry.key==="categories" ? "category" : entry.key.substring(0, entry.key.length-1);
     let content = { type: "prompto", subType: subType, core: false };
-    if(subType==="method") {
-        content.name = entry.value.name;
-        content.proto = entry.value.protos[0].proto;
-    } else
-        content.name = entry.value;
+    switch(subType) {
+        case "method":
+            content.name = entry.value.name;
+            content.proto = entry.value.protos[0].proto;
+            break;
+        case "enumeration":
+            content.name = entry.value.name;
+            break;
+        default:
+            content.name = entry.value;
+    }
     return content;
 }

@@ -165,7 +165,9 @@ export default class EditorPage extends React.Component {
     catalogUpdated(delta, callback) {
         this.catalog.applyDelta(delta);
         let content = null;
-        if(delta.selected)
+        if(delta.created)
+            content = {type: "Prompto", value: {name: delta.created}};
+        else if(delta.selected)
             content = {type: "Prompto", value: {name: delta.selected}};
         else if(delta.project) {
             if(this.state.activity===Activity.Loading)
