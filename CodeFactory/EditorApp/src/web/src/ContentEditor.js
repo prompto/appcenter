@@ -48,8 +48,8 @@ export default class ContentEditor extends React.Component {
         this.refs.PromptoEditor.commitFailed();
     }
 
-    commitSuccessful() {
-        this.refs.PromptoEditor.commitSuccessful();
+    commitSuccessfull() {
+        this.refs.PromptoEditor.commitSuccessfull();
     }
 
     runTestOrMethod(content, runMode) {

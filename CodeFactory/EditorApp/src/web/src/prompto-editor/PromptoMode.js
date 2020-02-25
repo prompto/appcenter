@@ -54,8 +54,8 @@ export default class PromptoMode extends window.ace.acequire("ace/mode/text")
             this.$worker && this.$worker.send("commitFailed", [ dbId ] );
         }
 
-        commitSuccessful(dbId) {
-            this.$worker && this.$worker.send("commitSuccessful", [ dbId ] );
+        commitSuccessfull(dbId) {
+            this.$worker && this.$worker.send("commitSuccessfull", [ dbId ] );
         };
 
         runTestOrMethod(id, mode, callback) {

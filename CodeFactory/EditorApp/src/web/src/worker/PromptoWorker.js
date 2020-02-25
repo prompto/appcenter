@@ -257,7 +257,7 @@ export default class PromptoWorker extends Mirror {
         // keep state as is
     }
 
-    commitSuccessful() {
+    commitSuccessfull() {
         this.fetchModuleDeclarations(this.$projectId, response => {
             if (response.error)
                 ; // TODO something

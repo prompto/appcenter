@@ -315,8 +315,8 @@ export default class PromptoEditor extends React.Component {
         this.getSession().getMode().commitFailed();
     }
 
-    commitSuccessful() {
-        this.getSession().getMode().commitSuccessful();
+    commitSuccessfull() {
+        this.getSession().getMode().commitSuccessfull();
         this.saveBreakpoints();
     }
 
