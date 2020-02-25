@@ -228,6 +228,18 @@ export default function Catalog() {
         else
             return null;
     };
+    this.commitSuccessfull = function() {
+        var statuses = this.resources.statuses;
+        for (var id in statuses) {
+            if (statuses.hasOwnProperty(id)) {
+                var status = statuses[id].editStatus;
+                if (status === "DELETED")
+                    delete this.resources.statuses[id];
+                else
+                    this.resources.statuses[id].editStatus = "CLEAN";
+            }
+        }
+    };
 
     // clear
     this.clearResources();

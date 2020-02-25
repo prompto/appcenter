@@ -25,7 +25,7 @@ export default class EditorPage extends React.Component {
         this.commitAndReset = this.commitAndReset.bind(this);
         this.commitPrepared = this.commitPrepared.bind(this);
         this.commitFailed = this.commitFailed.bind(this);
-        this.commitSuccessful = this.commitSuccessful.bind(this);
+        this.commitSuccessfull = this.commitSuccessfull.bind(this);
         this.clearModuleContext = this.clearModuleContext.bind(this);
         this.textResourceEdited = this.textResourceEdited.bind(this);
         this.renameResource = this.renameResource.bind(this);
@@ -85,11 +85,11 @@ export default class EditorPage extends React.Component {
             const stuff = (declarations || []).concat(resources || []);
             formData.append("params", JSON.stringify([{name: "edited", type: "EditedStuff[]", value: stuff}]));
             axios.post('/ws/run/storeEdited', formData)
-                .then(response=>this.commitSuccessful(response))
+                .then(response=>this.commitSuccessfull(response))
                 .catch(error=>this.commitFailed(error));
         } else {
             this.refs.MessageArea.setMessage("Nothing to commit!");
-            this.refs.ContentEditor.commitSuccessful();
+            this.refs.ContentEditor.commitSuccessfull();
         }
 
     }
@@ -99,9 +99,10 @@ export default class EditorPage extends React.Component {
         this.refs.ContentEditor.commitFailed();
     }
 
-    commitSuccessful(success) {
+    commitSuccessfull(success) {
         this.refs.MessageArea.setMessage("Commit ok!");
-        this.refs.ContentEditor.commitSuccessful();
+        this.refs.ContentEditor.commitSuccessfull();
+        this.catalog.commitSuccessfull();
         this.clearModuleContext();
     }
 
