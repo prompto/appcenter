@@ -102,7 +102,7 @@ export default class EditorPage extends React.Component {
     commitSuccessfull(success) {
         this.refs.MessageArea.setMessage("Commit ok!");
         this.refs.ContentEditor.commitSuccessfull();
-        this.catalog.commitSuccessfull();
+        this.loadResources()
         this.clearModuleContext();
     }
 
