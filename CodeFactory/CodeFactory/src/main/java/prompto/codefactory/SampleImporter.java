@@ -128,14 +128,14 @@ public class SampleImporter {
 		return true;
 	}
 
-	private void updateDependencies(ICodeStore codeStore, PromptoVersion version) {
+	private void updateDependencies(ICodeStore codeStore, PromptoVersion minVersion) {
 		StreamSupport.stream(codeStore.fetchAllModules().spliterator(), false)
 			.filter(m->m.hasDependency(module.getName()))
 			.forEach(m->{
 				Dependency d = m.getDependency(module.getName());
-				if(d.getVersion().asInt() >= version.asInt()) {
-					d.setVersion(version);
-					codeStore.storeModule(m);
+				if(d.getVersion().asInt() >= minVersion.asInt() && d.getVersion().asInt()<module.getVersion().asInt()) {
+					d.setVersion(module.getVersion());
+					codeStore.storeDependency(d);
 				}
 			});
 	}
