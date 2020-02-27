@@ -28,7 +28,7 @@ public class PropTypesConverter {
 		PropTypesExtractor.extractPropTypes(node_modules, "react-overlays", "lib", propTypesMap);
 		PropTypesExtractor.extractPropTypes(node_modules, "react-bootstrap", "es", propTypesMap);
 		// react-bootstrap-3
-		File widget_dir = new File("src/main/resources/react-bootstrap-3/");
+		File widget_dir = new File("src/main/resources/libraries/react-bootstrap-3/");
 		DeclarationList decls = readWidgetDeclarations(new File(widget_dir, "React-Bootstrap-3.poc"));
 		attachPropTypes(propTypesMap, decls);
 		writeWidgetDeclarations(new File(widget_dir, "React-Bootstrap-3.poc"), decls);

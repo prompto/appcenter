@@ -65,6 +65,15 @@ self.ReactBootstrap = {
 	ButtonGroup: React.Component,
 	ToggleButtonGroup: React.Component,
 	ToggleButton: React.Component,
+	Pagination: React.Component,
+	PaginationItem: React.Component,
+	PaginationFirst: React.Component,
+	PaginationLast: React.Component,
+	PaginationNext: React.Component,
+	PaginationPrevious: React.Component,
+	PaginationEllipsis: React.Component,
+	Pager: React.Component,
+	PagerItem: React.Component,
     Typeahead: React.Component,
     DatePicker: React.Component
 };

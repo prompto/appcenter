@@ -37,7 +37,6 @@ native widget Radio {
 	
 }
 
-
 native widget InputGroup {
 
 	category bindings {
@@ -457,7 +456,7 @@ native widget NavbarForm {
 	
 }
 
-@WidgetProperties({unmountOnExit:{type:Boolean, help:"Unmount tabs (remove it from the DOM) when it is no longer visible"}, bsStyle:{values:<"pills", "tabs">, help:"Navigation style", required:false}, defaultActiveKey:{type:any}, activeKey:{type:any, help:"Mark the Tab with a matching `eventKey` as active.@controllable onSelect"}, id:<Integer, Text>, animation:{types:<Boolean, Text>, help:"Sets a default animation strategy. Use `false` to disable, `true` to enable the default `<Fade>` animation, or a react-transition-group v2 `<Transition/>` component."}, onSelect:{type:ItemSelectedCallback, help:"Callback fired when a Tab is selected.```js function ( Any eventKey, SyntheticEvent event? ) ``` @controllable activeKey"}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount tabs (add them to the DOM)"}})
+@WidgetProperties({unmountOnExit:{type:Boolean, help:"Unmount tabs (remove it from the DOM) when it is no longer visible"}, bsStyle:{values:<"pills", "tabs">, help:"Navigation style", required:false}, defaultActiveKey:{type: any}, activeKey:{type:any, help:"Mark the Tab with a matching `eventKey` as active.@controllable onSelect"}, id:<Integer, Text>, animation:{types:<Boolean, Text>, help:"Sets a default animation strategy. Use `false` to disable, `true` to enable the default `<Fade>` animation, or a react-transition-group v2 `<Transition/>` component."}, onSelect:{type:ItemSelectedCallback, help:"Callback fired when a Tab is selected.```js function ( Any eventKey, SyntheticEvent event? ) ``` @controllable activeKey"}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount tabs (add them to the DOM)"}})
 native widget Tabs {
 
 	category bindings {
@@ -672,8 +671,8 @@ native widget ToggleButton {
 	Html method render () {
 		JavaScript: return this.render();
 	}
+	
 }
-
 
 native widget Pagination {
 
@@ -684,6 +683,7 @@ native widget Pagination {
 	Html method render () {
 		JavaScript: return this.render();
 	}
+	
 }
 
 native widget PaginationItem {
@@ -695,6 +695,7 @@ native widget PaginationItem {
 	Html method render () {
 		JavaScript: return this.render();
 	}
+	
 }
 
 native widget PaginationFirst {
@@ -718,8 +719,8 @@ native widget PaginationLast {
 	Html method render () {
 		JavaScript: return this.render();
 	}
+	
 }
-
 
 native widget PaginationNext {
 
@@ -730,6 +731,7 @@ native widget PaginationNext {
 	Html method render () {
 		JavaScript: return this.render();
 	}
+	
 }
 
 native widget PaginationPrevious {
@@ -741,6 +743,7 @@ native widget PaginationPrevious {
 	Html method render () {
 		JavaScript: return this.render();
 	}
+	
 }
 
 native widget PaginationEllipsis {
@@ -752,9 +755,10 @@ native widget PaginationEllipsis {
 	Html method render () {
 		JavaScript: return this.render();
 	}
+	
 }
 
-
+@WidgetProperties({onSelect:Callback})
 native widget Pager {
 
 	category bindings {
@@ -764,8 +768,10 @@ native widget Pager {
 	Html method render () {
 		JavaScript: return this.render();
 	}
+	
 }
 
+@WidgetProperties({next:Boolean, onClick:ClickEventCallback, previous:Boolean, eventKey:any, disabled:Boolean, onSelect:Callback})
 native widget PagerItem {
 
 	category bindings {
@@ -775,8 +781,8 @@ native widget PagerItem {
 	Html method render () {
 		JavaScript: return this.render();
 	}
+	
 }
-
 
 native widget Typeahead {
 
