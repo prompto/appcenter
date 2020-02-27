@@ -91,6 +91,10 @@ public abstract class PropTypesExtractor {
 		if(line.endsWith(";"))
 			line = line.substring(0, line.length() - 1);
 		line = line.trim();
+		if(line.startsWith("class "))
+			line = line.substring("class ".length()).trim();
+		if(line.contains(" extends "))
+			line = line.substring(0, line.indexOf(" extends ")).trim();
 		if(line.startsWith("bsClass") || line.startsWith("setBsClass") || line.startsWith("bsStyles")) {
 			line = line.substring(line.lastIndexOf(",") + 1);
 			while(line.endsWith(")"))
@@ -110,6 +114,7 @@ public abstract class PropTypesExtractor {
 	private static String extractPropTypesName(List<String> lines, String widgetName) {
 		return lines.stream()
 				.filter(line->line.startsWith(widgetName + ".propTypes = "))
+				.filter(line->!line.contains("{"))
 				.map(line->{
 					line = line.substring((widgetName + ".propTypes = ").length());
 					if(line.endsWith(";"))

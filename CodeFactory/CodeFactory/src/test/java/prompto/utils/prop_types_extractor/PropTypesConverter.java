@@ -27,6 +27,8 @@ public class PropTypesConverter {
 		File node_modules = new File("../EditorApp/src/web/node_modules/");
 		PropTypesExtractor.extractPropTypes(node_modules, "react-overlays", "lib", propTypesMap);
 		PropTypesExtractor.extractPropTypes(node_modules, "react-bootstrap", "es", propTypesMap);
+		node_modules = new File("../../../prompto-widgets/react-bootstrap-3/");
+		PropTypesExtractor.extractPropTypes(node_modules, "src", "datepicker", propTypesMap);
 		// react-bootstrap-3
 		File widget_dir = new File("src/main/resources/libraries/react-bootstrap-3/");
 		DeclarationList decls = readWidgetDeclarations(new File(widget_dir, "React-Bootstrap-3.poc"));
