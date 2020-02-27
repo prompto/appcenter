@@ -1,4 +1,4 @@
-@WidgetProperties({onClick:ClickEventCallback, componentClass:Text, active:Boolean, disabled:Boolean, block:Boolean, href:Text, type:{values:<"button", "submit", "reset">, help:"Defines HTML button type attribute @defaultValue 'button'", required:true}})
+@WidgetProperties({onClick:ClickEventCallback, componentClass:Text, active:Boolean, disabled:Boolean, block:Boolean, href:Text, type:{values:<"button", "submit", "reset">, help:"Defines HTML button type attribute @defaultValue 'button'", required:true}, bsStyle:{values:<"default", "primary", "link", "inverse">, required:false}})
 native widget Button {
 
 	category bindings {
@@ -36,6 +36,7 @@ native widget Radio {
 	}
 	
 }
+
 
 native widget InputGroup {
 
@@ -163,7 +164,7 @@ native widget Modal {
 	
 }
 
-@WidgetProperties({dialogClassName:{type:Text, help:"A css class to apply to the Modal dialog DOM node."}})
+@WidgetProperties({dialogClassName:{type:Text, help:"A css class to apply to the Modal dialog DOM node."}, bsSize:{values:<"large", "small", "xsmall">, required:false}})
 native widget ModalDialog {
 
 	category bindings {
@@ -456,7 +457,7 @@ native widget NavbarForm {
 	
 }
 
-@WidgetProperties({unmountOnExit:{type:Boolean, help:"Unmount tabs (remove it from the DOM) when it is no longer visible"}, bsStyle:{values:<"pills", "tabs">, help:"Navigation style", required:true}, defaultActiveKey:{type:any}, activeKey:{type:any, help:"Mark the Tab with a matching `eventKey` as active.@controllable onSelect"}, id:<Integer, Text>, animation:{types:<Boolean, Text>, help:"Sets a default animation strategy. Use `false` to disable, `true` to enable the default `<Fade>` animation, or a react-transition-group v2 `<Transition/>` component."}, onSelect:{type:ItemSelectedCallback, help:"Callback fired when a Tab is selected.```js function ( Any eventKey, SyntheticEvent event? ) ``` @controllable activeKey"}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount tabs (add them to the DOM)"}})
+@WidgetProperties({unmountOnExit:{type:Boolean, help:"Unmount tabs (remove it from the DOM) when it is no longer visible"}, bsStyle:{values:<"pills", "tabs">, help:"Navigation style", required:false}, defaultActiveKey:{type:any}, activeKey:{type:any, help:"Mark the Tab with a matching `eventKey` as active.@controllable onSelect"}, id:<Integer, Text>, animation:{types:<Boolean, Text>, help:"Sets a default animation strategy. Use `false` to disable, `true` to enable the default `<Fade>` animation, or a react-transition-group v2 `<Transition/>` component."}, onSelect:{type:ItemSelectedCallback, help:"Callback fired when a Tab is selected.```js function ( Any eventKey, SyntheticEvent event? ) ``` @controllable activeKey"}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount tabs (add them to the DOM)"}})
 native widget Tabs {
 
 	category bindings {
@@ -671,8 +672,111 @@ native widget ToggleButton {
 	Html method render () {
 		JavaScript: return this.render();
 	}
+}
+
+
+native widget Pagination {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Pagination;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+}
+
+native widget PaginationItem {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Pagination.Item;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+}
+
+native widget PaginationFirst {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Pagination.First;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
 	
 }
+
+native widget PaginationLast {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Pagination.Last;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+}
+
+
+native widget PaginationNext {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Pagination.Next;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+}
+
+native widget PaginationPrevious {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Pagination.Previous;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+}
+
+native widget PaginationEllipsis {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Pagination.Ellipsis;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+}
+
+
+native widget Pager {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Pager;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+}
+
+native widget PagerItem {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Pager.Item;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+}
+
 
 native widget Typeahead {
 

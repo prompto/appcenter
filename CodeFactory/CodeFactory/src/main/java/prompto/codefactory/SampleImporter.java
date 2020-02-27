@@ -10,7 +10,9 @@ import java.nio.file.Paths;
 import java.nio.file.spi.FileSystemProvider;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.stream.StreamSupport;
 
+import prompto.code.Dependency;
 import prompto.code.ICodeStore;
 import prompto.code.ImmutableCodeStore;
 import prompto.code.Module;
@@ -31,6 +33,7 @@ public class SampleImporter {
 	static Logger logger = new Logger();
 
 	Module module;
+	PromptoVersion migrateFrom;
 	URL imageResource;
 	URL codeResource;
 	URL nativeResource;
@@ -51,11 +54,17 @@ public class SampleImporter {
 			Module module = newModule(descriptor);
 			populateModule(module, descriptor);
 			populateResources(url, descriptor);
+			populateMigrateFrom(descriptor);
 			// done
 			this.module = module;
 		} catch(Exception e) {
 			e.printStackTrace(System.err);
 		}
+	}
+
+	private void populateMigrateFrom(JsonNode descriptor) {
+		if(descriptor.get("migrateFrom")!=null)
+			this.migrateFrom = PromptoVersion.parse(descriptor.get("migrateFrom").asText());
 	}
 
 	private void populateResources(URL url, JsonNode descriptor) throws MalformedURLException {
@@ -93,6 +102,45 @@ public class SampleImporter {
 		Module existing = codeStore.fetchModule(module.getType(), module.getName(), module.getVersion());
 		if(existing!=null)
 			return false;
+		Module toMigrate = fetchModuleToMigrate(codeStore);
+		if(toMigrate==null)
+			return createModule(codeStore);
+		else
+			return migrateModule(codeStore, toMigrate);
+	}
+
+	private Module fetchModuleToMigrate(ICodeStore codeStore) {
+		if(migrateFrom==null)
+			return null;
+		else
+			return StreamSupport.stream(codeStore.fetchAllModules().spliterator(), false)
+					.filter(m->m.getName().equals(module.getName()))
+					.filter(m->m.getVersion().asInt() >= migrateFrom.asInt())
+					.filter(m->m.getVersion().asInt() < module.getVersion().asInt())
+					.findFirst()
+					.orElse(null);
+	}
+
+	private boolean migrateModule(ICodeStore codeStore, Module existing) throws Exception {
+		createModule(codeStore);
+		updateDependencies(codeStore, existing.getVersion());
+		codeStore.dropModule(existing);
+		return true;
+	}
+
+	private void updateDependencies(ICodeStore codeStore, PromptoVersion version) {
+		StreamSupport.stream(codeStore.fetchAllModules().spliterator(), false)
+			.filter(m->m.hasDependency(module.getName()))
+			.forEach(m->{
+				Dependency d = m.getDependency(module.getName());
+				if(d.getVersion().asInt() >= version.asInt()) {
+					d.setVersion(version);
+					codeStore.storeModule(m);
+				}
+			});
+	}
+
+	private boolean createModule(ICodeStore codeStore) throws Exception {
 		logger.info(()->"Importing module: " + module.getName() + " - " + module.getVersion());
 		if(imageResource!=null)
 			module.setImage(ImageValue.fromURL(imageResource).getStorableData());
