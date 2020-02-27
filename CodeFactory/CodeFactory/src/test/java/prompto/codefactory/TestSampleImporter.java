@@ -27,7 +27,6 @@ public class TestSampleImporter {
 		TempDirectories.create();
 		Mode.set(Mode.UNITTEST);
 		Standalone.bootstrapCodeStore(new MemStore(), newRuntimeConfig());
-
 	}
 	
 	private IRuntimeConfiguration newRuntimeConfig() {
