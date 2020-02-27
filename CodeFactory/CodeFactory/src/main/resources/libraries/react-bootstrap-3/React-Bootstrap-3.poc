@@ -1,4 +1,4 @@
-@WidgetProperties({onClick:ClickEventCallback, componentClass:Text, active:Boolean, disabled:Boolean, block:Boolean, href:Text, type:{values:<"button", "submit", "reset">, help:"Defines HTML button type attribute @defaultValue 'button'", required:true}, bsStyle:{values:<"default", "primary", "link", "inverse">, required:false}})
+@WidgetProperties({onClick:ClickEventCallback, componentClass:Text, active:Boolean, disabled:Boolean, block:Boolean, href:Text, type:{values:<"button", "submit", "reset">, help:"Defines HTML button type attribute @defaultValue 'button'", required:false}, bsStyle:<"default", "primary", "success", "info", "warning", "danger", "link", null>})
 native widget Button {
 
 	category bindings {
@@ -163,7 +163,7 @@ native widget Modal {
 	
 }
 
-@WidgetProperties({dialogClassName:{type:Text, help:"A css class to apply to the Modal dialog DOM node."}, bsSize:{values:<"large", "small", "xsmall">, required:false}})
+@WidgetProperties({dialogClassName:{type:Text, help:"A css class to apply to the Modal dialog DOM node."}, bsSize: <"large", "small", null>})
 native widget ModalDialog {
 
 	category bindings {
@@ -456,7 +456,7 @@ native widget NavbarForm {
 	
 }
 
-@WidgetProperties({unmountOnExit:{type:Boolean, help:"Unmount tabs (remove it from the DOM) when it is no longer visible"}, bsStyle:{values:<"pills", "tabs">, help:"Navigation style", required:false}, defaultActiveKey:{type: any}, activeKey:{type:any, help:"Mark the Tab with a matching `eventKey` as active.@controllable onSelect"}, id:<Integer, Text>, animation:{types:<Boolean, Text>, help:"Sets a default animation strategy. Use `false` to disable, `true` to enable the default `<Fade>` animation, or a react-transition-group v2 `<Transition/>` component."}, onSelect:{type:ItemSelectedCallback, help:"Callback fired when a Tab is selected.```js function ( Any eventKey, SyntheticEvent event? ) ``` @controllable activeKey"}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount tabs (add them to the DOM)"}})
+@WidgetProperties({unmountOnExit:{type:Boolean, help:"Unmount tabs (remove it from the DOM) when it is no longer visible"}, bsStyle:{values:<"pills", "tabs">, help:"Navigation style", required:false}, defaultActiveKey:{type:any}, activeKey:{type:any, help:"Mark the Tab with a matching `eventKey` as active.@controllable onSelect"}, id:<Integer, Text>, animation:{types:<Boolean, Text>, help:"Sets a default animation strategy. Use `false` to disable, `true` to enable the default `<Fade>` animation, or a react-transition-group v2 `<Transition/>` component."}, onSelect:{type:ItemSelectedCallback, help:"Callback fired when a Tab is selected.```js function ( Any eventKey, SyntheticEvent event? ) ``` @controllable activeKey"}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount tabs (add them to the DOM)"}})
 native widget Tabs {
 
 	category bindings {
@@ -796,6 +796,7 @@ native widget Typeahead {
 	
 }
 
+@WidgetProperties({showTodayButton:Boolean, minDate:Date, previousButtonElement:any, roundedCorners:Boolean, bsSize:Text, onClear:Callback, defaultValue:Date, autoFocus:Boolean, required:Boolean, todayButtonLabel:Text, showWeeks:Boolean, disabled:Boolean, placeholder:Text, value:Date, weekStartsOn:Integer, autoComplete:Text, calendarPlacement:<null, Text>, onChange:DateChangedCallback, bsClass:Text, dateFormat:<"MM/DD/YYYY", "DD/MM/YYYY", "YYYY/MM/DD", "DD-MM-YYYY", null>, showClearButton:Boolean, noValidate:Boolean, calendarContainer:any, clearButtonElement:<null, Text>, onInvalid:any, onFocus:Callback, dayLabels:any, onBlur:Callback, instanceCount:Integer, customControl:any, name:Text, maxDate:Date, monthLabels:any, nextButtonElement:any, cellPadding:Text})
 native widget DatePicker {
 
 	category bindings {
