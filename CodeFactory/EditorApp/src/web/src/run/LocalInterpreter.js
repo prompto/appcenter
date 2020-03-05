@@ -14,12 +14,12 @@ export default class LocalInterpreter extends Runner {
     }
 
     runTest(repo, content, callback) {
-        const store = prompto.store.DataStore.instance;
-        prompto.store.DataStore.instance = new prompto.memstore.MemStore();
+        const store = prompto.store.$DataStore.instance;
+        prompto.store.$DataStore.instance = new prompto.memstore.MemStore();
         try {
             prompto.runtime.Interpreter.interpretTest(repo.projectContext, content.name);
         } finally {
-            prompto.store.DataStore.instance = store;
+            prompto.store.$DataStore.instance = store;
             callback();
         }
     }
