@@ -11,6 +11,7 @@ const log = function() {
     });
 };
 
+globals.logDebug = console.log;
 console.error = console.warn = console.log = console.trace = log;
 
 /* not Webpacking this yet because that would require webpacking and installing prompto runtime too, which is not ready yet */
