@@ -28,6 +28,9 @@ export default class Repository {
         this.statuses = {};
     }
 
+    reset() {
+        this.lastSuccess = "";
+    }
 
     registerLibraryCode(code, dialect) {
         var decls = parse(code, dialect);

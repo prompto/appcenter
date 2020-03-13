@@ -83,6 +83,7 @@ export default class PromptoWorker extends Mirror {
             this.$value = "";
             this.$selectedContent = false;
             this.$core = false;
+            this.$repo.reset();
         } else if(content.name) {
             // don't replace newly created declaration body
             if(content.name !== this.$created)
