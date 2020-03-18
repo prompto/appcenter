@@ -1,4 +1,4 @@
-@WidgetProperties({preview: Image, dragLabel:Text, dropLabel:Text, onDrop:FileRefCallback})
+@WidgetProperties({preview: Image, acceptAll: Boolean, dragLabel:Text, readyLabel:Text, onDrop:FileRefCallback})
 native widget FileUploader {
 
 	category bindings {
