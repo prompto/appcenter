@@ -10,6 +10,8 @@ import java.nio.file.Paths;
 import java.nio.file.spi.FileSystemProvider;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import prompto.code.Dependency;
@@ -102,14 +104,12 @@ public class SampleImporter {
 		Module existing = codeStore.fetchModule(module.getType(), module.getName(), module.getVersion());
 		if(existing!=null)
 			return false;
-		Module toMigrate = fetchModuleToMigrate(codeStore);
-		if(toMigrate==null)
-			return createModule(codeStore);
-		else
-			return migrateModule(codeStore, toMigrate);
+		createModule(codeStore);
+		List<Module> toMigrate = fetchModulesToMigrate(codeStore);
+		return migrateModules(codeStore, toMigrate);
 	}
 
-	private Module fetchModuleToMigrate(ICodeStore codeStore) {
+	private List<Module> fetchModulesToMigrate(ICodeStore codeStore) {
 		if(migrateFrom==null)
 			return null;
 		else
@@ -117,14 +117,15 @@ public class SampleImporter {
 					.filter(m->m.getName().equals(module.getName()))
 					.filter(m->m.getVersion().asInt() >= migrateFrom.asInt())
 					.filter(m->m.getVersion().asInt() < module.getVersion().asInt())
-					.findFirst()
-					.orElse(null);
+					.collect(Collectors.toList());
 	}
 
-	private boolean migrateModule(ICodeStore codeStore, Module existing) throws Exception {
+	private boolean migrateModules(ICodeStore codeStore, List<Module> toMigrate) throws Exception {
 		createModule(codeStore);
-		updateDependencies(codeStore, existing.getVersion());
-		codeStore.dropModule(existing);
+		for(Module existing : toMigrate) {
+			updateDependencies(codeStore, existing.getVersion());
+			codeStore.dropModule(existing);
+		}
 		return true;
 	}
 
@@ -140,7 +141,7 @@ public class SampleImporter {
 			});
 	}
 
-	private boolean createModule(ICodeStore codeStore) throws Exception {
+	private void createModule(ICodeStore codeStore) throws Exception {
 		logger.info(()->"Importing module: " + module.getName() + " - " + module.getVersion());
 		if(imageResource!=null)
 			module.setImage(ImageValue.fromURL(imageResource).getStorableData());
@@ -153,7 +154,6 @@ public class SampleImporter {
 			if(stubResource!=null) 
 				storeResource(codeStore, stubResource);
 		}
-		return true;
 	}
 
 	private void storeAssociatedCode(ICodeStore codeStore) throws Exception {
