@@ -1,7 +1,8 @@
 {
 	"type" : "WEBLIBRARY",
 	"name" : "React-File-Uploader",
-	"version" : "1.0.1",
+	"version" : "1.0.2",
+	"migrateFrom" : "1.0.0",
 	"description" : "File upload widget",
     "htmlEngine" : "react-16",
  	"codeResource" : "widget.poc",
