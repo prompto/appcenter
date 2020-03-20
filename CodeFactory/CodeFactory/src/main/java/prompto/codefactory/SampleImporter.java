@@ -121,8 +121,7 @@ public class SampleImporter {
 	}
 
 	private boolean migrateModules(ICodeStore codeStore, List<Module> toMigrate) throws Exception {
-		createModule(codeStore);
-		for(Module existing : toMigrate) {
+		if(toMigrate!=null) for(Module existing : toMigrate) {
 			updateDependencies(codeStore, existing.getVersion());
 			codeStore.dropModule(existing);
 		}
