@@ -39,7 +39,7 @@ export default class EditorPage extends React.Component {
         this.contentUpdated = this.contentUpdated.bind(this);
         this.breakpointSelected = this.breakpointSelected.bind(this);
         this.dependenciesUpdated = this.dependenciesUpdated.bind(this);
-        this.startSessionRefresher = this.startSessionRefresher.bind(this);
+        this.startSessionHeartbeat = this.startSessionHeartbeat.bind(this);
         this.state = { project: null, activity: Activity.Loading, content: null };
         this.catalog = new Catalog();
         this.interval = null;
