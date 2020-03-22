@@ -39,8 +39,10 @@ export default class EditorPage extends React.Component {
         this.contentUpdated = this.contentUpdated.bind(this);
         this.breakpointSelected = this.breakpointSelected.bind(this);
         this.dependenciesUpdated = this.dependenciesUpdated.bind(this);
+        this.startSessionRefresher = this.startSessionRefresher.bind(this);
         this.state = { project: null, activity: Activity.Loading, content: null };
         this.catalog = new Catalog();
+        this.interval = null;
         Mousetrap.bind('command+s', this.commit);
     }
 
@@ -56,7 +58,20 @@ export default class EditorPage extends React.Component {
             this.loadResources();
             this.loadCode(true);
             document.title = "Project: " + this.projectName;
+            this.startSessionHeartbeat();
         }
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+
+    startSessionHeartbeat() {
+        this.interval = setInterval(function() {
+            const params = {params: JSON.stringify([])};
+            axios.get('/ws/run/getHttpUser', {params: params}).then(resp => {});
+        }, 30000);
     }
 
     setDialect(dialect) {
