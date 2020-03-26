@@ -640,6 +640,11 @@ define ClickEvent as native category with bindings:
 	define category bindings as:
 		JavaScript: Event
 
+and methods:
+		
+	define stopPropagation as method doing:
+		JavaScript: this.stopPropagation();
+
 
 @Inlined
 define MouseEvent as native category with bindings:
@@ -647,12 +652,22 @@ define MouseEvent as native category with bindings:
 	define category bindings as:
 		JavaScript: Event
 
+and methods:
+		
+	define stopPropagation as method doing:
+		JavaScript: this.stopPropagation();
+
 
 @Inlined
 define KeyboardEvent as native category with bindings:
 	
 	define category bindings as:
 		JavaScript: Event
+
+and methods:
+		
+	define stopPropagation as method doing:
+		JavaScript: this.stopPropagation();
 
 
 @Inlined
@@ -666,6 +681,9 @@ and methods:
 	define getSelectedRadio as method returning Text doing:
 		JavaScript: return this.target.id;
 	
+	define stopPropagation as method doing:
+		JavaScript: this.stopPropagation();
+
 
 @Inlined
 define InputChangedEvent as native category with bindings:
@@ -680,6 +698,9 @@ and methods:
 	
 	define getProposedText as method returning Text doing:
 		JavaScript: return this.target.value;
+
+	define stopPropagation as method doing:
+		JavaScript: this.stopPropagation();
 
 
 define ClickEventCallback as abstract method receiving ClickEvent event
