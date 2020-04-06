@@ -22,4 +22,4 @@ target:
 
 http:
   port: 8081
-  
+  publicAddress: eric.prompto.cloud
