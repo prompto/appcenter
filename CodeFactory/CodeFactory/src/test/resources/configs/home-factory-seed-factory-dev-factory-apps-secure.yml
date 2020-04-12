@@ -1,0 +1,54 @@
+mongoStore: &homeMongoStore
+  factory: prompto.store.mongo.MongoStoreFactory
+  host: 119.237.156.192
+  port: 27017
+  user: prompto
+  secretKey:
+    factory: prompto.security.PlainSecretKeyFactory
+    secret: prompto
+    
+codeStore: 
+  <<: *homeMongoStore
+  dbName: FACTORY-SEED
+
+dataStore: 
+  <<: *homeMongoStore
+  dbName: FACTORY-DEV
+
+target:
+  dataStore:
+    <<: *homeMongoStore
+    dbName: FACTORY-APPS
+
+http:
+  publicAddress: eric.prompto.cloud
+  protocol: https
+  port: 443
+  redirectFrom: 80
+  keyStore:
+    provider:
+      factory: prompto.security.FileKeyStoreFactory
+      file: /Users/ericvergnaud/Development/prompto/prompto-factory/CodeFactory/CodeFactory/src/test/resources/security/keystore.jks
+    secretKey:
+      factory: prompto.security.PlainSecretKeyFactory
+      secret: Pink-floyd01
+  trustStore:
+    provider:
+      factory: prompto.security.FileKeyStoreFactory
+      file: /Users/ericvergnaud/Development/prompto/prompto-factory/CodeFactory/CodeFactory/src/test/resources/security/truststore.jks
+    secretKey:
+      factory: prompto.security.PlainSecretKeyFactory
+      secret: Pink-floyd01
+  authentication:
+    source:
+      factory: prompto.security.auth.source.PasswordIsUserNameAuthenticationSourceFactory
+      store:
+        factory: prompto.store.memory.MemStoreFactory
+    method:
+      factory: prompto.security.auth.method.FormAuthenticationMethodFactory
+      loginPage: /auth/loginPage.html
+      errorPage: /auth/errorPage.html
+    whiteList:
+      - /cloud/*
+      - /auth/*
+      - /ec2/*
