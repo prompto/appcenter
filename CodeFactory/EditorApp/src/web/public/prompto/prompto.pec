@@ -624,6 +624,9 @@ and methods:
 	define hasLogin as method receiving login returning Boolean doing:
 		Java: return this.hasLogin(login);
 
+	define close as method doing:
+		Java: return this.close();
+
 define serviceHandler as abstract method receiving Document doc
 
 define installServiceHandler as native method receiving Text path and serviceHandler doing:
