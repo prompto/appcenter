@@ -625,7 +625,7 @@ and methods:
 		Java: return this.hasLogin(login);
 
 	define close as method doing:
-		Java: return this.close();
+		Java: this.close();
 
 define serviceHandler as abstract method receiving Document doc
 
