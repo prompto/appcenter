@@ -58,8 +58,8 @@ export default class EditorPage extends React.Component {
             this.loadResources();
             this.loadCode(true);
             document.title = "Project: " + this.projectName;
-            this.startSessionHeartbeat();
         }
+        this.startSessionHeartbeat();
     }
 
     componentWillUnmount() {
