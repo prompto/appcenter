@@ -796,6 +796,10 @@ native widget Typeahead {
 	
 }
 
+native method clearTypeahead(Any typeahead) {
+	JavaScript: typeahead.getInstance().clear();
+}
+
 @WidgetProperties({showTodayButton:Boolean, minDate:Date, previousButtonElement:any, roundedCorners:Boolean, bsSize:Text, onClear:Callback, defaultValue:Date, autoFocus:Boolean, required:Boolean, todayButtonLabel:Text, showWeeks:Boolean, disabled:Boolean, placeholder:Text, value:Date, weekStartsOn:Integer, autoComplete:Text, calendarPlacement:<null, Text>, onChange:DateChangedCallback, bsClass:Text, dateFormat:<"MM/DD/YYYY", "DD/MM/YYYY", "YYYY/MM/DD", "DD-MM-YYYY", null>, showClearButton:Boolean, noValidate:Boolean, calendarContainer:any, clearButtonElement:<null, Text>, onInvalid:any, onFocus:Callback, dayLabels:any, onBlur:Callback, instanceCount:Integer, customControl:any, name:Text, maxDate:Date, monthLabels:any, nextButtonElement:any, cellPadding:Text})
 native widget DatePicker {
 
