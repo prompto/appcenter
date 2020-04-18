@@ -24,5 +24,6 @@ target:
     maxPort: 9090    
 
 http:
+  publicAddress: eric.prompto.cloud
   port: 8080
   
