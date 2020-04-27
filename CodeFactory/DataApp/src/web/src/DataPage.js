@@ -15,6 +15,7 @@ export default class DataPage extends React.Component {
         this.dataFetched = this.dataFetched.bind(this);
         this.showHideDbIdColumn = this.showHideDbIdColumn.bind(this);
         this.showHideDbId = this.showHideDbId.bind(this);
+        this.extractValue = this.extractValue.bind(this);
     }
 
     fetchPage(page) {
@@ -90,13 +91,22 @@ export default class DataPage extends React.Component {
     extractValue(type, value) {
         if(value===undefined)
             return "";
-        if(value instanceof Object) {
-            if(value.value===undefined)
-                return "";
-            else if(value.value instanceof Object)
-                return value.value.name ? value.value.name : JSON.stringify(value.value);
-            else
-                return value.value;
+        else if(Array.isArray(value)) {
+            if(type.endsWith("[]"))
+                type = type.substring(0, type.length()-2);
+            return value.map(val=>this.extractValue(type, val));
+        } else if(value instanceof Object) {
+            if(value.name)
+                return value.name;
+            else {
+                value = value.value;
+                if (value === undefined)
+                    return "";
+                else if (value instanceof Object)
+                    return JSON.stringify(value.value);
+                else
+                    return value;
+            }
         } else
             return value;
     }
