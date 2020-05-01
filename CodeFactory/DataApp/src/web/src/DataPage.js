@@ -73,6 +73,9 @@ export default class DataPage extends React.Component {
                     continue;
                 let value = row.value[key];
                 delete row.value[key];
+                let type = headers[key];
+                if(type==="Any")
+                    headers[key] = this.extractType(value);
                 value = this.extractValue(headers[key], value);
                 flatRow.push(value);
             }
@@ -91,10 +94,12 @@ export default class DataPage extends React.Component {
     extractValue(type, value) {
         if(value===undefined)
             return "";
+        else if(value==null)
+            return "null"
         else if(Array.isArray(value)) {
             if(type.endsWith("[]"))
                 type = type.substring(0, type.length()-2);
-            return value.map(val=>this.extractValue(type, val));
+            return "[" + value.map(val=>this.extractValue(type, val)) + "]";
         } else if(value instanceof Object) {
             if(value.name)
                 return value.name;
@@ -107,6 +112,10 @@ export default class DataPage extends React.Component {
                 else
                     return value;
             }
+        } else if(type === "Decimal") {
+            return Number(value).toFixed(2);
+        } else if(type === "Boolean") {
+            return value ? "true" : "false";
         } else
             return value;
     }
