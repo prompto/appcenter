@@ -74,6 +74,10 @@ self.ReactBootstrap = {
 	PaginationEllipsis: React.Component,
 	Pager: React.Component,
 	PagerItem: React.Component,
+	Well: React.Component,
+	Carousel: React.Component,
+	CarouselItem: React.Component,
+	CarouselCaption: React.Component,
     Typeahead: React.Component,
     DatePicker: React.Component
 };
