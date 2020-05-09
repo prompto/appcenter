@@ -5,6 +5,7 @@ globals.importScripts("/js/lib/require.js", "/js/lib/prompto.core.bundle.js");
 
 const log = function() {
     var e = Array.prototype.slice.call(arguments, 0);
+    globals.logDebug(e);
     postMessage({
         type: "log",
         data: e
