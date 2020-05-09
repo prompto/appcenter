@@ -1,7 +1,7 @@
 {
 	"type" : "WEBLIBRARY",
 	"name" : "React-Bootstrap-3",
-	"version" : "1.0.7",
+	"version" : "1.0.8",
 	"migrateFrom" : "1.0.0",
 	"description" : "Built-in widgets",
 	"widgetLibrary" : "react-bootstrap-3",

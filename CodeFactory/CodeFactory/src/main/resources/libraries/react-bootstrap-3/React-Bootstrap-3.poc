@@ -842,7 +842,7 @@ native widget Carousel {
 native widget CarouselItem {
 
 	category bindings {
-		JavaScript: ReactBootstrap.CarouselItem;
+		JavaScript: ReactBootstrap.Carousel.Item;
 	}
 	
 	Html method render () {
@@ -855,7 +855,7 @@ native widget CarouselItem {
 native widget CarouselCaption {
 
 	category bindings {
-		JavaScript: ReactBootstrap.CarouselCaption;
+		JavaScript: ReactBootstrap.Carousel.Caption;
 	}
 	
 	Html method render () {
