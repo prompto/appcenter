@@ -9,4 +9,9 @@ native widget FileUploader {
 		JavaScript: return this.render();
 	}
 	
+	method clear() {
+		JavaScript: this.clear();
+	}
+	
+	
 }
