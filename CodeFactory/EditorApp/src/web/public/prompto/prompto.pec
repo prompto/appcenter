@@ -1,5 +1,7 @@
 define Callback as abstract method
-
+define BooleanCallback as abstract method receiving Boolean value
+define IntegerCallback as abstract method receiving Integer value
+define TextCallback as abstract method receiving Text value
 define Any as native category with attributes id and text, and bindings:
 
 	define category bindings as:
@@ -868,8 +870,8 @@ and methods:
 	define getSize as method returning Integer doing:
 		JavaScript: return this.file.size;
 
-	define readText as method returning Text doing:
-		JavaScript: return this.file.text();
+	define readText as method receiving TextCallback callback doing:
+		JavaScript: this.readText(callback);
 
 	define readImage as method returning Image doing:
 		JavaScript: return this.readImage();
