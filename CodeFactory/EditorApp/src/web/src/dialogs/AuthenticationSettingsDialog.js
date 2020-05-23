@@ -30,13 +30,13 @@ export default class AuthenticationSettingsDialog extends React.Component {
         const settings = (this.getProject().authenticationSettings || {}).value || {};
         if(settings.authenticationMethod && settings.authenticationMethod.type) {
             state.method = NAME_TO_AUTH_METHOD_MAP[settings.authenticationMethod.type];
-            state.method.setStateFromValue(settings.authenticationMethod.value, this.state);
+            state.method.setStateFromValue(settings.authenticationMethod.value, state);
         } else
             state.method = NAME_TO_AUTH_METHOD_MAP["NoAuthenticationMethod"];
         state.skipAuthInDev = settings.skipAuthInDev || false;
         if(settings.authenticationSource && settings.authenticationSource.type) {
             state.source = NAME_TO_AUTH_SOURCE_MAP[settings.authenticationSource.type];
-            state.source.setStateFromValue(settings.authenticationSource.value, this.state);
+            state.source.setStateFromValue(settings.authenticationSource.value, state);
         } else
             state.source = NAME_TO_AUTH_SOURCE_MAP["DataStoreAuthenticationSource"];
         state.useTestSourceInDev = settings.useTestSourceInDev || false;
@@ -168,7 +168,7 @@ export default class AuthenticationSettingsDialog extends React.Component {
                         <FormControl componentClass="textarea" value={this.state.whiteList.join("\n")} onChange={this.handleWhiteList} />
                         <HelpBlock>List 1 resource per line.&nbsp;Valid resources are of the form:<br/>
                             &nbsp;-&nbsp;Exact resource name<br/>
-                            &nbsp;-&nbsp;Path pattern such as: {cleanName} {String.raw`/auth/*`}<br/>
+                            &nbsp;-&nbsp;Path pattern such as: {cleanName}{String.raw`/auth/*`}<br/>
                             &nbsp;-&nbsp;Extension pattern such as: *.jpeg</HelpBlock>
                         <Checkbox inline checked={this.state.useDefaultWhiteList} onChange={this.handleUseDefaultWhiteList}>Also use default white list</Checkbox>
                     </FormGroup>
