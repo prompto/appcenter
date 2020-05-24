@@ -17,6 +17,10 @@ export default class FormAuthenticationMethod extends AuthenticationMethod {
         dialog.setState({loginPage: e.target.value});
     }
 
+    handleLoginExtension(e, dialog) {
+        dialog.setState({loginExtension: e.target.value});
+    }
+
     handleErrorFolder(e, dialog) {
         dialog.setState({errorFolder: e.target.value});
     }
@@ -25,18 +29,25 @@ export default class FormAuthenticationMethod extends AuthenticationMethod {
         dialog.setState({errorPage: e.target.value});
     }
 
+    handleErrorExtension(e, dialog) {
+        dialog.setState({errorExtension: e.target.value});
+    }
+
     createDefaults(dialog) {
         super.createDefaults(dialog);
         const cleanName = getParam("name").toLowerCase().replace(/ /g, "-");
-        let { loginFolder, errorFolder } = dialog.state;
+        let { loginFolder, loginPage, loginExtension, errorFolder, errorPage, errorExtension } = dialog.state;
         loginFolder = loginFolder || cleanName;
+        loginPage = loginPage || "loginPage";
+        loginExtension = loginExtension || "page";
         errorFolder = errorFolder || cleanName;
-        dialog.setState({loginFolder: loginFolder, errorFolder: errorFolder});
+        errorPage = errorPage || "errorPage";
+        errorExtension = errorExtension || "page";
+        dialog.setState({loginFolder: loginFolder, loginPage: loginPage, loginExtension: loginExtension, errorFolder: errorFolder, errorPage: errorPage, errorExtension: errorExtension});
     }
 
     renderItems(dialog) {
-        const { loginFolder, loginPage, errorFolder, errorPage } = dialog.state;
-        const extension = "html";
+        const { loginFolder, loginPage, loginExtension, errorFolder, errorPage, errorExtension } = dialog.state;
         return <div>
             <FormGroup>
                 <ControlLabel>Login page:</ControlLabel><br/>
@@ -45,7 +56,7 @@ export default class FormAuthenticationMethod extends AuthenticationMethod {
                     <InputGroup.Addon>/</InputGroup.Addon>
                     <FormControl type="text" value={loginPage || ""} style={{width:300}} onChange={(e)=>this.handleLoginPage(e, dialog)} placeholder={"loginPage"} />
                     <InputGroup.Addon>.</InputGroup.Addon>
-                    <FormControl type="text" value={extension} style={{width:60}} readOnly={true}/>
+                    <FormControl type="text" value={loginExtension || ""} style={{width:60}} onChange={(e)=>this.handleLoginExtension(e, dialog)} placeholder={"page"} />
                 </InputGroup>
                 <HelpBlock>This page will be displayed when the user connects to the web site.</HelpBlock>
             </FormGroup>
@@ -56,7 +67,7 @@ export default class FormAuthenticationMethod extends AuthenticationMethod {
                     <InputGroup.Addon>/</InputGroup.Addon>
                     <FormControl type="text" value={errorPage || ""} style={{width:300}} onChange={(e)=>this.handleErrorPage(e, dialog)} placeholder={"errorPage"} />
                     <InputGroup.Addon>.</InputGroup.Addon>
-                    <FormControl type="text" value={extension} style={{width:60}} readOnly={true}/>
+                    <FormControl type="text" value={errorExtension || ""} style={{width:60}} onChange={(e)=>this.handleErrorExtension(e, dialog)} placeholder={"page"} />
                 </InputGroup>
                 <HelpBlock>This page will be displayed when the user connection fails.</HelpBlock>
             </FormGroup>
@@ -68,9 +79,11 @@ export default class FormAuthenticationMethod extends AuthenticationMethod {
         let parts = this.extractParts(value.loginPage);
         state.loginFolder = parts.folder;
         state.loginPage = parts.page;
+        state.loginExtension = parts.extension;
         parts = this.extractParts(value.errorPage);
         state.errorFolder = parts.folder;
         state.errorPage = parts.page;
+        state.errorExtension = parts.extension;
     }
 
     extractParts(path) {
@@ -97,8 +110,8 @@ export default class FormAuthenticationMethod extends AuthenticationMethod {
     }
 
     setValueFromState(state, value) {
-        value.loginPage = state.loginFolder + "/" + state.loginPage + ".html";
-        value.errorPage = state.errorFolder + "/" + state.errorPage + ".html";
+        value.loginPage = state.loginFolder + "/" + state.loginPage + "." + state.loginExtension;
+        value.errorPage = state.errorFolder + "/" + state.errorPage + "." + state.errorExtension;
     }
 
 };
