@@ -168,7 +168,7 @@ export default class AuthenticationSettingsDialog extends React.Component {
                         <FormControl componentClass="textarea" value={this.state.whiteList.join("\n")} onChange={this.handleWhiteList} />
                         <HelpBlock>List 1 resource per line.&nbsp;Valid resources are of the form:<br/>
                             &nbsp;-&nbsp;Exact resource name<br/>
-                            &nbsp;-&nbsp;Path pattern such as: {cleanName}{String.raw`/auth/*`}<br/>
+                            &nbsp;-&nbsp;Path pattern such as: /{cleanName}{String.raw`/auth/*`}<br/>
                             &nbsp;-&nbsp;Extension pattern such as: *.jpeg</HelpBlock>
                         <Checkbox inline checked={this.state.useDefaultWhiteList} onChange={this.handleUseDefaultWhiteList}>Also use default white list</Checkbox>
                     </FormGroup>
