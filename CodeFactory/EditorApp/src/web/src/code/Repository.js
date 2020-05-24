@@ -163,8 +163,12 @@ export default class Repository {
                         decl_obj.prototype = decl.getProto();
                     if (decl.storable !== undefined)
                         decl_obj.storable = decl.storable;
-                    if (decl.symbols !== undefined)
+                    if (decl.symbols)
                         decl_obj.symbols = decl.symbols.map(function (s) {
+                            return s.name;
+                        });
+                    if (decl.derivedFrom)
+                        decl_obj.derivedFrom = decl.derivedFrom.map(function (s) {
                             return s.name;
                         });
                 }
@@ -185,8 +189,12 @@ export default class Repository {
                     decl_obj.prototype = decl.getProto();
                 if (decl.storable !== undefined)
                     decl_obj.storable = decl.storable;
-                if (decl.symbols !== undefined)
+                if (decl.symbols)
                     decl_obj.symbols = decl.symbols.map(function (s) {
+                        return s.name;
+                    });
+                if (decl.derivedFrom)
+                    decl_obj.derivedFrom = decl.derivedFrom.map(function (s) {
                         return s.name;
                     });
                 this.statuses[id] = {
