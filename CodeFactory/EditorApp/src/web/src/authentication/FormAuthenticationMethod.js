@@ -38,10 +38,10 @@ export default class FormAuthenticationMethod extends AuthenticationMethod {
         const cleanName = getParam("name").toLowerCase().replace(/ /g, "-");
         let { loginFolder, loginPage, loginExtension, errorFolder, errorPage, errorExtension } = dialog.state;
         loginFolder = loginFolder || cleanName;
-        loginPage = loginPage || "loginPage";
+        loginPage = loginPage || "login";
         loginExtension = loginExtension || "page";
         errorFolder = errorFolder || cleanName;
-        errorPage = errorPage || "errorPage";
+        errorPage = errorPage || "error";
         errorExtension = errorExtension || "page";
         dialog.setState({loginFolder: loginFolder, loginPage: loginPage, loginExtension: loginExtension, errorFolder: errorFolder, errorPage: errorPage, errorExtension: errorExtension});
     }
