@@ -21,10 +21,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
-
 import com.esotericsoftware.yamlbeans.document.YamlMapping;
 
 import prompto.config.IPortRangeConfiguration;
@@ -36,6 +32,7 @@ import prompto.server.PromptoServlet;
 import prompto.store.DataStore;
 import prompto.store.IStored;
 import prompto.utils.Logger;
+import prompto.utils.SSLUtils;
 import prompto.utils.SocketUtils;
 import prompto.value.IValue;
 
@@ -271,25 +268,24 @@ public class ModuleProcess {
 	}
 	
 	public void clearContext() {
-		String protocol = this.protocol==null ? "http" : this.protocol;
-		if("https".equals(protocol))
-			clearContextHttps();
-		else 
-			clearContextHttp();
-	}
-	
-	private void clearContextHttps() {
-		String spec = "https://localhost:" + port + "/ws/control/clear-context";
 		try {
-			URL url = new URL(spec);
-			HttpsURLConnection cnx = (HttpsURLConnection) url.openConnection();
-			cnx.setHostnameVerifier(new HostnameVerifier() { @Override public boolean verify(String hostName, SSLSession session) { return true; } });
-	        cnx.getResponseCode();
-	        cnx.disconnect();
+			String protocol = this.protocol==null ? "http" : this.protocol;
+			if("http".equals(protocol))
+				clearContextHttp();
+			else 
+				clearContextHttps();
 		} catch(Throwable t) {
 			logger.warn(()->"Error while clearing context", t);
 		}
-		
+	}
+	
+	private void clearContextHttps() {
+		try {
+			URL url = new URL("https://localhost:" + port + "/ws/control/clear-context");
+			SSLUtils.acceptingAllCertificates(url, cnx -> cnx.getResponseCode());
+		} catch(Throwable t) {
+			logger.warn(()->"Error while clearing context", t);
+		}
 	}
 
 	void clearContextHttp() {
