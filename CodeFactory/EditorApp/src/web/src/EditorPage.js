@@ -110,25 +110,24 @@ export default class EditorPage extends React.Component {
     }
 
     commitFailed(failure) {
-        this.refs.MessageArea.setMessage("Commit failed!");
+        this.refs.MessageArea.setMessage("Commit failed!", true);
         this.refs.ContentEditor.commitFailed();
     }
 
-    commitSuccessfull(success) {
-        this.refs.MessageArea.setMessage("Commit ok!");
-        this.refs.ContentEditor.commitSuccessfull();
-        this.loadResources()
-        this.clearModuleContext();
+    commitSuccessfull(response) {
+        if(response.headers["content-type"]==="text/html") {
+            this.refs.MessageArea.setMessage("Commit failed!", true);
+            this.refs.ContentEditor.commitFailed();
+        } else {
+            this.refs.MessageArea.setMessage("Commit ok!");
+            this.refs.ContentEditor.commitSuccessfull();
+            this.loadResources()
+            this.clearModuleContext();
+        }
     }
 
     clearModuleContext() {
-        fetcher.fetchModuleURL(this.projectId, "READ", url => {
-            // port is 0 if server is not running
-            if(url.indexOf(":0/")<0) {
-                const fullUrl = url + "ws/control/clear-context";
-                axios.get(fullUrl);
-            }
-        }, error => alert(error));
+        fetcher.clearModuleContext(this.projectId);
     }
 
     prepareResourceFiles(formData, resources) {

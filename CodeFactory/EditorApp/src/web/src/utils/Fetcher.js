@@ -69,6 +69,22 @@ class Fetcher {
             this.$authorization = response.headers["X-Authorization"] || null;
     }
 
+    clearModuleContext(projectId, success, errored) {
+        const args = [ {name:"dbId", value: projectId}];
+        const params = { params: JSON.stringify(args) };
+        axios.get('/ws/run/clearModuleContext', { params: params })
+            .then(resp => {
+                const response = resp.data;
+                if (response.error)
+                    ; // TODO something
+                else if(response.data === -1)
+                    alert("Server is not running!");
+                else if(success)
+                    success(response.data);
+            })
+            .catch(error => errored ? errored(error) : {} );
+    }
+
     fetchModulePort(projectId, action, success, errored) {
         const args = [ {name:"dbId", value: projectId}, {name:"action", type: "Text", value: action} ];
         const params = { params: JSON.stringify(args) };

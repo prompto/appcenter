@@ -70,6 +70,21 @@ public class ModuleProcess {
 		}
 	}
 	
+	public static void clearContext(Object dbId) {
+		synchronized(modules) {
+			try {
+				if(dbId instanceof IValue)
+					dbId = ((IValue)dbId).getStorableData();
+				ModuleProcess module = modules.get(dbId);
+				if(module!=null)
+					module.clearContext();
+			} catch(Throwable t) {
+				t.printStackTrace();
+				// TODO send error to client
+			}
+		}
+	}
+	
 	public static Long launchIfNeeded(Object dbId, String action) {
 		synchronized(modules) {
 			try {
@@ -192,13 +207,18 @@ public class ModuleProcess {
 
 	
 	IStored stored;
-	boolean debug;
+	String protocol;
 	int port;
+	boolean debug;
 	Process process;
 
 	public ModuleProcess(IStored stored, boolean debug) {
 		this.stored = stored;
 		this.debug = debug;
+	}
+	
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
 	}
 	
 	public int getPort() {
@@ -246,6 +266,15 @@ public class ModuleProcess {
 		}
 	}
 	
+	public void clearContext() {
+		String protocol = this.protocol==null ? "http" : this.protocol;
+		String spec = protocol + "://localhost:" + port + "/ws/control/clear-context";
+		try(InputStream input = new URL(spec).openStream()) {
+			input.read();
+		} catch(Throwable t) {
+			logger.warn(()->"Error while clearing context", t);
+		}
+	}
 
 	private String[] buildCommandLineArgs() throws Throwable {
 		List<String> cmds = new ArrayList<String>();

@@ -12,8 +12,10 @@ import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 import com.esotericsoftware.yamlbeans.document.YamlDocument;
 import com.esotericsoftware.yamlbeans.document.YamlDocumentReader;
+import com.esotericsoftware.yamlbeans.document.YamlElement;
 import com.esotericsoftware.yamlbeans.document.YamlEntry;
 import com.esotericsoftware.yamlbeans.document.YamlMapping;
+import com.esotericsoftware.yamlbeans.document.YamlScalar;
 
 import prompto.debug.HttpServletDebugRequestListenerFactory;
 import prompto.debug.WebSocketDebugEventAdapterFactory;
@@ -88,6 +90,12 @@ public class YamlConfigBuilder {
 		YamlEntry entry = document.getEntry("http");
 		YamlMapping http = (YamlMapping)entry.getValue();
 		http.setEntry("port", process.getPort());
+		entry = http.getEntry("protocol");
+		if(entry!=null) {
+			YamlElement value = entry.getValue();
+			if(value instanceof YamlScalar)
+				process.setProtocol(((YamlScalar)value).getValue());
+		}
 		http.deleteEntry("redirectFrom");
 		http.deleteEntry("sendsXAuthorization");
 		http.deleteEntry("authentication");
