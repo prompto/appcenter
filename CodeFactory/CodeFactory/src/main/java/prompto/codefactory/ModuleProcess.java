@@ -21,6 +21,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+
 import com.esotericsoftware.yamlbeans.document.YamlMapping;
 
 import prompto.config.IPortRangeConfiguration;
@@ -268,7 +272,28 @@ public class ModuleProcess {
 	
 	public void clearContext() {
 		String protocol = this.protocol==null ? "http" : this.protocol;
-		String spec = protocol + "://localhost:" + port + "/ws/control/clear-context";
+		if("https".equals(protocol))
+			clearContextHttps();
+		else 
+			clearContextHttp();
+	}
+	
+	private void clearContextHttps() {
+		String spec = "https://localhost:" + port + "/ws/control/clear-context";
+		try {
+			URL url = new URL(spec);
+			HttpsURLConnection cnx = (HttpsURLConnection) url.openConnection();
+			cnx.setHostnameVerifier(new HostnameVerifier() { @Override public boolean verify(String hostName, SSLSession session) { return true; } });
+	        cnx.getResponseCode();
+	        cnx.disconnect();
+		} catch(Throwable t) {
+			logger.warn(()->"Error while clearing context", t);
+		}
+		
+	}
+
+	void clearContextHttp() {
+		String spec = "http://localhost:" + port + "/ws/control/clear-context";
 		try(InputStream input = new URL(spec).openStream()) {
 			input.read();
 		} catch(Throwable t) {
