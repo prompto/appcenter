@@ -96,6 +96,8 @@ public class YamlConfigBuilder {
 			if(value instanceof YamlScalar)
 				process.setProtocol(((YamlScalar)value).getValue());
 		}
+		if(process.getWelcomePage()!=null)
+			http.setEntry("welcomePage", process.getWelcomePage());
 		http.deleteEntry("redirectFrom");
 		http.deleteEntry("sendsXAuthorization");
 		http.deleteEntry("authentication");

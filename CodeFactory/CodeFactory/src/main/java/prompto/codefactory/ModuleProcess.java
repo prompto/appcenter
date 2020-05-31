@@ -258,6 +258,18 @@ public class ModuleProcess {
 		return value==null ? null : value.toString();
 	}
 
+	@SuppressWarnings("unchecked")
+	String getWelcomePage() {
+		Object value = stored.getData("http");
+		if(value instanceof Map) {
+			Object welcomePage = ((Map<String, Object>)value).get("welcomePage");
+			if(welcomePage instanceof String)
+				return (String)welcomePage;
+		}
+		return null;
+	}
+
+
 	public void shutDown() {
 		try {
 			process.destroyForcibly();
@@ -282,7 +294,7 @@ public class ModuleProcess {
 	private void clearContextHttps() {
 		try {
 			URL url = new URL("https://localhost:" + port + "/ws/control/clear-context");
-			SSLUtils.acceptingAllCertificates(url, cnx -> cnx.getResponseCode());
+			SSLUtils.trustingAllCertificates(url, cnx -> cnx.getResponseCode());
 		} catch(Throwable t) {
 			logger.warn(()->"Error while clearing context", t);
 		}
