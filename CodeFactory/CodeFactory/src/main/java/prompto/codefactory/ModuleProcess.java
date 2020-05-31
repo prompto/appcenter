@@ -248,25 +248,22 @@ public class ModuleProcess {
 		return stored.getData("version").toString();
 	}
 
+	
 	String getStartMethod() {
 		Object value = stored.getData("startMethod");
 		return value==null ? null : value.toString();
 	}
 
+	
 	String getServerAboutToStartMethod() {
 		Object value = stored.getData("serverAboutToStartMethod");
 		return value==null ? null : value.toString();
 	}
 
-	@SuppressWarnings("unchecked")
+
 	String getWelcomePage() {
-		Object value = stored.getData("http");
-		if(value instanceof Map) {
-			Object welcomePage = ((Map<String, Object>)value).get("welcomePage");
-			if(welcomePage instanceof String)
-				return (String)welcomePage;
-		}
-		return null;
+		Object value = stored.getData("homePage");
+		return value==null ? null : value.toString();
 	}
 
 
@@ -278,6 +275,7 @@ public class ModuleProcess {
 			// OK
 		}
 	}
+	
 	
 	public void clearContext() {
 		try {
