@@ -28,7 +28,7 @@ import prompto.config.StoredRecordConfigurationReader;
 import prompto.config.auth.CodeStoreAuthenticationConfiguration;
 import prompto.runtime.Mode;
 import prompto.server.AppServer;
-import prompto.server.PromptoServlet;
+import prompto.server.CleverServlet;
 import prompto.store.DataStore;
 import prompto.store.IStored;
 import prompto.utils.Logger;
@@ -341,7 +341,7 @@ public class ModuleProcess {
 		cmds.add(getModuleName());
 		cmds.add("-applicationVersion");
 		cmds.add(getModuleVersion());
-		String origin = PromptoServlet.REGISTERED_ORIGIN.get();
+		String origin = CleverServlet.REGISTERED_ORIGIN.get();
 		if(origin!=null) {
 			cmds.add("-http-allowedOrigins");
 			cmds.add(origin);
