@@ -1,0 +1,29 @@
+homeMongoStore: &homeMongoStore
+  factory: prompto.store.mongo.MongoStoreFactory
+  host: 119.237.156.192
+  port: 27017
+  user: prompto
+  secretKey:
+    factory: prompto.security.PlainSecretKeyFactory
+    secret: prompto
+
+codeStore: 
+  <<: *homeMongoStore
+  dbName: FACTORY-DEV
+
+dataStore: 
+  <<: *homeMongoStore
+  dbName: BAIYA-APPS
+
+target:
+  dataStore: 
+    <<: *homeMongoStore
+    dbName: BAIYA-DATA
+  portRange:
+    minPort: 8080
+    maxPort: 9090    
+
+http:
+  publicAddress: factory.baiya.io
+  port: 8080
+  
