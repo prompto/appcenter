@@ -22,19 +22,19 @@ class LoginPage extends React.Component {
                     <h2>Welcome to Prompto!</h2>
                 </div>
                 <Modal show={true} onHide={this.handleClose}>
-                    <Modal.Header closeButton={true}>
-                        <Modal.Title>Connect to your development server</Modal.Title>
-                    </Modal.Header>
-	                <form method='post' action="/j_security_check">
+	                <form method='POST' action="/j_security_check">
+	                    <Modal.Header closeButton={true}>
+	                        <Modal.Title>Connect to your development server</Modal.Title>
+	                    </Modal.Header>
 	                    <Modal.Body style={{padding: "8px"}}>
 							<div style={{margin: "8px"}}>
 	                            <FormGroup>
 	                                <ControlLabel>Name</ControlLabel><br/>
-	                                <FormControl type="text" id="name"/>
+	                                <FormControl type="text" name="j_username"/>
 	                            </FormGroup>
 	                            <FormGroup>
 	                                <ControlLabel>Password</ControlLabel><br/>
-	                                <FormControl type="password" id="description"/>
+	                                <FormControl type="password" name="j_password" />
 	                            </FormGroup>
 							</div>
 	                    </Modal.Body>
