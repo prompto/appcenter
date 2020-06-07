@@ -216,6 +216,18 @@ export default class Repository {
             repo.statuses[id].stuff.value.dbId = storedDecl.value.dbId;
             repo.statuses[id].editStatus = "CLEAN";
         });
+        this.clearDeleted();
+    }
+
+    clearDeleted() {
+        var deleted = [];
+        for (var id in this.statuses) {
+            if (this.statuses.hasOwnProperty(id) && this.statuses[id].editStatus === "DELETED")
+                deleted.push(id);
+        }
+        deleted.forEach(id=>{
+            delete this.statuses[id];
+        }, this);
     };
 
 
