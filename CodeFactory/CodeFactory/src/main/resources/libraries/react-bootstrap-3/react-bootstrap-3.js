@@ -75,6 +75,8 @@ self.ReactBootstrap = {
 	Pager: React.Component,
 	PagerItem: React.Component,
 	Well: React.Component,
+	Badge: React.Component,
+	Label: React.Component,
 	Carousel: React.Component,
 	CarouselItem: React.Component,
 	CarouselCaption: React.Component,
