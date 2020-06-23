@@ -293,7 +293,7 @@ native widget PanelHeading {
 	
 }
 
-@WidgetProperties({collapsible:{type:Boolean, help:"A convenience prop that renders a Collapse component around the Body for situations when the parent Panel only contains a single Panel.Body child.renders: ```jsx <Panel.Collapse> <Panel.Body /> </Panel.Collapse> ```", required:true}})
+@WidgetProperties({collapsible:{type:Boolean, help:"A convenience prop that renders a Collapse component around the Body for situations when the parent Panel only contains a single Panel.Body child.renders: ```jsx <Panel.Collapse> <Panel.Body /> </Panel.Collapse> ```", required:false}})
 native widget PanelBody {
 
 	category bindings {
