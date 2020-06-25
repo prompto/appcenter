@@ -171,6 +171,8 @@ export default class Repository {
                         decl_obj.derivedFrom = decl.derivedFrom.map(function (s) {
                             return s.name;
                         });
+                    else if(decl_obj.derivedFrom)
+                        decl_obj.derivedFrom = [];
                 }
             } else {
                 decl_obj = {
