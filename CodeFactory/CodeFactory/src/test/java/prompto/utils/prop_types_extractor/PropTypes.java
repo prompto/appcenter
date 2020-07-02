@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import prompto.grammar.Annotation;
-import prompto.literal.DictEntry;
-import prompto.literal.DictEntryList;
+import prompto.literal.DocEntry;
 import prompto.literal.DocEntryList;
 import prompto.literal.DocumentLiteral;
 import prompto.parser.OCleverParser;
@@ -18,7 +17,7 @@ public class PropTypes {
 	
 	List<String> inherited;
 	List<Property> properties;
-	DictEntryList entries = null;
+	DocEntryList entries = null;
 	
 	private String toDocumentLiteral() {
 		StringWriter entriesWriter = new StringWriter();
@@ -35,23 +34,23 @@ public class PropTypes {
 		return entriesWriter.toString();
 	}
 
-	public DictEntryList toDictEntries(PropTypesMap propertyMap) {
+	public DocEntryList toDocEntries(PropTypesMap propertyMap) {
 		if(entries==null) {
 			if(inherited==null || inherited.isEmpty()) {
-				entries = localPropertiesToDictEntries();
+				entries = localPropertiesToDocEntries();
 			} else {
-				Map<String, DictEntry> mergedMap = new HashMap<>();
+				Map<String, DocEntry> mergedMap = new HashMap<>();
 				inherited.forEach(name->mergeWidgetEntries(name, propertyMap, mergedMap));
-				mergeDictEntries(mergedMap, localPropertiesToDocumentLiteral().getEntries());
+				mergeDocEntries(mergedMap, localPropertiesToDocumentLiteral().getEntries());
 				DocEntryList merged = new DocEntryList();
 				merged.addAll(mergedMap.values());
-				entries = new DictEntryList(new DictEntry(null, new DocumentLiteral(merged)));
+				entries = new DocEntryList(new DocEntry(null, new DocumentLiteral(merged)));
 			}
 		}
 		return entries;
 	}
 
-	private void mergeWidgetEntries(String name, PropTypesMap propertyMap, Map<String, DictEntry> mergedMap) {
+	private void mergeWidgetEntries(String name, PropTypesMap propertyMap, Map<String, DocEntry> mergedMap) {
 		int idx = name.lastIndexOf('.');
 		if(idx>=0)
 			name = name.substring(0, idx);
@@ -59,21 +58,21 @@ public class PropTypes {
 			Annotation inherited = propertyMap.get(name).apply(propertyMap);
 			Object types = inherited.getDefaultArgument();
 			if(types instanceof DocumentLiteral)
-				mergeDictEntries(mergedMap, ((DocumentLiteral)types).getEntries());
+				mergeDocEntries(mergedMap, ((DocumentLiteral)types).getEntries());
 		}
 		
 	}
 	
-	private void mergeDictEntries(Map<String, DictEntry> mergedMap, List<DictEntry> toMerge) {
+	private void mergeDocEntries(Map<String, DocEntry> mergedMap, List<DocEntry> toMerge) {
 		toMerge.forEach(arg->{
 			mergedMap.put(arg.getKey().toString(), arg);
 		});
 	}
 	
 	
-	private DictEntryList localPropertiesToDictEntries() {
+	private DocEntryList localPropertiesToDocEntries() {
 		DocumentLiteral value = localPropertiesToDocumentLiteral();
-		return new DictEntryList(new DictEntry(null, value));
+		return new DocEntryList(new DocEntry(null, value));
 	}
 	
 	private DocumentLiteral localPropertiesToDocumentLiteral() {

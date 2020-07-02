@@ -20,7 +20,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import prompto.grammar.Annotation;
 import prompto.grammar.Identifier;
-import prompto.literal.DictEntryList;
+import prompto.literal.DocEntryList;
 import prompto.property.IPropertyValidator;
 import prompto.utils.StreamUtils;
 import prompto.utils.prop_types_extractor.PropTypesConverter.PropTypesMap;
@@ -60,7 +60,7 @@ public abstract class PropTypesExtractor {
 		WIDGET = MODULE.getOrDefault(widgetName, Collections.emptyMap());
 		PropTypes propTypes = parsePropTypes(propTypesCode);
 		propertyMap.put(widgetName, map->{
-			DictEntryList entries = propTypes.toDictEntries(propertyMap);
+			DocEntryList entries = propTypes.toDocEntries(propertyMap);
 			return new Annotation(new Identifier("@WidgetProperties"), entries);
 		});
 	}
