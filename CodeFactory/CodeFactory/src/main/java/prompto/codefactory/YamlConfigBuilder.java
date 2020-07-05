@@ -101,9 +101,9 @@ public class YamlConfigBuilder {
 		http.deleteEntry("redirectFrom");
 		http.deleteEntry("sendsXAuthorization");
 		http.deleteEntry("authentication");
-		String origin = PromptoServlet.REGISTERED_ORIGIN.get();
-		if(origin!=null) {
-			http.setEntry("allowedOrigins", origin);
+		String origins = PromptoServlet.REGISTERED_ORIGINS.get();
+		if(origins!=null) {
+			http.setEntry("allowedOrigins", origins);
 			http.setEntry("allowsXAuthorization", true);
 		}
 		YamlMapping auth = process.authenticationSettingsToYaml();

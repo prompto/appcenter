@@ -341,10 +341,10 @@ public class ModuleProcess {
 		cmds.add(getModuleName());
 		cmds.add("-applicationVersion");
 		cmds.add(getModuleVersion());
-		String origin = CleverServlet.REGISTERED_ORIGIN.get();
-		if(origin!=null) {
+		String origins = CleverServlet.REGISTERED_ORIGINS.get();
+		if(origins!=null) {
 			cmds.add("-http-allowedOrigins");
-			cmds.add(origin);
+			cmds.add(origins);
 			cmds.add("-http-allowsXAuthorization");
 			cmds.add("true");
 		}
