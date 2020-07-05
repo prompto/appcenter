@@ -127,7 +127,14 @@ export default class EditorPage extends React.Component {
     }
 
     clearModuleContext() {
-        fetcher.clearModuleContext(this.projectId);
+        fetcher.fetchModuleURL(this.projectId, "READ", url => {
+            // port is 0 if server is not running
+            if(url.indexOf(":0/")<0) {
+                const fullUrl = url + "ws/control/clear-context";
+                axios.get(fullUrl);
+            }
+        }, error => alert(error));
+        // fetcher.clearModuleContext(this.projectId);
     }
 
     prepareResourceFiles(formData, resources) {
