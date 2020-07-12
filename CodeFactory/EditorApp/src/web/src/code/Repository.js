@@ -23,13 +23,13 @@ export default class Repository {
         this.projectContext = prompto.runtime.Context.newGlobalContext();
         this.projectContext.setParentContext(this.librariesContext);
         this.moduleId = null;
-        this.lastSuccess = ""; // last piece of code successfully registered through handleUpdate
+        this.lastSuccess = []; // last piece of code successfully registered through handleUpdate
         this.lastDialect = "E";
         this.statuses = {};
     }
 
     reset() {
-        this.lastSuccess = "";
+        this.lastSuccess = [];
     }
 
     registerLibraryCode(code, dialect) {
@@ -276,24 +276,29 @@ export default class Repository {
         } finally {
             this.projectContext.problemListener = saved_listener;
         }
-        this.lastSuccess = content; // assume registered content is always parsed successfully
+        this.lastSuccess = decls; // assume registered content is always parsed successfully
         this.lastDialect = dialect;
     }
 
 
     handleEditContent(content, dialect, listener, selected) {
-        // analyze what has changed, we'll ignore errors but let's catch them using a temporary listener
-        var old_decls = parse(this.lastSuccess, this.lastDialect, new prompto.problem.ProblemCollector());
-        // always annotate new content
+        var startTime = Date.now();
+        var old_decls = this.lastSuccess;
         var parser = newParser(content, dialect, listener);
         var new_decls = parser.parse();
+        var parseEndTime = Date.now();
+        self.logDebug("parse time: " + (parseEndTime - startTime) + " ms");
         // look for duplicates
         this.checkDuplicates(old_decls, new_decls, listener);
+        var duplicatesEndTime = Date.now();
+        self.logDebug("check duplicates time: " + (duplicatesEndTime - parseEndTime) + " ms");
         // only update codebase if syntax is correct and there is no foreseeable damage
         if (listener.problems.length === 0) {
-            this.lastSuccess = content;
+            this.lastSuccess = new_decls;
             this.lastDialect = dialect;
             var delta = this.updateCodebase(old_decls, new_decls, parser, dialect, listener);
+            var updateEndTime = Date.now();
+            self.logDebug("repo update time: " + (updateEndTime - duplicatesEndTime) + " ms");
             if(delta) {
                 var $delta = delta.getContent();
                 if (selected && new_decls.length === 1) // object might have been renamed
