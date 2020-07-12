@@ -2,6 +2,7 @@
 import PromptoWorkerThread from "worker-loader!./PromptoWorkerThread";
 import { print } from '../utils/Utils';
 import PromptoMarker from "./PromptoMarker";
+import PromptoChangeManager from "./PromptoChangeManager";
 
 export default class PromptoWorkerClient extends window.ace.acequire("ace/worker/worker_client")
     .WorkerClient {
@@ -25,13 +26,34 @@ export default class PromptoWorkerClient extends window.ace.acequire("ace/worker
         this.addEventListeners(["errors", "annotate", "terminate", "value", "catalogUpdated", "contentUpdated", "inspected"]);
         this.attachToDocument(this.getSession().getDocument());
         this.send("setDialect", [ dialect ] );
+        this.changeMgr = new PromptoChangeManager(super.emit.bind(this));
     }
 
-    messageHook(e) {
-        if(e.data.type === "log")
-            print(e.data.data);
+    emit(event, data) {
+        this.changeMgr.processEvent(event, data);
+    }
+
+    messageHook(msg) {
+        this.changeMgr.processMessage(msg);
+        if(msg.data.type === "log")
+            print(msg.data.data);
         else
-            this.onMessage(e);
+            this.onMessage(msg);
+    }
+
+    setDialect(dialect) {
+        this.changeMgr.setDialect(dialect);
+        this.send("setDialect", [ dialect ] );
+    }
+
+    setContent(content, callback) {
+        this.changeMgr.setContent(content);
+        var self_ = this;
+        this.call("setContent", [ content ], value => {
+            const changed = self_.onValue({ data: value });
+            if(callback)
+                callback(changed);
+        });
     }
 
     getEditor() {

@@ -287,18 +287,18 @@ export default class Repository {
         var parser = newParser(content, dialect, listener);
         var new_decls = parser.parse();
         var parseEndTime = Date.now();
-        self.logDebug("parse time: " + (parseEndTime - startTime) + " ms");
+        // self.logDebug("parse time: " + (parseEndTime - startTime) + " ms");
         // look for duplicates
         this.checkDuplicates(old_decls, new_decls, listener);
         var duplicatesEndTime = Date.now();
-        self.logDebug("check duplicates time: " + (duplicatesEndTime - parseEndTime) + " ms");
+        // self.logDebug("check duplicates time: " + (duplicatesEndTime - parseEndTime) + " ms");
         // only update codebase if syntax is correct and there is no foreseeable damage
         if (listener.problems.length === 0) {
             this.lastSuccess = new_decls;
             this.lastDialect = dialect;
             var delta = this.updateCodebase(old_decls, new_decls, parser, dialect, listener);
             var updateEndTime = Date.now();
-            self.logDebug("repo update time: " + (updateEndTime - duplicatesEndTime) + " ms");
+            // self.logDebug("repo update time: " + (updateEndTime - duplicatesEndTime) + " ms");
             if(delta) {
                 var $delta = delta.getContent();
                 if (selected && new_decls.length === 1) // object might have been renamed

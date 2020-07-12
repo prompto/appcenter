@@ -37,6 +37,12 @@ export default class PromptoWorker extends Mirror {
         });
     }
 
+    setProject(projectId, loadDependencies) {
+        this.$projectId = projectId;
+        this.unpublishProject();
+        this.loadProject(loadDependencies);
+    }
+
     onUpdate() {
         delete this.$created;
         var value = this.doc.getValue();
@@ -53,6 +59,7 @@ export default class PromptoWorker extends Mirror {
             }
         }
         this.$value = value;
+        // if you change the below, you might need to evolve PromptoChangeManager
         this.sender.emit("annotate", errorListener.problems);
     }
 
@@ -68,13 +75,6 @@ export default class PromptoWorker extends Mirror {
             }
         }
     }
-
-    setProject(projectId, loadDependencies) {
-        this.$projectId = projectId;
-        this.unpublishProject();
-        this.loadProject(loadDependencies);
-    }
-
 
     setContent(content) {
         const callbackId = arguments[arguments.length - 1]; // callbackId is added by ACE
