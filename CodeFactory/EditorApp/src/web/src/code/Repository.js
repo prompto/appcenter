@@ -268,7 +268,15 @@ export default class Repository {
 
 
     handleSetContent(content, dialect, listener) {
-        var decls = parse(content, dialect, listener);
+        try {
+            return this.doHandleSetContent(content, dialect, listener);
+        } catch (e) {
+            return this.handleUnhandled(e, listener);
+        }
+    }
+
+    doHandleSetContent(content, dialect, listener) {
+     var decls = parse(content, dialect, listener);
         var saved_listener = this.projectContext.problemListener;
         try {
             this.projectContext.problemListener = listener;
@@ -282,6 +290,29 @@ export default class Repository {
 
 
     handleEditContent(content, dialect, listener, selected) {
+        try {
+            return this.doHandleEditContent(content, dialect, listener, selected);
+        } catch (e) {
+            return this.handleUnhandled(e, listener);
+        }
+    }
+
+    handleUnhandled(e, listener) {
+        if (!listener.problems.length) {
+            const problem = {
+                startLine: 1,
+                startColumn: 0,
+                endLine: 1000,
+                endColumn: 1000,
+                type: "error",
+                message: "Invalid syntax!"
+            };
+            listener.collectProblem(problem);
+        }
+        return null;
+    }
+
+    doHandleEditContent(content, dialect, listener, selected) {
         var startTime = Date.now();
         var old_decls = this.lastSuccess;
         var parser = newParser(content, dialect, listener);
