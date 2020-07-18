@@ -173,6 +173,12 @@ export default class Repository {
                         });
                     else if(decl_obj.derivedFrom)
                         decl_obj.derivedFrom = [];
+                    if (decl.annotations)
+                        decl_obj.annotations = decl.annotations.map(function (a) {
+                            return a.name;
+                        });
+                    else if(decl_obj.annotations)
+                        decl_obj.annotations = [];
                 }
             } else {
                 decl_obj = {
@@ -198,6 +204,10 @@ export default class Repository {
                 if (decl.derivedFrom)
                     decl_obj.derivedFrom = decl.derivedFrom.map(function (s) {
                         return s.name;
+                    });
+                if (decl.annotations)
+                    decl_obj.annotations = decl.annotations.map(function (a) {
+                        return a.name;
                     });
                 this.statuses[id] = {
                     editStatus: "CREATED",
