@@ -32,7 +32,8 @@ export default class PromptoChangeManager {
         // "annotate" is the last message always sent by PromptoWorker.onUpdate
         if(msg.data.name === "annotate") {
             this.processing = Math.max(this.processing - 1, 0);
-            this.emitPendingChanges();
+            if(this.canSendPendingChanges(false))
+                this.emitPendingChanges();
         }
     }
 
@@ -77,7 +78,8 @@ export default class PromptoChangeManager {
         if(this.timerId) {
             clearTimeout(this.timerId);
             this.timerId = null;
-            this.pendingChanges = this.scheduledChanges.concat(this.pendingChanges);
+            if(this.scheduledChanges)
+                this.pendingChanges = this.scheduledChanges.concat(this.pendingChanges);
             this.scheduledChanges = null;
         }
     }
