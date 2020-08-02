@@ -110,7 +110,7 @@ it('filterOutDuplicates removes proto when adding and removing other proto', () 
 });
 
 function createContextWithMethods(methods) {
-    var context = prompto.runtime.Context.newGlobalContext();
+    var context = prompto.runtime.Context.newGlobalsContext();
     methods.map(function (method) {
         var params = new prompto.param.ParameterList();
         method.parameters.map(function (name) {

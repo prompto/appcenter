@@ -37,7 +37,7 @@ export default class Codebase {
 
     loadCatalog(globalContext, decls) {
         if (prompto && decls) {
-            const context = prompto.runtime.Context.newGlobalContext();
+            const context = prompto.runtime.Context.newGlobalsContext();
             // need a fresh context to ensure all get registered
             context.problemListener = new prompto.problem.ProblemCollector(); // we'll ignore these errors but let's catch them
             decls.register(context);

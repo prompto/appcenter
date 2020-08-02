@@ -19,8 +19,8 @@ export default class Repository {
 
     constructor() {
         linkPrompto();
-        this.librariesContext = prompto.runtime.Context.newGlobalContext();
-        this.projectContext = prompto.runtime.Context.newGlobalContext();
+        this.librariesContext = prompto.runtime.Context.newGlobalsContext();
+        this.projectContext = prompto.runtime.Context.newGlobalsContext();
         this.projectContext.setParentContext(this.librariesContext);
         this.moduleId = null;
         this.lastSuccess = []; // last piece of code successfully registered through handleUpdate
@@ -45,7 +45,7 @@ export default class Repository {
     };
 
     clearLibrariesContext() {
-        this.librariesContext = prompto.runtime.Context.newGlobalContext();
+        this.librariesContext = prompto.runtime.Context.newGlobalsContext();
         this.projectContext.setParentContext(this.librariesContext);
     }
 
@@ -73,7 +73,7 @@ export default class Repository {
             removed: this.projectContext.getLocalCatalog(),
             added: {}
         };
-        this.projectContext = prompto.runtime.Context.newGlobalContext();
+        this.projectContext = prompto.runtime.Context.newGlobalsContext();
         this.projectContext.setParentContext(this.librariesContext);
         this.statuses = {};
         return delta;
