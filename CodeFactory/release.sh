@@ -21,7 +21,7 @@ then
 	release=$?	 
 	if [ $release -eq 0 ]
 	then
-		./copy_home_seed_to_atlas_seed.sh $(cat password.txt)
+		./copy_home_seed_to_atlas_seed.sh
 	fi
 else
 	echo $deploy
