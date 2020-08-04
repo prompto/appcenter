@@ -19,3 +19,5 @@ home-factory-seed-atlas-seed-tools.yml
 home-factory-dev-atlas-seed-tools.yml
 home-seed-secure.yml
 home-zubin-secure.yml
+atlas-factory-dev.yml
+atlas-factory-test.yml

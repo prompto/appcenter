@@ -9,7 +9,7 @@ codeStore:
 
 dataStore: 
   <<: *localMongoStore
-  dbName: FACTORY-DEV
+  dbName: APPS
 
 target:
   dataStore: 
