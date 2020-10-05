@@ -17,14 +17,13 @@ console.error = console.warn = console.log = console.trace = log;
 
 /* not Webpacking this yet because that would require webpacking and installing prompto runtime too, which is not ready yet */
 
-globals.AnnotatingErrorListener = class AnnotatingErrorListener extends globals["prompto"].problem.ProblemCollector {
+const ProblemCollector = globals["prompto"].problem.ProblemCollector;
 
-    constructor(problems) {
-        super();
-        this.problems = problems || [];
-    }
+/* ES6 inheritance crashes here */
 
-    collectProblem(problem) {
+function AnnotatingErrorListener(problems) {
+    const pc = new ProblemCollector(problems);
+    pc.collectProblem = function(problem) {
         // convert to ACE annotation
         problem = { row : problem.startLine - 1,
             column : problem.startColumn,
@@ -33,5 +32,13 @@ globals.AnnotatingErrorListener = class AnnotatingErrorListener extends globals[
             type : problem.type,
             text : problem.message };
         this.problems.push(problem);
-    }
+    };
+    return pc;
 }
+
+// test the above
+const collector = new ProblemCollector();
+const annotating = new AnnotatingErrorListener();
+
+globals.AnnotatingErrorListener = AnnotatingErrorListener;
+
