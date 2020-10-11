@@ -80,6 +80,7 @@ self.ReactBootstrap = {
 	Carousel: React.Component,
 	CarouselItem: React.Component,
 	CarouselCaption: React.Component,
+    Overlay: React.Component,
     Typeahead: React.Component,
     DatePicker: React.Component
 };
