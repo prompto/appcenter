@@ -877,11 +877,24 @@ native widget Badge {
 	
 }
 
-@WidgetProperties({bsStyle:{values:<"success", "warning", "danger", "info", "default", "primary">, required: false}})
+@WidgetProperties({bsStyle:{values:<"success", "warning", "danger", "info", "default", "primary">, required:false}})
 native widget Label {
 
 	category bindings {
 		JavaScript: ReactBootstrap.Label;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({onEnter:{type:Callback, help:"Callback fired before the Overlay transitions in"}, rootClose:{type:Boolean, help:"Specify whether the overlay should trigger onHide when the user clicks outside the overlay"}, onExit:{type:Callback, help:"Callback fired right before the Overlay transitions out"}, onExited:{type:Callback, help:"Callback fired after the Overlay finishes transitioning out"}, show:{type:Boolean, help:"Set the visibility of the Overlay"}, onEntered:{type:Callback, help:"Callback fired after the Overlay finishes transitioning in"}, onHide:{type:Callback, help:"A callback invoked by the overlay when it wishes to be hidden. Required if `rootClose` is specified."}, onExiting:{type:Callback, help:"Callback fired as the Overlay begins to transition out"}, placement:{values:<"top", "left", "bottom", "right">, help:"Sets the direction of the Overlay.", required:true}, onEntering:{type:Callback, help:"Callback fired as the Overlay begins to transition in"}, animation:{types:<Boolean, Text>, help:"Use animation"}})
+native widget Overlay {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Overlay;
 	}
 	
 	Html method render () {
