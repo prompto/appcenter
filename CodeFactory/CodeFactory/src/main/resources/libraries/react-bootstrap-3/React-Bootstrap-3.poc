@@ -903,3 +903,42 @@ native widget Overlay {
 	
 }
 
+@WidgetProperties({role:{type:Text, help:"ARIA role of collapsible element"}, onExit:{type:Callback, help:"Callback fired before the component collapses"}, in:{type:Boolean, help:"Show the component; triggers the expand or collapse animation"}, onExited:{type:Callback, help:"Callback fired after the component has collapsed"}, timeout:{type:Integer, help:"Duration of the collapse animation in milliseconds, to ensure that finishing callbacks are fired even if the original browser transition end events are canceled"}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount the component (add it to the DOM)"}, appear:{type:Boolean, help:"Run the expand animation when the component mounts, if it is initially shown"}, onEnter:{type:Callback, help:"Callback fired before the component expands"}, getDimensionValue:{type:any, help:"Function that returns the height or width of the animating DOM node Allows for providing some custom logic for how much the Collapse component should animate in its specified dimension. Called with the current dimension prop value and the DOM node."}, unmountOnExit:{type:Boolean, help:"Unmount the component (remove it from the DOM) when it is collapsed"}, onEntered:{type:Callback, help:"Callback fired after the component has expanded"}, onExiting:{type:Callback, help:"Callback fired after the component starts to collapse"}, onEntering:{type:Callback, help:"Callback fired after the component starts to expand"}, dimension:{types:<null>, help:"The dimension used when collapsing, or a function that returns the dimension _Note: Bootstrap only partially supports 'width'! You will need to supply your own CSS animation for the `.width` CSS class._"}})
+native widget Collapse {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Collapse;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({componentClass:{type:Text, help:"You can use a custom element type for this component.If not specified, it will be treated as `'li'` if every child is a non-actionable `<ListGroupItem>`, and `'div'` otherwise."}})
+native widget ListGroup {
+
+	category bindings {
+		JavaScript: ReactBootstrap.ListGroup;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({listItem:Boolean, onClick:ClickEventCallback, active:any, header:Text, disabled:any, href:Text, type:Text})
+native widget ListGroupItem {
+
+	category bindings {
+		JavaScript: ReactBootstrap.ListGroupItem;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
