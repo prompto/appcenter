@@ -1,0 +1,26 @@
+@WidgetProperties({readOnly:Boolean})
+native widget AceResourceEditor {
+
+	category bindings {
+		JavaScript: ResourceEditors.AceResourceEditor;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+
+@WidgetProperties({readOnly:Boolean})
+native widget AcePromptoEditor {
+
+	category bindings {
+		JavaScript: ResourceEditors.AcePromptoEditor;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
