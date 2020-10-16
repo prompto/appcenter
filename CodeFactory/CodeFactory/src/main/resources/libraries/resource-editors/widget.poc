@@ -9,6 +9,11 @@ native widget AceResourceEditor {
 		JavaScript: return this.render();
 	}
 	
+	@Inlined
+	method setResource(Any stuff) {
+		JavaScript: this.setResource(stuff);
+	}
+	
 }
 
 
