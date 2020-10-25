@@ -1,11 +1,11 @@
 {
 	"type" : "WEBLIBRARY",
 	"name" : "Resource-Editors",
-	"version" : "0.0.24",
+	"version" : "0.0.31",
 	"migrateFrom" : "0.0.0",
 	"description" : "Editor widgets",
     "htmlEngine" : "react-16",
  	"codeResource" : "widget.poc",
-	"nativeResource" : "main.js",
+	"nativeResource" : "/ide/main.js",
 	"stubResource" : "stub.js"
 }
