@@ -316,7 +316,11 @@ public class ModuleProcess {
 			cmds.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=" + debugPort);
 		}
 		addClassPathArgs(cmds);
-		cmds.add(AppServer.class.getName());
+		String factory = System.getenv("RUN_PROMPTO_FACTORY");
+		if(factory!=null && !factory.isEmpty()) 
+			cmds.add(Application.class.getName());
+		else			
+			cmds.add(AppServer.class.getName());
 		addPromptoArgs(cmds);
 		return cmds.toArray(new String[cmds.size()]);
 	}
