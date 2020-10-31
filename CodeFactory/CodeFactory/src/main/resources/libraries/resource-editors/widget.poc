@@ -1,4 +1,4 @@
-@WidgetProperties({readOnly:Boolean})
+@WidgetProperties({readOnly:Boolean, bodyEdited: TextCallback})
 native widget AceResourceEditor {
 
 	category bindings {
