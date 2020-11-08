@@ -17,7 +17,7 @@ native widget AceResourceEditor {
 }
 
 
-@WidgetProperties({catalogUpdated: DocumentCallback, readOnly:Boolean})
+@WidgetProperties({readOnly:Boolean, catalogUpdated: DocumentCallback})
 native widget AcePromptoEditor {
 
 	category bindings {
@@ -31,6 +31,11 @@ native widget AcePromptoEditor {
 	@Inlined
 	method setProject(Any projectId, Boolean loadDependencies) {
 		JavaScript: this.setProject(projectId, loadDependencies);
+	}
+	
+	@Inlined
+	method setResource(Any stuff) {
+		JavaScript: this.setResource(stuff);
 	}
 	
 	
