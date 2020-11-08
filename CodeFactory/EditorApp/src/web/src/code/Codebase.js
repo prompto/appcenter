@@ -1,4 +1,4 @@
-import { getCodebaseLength } from './Utils';
+import { getCodebaseLength, convertDocumentToObject } from './Utils';
 
 let prompto = null;
 
@@ -42,7 +42,8 @@ export default class Codebase {
             context.problemListener = new prompto.problem.ProblemCollector(); // we'll ignore these errors but let's catch them
             decls.register(context);
             context.globals = globalContext;
-            return context.getLocalCatalog();
+            const catalog = context.getLocalCatalog();
+            return convertDocumentToObject(catalog);
         } else
             return {};
     }

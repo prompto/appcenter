@@ -1,4 +1,4 @@
-import { makeValidId } from './Utils';
+import {convertDocumentToObject, makeValidId} from './Utils';
 
 export default function Catalog() {
     this.attributes = [];
@@ -10,6 +10,7 @@ export default function Catalog() {
     // for performance reasons, we only receive a delta from the ace worker
     // so can't rely on just React virtual DOM
     this.applyDelta = function(delta) {
+        delta = convertDocumentToObject(delta);
         if (delta.removed)
             this.applyRemoved(delta.removed);
         if (delta.added) {

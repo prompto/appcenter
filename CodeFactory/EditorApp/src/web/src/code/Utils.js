@@ -103,4 +103,22 @@ export const getContentFromEntry = function(entry) {
             content.name = entry.value;
     }
     return content;
+};
+
+function recursivelyConvertDocumentToObject(object) {
+    if(!object)
+        return object;
+    if(Array.isArray(object))
+        return object.map(recursivelyConvertDocumentToObject);
+    if(typeof(object) === typeof({})) {
+        const result = {};
+        if(object.type==="Document" && object.value)
+            object = object.value;
+        Object.getOwnPropertyNames(object).forEach(name => result[name] = recursivelyConvertDocumentToObject(object[name]), this);
+        return result;
+    }
+    return object;
 }
+
+
+export const convertDocumentToObject = recursivelyConvertDocumentToObject;
