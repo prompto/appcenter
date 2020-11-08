@@ -10,8 +10,6 @@ export default function Catalog() {
     // for performance reasons, we only receive a delta from the ace worker
     // so can't rely on just React virtual DOM
     this.applyDelta = function(delta) {
-        if(delta.type==="Document" && delta.value)
-            delta = delta.value;
         if (delta.removed)
             this.applyRemoved(delta.removed);
         if (delta.added) {
@@ -21,8 +19,6 @@ export default function Catalog() {
         }
     };
     this.applyRemoved = function(delta) {
-        if(delta.type==="Document" && delta.value)
-            delta = delta.value;
         if (delta.attributes)
             this.removeStuffByName(this.attributes, delta.attributes);
         if (delta.methods)
@@ -37,8 +33,6 @@ export default function Catalog() {
             this.removeStuffByName(this.widgets, delta.widgets);
     };
     this.applyAdded = function(delta, core) {
-        if(delta.type==="Document" && delta.value)
-            delta = delta.value;
         if (delta.attributes)
             this.attributes = this.addStuffByName(this.attributes, delta.attributes, core);
         if (delta.methods)
@@ -71,30 +65,23 @@ export default function Catalog() {
         return current.sort(function(a,b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
     };
     this.removeEnums = function(current, removed) {
-        removed.forEach(enum_ => {
-            if(enum_.type==="Document" && enum_.value)
-                enum_ = enum_.value;
+        removed.forEach(e => {
             const idx = current.findIndex(function(a) {
-                return a.name === enum_.name;
+                return a.name === e.name;
             });
             if (idx >= 0)
                 current.splice(idx, 1);
         });
     };
     this.addEnumsByName = function(current, toAdd, core) {
-        toAdd = toAdd.map(enum_ => {
-            if(enum_.type==="Document" && enum_.value)
-                enum_ = enum_.value;
-            enum_.core = core;
-            return enum_;
+        toAdd.forEach(value => {
+            value.core = core;
         });
         current = current.concat(toAdd);
         return current.sort(function(a,b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
     };
     this.removeMethods = function(methods) {
         methods.forEach(method => {
-            if(method.type==="Document" && method.value)
-                method = method.value;
             const idx1 = this.methods.findIndex(function(a) {
                 return a.name === method.name;
             } );
@@ -104,8 +91,6 @@ export default function Catalog() {
                     this.methods.splice(idx1, 1);
                 else
                     method.protos.forEach(proto => {
-                        if(proto.type==="Document" && proto.value)
-                            proto = proto.value;
                         const idx2 = map.protos.findIndex(function(a) { return a.proto === proto.proto; });
                         if (idx2 >= 0)
                             map.protos.splice(idx2, 1);
@@ -114,21 +99,12 @@ export default function Catalog() {
         }, this);
     };
     this.addMethods = function(toAdd, core) {
-        toAdd = toAdd.map(method => {
-            if(method.type==="Document" && method.value)
-                method = method.value;
-            method.protos = method.protos.map(proto=>{
-                if(proto.type==="Document" && proto.value)
-                    proto = proto.value;
-                return proto;
-            });
+        toAdd.forEach(method => {
             method.core = core;
-            return method;
-        })
+        });
         const added = this.methods.concat(toAdd);
         this.methods = added.sort(function(a,b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
     };
-
     this.mapTextMimeTypeToList = function() {
         return {
             "text/page": this.resources.page,
