@@ -3,7 +3,6 @@ package prompto.codefactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import prompto.codefactory.Application;
 import prompto.config.ICodeFactoryConfiguration;
 import prompto.libraries.Libraries;
 import prompto.runtime.Mode;

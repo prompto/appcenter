@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import de.flapdoodle.embed.mongo.MongodExecutable;
-import prompto.codefactory.Application;
 import prompto.config.ICodeFactoryConfiguration;
 import prompto.libraries.Libraries;
 import prompto.runtime.Mode;

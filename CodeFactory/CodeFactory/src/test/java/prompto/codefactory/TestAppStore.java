@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import prompto.codefactory.Application;
 import prompto.server.AppServer;
 import prompto.server.BaseWebTest;
 

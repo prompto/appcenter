@@ -11,7 +11,6 @@ import prompto.code.Module;
 import prompto.code.ModuleType;
 import prompto.code.Thesaurus;
 import prompto.code.WebLibrary;
-import prompto.codefactory.SampleImporter;
 import prompto.config.IRuntimeConfiguration;
 import prompto.config.TempDirectories;
 import prompto.intrinsic.PromptoVersion;
