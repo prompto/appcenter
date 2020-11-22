@@ -1,4 +1,4 @@
-@WidgetProperties({readOnly:Boolean, bodyEdited: TextCallback})
+@WidgetProperties({bodyEdited: TextCallback})
 native widget AceResourceEditor {
 
 	category bindings {
@@ -10,14 +10,14 @@ native widget AceResourceEditor {
 	}
 	
 	@Inlined
-	method setResource(Any stuff) {
-		JavaScript: this.setResource(stuff);
+	method setResource(Any stuff, Boolean readOnly) {
+		JavaScript: this.setResource(stuff, readOnly);
 	}
 	
 }
 
 
-@WidgetProperties({readOnly:Boolean, catalogUpdated: DocumentCallback, contentUpdated: DocumentCallback})
+@WidgetProperties({catalogLoaded: DocumentCallback, contentUpdated: DocumentCallback})
 native widget AcePromptoEditor {
 
 	category bindings {
@@ -34,8 +34,8 @@ native widget AcePromptoEditor {
 	}
 	
 	@Inlined
-	method setResource(Any stuff) {
-		JavaScript: this.setResource(stuff);
+	method setResource(Any stuff, Boolean readOnly) {
+		JavaScript: this.setResource(stuff, readOnly);
 	}
 	
 	
