@@ -38,5 +38,9 @@ native widget AcePromptoEditor {
 		JavaScript: this.setResource(stuff, readOnly);
 	}
 	
+	@Inlined
+	method destroyResource(Any stuff) {
+		JavaScript: this.destroyResource(stuff);
+	}
 	
 }
