@@ -34,6 +34,11 @@ native widget AcePromptoEditor {
 	}
 	
 	@Inlined
+	method setBody(Text body, Boolean readOnly) {
+		JavaScript: this.setBody(body, readOnly);
+	}
+
+	@Inlined
 	method setResource(Any stuff, Boolean readOnly) {
 		JavaScript: this.setResource(stuff, readOnly);
 	}
