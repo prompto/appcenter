@@ -44,6 +44,11 @@ native widget AcePromptoEditor {
 	}
 	
 	@Inlined
+	method setDialect(Text dialect) {
+		JavaScript: this.setDialect(dialect);
+	}
+
+	@Inlined
 	method destroyResource(Any stuff) {
 		JavaScript: this.destroyResource(stuff);
 	}
