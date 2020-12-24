@@ -17,7 +17,7 @@ native widget AceResourceEditor {
 }
 
 
-@WidgetProperties({catalogLoaded: DocumentCallback, catalogUpdated:DocumentCallback, bodyEdited: AnyCallback})
+@WidgetProperties({catalogLoaded: DocumentCallback, catalogUpdated:DocumentCallback, bodyEdited: AnyCallback, progressed: TextCallback})
 native widget AcePromptoEditor {
 
 	category bindings {
