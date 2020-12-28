@@ -53,4 +53,13 @@ native widget AcePromptoEditor {
 		JavaScript: this.destroyResource(stuff);
 	}
 	
+	@Inlined
+	method getEditedResources(Any resources, AnyCallback callback) {
+		JavaScript: this.getEditedResources(resources, callback);
+	}
+	
+	@Inlined
+	method markChangesCommitted() {
+		JavaScript: this.markChangesCommitted();
+	}
 }
