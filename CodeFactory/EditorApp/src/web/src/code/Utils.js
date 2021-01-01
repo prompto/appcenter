@@ -106,7 +106,7 @@ export const getContentFromEntry = function(entry) {
 };
 
 function recursivelyConvertDocumentToObject(object) {
-    if(!object)
+    if(!object || object instanceof File)
         return object;
     if(Array.isArray(object))
         return object.map(recursivelyConvertDocumentToObject);
