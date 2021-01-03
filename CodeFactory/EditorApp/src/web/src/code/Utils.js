@@ -97,6 +97,7 @@ export const getContentFromEntry = function(entry) {
             content.proto = entry.value.protos[0].proto;
             break;
         case "enumeration":
+        case "widget":
             content.name = entry.value.name;
             break;
         default:
