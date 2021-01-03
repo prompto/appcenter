@@ -10,6 +10,11 @@ self.ReactBootstrap = {
     Button: React.Component,
     Checkbox: React.Component,
     Radio: React.Component,
+    Dropdown: {
+    	render: React.Component.render,
+    	Toggle: React.Component,
+    	Menu: React.Component
+	},
     DropdownButton: React.Component,
     SplitButton: React.Component,
     InputGroup: {
@@ -85,6 +90,7 @@ self.ReactBootstrap = {
     ListGroup: React.Component,
     ListGroupItem: React.Component,
     Typeahead: React.Component,
-    DatePicker: React.Component
+    DatePicker: React.Component,
+    OverlayTrigger: React.Component
 };
 
