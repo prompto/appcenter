@@ -4,6 +4,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import prompto.grammar.Annotation;
 import prompto.literal.DocEntry;
@@ -22,8 +23,9 @@ public class PropTypes {
 	private String toDocumentLiteral() {
 		StringWriter entriesWriter = new StringWriter();
 		entriesWriter.append("{\n\t");
+		List<Property> publicProperties = properties.stream().filter(prop -> !prop.isPrivate()).collect(Collectors.toList());
 		boolean first = true;
-		for(Property prop : properties) {
+		for(Property prop : publicProperties) {
 			if(first)
 				first = false;
 			else
