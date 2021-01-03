@@ -23,7 +23,7 @@ public class PropTypes {
 	private String toDocumentLiteral() {
 		StringWriter entriesWriter = new StringWriter();
 		entriesWriter.append("{\n\t");
-		List<Property> publicProperties = properties.stream().filter(prop -> !prop.isPrivate()).collect(Collectors.toList());
+		List<Property> publicProperties = properties.stream().filter(prop -> !isPrivateProperty(prop)).collect(Collectors.toList());
 		boolean first = true;
 		for(Property prop : publicProperties) {
 			if(first)
@@ -34,6 +34,10 @@ public class PropTypes {
 		}
 		entriesWriter.append("\n}");
 		return entriesWriter.toString();
+	}
+
+	private boolean isPrivateProperty(Property prop) {
+		return prop.getHelp()!=null && prop.getHelp().contains("@private");
 	}
 
 	public DocEntryList toDocEntries(PropTypesMap propertyMap) {
