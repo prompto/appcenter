@@ -981,11 +981,24 @@ native widget ListGroupItem {
 	
 }
 
-@WidgetProperties({delayHide:{type:Integer, help:"A millisecond delay amount before hiding the Overlay once triggered."}, onExit:{type:Callback, help:"Callback fired right before the Overlay transitions out"}, overlay:{type:Text, help:"An element or text to overlay next to the target.", required:true}, onExited:{type:Callback, help:"Callback fired after the Overlay finishes transitioning out"}, show:{type:Boolean, help:"Set the visibility of the Overlay"}, delayShow:{type:Integer, help:"A millisecond delay amount before showing the Overlay once triggered."}, trigger:{types:<null>, help:"Specify which action or actions trigger Overlay visibility"}, defaultOverlayShown:{type:Boolean, help:"FIXME: This should be `defaultShow`.The initial visibility state of the Overlay. For more nuanced visibility control, consider using the Overlay component directly."}, animation:{types:<Boolean, Text>, help:"Use animation"}, onEnter:{type:Callback, help:"Callback fired before the Overlay transitions in"}, rootClose:{type:Boolean, help:"Specify whether the overlay should trigger onHide when the user clicks outside the overlay"}, delay:{type:Integer, help:"A millisecond delay amount to show and hide the Overlay once triggered"}, onEntered:{type:Callback, help:"Callback fired after the Overlay finishes transitioning in"}, onHide:{type:Callback, help:"A callback invoked by the overlay when it wishes to be hidden. Required if `rootClose` is specified."}, onExiting:{type:Callback, help:"Callback fired as the Overlay begins to transition out"}, placement:{values:<"top", "left", "bottom", "right">, help:"Sets the direction of the Overlay.", required:true}, onEntering:{type:Callback, help:"Callback fired as the Overlay begins to transition in"}})
+@WidgetProperties({delayHide:{type:Integer, help:"A millisecond delay amount before hiding the Overlay once triggered."}, onExit:{type:Callback, help:"Callback fired right before the Overlay transitions out"}, overlay:{types:<Text, Html>, help:"An element or text to overlay next to the target.", required:true}, onExited:{type:Callback, help:"Callback fired after the Overlay finishes transitioning out"}, show:{type:Boolean, help:"Set the visibility of the Overlay"}, delayShow:{type:Integer, help:"A millisecond delay amount before showing the Overlay once triggered."}, trigger:{types:<Text, Text[]>, help:"Specify which action or actions trigger Overlay visibility"}, defaultOverlayShown:{type:Boolean, help:"FIXME: This should be `defaultShow`.The initial visibility state of the Overlay. For more nuanced visibility control, consider using the Overlay component directly."}, animation:{types:<Boolean, Text>, help:"Use animation"}, onEnter:{type:Callback, help:"Callback fired before the Overlay transitions in"}, rootClose:{type:Boolean, help:"Specify whether the overlay should trigger onHide when the user clicks outside the overlay"}, delay:{type:Integer, help:"A millisecond delay amount to show and hide the Overlay once triggered"}, onEntered:{type:Callback, help:"Callback fired after the Overlay finishes transitioning in"}, onHide:{type:Callback, help:"A callback invoked by the overlay when it wishes to be hidden. Required if `rootClose` is specified."}, onExiting:{type:Callback, help:"Callback fired as the Overlay begins to transition out"}, placement:{values:<"top", "left", "bottom", "right">, help:"Sets the direction of the Overlay.", required:false}, onEntering:{type:Callback, help:"Callback fired as the Overlay begins to transition in"}})
 native widget OverlayTrigger {
 
 	category bindings {
 		JavaScript: ReactBootstrap.OverlayTrigger;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({positionTop:{types:<Integer, Text>, help:"The 'top' position value for the Tooltip."}, positionLeft:{types:<Integer, Text>, help:"The 'left' position value for the Tooltip."}, arrowOffsetTop:{types:<Integer, Text>, help:"The 'top' position value for the Tooltip arrow."}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for accessibility @type {string|number} @required"}, placement:{values:<"top", "left", "bottom", "right">, help:"Sets the direction the Tooltip is positioned towards.", required:true}, arrowOffsetLeft:{types:<Integer, Text>, help:"The 'left' position value for the Tooltip arrow."}})
+native widget Tooltip {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Tooltip;
 	}
 	
 	Html method render () {

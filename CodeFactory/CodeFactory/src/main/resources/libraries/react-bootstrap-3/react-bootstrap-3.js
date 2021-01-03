@@ -91,6 +91,7 @@ self.ReactBootstrap = {
     ListGroupItem: React.Component,
     Typeahead: React.Component,
     DatePicker: React.Component,
-    OverlayTrigger: React.Component
+    OverlayTrigger: React.Component,
+    Tooltip: React.Component
 };
 
