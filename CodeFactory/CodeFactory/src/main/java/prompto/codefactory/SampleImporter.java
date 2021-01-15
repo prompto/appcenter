@@ -102,7 +102,7 @@ public class SampleImporter {
 	}
 
 	public boolean importModule(ICodeStore codeStore) throws Exception {
-		Module existing = codeStore.fetchModule(module.getType(), module.getName(), module.getVersion());
+		Module existing = codeStore.fetchVersionedModule(module.getType(), module.getName(), module.getVersion());
 		if(existing!=null)
 			return false;
 		createModule(codeStore);
