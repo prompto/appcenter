@@ -43,6 +43,13 @@ export default class Codebase {
             decls.register(context);
             context.globals = globalContext;
             const catalog = context.getLocalCatalog();
+            if(catalog.value && catalog.value.methods) {
+                catalog.value.methods.forEach(method => {
+                    method.value.protos.forEach(proto => {
+                        proto.value.main = proto.value.main || proto.value.eligibleAsMain;
+                    });
+                });
+            }
             return convertDocumentToObject(catalog);
         } else
             return {};
