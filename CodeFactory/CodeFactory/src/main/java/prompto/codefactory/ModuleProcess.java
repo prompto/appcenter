@@ -316,8 +316,8 @@ public class ModuleProcess {
 			cmds.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=" + debugPort);
 		}
 		addClassPathArgs(cmds);
-		String factory = System.getenv("RUN_PROMPTO_FACTORY");
-		if(factory!=null && !factory.isEmpty()) 
+		boolean factory = "CodeFactory".equals(getModuleName());
+		if(factory) 
 			cmds.add(Application.class.getName());
 		else			
 			cmds.add(AppServer.class.getName());
