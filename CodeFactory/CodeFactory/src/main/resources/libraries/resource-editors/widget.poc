@@ -1,4 +1,4 @@
-@WidgetProperties({bodyEdited: TextCallback, quickCommit: Callback})
+@WidgetProperties({bodyEdited: TextCallback, onCommit: Callback})
 native widget AceResourceEditor {
 
 	category bindings {
@@ -17,7 +17,7 @@ native widget AceResourceEditor {
 }
 
 
-@WidgetProperties({catalogLoaded: DocumentCallback, catalogUpdated:DocumentCallback, bodyEdited: AnyCallback, progressed: TextCallback, quickCommit: Callback})
+@WidgetProperties({catalogLoaded: DocumentCallback, catalogUpdated:DocumentCallback, bodyEdited: AnyCallback, progressed: TextCallback, onCommit: Callback})
 native widget AcePromptoEditor {
 
 	category bindings {
