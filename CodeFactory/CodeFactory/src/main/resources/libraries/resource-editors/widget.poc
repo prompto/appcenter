@@ -16,8 +16,9 @@ native widget AceResourceEditor {
 	
 }
 
+abstract method CatalogLoadedCallback(Document catalog, Boolean complete); 
 
-@WidgetProperties({catalogLoaded: DocumentCallback, catalogUpdated:DocumentCallback, bodyEdited: AnyCallback, progressed: TextCallback, onCommit: Callback})
+@WidgetProperties({catalogLoaded: CatalogLoadedCallback, catalogUpdated:DocumentCallback, bodyEdited: AnyCallback, onCommit: Callback})
 native widget AcePromptoEditor {
 
 	category bindings {
@@ -29,8 +30,8 @@ native widget AcePromptoEditor {
 	}
 	
 	@Inlined
-	method setProject(Any projectId, Boolean loadDependencies) {
-		JavaScript: this.setProject(projectId, loadDependencies);
+	method setProject(Any projectId, Boolean loadDependencies, TextCallback progressed) {
+		JavaScript: this.setProject(projectId, loadDependencies, progressed);
 	}
 	
 	@Inlined
@@ -61,5 +62,15 @@ native widget AcePromptoEditor {
 	@Inlined
 	method markChangesCommitted() {
 		JavaScript: this.markChangesCommitted();
+	}
+
+	@Inlined
+	method runMethod(Any stuff, TextCallback progressed, Callback done) {
+		JavaScript: this.runMethod(stuff, progressed, done);
+	}
+
+	@Inlined
+	method runTest(Any stuff, TextCallback progressed, Callback done) {
+		JavaScript: this.runTest(stuff, progressed, done);
 	}
 }
