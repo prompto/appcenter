@@ -155,23 +155,6 @@
 							</resources>
 						</configuration>
 					</execution>
-					<execution>
-						<id>include editor app</id>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<phase>generate-resources</phase>
-						<configuration>
-							<outputDirectory>src/main/web/ide</outputDirectory>
-							<overwrite>false</overwrite>
-							<resources>
-								<resource>
-									<directory>../EditorApp/src/web/build</directory>
-									<filtering>false</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 		</plugins>
