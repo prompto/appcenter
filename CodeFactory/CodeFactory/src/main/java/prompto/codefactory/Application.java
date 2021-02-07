@@ -5,7 +5,9 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import prompto.code.BaseCodeStore;
 import prompto.code.Dependency;
@@ -153,8 +155,10 @@ public class Application {
 		try {
 			ICodeStore codeStore = codeStoreUsingDataStore();
 			createResourceLibraries(codeStore, "thesaurus/", "react-bootstrap-3/", "react-file-uploader/");
-			if(isSeedDataStore())
+			if(isSeedDataStore()) {
+				createResourceLibraries(codeStore, "resource-editors/");
 				createSeedLibraries(codeStore);
+			}
 		} catch(Throwable t) {
 			t.printStackTrace();
 		}
@@ -221,7 +225,8 @@ public class Application {
 	}
 
 	private static boolean isSeedDataStore() {
-		return config.getDataStoreConfiguration().getDbName().equals("tools");
+		final Set<String> names = new HashSet<>(Arrays.asList("tools", "factory-ide"));
+		return names.contains(config.getDataStoreConfiguration().getDbName().toLowerCase());
 	}
 
 

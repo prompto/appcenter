@@ -1,0 +1,76 @@
+@WidgetProperties({bodyEdited: TextCallback, onCommit: Callback})
+native widget AceResourceEditor {
+
+	category bindings {
+		JavaScript: ResourceEditors.AceResourceEditor;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+	@Inlined
+	method setResource(Any stuff, Boolean readOnly) {
+		JavaScript: this.setResource(stuff, readOnly);
+	}
+	
+}
+
+abstract method CatalogLoadedCallback(Document catalog, Boolean complete); 
+
+@WidgetProperties({catalogLoaded: CatalogLoadedCallback, catalogUpdated:DocumentCallback, bodyEdited: AnyCallback, onCommit: Callback})
+native widget AcePromptoEditor {
+
+	category bindings {
+		JavaScript: ResourceEditors.AcePromptoEditor;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+	@Inlined
+	method setProject(Any projectId, Boolean loadDependencies, TextCallback progressed) {
+		JavaScript: this.setProject(projectId, loadDependencies, progressed);
+	}
+	
+	@Inlined
+	method setBody(Text body, Boolean readOnly) {
+		JavaScript: this.setBody(body, readOnly);
+	}
+
+	@Inlined
+	method setResource(Any stuff, Boolean readOnly) {
+		JavaScript: this.setResource(stuff, readOnly);
+	}
+	
+	@Inlined
+	method setDialect(Text dialect) {
+		JavaScript: this.setDialect(dialect);
+	}
+
+	@Inlined
+	method destroyResource(Any stuff) {
+		JavaScript: this.destroyResource(stuff);
+	}
+	
+	@Inlined
+	method getEditedResources(Any resources, AnyCallback callback) {
+		JavaScript: this.getEditedResources(resources, callback);
+	}
+	
+	@Inlined
+	method markChangesCommitted() {
+		JavaScript: this.markChangesCommitted();
+	}
+
+	@Inlined
+	method runMethod(Any stuff, TextCallback progressed, Callback done) {
+		JavaScript: this.runMethod(stuff, progressed, done);
+	}
+
+	@Inlined
+	method runTest(Any stuff, TextCallback progressed, Callback done) {
+		JavaScript: this.runTest(stuff, progressed, done);
+	}
+}

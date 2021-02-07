@@ -1,4 +1,4 @@
-import { makeValidId } from './Utils';
+import {convertDocumentToObject, makeValidId} from './Utils';
 
 export default function Catalog() {
     this.attributes = [];
@@ -10,6 +10,7 @@ export default function Catalog() {
     // for performance reasons, we only receive a delta from the ace worker
     // so can't rely on just React virtual DOM
     this.applyDelta = function(delta) {
+        delta = convertDocumentToObject(delta);
         if (delta.removed)
             this.applyRemoved(delta.removed);
         if (delta.added) {
@@ -29,8 +30,10 @@ export default function Catalog() {
             this.removeEnums(this.enumerations, delta.enumerations);
         if (delta.tests)
             this.removeStuffByName(this.tests, delta.tests);
-        if (delta.widgets)
-            this.removeStuffByName(this.widgets, delta.widgets);
+        if (delta.widgets) {
+            const widgets = delta.widgets.map(w => w.name ? w.name : w);
+            this.removeStuffByName(this.widgets, widgets);
+        }
     };
     this.applyAdded = function(delta, core) {
         if (delta.attributes)
@@ -43,8 +46,10 @@ export default function Catalog() {
             this.enumerations = this.addEnumsByName(this.enumerations, delta.enumerations, core);
         if (delta.tests)
             this.tests = this.addStuffByName(this.tests, delta.tests, core);
-        if (delta.widgets)
-            this.widgets = this.addStuffByName(this.widgets, delta.widgets, core);
+        if (delta.widgets) {
+            const widgets = delta.widgets.map(w => w.name ? w.name : w);
+            this.widgets = this.addStuffByName(this.widgets, widgets, core);
+        }
         if (delta.resources)
             this.addResources(delta.resources);
     };

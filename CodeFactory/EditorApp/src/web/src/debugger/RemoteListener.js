@@ -3,7 +3,7 @@ import DebugEvent from './DebugEvent';
 export default class RemoteListener {
 
     constructor(listener) {
-        this.listener = listener
+        this.listener = listener;
         this.webSocket = null;
     }
 

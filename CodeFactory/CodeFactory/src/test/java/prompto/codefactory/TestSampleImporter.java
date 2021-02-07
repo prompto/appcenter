@@ -11,7 +11,6 @@ import prompto.code.Module;
 import prompto.code.ModuleType;
 import prompto.code.Thesaurus;
 import prompto.code.WebLibrary;
-import prompto.codefactory.SampleImporter;
 import prompto.config.IRuntimeConfiguration;
 import prompto.config.TempDirectories;
 import prompto.intrinsic.PromptoVersion;
@@ -96,13 +95,13 @@ public class TestSampleImporter {
 	public void reactBootstrapNewVersionIsImported() throws Exception {
 		SampleImporter importer = new SampleImporter("samples/react-bootstrap-3-1.0.0/");
 		importer.importModule(ICodeStore.getInstance());
-		Module module = ICodeStore.getInstance().fetchModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.LATEST);
+		Module module = ICodeStore.getInstance().fetchVersionedModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.LATEST);
 		assertEquals(PromptoVersion.parse("1.0.0"), module.getVersion());
 		importer = new SampleImporter("samples/react-bootstrap-3-1.0.1/");
 		importer.importModule(ICodeStore.getInstance());
-		module = ICodeStore.getInstance().fetchModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.LATEST);
+		module = ICodeStore.getInstance().fetchVersionedModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.LATEST);
 		assertEquals(PromptoVersion.parse("1.0.1"), module.getVersion());
-		module = ICodeStore.getInstance().fetchModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.parse("1.0.0"));
+		module = ICodeStore.getInstance().fetchVersionedModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.parse("1.0.0"));
 		assertNotNull(module);
 		}
 	
@@ -110,13 +109,13 @@ public class TestSampleImporter {
 	public void reactBootstrapIsUpdated() throws Exception {
 		SampleImporter importer = new SampleImporter("samples/react-bootstrap-3-1.0.0/");
 		importer.importModule(ICodeStore.getInstance());
-		Module module = ICodeStore.getInstance().fetchModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.LATEST);
+		Module module = ICodeStore.getInstance().fetchVersionedModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.LATEST);
 		assertEquals(PromptoVersion.parse("1.0.0"), module.getVersion());
 		importer = new SampleImporter("samples/react-bootstrap-3-1.0.2/");
 		importer.importModule(ICodeStore.getInstance());
-		module = ICodeStore.getInstance().fetchModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.LATEST);
+		module = ICodeStore.getInstance().fetchVersionedModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.LATEST);
 		assertEquals(PromptoVersion.parse("1.0.2"), module.getVersion());
-		module = ICodeStore.getInstance().fetchModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.parse("1.0.0"));
+		module = ICodeStore.getInstance().fetchVersionedModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.parse("1.0.0"));
 		assertNull(module);
 		
 	}

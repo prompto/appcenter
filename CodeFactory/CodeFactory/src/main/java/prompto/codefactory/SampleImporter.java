@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Paths;
@@ -101,7 +102,7 @@ public class SampleImporter {
 	}
 
 	public boolean importModule(ICodeStore codeStore) throws Exception {
-		Module existing = codeStore.fetchModule(module.getType(), module.getName(), module.getVersion());
+		Module existing = codeStore.fetchVersionedModule(module.getType(), module.getName(), module.getVersion());
 		if(existing!=null)
 			return false;
 		createModule(codeStore);
@@ -148,9 +149,9 @@ public class SampleImporter {
 		if(codeResource!=null)
 			storeAssociatedCode(codeStore);
 		if(module instanceof WebLibrary) {
-			if(nativeResource!=null) 
+			if(nativeResource!=null && isLocalResource(nativeResource)) 
 				storeResource(codeStore, nativeResource);
-			if(stubResource!=null) 
+			if(stubResource!=null && isLocalResource(stubResource)) 
 				storeResource(codeStore, stubResource);
 		}
 	}
@@ -160,6 +161,13 @@ public class SampleImporter {
 		codeStore.storeDeclarations(rcs.getDeclarations(), rcs.getModuleDialect(), module.getVersion(), module.getDbId());
 	}
 	
+	private boolean isLocalResource(URL resource) throws URISyntaxException {
+		if("file".equals(resource.getProtocol()))
+			return Paths.get(resource.toURI()).toFile().exists();
+		else
+			return false;
+	}
+
 	private void storeResource(ICodeStore codeStore, URL resourceUrl) throws Exception {
 		initializeJarFileSystem(resourceUrl.toURI());
 		String fileName = Paths.get(resourceUrl.toURI()).getFileName().toString();

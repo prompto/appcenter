@@ -1,4 +1,4 @@
-import { parse, unparse, newParser, translate } from './Utils';
+import {parse, unparse, newParser, translate, convertDocumentToObject} from './Utils';
 import Codebase from "./Codebase";
 import Delta from "./Delta";
 
@@ -51,18 +51,20 @@ export default class Repository {
 
 
     publishLibraries() {
+        const catalog = this.librariesContext.getCatalog();
         return {
             removed: {},
-            added: this.librariesContext.getCatalog(),
+            added: convertDocumentToObject(catalog),
             core: true
         };
     };
 
 
     publishProject() {
+        const catalog = this.projectContext.getCatalog();
         return {
             removed: {},
-            added: this.projectContext.getLocalCatalog(),
+            added: convertDocumentToObject(catalog),
             project: true
         };
     };

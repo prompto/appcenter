@@ -1,7 +1,15 @@
 define Callback as abstract method
+define AnyCallback as abstract method receiving Any value
 define BooleanCallback as abstract method receiving Boolean value
 define IntegerCallback as abstract method receiving Integer value
+define DecimalCallback as abstract method receiving Decimal value
 define TextCallback as abstract method receiving Text value
+define DateCallback as abstract method receiving Decimal value
+define TimeCallback as abstract method receiving Time value
+define DateTimeCallback as abstract method receiving DateTime value
+define PeriodCallback as abstract method receiving Period value
+define UuidCallback as abstract method receiving Uuid value
+define DocumentCallback as abstract method receiving Document value
 define Any as native category with attributes id and text, and bindings:
 
 	define category bindings as:
@@ -554,20 +562,37 @@ define "decode Html charcode" as test method doing:
 and verifying:
 	encoded = "a1b"
 
-define HttpRequestMethod as enumerated Text with symbols:
-	CONNECT with "CONNECT" as value
-	DELETE with "DELETE" as value
-	GET with "GET" as value
-	HEAD with "HEAD" as value
-	OPTIONS with "OPTIONS" as value
-	PATCH with "PATCH" as value
-	POST with "POST" as value
-	PUT with "PUT" as value
-	TRACE with "TRACE" as value
+define HttpMethod as enumerated Text with symbols:
+	HTTP_CONNECT with "CONNECT" as value
+	HTTP_DELETE with "DELETE" as value
+	HTTP_GET with "GET" as value
+	HTTP_HEAD with "HEAD" as value
+	HTTP_OPTIONS with "OPTIONS" as value
+	HTTP_PATCH with "PATCH" as value
+	HTTP_POST with "POST" as value
+	HTTP_PUT with "PUT" as value
+	HTTP_TRACE with "TRACE" as value
 
-define httpRequestMethod as storable HttpRequestMethod attribute
+define httpMethod as storable HttpMethod attribute
 
-define Url as storable native resource with attributes path, encoding and httpRequestMethod, and bindings:
+define HttpHeader as native category with attributes name and text, and bindings:
+
+	define category bindings as:
+		Java: prompto.internet.HttpHeader
+		C#: prompto.internet.HttpHeader
+		Python2: HttpHeader from module: prompto.internet.HttpHeader
+		Python3: HttpHeader from module: prompto.internet.HttpHeader
+		JavaScript: HttpHeader from module: prompto/internet/HttpHeader.js
+
+define httpHeaders as HttpHeader[] attribute
+	
+define HttpContentType as enumerated Text with symbols:
+	HTTP_URL_ENCODED with "application/x-www-form-urlencoded" as value
+	HTTP_FORM_DATA with "multipart/form-data" as value
+	HTTP_TEXT_PLAIN with "text/plain" as value
+	HTTP_APPLICATION_JSON with "application/json" as value
+
+define Url as native resource with attributes path, encoding, httpMethod and httpHeaders, and bindings:
 	
 	define category bindings as:
 		Java: prompto.internet.Url
@@ -576,8 +601,7 @@ define Url as storable native resource with attributes path, encoding and httpRe
 		Python3: Url from module: prompto.internet.Url
 		JavaScript: Url from module: prompto/internet/Url.js
 
-// many objects have an Url  
-define url as storable Url attribute
+define url as Url attribute
 
 define "reads from www.google.com" as test method doing:
 	// need a cross-domain enabled page for browser testing
@@ -820,11 +844,11 @@ define getHttpPort as native method returning Integer doing:
 
 define getHttpQueryParameter as native method receiving Text name returning Text doing:
     Java: return $server.getHttpQueryParameter(name);
-	JavaScript: return browserGetQueryParameter(name); from module: prompto/internet/Browser.js
+	JavaScript: return browserGetQueryParameter(name); from module: prompto/web/Browser.js
 
 define httpRedirect as native method receiving Text path doing:
     Java: $server.httpRedirect(path);
-	JavaScript: browserGoto(location); from module: prompto/internet/Browser.js
+	JavaScript: browserGoto(location); from module: prompto/web/Browser.js
 
 @Inlined
 define ClickEvent as native category with bindings:
@@ -837,6 +861,9 @@ and methods:
 	define stopPropagation as method doing:
 		JavaScript: this.stopPropagation();
 
+	define preventDefault as method doing:
+		JavaScript: this.preventDefault();
+		
 
 @Inlined
 define MouseEvent as native category with bindings:
@@ -849,6 +876,9 @@ and methods:
 	define stopPropagation as method doing:
 		JavaScript: this.stopPropagation();
 
+	define preventDefault as method doing:
+		JavaScript: this.preventDefault();
+		
 
 @Inlined
 define KeyboardEvent as native category with bindings:
@@ -861,6 +891,9 @@ and methods:
 	define stopPropagation as method doing:
 		JavaScript: this.stopPropagation();
 
+	define preventDefault as method doing:
+		JavaScript: this.preventDefault();
+		
 
 @Inlined
 define RadioChangedEvent as native category with bindings:
@@ -876,6 +909,9 @@ and methods:
 	define stopPropagation as method doing:
 		JavaScript: this.stopPropagation();
 
+	define preventDefault as method doing:
+		JavaScript: this.preventDefault();
+		
 
 @Inlined
 define InputChangedEvent as native category with bindings:
@@ -894,6 +930,9 @@ and methods:
 	define stopPropagation as method doing:
 		JavaScript: this.stopPropagation();
 
+	define preventDefault as method doing:
+		JavaScript: this.preventDefault();
+		
 
 define ClickEventCallback as abstract method receiving ClickEvent event
 define MouseEventCallback as abstract method receiving MouseEvent event
@@ -904,6 +943,37 @@ define DateChangedCallback as abstract method receiving Date value
 define ToggleChangedCallback as abstract method receiving Boolean value
 define ItemSelectedCallback as abstract method receiving Any value
 define PageSelectedCallback as abstract method receiving Integer value
+@Inlined
+define FileRef as native category with bindings:
+
+	define category bindings as:
+		JavaScript: FileRef from module: prompto/web/FileRef.js
+
+and methods: 
+
+	define getName as method returning Text doing:
+		JavaScript: return this.file.name;
+	
+	define getMimeType as method returning Text doing:
+		JavaScript: return this.file.type;
+
+	define getSize as method returning Integer doing:
+		JavaScript: return this.file.size;
+
+	define readText as method receiving TextCallback callback doing:
+		JavaScript: this.readText(callback);
+
+	define readImage as method returning Image doing:
+		JavaScript: return this.readImage();
+
+	define readBlob as method returning Blob doing:
+		JavaScript: return this.readBlob();
+
+define FileRefCallback as abstract method receiving FileRef file
+ 
+define selectFile as native method receiving FileRefCallback callback and Text<> mimeTypes = nothing doing:
+	JavaScript: selectFileRef(callback, mimeTypes); from module: prompto/web/FileRef.js
+
 define getReactWidgetProps as native method receiving ReactWidget w returning Document doing:
 	JavaScript: return w.props;
 
@@ -916,8 +986,8 @@ define setReactWidgetState as native method receiving ReactWidget w, Document st
 	JavaScript: w.setState(state, callback);
 
 
-define forceReactWidgetRender as native method receiving ReactWidget w doing:
-	JavaScript: w.forceUpdate();
+define forceReactWidgetRender as native method receiving ReactWidget w and Callback callback = nothing doing:
+	JavaScript: w.forceUpdate(callback);
 
 
 define showReactModal as native method receiving Html dialog doing:
@@ -983,50 +1053,19 @@ define ReactWidget as widget with methods:
 	define setState as method receiving Document state and Callback callback = nothing doing:
 		setReactWidgetState self with state and callback
 
-	define forceRender as method doing:
-		forceReactWidgetRender self
+	define forceRender as method receiving Callback callback = nothing doing:
+		forceReactWidgetRender self with callback
 
 define WidgetCallback as abstract method receiving any ref
 
 define alert as native method receiving Text text doing:
 	JavaScript: alert(text);
 
-define openBrowser as native method receiving Text url, Text name = Nothing and Text methodName = "open" doing:
-	JavaScript: openBrowser(methodName, url, name); from module: prompto/internet/Browser.js
-
 define downloadFile as native method receiving Text url and Text name = Nothing doing:
-	JavaScript: downloadFile(url, name); from module: prompto/internet/Browser.js
+	JavaScript: downloadFile(url, name); from module: prompto/web/Browser.js
 
-@Inlined
-define FileRef as native category with bindings:
-
-	define category bindings as:
-		JavaScript: FileRef from module: prompto/internet/FileRef.js
-
-and methods: 
-
-	define getName as method returning Text doing:
-		JavaScript: return this.file.name;
-	
-	define getMimeType as method returning Text doing:
-		JavaScript: return this.file.type;
-
-	define getSize as method returning Integer doing:
-		JavaScript: return this.file.size;
-
-	define readText as method receiving TextCallback callback doing:
-		JavaScript: this.readText(callback);
-
-	define readImage as method returning Image doing:
-		JavaScript: return this.readImage();
-
-	define readBlob as method returning Blob doing:
-		JavaScript: return this.readBlob();
-
-define FileRefCallback as abstract method receiving FileRef file
- 
-define selectFile as native method receiving FileRefCallback callback and Text<> mimeTypes = nothing doing:
-	JavaScript: selectFileRef(callback, mimeTypes); from module: prompto/internet/FileRef.js
+define openBrowser as native method receiving Text url, Text name = Nothing and Text methodName = "open" returning Document doing:
+	JavaScript: return openBrowser(methodName, url, name); from module: prompto/web/Browser.js
 
 define browserHistoryBack as native method doing:
 	JavaScript: window.history.back();
@@ -1041,4 +1080,29 @@ define browserHistoryCount as native method returning Integer doing:
 	JavaScript: return window.history.length;
 
 define browserGoto as native method receiving Text location doing:
-	JavaScript: browserGoto(location); from module: prompto/internet/Browser.js
+	JavaScript: browserGoto(location); from module: prompto/web/Browser.js
+
+define KeyboardShortcutCallback as abstract method returning Boolean
+
+define browserBindKeyboardShortcuts as native method receiving Text[] shortcuts and KeyboardShortcutCallback callback doing:
+	JavaScript: window.Mousetrap.bind(shortcuts, callback);
+
+define browserGetWindow as native method returning Document doing:
+	JavaScript: return window;
+
+define WebSocketCallback as abstract method receiving WebSocket value
+
+define openWebSocket as native method receiving Text url, AnyCallback onMessage, Callback onClose = nothing and WebSocketCallback callback = nothing doing:
+		JavaScript: openWebSocket(url, onMessage, onClose, callback); from module: prompto/web/WebSocket.js
+
+@Inlined
+define WebSocket as native category with bindings:
+
+    define category bindings as:
+		JavaScript: window.WebSocket
+
+and methods: 
+
+	define close as method doing:
+        JavaScript: this.close();
+	

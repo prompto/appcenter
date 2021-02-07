@@ -482,7 +482,46 @@ native widget Tab {
 	
 }
 
-@WidgetProperties({onToggle:{type:any, help:"A callback fired when the Dropdown wishes to change visibility. Called with the requested `open` value, the DOM event, and the source that fired it: `'click'`,`'keydown'`,`'rootClose'`, or `'select'`.```js function(Boolean isOpen, Object event, { String source }) {} ``` @controllable open"}, role:{type:Text, help:"If `'menuitem'`, causes the dropdown to behave like a menu item rather than a menu button."}, componentClass:Text, bsSize:Text, bsStyle:{type:Text, help:"Toggle props."}, pullRight:{type:Boolean, help:"Align the menu to the right side of the Dropdown toggle"}, onMouseEnter:{type:MouseEventCallback, help:"@private"}, title:{type:Text, required:true}, onMouseLeave:{type:MouseEventCallback, help:"@private"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a menu item is selected.```js (eventKey: any, event: Object) => any ```"}, dropup:{type:Boolean, help:"The menu will open above the dropdown button, instead of below it."}, children:{type:Text, help:"Override generated docs from <Dropdown>.@private"}, noCaret:Boolean, defaultOpen:Boolean, disabled:{type:Boolean, help:"Whether or not component is disabled."}, rootCloseEvent:{values:<"click", "mousedown">, help:"Which event when fired outside the component will cause it to be closed *Note: For custom dropdown components, you will have to pass the `rootCloseEvent` to `<RootCloseWrapper>` in your custom dropdown menu component ([similarly to how it is implemented in `<Dropdown.Menu>`](https://github.com/react-bootstrap/react-bootstrap/blob/v0.31.5/src/DropdownMenu.js#L115-L119)).*", required: false}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for assistive technologies, such as screen readers.@type {string|number} @required"}, open:{type:Boolean, help:"Whether or not the Dropdown is visible.@controllable onToggle"}})
+@WidgetProperties({onToggle:{type:any, help:"A callback fired when the Dropdown wishes to change visibility. Called with the requested `open` value, the DOM event, and the source that fired it: `'click'`,`'keydown'`,`'rootClose'`, or `'select'`.```js function(Boolean isOpen, Object event, { String source }) {} ``` @controllable open"}, role:{type:Text, help:"If `'menuitem'`, causes the dropdown to behave like a menu item rather than a menu button."}, componentClass:Text, pullRight:{type:Boolean, help:"Align the menu to the right side of the Dropdown toggle"}, onMouseEnter:{type:MouseEventCallback, help:"@private"}, onMouseLeave:{type:MouseEventCallback, help:"@private"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a menu item is selected.```js (eventKey: any, event: Object) => any ```"}, dropup:{type:Boolean, help:"The menu will open above the dropdown button, instead of below it."}, children:{type:Html, help:"The children of a Dropdown may be a `<Dropdown.Toggle>` or a `<Dropdown.Menu>`.@type {node}"}, defaultOpen:Boolean, disabled:{type:Boolean, help:"Whether or not component is disabled."}, rootCloseEvent:{values:<"click", "mousedown">, help:"Which event when fired outside the component will cause it to be closed *Note: For custom dropdown components, you will have to pass the `rootCloseEvent` to `<RootCloseWrapper>` in your custom dropdown menu component ([similarly to how it is implemented in `<Dropdown.Menu>`](https://github.com/react-bootstrap/react-bootstrap/blob/v0.31.5/src/DropdownMenu.js#L115-L119)).*", required:false}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for assistive technologies, such as screen readers.@type {string|number} @required"}, open:{type:Boolean, help:"Whether or not the Dropdown is visible.@controllable onToggle"}})
+native widget Dropdown {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Dropdown;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({useAnchor:Boolean, noCaret:Boolean, title:Text, open:Boolean})
+native widget DropdownToggle {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Dropdown.Toggle;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({labelledBy:<Integer, Text>, onClose:Callback, rootCloseEvent:{values:<"click", "mousedown">, required:false}, pullRight:Boolean, open:Boolean, onSelect:ItemSelectedCallback})
+native widget DropdownMenu {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Dropdown.Menu;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({onToggle:{type:any, help:"A callback fired when the Dropdown wishes to change visibility. Called with the requested `open` value, the DOM event, and the source that fired it: `'click'`,`'keydown'`,`'rootClose'`, or `'select'`.```js function(Boolean isOpen, Object event, { String source }) {} ``` @controllable open"}, role:{type:Text, help:"If `'menuitem'`, causes the dropdown to behave like a menu item rather than a menu button."}, componentClass:Text, bsSize:Text, bsStyle:{type:Text, help:"Toggle props."}, pullRight:{type:Boolean, help:"Align the menu to the right side of the Dropdown toggle"}, onMouseEnter:{type:MouseEventCallback, help:"@private"}, title:{type:Text, required:true}, onMouseLeave:{type:MouseEventCallback, help:"@private"}, onSelect:{type:ItemSelectedCallback, help:"A callback fired when a menu item is selected.```js (eventKey: any, event: Object) => any ```"}, dropup:{type:Boolean, help:"The menu will open above the dropdown button, instead of below it."}, children:{type:Text, help:"Override generated docs from <Dropdown>.@private"}, noCaret:Boolean, defaultOpen:Boolean, disabled:{type:Boolean, help:"Whether or not component is disabled."}, rootCloseEvent:{values:<"click", "mousedown">, help:"Which event when fired outside the component will cause it to be closed *Note: For custom dropdown components, you will have to pass the `rootCloseEvent` to `<RootCloseWrapper>` in your custom dropdown menu component ([similarly to how it is implemented in `<Dropdown.Menu>`](https://github.com/react-bootstrap/react-bootstrap/blob/v0.31.5/src/DropdownMenu.js#L115-L119)).*", required:false}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for assistive technologies, such as screen readers.@type {string|number} @required"}, open:{type:Boolean, help:"Whether or not the Dropdown is visible.@controllable onToggle"}})
 native widget DropdownButton {
 
 	category bindings {
@@ -877,11 +916,89 @@ native widget Badge {
 	
 }
 
-@WidgetProperties({bsStyle:{values:<"success", "warning", "danger", "info", "default", "primary">, required: false}})
+@WidgetProperties({bsStyle:{values:<"success", "warning", "danger", "info", "default", "primary">, required:false}})
 native widget Label {
 
 	category bindings {
 		JavaScript: ReactBootstrap.Label;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({onEnter:{type:Callback, help:"Callback fired before the Overlay transitions in"}, rootClose:{type:Boolean, help:"Specify whether the overlay should trigger onHide when the user clicks outside the overlay"}, onExit:{type:Callback, help:"Callback fired right before the Overlay transitions out"}, onExited:{type:Callback, help:"Callback fired after the Overlay finishes transitioning out"}, show:{type:Boolean, help:"Set the visibility of the Overlay"}, onEntered:{type:Callback, help:"Callback fired after the Overlay finishes transitioning in"}, onHide:{type:Callback, help:"A callback invoked by the overlay when it wishes to be hidden. Required if `rootClose` is specified."}, onExiting:{type:Callback, help:"Callback fired as the Overlay begins to transition out"}, placement:{values:<"top", "left", "bottom", "right">, help:"Sets the direction of the Overlay.", required:true}, onEntering:{type:Callback, help:"Callback fired as the Overlay begins to transition in"}, animation:{types:<Boolean, Text>, help:"Use animation"}})
+native widget Overlay {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Overlay;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({role:{type:Text, help:"ARIA role of collapsible element"}, onExit:{type:Callback, help:"Callback fired before the component collapses"}, in:{type:Boolean, help:"Show the component; triggers the expand or collapse animation"}, onExited:{type:Callback, help:"Callback fired after the component has collapsed"}, timeout:{type:Integer, help:"Duration of the collapse animation in milliseconds, to ensure that finishing callbacks are fired even if the original browser transition end events are canceled"}, mountOnEnter:{type:Boolean, help:"Wait until the first 'enter' transition to mount the component (add it to the DOM)"}, appear:{type:Boolean, help:"Run the expand animation when the component mounts, if it is initially shown"}, onEnter:{type:Callback, help:"Callback fired before the component expands"}, getDimensionValue:{type:any, help:"Function that returns the height or width of the animating DOM node Allows for providing some custom logic for how much the Collapse component should animate in its specified dimension. Called with the current dimension prop value and the DOM node."}, unmountOnExit:{type:Boolean, help:"Unmount the component (remove it from the DOM) when it is collapsed"}, onEntered:{type:Callback, help:"Callback fired after the component has expanded"}, onExiting:{type:Callback, help:"Callback fired after the component starts to collapse"}, onEntering:{type:Callback, help:"Callback fired after the component starts to expand"}, dimension:{type:{values:<null, "height", "width">}, help:"The dimension used when collapsing, or a function that returns the dimension _Note: Bootstrap only partially supports 'width'! You will need to supply your own CSS animation for the `.width` CSS class._"}})
+native widget Collapse {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Collapse;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({componentClass:{type:Text, help:"You can use a custom element type for this component.If not specified, it will be treated as `'li'` if every child is a non-actionable `<ListGroupItem>`, and `'div'` otherwise."}})
+native widget ListGroup {
+
+	category bindings {
+		JavaScript: ReactBootstrap.ListGroup;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({listItem:Boolean, onClick:ClickEventCallback, active:any, header:Text, disabled:any, href:Text, type:Text})
+native widget ListGroupItem {
+
+	category bindings {
+		JavaScript: ReactBootstrap.ListGroupItem;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({delayHide:{type:Integer, help:"A millisecond delay amount before hiding the Overlay once triggered."}, onExit:{type:Callback, help:"Callback fired right before the Overlay transitions out"}, overlay:{types:<Text, Html>, help:"An element or text to overlay next to the target.", required:true}, onExited:{type:Callback, help:"Callback fired after the Overlay finishes transitioning out"}, show:{type:Boolean, help:"Set the visibility of the Overlay"}, delayShow:{type:Integer, help:"A millisecond delay amount before showing the Overlay once triggered."}, trigger:{types:<Text, Text[]>, help:"Specify which action or actions trigger Overlay visibility"}, defaultOverlayShown:{type:Boolean, help:"FIXME: This should be `defaultShow`.The initial visibility state of the Overlay. For more nuanced visibility control, consider using the Overlay component directly."}, animation:{types:<Boolean, Text>, help:"Use animation"}, onEnter:{type:Callback, help:"Callback fired before the Overlay transitions in"}, rootClose:{type:Boolean, help:"Specify whether the overlay should trigger onHide when the user clicks outside the overlay"}, delay:{type:Integer, help:"A millisecond delay amount to show and hide the Overlay once triggered"}, onEntered:{type:Callback, help:"Callback fired after the Overlay finishes transitioning in"}, onHide:{type:Callback, help:"A callback invoked by the overlay when it wishes to be hidden. Required if `rootClose` is specified."}, onExiting:{type:Callback, help:"Callback fired as the Overlay begins to transition out"}, placement:{values:<"top", "left", "bottom", "right">, help:"Sets the direction of the Overlay.", required:false}, onEntering:{type:Callback, help:"Callback fired as the Overlay begins to transition in"}})
+native widget OverlayTrigger {
+
+	category bindings {
+		JavaScript: ReactBootstrap.OverlayTrigger;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+}
+
+@WidgetProperties({positionTop:{types:<Integer, Text>, help:"The 'top' position value for the Tooltip."}, positionLeft:{types:<Integer, Text>, help:"The 'left' position value for the Tooltip."}, arrowOffsetTop:{types:<Integer, Text>, help:"The 'top' position value for the Tooltip arrow."}, id:{types:<Integer, Text>, help:"An html id attribute, necessary for accessibility @type {string|number} @required"}, placement:{values:<"top", "left", "bottom", "right">, help:"Sets the direction the Tooltip is positioned towards.", required:true}, arrowOffsetLeft:{types:<Integer, Text>, help:"The 'left' position value for the Tooltip arrow."}})
+native widget Tooltip {
+
+	category bindings {
+		JavaScript: ReactBootstrap.Tooltip;
 	}
 	
 	Html method render () {

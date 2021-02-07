@@ -81,9 +81,11 @@ public class YamlConfigBuilder {
 	
 	private void writeDataStoreYamlEntries(YamlDocument document) throws YamlException {
 		YamlEntry entry = document.getEntry("target");
-		YamlMapping target = (YamlMapping)entry.getValue();
-		entry = target.getEntry("dataStore");
-		document.setEntry("dataStore", entry.getValue());
+		if(entry!=null) {
+			YamlMapping target = (YamlMapping)entry.getValue();
+			entry = target.getEntry("dataStore");
+			document.setEntry("dataStore", entry.getValue());
+		}
 	}
 
 	private void writeHttpYamlEntries(YamlDocument document) throws Throwable {

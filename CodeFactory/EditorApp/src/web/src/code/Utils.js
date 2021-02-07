@@ -97,10 +97,29 @@ export const getContentFromEntry = function(entry) {
             content.proto = entry.value.protos[0].proto;
             break;
         case "enumeration":
+        case "widget":
             content.name = entry.value.name;
             break;
         default:
             content.name = entry.value;
     }
     return content;
+};
+
+function recursivelyConvertDocumentToObject(object) {
+    if(!object || object instanceof File)
+        return object;
+    if(Array.isArray(object))
+        return object.map(recursivelyConvertDocumentToObject);
+    if(typeof(object) === typeof({})) {
+        const result = {};
+        if(object.type==="Document" && object.value)
+            object = object.value;
+        Object.getOwnPropertyNames(object).forEach(name => result[name] = recursivelyConvertDocumentToObject(object[name]), this);
+        return result;
+    }
+    return object;
 }
+
+
+export const convertDocumentToObject = recursivelyConvertDocumentToObject;
