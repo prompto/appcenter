@@ -22,7 +22,7 @@ public class TestYamlLocal {
 	public void testThatCodeServerRunsWithYamlLocal() throws Throwable {
 		MongodExecutable mongo = BaseMongoTest.startMongo(27017);
 		try {
-			URL url = Thread.currentThread().getContextClassLoader().getResource("local-mongo.yml");
+			URL url = Thread.currentThread().getContextClassLoader().getResource("configs/local-mongo.yml");
 			String[] args = new String[] { "-yamlConfigFile", url.getFile() };
 			ICodeFactoryConfiguration config = Application.loadConfiguration(args);
 			config = Application.adjustConfiguration(config, Mode.UNITTEST);

@@ -324,13 +324,14 @@ define detachComponents as method receiving Stuff[] stuff doing:
 define importModule as method receiving Blob blob doing:
 	doc = Document from blob
 	module = doc.module as Module
+	module = mutable module
 	components = attachComponents with (doc.components as Stuff[]) as stuff and module as module
 	store module, components
 
-define attachComponents as method receiving Stuff[] stuff and Module module doing:
+define attachComponents as method receiving Stuff[] stuff and mutable Module module doing:
 	components = [] as Stuff[]
-	for each component in stuff:
-		component = mutable component
+	for each c in stuff:
+		component = mutable c
 		component.module = module
 		components = components + [component]
 	return components	
