@@ -73,4 +73,20 @@ native widget AcePromptoEditor {
 	method runTest(Any stuff, TextCallback progressed, Callback done) {
 		JavaScript: this.runTest(stuff, progressed, done);
 	}
+	
+	@Inlined
+	method showStackFrame(Any stackFrame, Callback callback) {
+		JavaScript: this.showStackFrame(stackFrame, callback);
+	}
+	
+	@Inlined
+	method debuggerCreated(Callback callback) {
+		JavaScript: this.debuggerCreated(callback);
+	}
+	
+	@Inlined
+	method debuggerDisconnected(Callback callback) {
+		JavaScript: this.debuggerDisconnected(callback);
+	}
+	
 }
