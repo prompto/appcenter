@@ -10,15 +10,15 @@ native widget AceResourceEditor {
 	}
 	
 	@Inlined
-	method setResource(Any stuff, Boolean readOnly) {
-		JavaScript: this.setResource(stuff, readOnly);
+	method setResource(Any resource, Boolean readOnly) {
+		JavaScript: this.setResource(resource, readOnly);
 	}
 	
 }
 
 abstract method CatalogLoadedCallback(Document catalog, Boolean complete); 
 
-@WidgetProperties({catalogLoaded: CatalogLoadedCallback, catalogUpdated:DocumentCallback, bodyEdited: AnyCallback, onCommit: Callback})
+@WidgetProperties({catalogLoaded: CatalogLoadedCallback, catalogUpdated:DocumentCallback, bodyEdited: AnyCallback, breakpointAdded: AnyCallback, breakpointRemoved: AnyCallback, onCommit: Callback})
 native widget AcePromptoEditor {
 
 	category bindings {
@@ -35,13 +35,18 @@ native widget AcePromptoEditor {
 	}
 	
 	@Inlined
+	method setBreakpoints(Any[] breakpoints) {
+		JavaScript: this.setBreakpoints(breakpoints);
+	}
+
+	@Inlined
 	method setBody(Text body, Boolean readOnly) {
 		JavaScript: this.setBody(body, readOnly);
 	}
 
 	@Inlined
-	method setResource(Any stuff, Boolean readOnly) {
-		JavaScript: this.setResource(stuff, readOnly);
+	method setResource(Any resource, Boolean readOnly) {
+		JavaScript: this.setResource(resource, readOnly);
 	}
 	
 	@Inlined
@@ -50,12 +55,12 @@ native widget AcePromptoEditor {
 	}
 
 	@Inlined
-	method destroyResource(Any stuff) {
-		JavaScript: this.destroyResource(stuff);
+	method destroyResource(Any resource) {
+		JavaScript: this.destroyResource(resource);
 	}
 	
 	@Inlined
-	method getEditedResources(Any resources, AnyCallback callback) {
+	method getEditedResources(Any[] resources, AnyCallback callback) {
 		JavaScript: this.getEditedResources(resources, callback);
 	}
 	
@@ -65,13 +70,13 @@ native widget AcePromptoEditor {
 	}
 
 	@Inlined
-	method runMethod(Any stuff, TextCallback progressed, Callback done) {
-		JavaScript: this.runMethod(stuff, progressed, done);
+	method runMethod(Any resource, TextCallback progressed, Callback done) {
+		JavaScript: this.runMethod(resource, progressed, done);
 	}
 
 	@Inlined
-	method runTest(Any stuff, TextCallback progressed, Callback done) {
-		JavaScript: this.runTest(stuff, progressed, done);
+	method runTest(Any resource, TextCallback progressed, Callback done) {
+		JavaScript: this.runTest(resource, progressed, done);
 	}
 	
 	@Inlined

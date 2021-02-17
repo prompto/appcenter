@@ -1,7 +1,7 @@
 {
 	"type" : "WEBLIBRARY",
 	"name" : "Resource-Editors",
-	"version" : "0.0.60",
+	"version" : "0.0.63",
 	"migrateFrom" : "0.0.0",
 	"description" : "Editor widgets",
     "htmlEngine" : "react-16",
