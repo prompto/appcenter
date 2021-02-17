@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,15 +27,27 @@ import prompto.config.ITargetConfiguration;
 import prompto.config.auth.IAuthenticationConfiguration;
 import prompto.config.auth.source.IAuthenticationSourceConfiguration;
 import prompto.config.auth.source.IStoredAuthenticationSourceConfiguration;
+import prompto.declaration.CategoryDeclaration;
+import prompto.grammar.Identifier;
 import prompto.intrinsic.PromptoVersion;
 import prompto.libraries.Libraries;
+import prompto.runtime.ApplicationContext;
+import prompto.runtime.Context;
 import prompto.runtime.Mode;
 import prompto.runtime.Standalone;
 import prompto.server.AppServer;
 import prompto.server.DataServlet;
+import prompto.store.AttributeInfo;
 import prompto.store.DataStore;
+import prompto.store.IQueryBuilder;
 import prompto.store.IStore;
 import prompto.store.IStoreFactory;
+import prompto.store.IStored;
+import prompto.store.IStoredIterable;
+import prompto.store.memory.MemStore;
+import prompto.store.IQueryBuilder.MatchOp;
+import prompto.store.IStorable.IDbIdFactory;
+import prompto.store.IStorable;
 import prompto.utils.CmdLineParser;
 import prompto.utils.Logger;
 import prompto.utils.ResourceUtils;
@@ -56,7 +69,7 @@ public class Application {
 	
 	public static void main(ICodeFactoryConfiguration config) throws Throwable {
 		Application.config = config;
-		AppServer.main(config, Application::init); 
+		AppServer.main(config, Application::migrateDataModelIfRequired, null, null, Application::init); 
 	}
 	
 	public static ICodeFactoryConfiguration loadConfiguration(String[] args) throws Exception {
@@ -85,6 +98,75 @@ public class Application {
 		initModuleProcessPortRange(config);
 	}
 	
+	private static void migrateDataModelIfRequired() {
+		migrateStuffsToResourcesIfRequired();
+	}
+
+	private static void migrateStuffsToResourcesIfRequired() {
+		// migrate this factory if required
+		IStore codeStore = storeFromCodeStore();
+		if(migratableStore(codeStore) && isMigratingStuffsToResourcesRequired(codeStore, codeStore))
+			migrateStuffsToResources(codeStore);
+		// migrate projects if required
+		IStore dataStore = DataStore.getInstance();
+		if(migratableStore(dataStore) && isMigratingStuffsToResourcesRequired(codeStore, dataStore))
+			migrateStuffsToResources(dataStore);
+	}
+	
+	private static boolean migratableStore(IStore store) {
+		return store!=null && !(store instanceof MemStore);
+	}
+
+	private static IStore storeFromCodeStore() {
+		ICodeStore codeStore = ICodeStore.getInstance();
+		if(codeStore instanceof QueryableCodeStore)
+			return ((QueryableCodeStore)codeStore).getStore();
+		else
+			return null;
+	}
+
+	private static boolean isMigratingStuffsToResourcesRequired(IStore codeStore, IStore dataStore) {
+		// does the data store contain any "Stuff"
+		IQueryBuilder builder = dataStore.newQueryBuilder()
+				.verify(AttributeInfo.CATEGORY, MatchOp.HAS, "Stuff");
+		IStored stored = dataStore.fetchOne(builder.build());
+		if(stored==null)
+			return false;
+		// does the code store supportNamedResource
+		builder = codeStore.newQueryBuilder()
+				.verify(AttributeInfo.NAME, MatchOp.EQUALS, "NamedResource");
+		stored = codeStore.fetchOne(builder.build());
+		return stored!=null;
+	}
+
+	private static void migrateStuffsToResources(IStore store) {
+		logger.info(()->"Migrating Stuff records to Resource records...");
+		// fetch all the "Stuff"
+		IQueryBuilder builder = store.newQueryBuilder()
+				.verify(AttributeInfo.CATEGORY, MatchOp.HAS, "Stuff");
+		IStoredIterable stuffs = store.fetchMany(builder.build());
+		logger.info(()->"Found " + stuffs.count() + " Stuff records to migrate");
+		for(IStored stuff : stuffs)
+			migrateStuffToResource(store, stuff);
+		logger.info(()->"Done migrating Stuff records");
+	}
+
+	private static void migrateStuffToResource(IStore store, IStored stuff) {
+		String[] oldCategories = stuff.getCategories();
+		String category = oldCategories[oldCategories.length - 1];
+		Context context = ApplicationContext.get();
+		CategoryDeclaration decl = context.getRegisteredDeclaration(CategoryDeclaration.class, new Identifier(category));
+		List<String> newCategories = decl.collectCategories(context);
+		IStorable storable = store.newStorable(newCategories, new IDbIdFactory() {
+			@Override public void accept(Object t) { }
+			@Override public Object get() { return stuff.getDbId(); }
+			@Override public boolean isUpdate() { return true; }
+		});
+		// force dirty
+		storable.setData("category", newCategories);
+		store.store(storable);
+	}
+
 	private static void initModuleProcessPortRange(ICodeFactoryConfiguration config) {
 		try {
 			ITargetConfiguration target = config.getTargetConfiguration();
