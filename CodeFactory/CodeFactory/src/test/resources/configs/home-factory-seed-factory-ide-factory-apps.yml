@@ -19,6 +19,9 @@ target:
   dataStore:
     <<: *homeMongoStore
     dbName: FACTORY-APPS
+  portRange:
+    minPort: 8000
+    maxPort: 8000    
 
 http:
   port: 8081
