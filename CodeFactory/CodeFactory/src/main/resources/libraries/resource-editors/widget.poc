@@ -94,4 +94,13 @@ native widget AcePromptoEditor {
 		JavaScript: this.debuggerDisconnected(callback);
 	}
 	
+	@Inlined
+	method locateSection(Any breakpoint, AnyCallback callback) {
+		JavaScript: this.locateSection(breakpoint, callback);
+	}
+	
+	@Inlined
+	method locateSections(Any[] breakpoints, AnyCallback callback) {
+		JavaScript: this.locateSections(breakpoints, callback);
+	}
 }
