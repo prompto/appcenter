@@ -71,14 +71,20 @@ public class SampleImporter {
 	}
 
 	private void populateResources(URL url, JsonNode descriptor) throws MalformedURLException {
-		if(descriptor.get("imageResource")!=null)
-			this.imageResource = new URL(url, descriptor.get("imageResource").asText());
-		if(descriptor.get("codeResource")!=null)
-			this.codeResource = new URL(url, descriptor.get("codeResource").asText());
-		if(descriptor.get("nativeResource")!=null)
-			this.nativeResource = new URL(url, descriptor.get("nativeResource").asText());
-		if(descriptor.get("stubResource")!=null)
-			this.stubResource = new URL(url, descriptor.get("stubResource").asText());
+		this.imageResource = makeResourceURL(url, descriptor, "imageResource");
+		this.codeResource = makeResourceURL(url, descriptor, "codeResource");
+		this.nativeResource = makeResourceURL(url, descriptor, "nativeResource");
+		this.stubResource = makeResourceURL(url, descriptor, "stubResource");
+	}
+
+	private URL makeResourceURL(URL url, JsonNode descriptor, String name) throws MalformedURLException {
+		if(descriptor.get(name)==null)
+			return null;
+		String value = descriptor.get( name).asText();
+		if(value.startsWith("http"))
+			return new URL(value);
+		else
+			return new URL(url, name);
 	}
 
 	private void populateModule(Module module, JsonNode descriptor) throws Exception {
@@ -164,8 +170,8 @@ public class SampleImporter {
 	private boolean isLocalResource(URL resource) throws URISyntaxException {
 		if("file".equals(resource.getProtocol()))
 			return Paths.get(resource.toURI()).toFile().exists();
-		else
-			return false;
+		else 
+			return "jar".equals(resource.getProtocol());
 	}
 
 	private void storeResource(ICodeStore codeStore, URL resourceUrl) throws Exception {
