@@ -80,11 +80,11 @@ public class SampleImporter {
 	private URL makeResourceURL(URL url, JsonNode descriptor, String name) throws MalformedURLException {
 		if(descriptor.get(name)==null)
 			return null;
-		String value = descriptor.get( name).asText();
+		String value = descriptor.get(name).asText();
 		if(value.startsWith("http"))
 			return new URL(value);
 		else
-			return new URL(url, name);
+			return new URL(url, value);
 	}
 
 	private void populateModule(Module module, JsonNode descriptor) throws Exception {
