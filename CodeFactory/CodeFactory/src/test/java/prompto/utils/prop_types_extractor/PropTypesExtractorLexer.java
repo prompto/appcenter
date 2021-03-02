@@ -1,6 +1,6 @@
-// Generated from PropTypesExtractor.g4 by ANTLR 4.7.2
+// Generated from PropTypesExtractor.g4 by ANTLR 4.4
 
-	package prompto.utils.prop_types_extractor;
+package prompto.utils.prop_types_extractor;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -13,7 +13,7 @@ import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class PropTypesExtractorLexer extends Lexer {
-	static { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.4", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -22,70 +22,21 @@ public class PropTypesExtractorLexer extends Lexer {
 		WS=1, LINE_COMMENT=2, MULTI_COMMENT=3, VAR=4, EQ=5, DOT=6, COMMA=7, COLON=8, 
 		SEMI=9, LCURL=10, RCURL=11, LPAR=12, RPAR=13, LBRAK=14, RBRAK=15, TRUE=16, 
 		FALSE=17, NULL=18, FUNCTION=19, OTHER=20, ID=21, STRING=22, NUMBER=23;
-	public static String[] channelNames = {
-		"DEFAULT_TOKEN_CHANNEL", "HIDDEN"
-	};
-
 	public static String[] modeNames = {
 		"DEFAULT_MODE"
 	};
 
-	private static String[] makeRuleNames() {
-		return new String[] {
-			"WS", "LINE_COMMENT", "MULTI_COMMENT", "VAR", "EQ", "DOT", "COMMA", "COLON", 
-			"SEMI", "LCURL", "RCURL", "LPAR", "RPAR", "LBRAK", "RBRAK", "TRUE", "FALSE", 
-			"NULL", "FUNCTION", "OTHER", "ID", "STRING", "NUMBER"
-		};
-	}
-	public static final String[] ruleNames = makeRuleNames();
-
-	private static String[] makeLiteralNames() {
-		return new String[] {
-			null, null, null, null, "'var'", "'='", "'.'", "','", "':'", "';'", "'{'", 
-			"'}'", "'('", "')'", "'['", "']'", "'true'", "'false'", "'null'", "'function'"
-		};
-	}
-	private static final String[] _LITERAL_NAMES = makeLiteralNames();
-	private static String[] makeSymbolicNames() {
-		return new String[] {
-			null, "WS", "LINE_COMMENT", "MULTI_COMMENT", "VAR", "EQ", "DOT", "COMMA", 
-			"COLON", "SEMI", "LCURL", "RCURL", "LPAR", "RPAR", "LBRAK", "RBRAK", 
-			"TRUE", "FALSE", "NULL", "FUNCTION", "OTHER", "ID", "STRING", "NUMBER"
-		};
-	}
-	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
-	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-
-	/**
-	 * @deprecated Use {@link #VOCABULARY} instead.
-	 */
-	@Deprecated
-	public static final String[] tokenNames;
-	static {
-		tokenNames = new String[_SYMBOLIC_NAMES.length];
-		for (int i = 0; i < tokenNames.length; i++) {
-			tokenNames[i] = VOCABULARY.getLiteralName(i);
-			if (tokenNames[i] == null) {
-				tokenNames[i] = VOCABULARY.getSymbolicName(i);
-			}
-
-			if (tokenNames[i] == null) {
-				tokenNames[i] = "<INVALID>";
-			}
-		}
-	}
-
-	@Override
-	@Deprecated
-	public String[] getTokenNames() {
-		return tokenNames;
-	}
-
-	@Override
-
-	public Vocabulary getVocabulary() {
-		return VOCABULARY;
-	}
+	public static final String[] tokenNames = {
+		"'\\u0000'", "'\\u0001'", "'\\u0002'", "'\\u0003'", "'\\u0004'", "'\\u0005'", 
+		"'\\u0006'", "'\\u0007'", "'\b'", "'\t'", "'\n'", "'\\u000B'", "'\f'", 
+		"'\r'", "'\\u000E'", "'\\u000F'", "'\\u0010'", "'\\u0011'", "'\\u0012'", 
+		"'\\u0013'", "'\\u0014'", "'\\u0015'", "'\\u0016'", "'\\u0017'"
+	};
+	public static final String[] ruleNames = {
+		"WS", "LINE_COMMENT", "MULTI_COMMENT", "VAR", "EQ", "DOT", "COMMA", "COLON", 
+		"SEMI", "LCURL", "RCURL", "LPAR", "RPAR", "LBRAK", "RBRAK", "TRUE", "FALSE", 
+		"NULL", "FUNCTION", "OTHER", "ID", "STRING", "NUMBER"
+	};
 
 
 	public PropTypesExtractorLexer(CharStream input) {
@@ -97,13 +48,13 @@ public class PropTypesExtractorLexer extends Lexer {
 	public String getGrammarFileName() { return "PropTypesExtractor.g4"; }
 
 	@Override
+	public String[] getTokenNames() { return tokenNames; }
+
+	@Override
 	public String[] getRuleNames() { return ruleNames; }
 
 	@Override
 	public String getSerializedATN() { return _serializedATN; }
-
-	@Override
-	public String[] getChannelNames() { return channelNames; }
 
 	@Override
 	public String[] getModeNames() { return modeNames; }
@@ -112,7 +63,7 @@ public class PropTypesExtractorLexer extends Lexer {
 	public ATN getATN() { return _ATN; }
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2\31\u00aa\b\1\4\2"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\2\31\u00aa\b\1\4\2"+
 		"\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4"+
 		"\13\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22"+
 		"\t\22\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\3\2"+
@@ -128,8 +79,8 @@ public class PropTypesExtractorLexer extends Lexer {
 		"\5\30\u00a9\n\30\4>I\2\31\3\3\5\4\7\5\t\6\13\7\r\b\17\t\21\n\23\13\25"+
 		"\f\27\r\31\16\33\17\35\20\37\21!\22#\23%\24\'\25)\26+\27-\30/\31\3\2\t"+
 		"\5\2\13\f\17\17\"\"\n\2##\'(,-//\61\61>>@A~~\6\2\62;C\\aac|\6\2\f\f\17"+
-		"\17$$^^\6\2\f\f\17\17))^^\3\2\63;\3\2\62;\2\u00b3\2\3\3\2\2\2\2\5\3\2"+
-		"\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2\17\3\2\2\2\2\21"+
+		"\17$$^^\6\2\f\f\17\17))^^\3\2\63;\3\2\62;\u00b3\2\3\3\2\2\2\2\5\3\2\2"+
+		"\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2\17\3\2\2\2\2\21"+
 		"\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2\2\2\27\3\2\2\2\2\31\3\2\2\2\2\33\3\2"+
 		"\2\2\2\35\3\2\2\2\2\37\3\2\2\2\2!\3\2\2\2\2#\3\2\2\2\2%\3\2\2\2\2\'\3"+
 		"\2\2\2\2)\3\2\2\2\2+\3\2\2\2\2-\3\2\2\2\2/\3\2\2\2\3\62\3\2\2\2\58\3\2"+
