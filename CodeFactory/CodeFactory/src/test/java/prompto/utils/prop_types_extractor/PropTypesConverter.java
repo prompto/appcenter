@@ -3,6 +3,7 @@ package prompto.utils.prop_types_extractor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -23,11 +24,28 @@ public class PropTypesConverter {
 	
 	
 	public static void main(String[] args) throws Exception {
+		convertReactBootstrap3Props();
+		// convertReactBootstrap4Props();
+	}
+
+	private static void convertReactBootstrap4Props() throws Exception {
 		PropTypesMap propTypesMap = new PropTypesMap();
-		File node_modules = new File("../EditorApp/src/web/node_modules/");
+		File node_modules = new File("../../../prompto-widgets/react-bootstrap-4/");
 		PropTypesExtractor.extractPropTypes(node_modules, "react-overlays", "lib", propTypesMap);
 		PropTypesExtractor.extractPropTypes(node_modules, "react-bootstrap", "es", propTypesMap);
-		node_modules = new File("../../../prompto-widgets/react-bootstrap-3/");
+		PropTypesExtractor.extractPropTypes(node_modules, "src", "datepicker", propTypesMap);
+		// react-bootstrap-4
+		File widget_dir = new File("src/main/resources/libraries/react-bootstrap-4/");
+		DeclarationList decls = readWidgetDeclarations(new File(widget_dir, "React-Bootstrap-4.poc"));
+		attachPropTypes(propTypesMap, decls);
+		writeWidgetDeclarations(new File(widget_dir, "React-Bootstrap-4.poc"), decls);
+	}
+
+	private static void convertReactBootstrap3Props() throws Exception {
+		PropTypesMap propTypesMap = new PropTypesMap();
+		File node_modules = new File("../../../prompto-widgets/react-bootstrap-3/");
+		PropTypesExtractor.extractPropTypes(node_modules, "node_modules/react-overlays", "lib", propTypesMap);
+		PropTypesExtractor.extractPropTypes(node_modules, "node_modules/react-bootstrap", "es", propTypesMap);
 		PropTypesExtractor.extractPropTypes(node_modules, "src", "datepicker", propTypesMap);
 		// react-bootstrap-3
 		File widget_dir = new File("src/main/resources/libraries/react-bootstrap-3/");
