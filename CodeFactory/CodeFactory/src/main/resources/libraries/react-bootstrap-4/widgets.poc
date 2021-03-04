@@ -1,0 +1,1436 @@
+@WidgetProperties({ activeKey: Text, as: Text, bsPrefix: Text, defaultActiveKey: Text })
+native widget Accordion {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Accordion;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ children: { type: Html, required: true }, eventKey: { type: Text, required: true } })
+native widget AccordionCollapse {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Accordion.Collapse;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, eventKey: { type: Text, required: true }, onClick: ClickEventCallback })
+native widget AccordionToggle {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Accordion.Toggle;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bsPrefix: Text, closeLabel: Text, dismissible: Boolean, onClose: Callback, show: Boolean, transition: <Boolean, null, null>, variant: Text })
+native widget Alert {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Alert;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget AlertHeading {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Alert.Heading;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget AlertLink {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Alert.Link;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, pill: { type: Boolean, required: true }, variant: Text })
+native widget Badge {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Badge;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, label: Text, listProps: Any })
+native widget Breadcrumb {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Breadcrumb;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ active: Boolean, as: Text, bsPrefix: Text, href: Text, linkAs: Text, linkProps: Any, target: Text, title: Any })
+native widget BreadcrumbItem {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Breadcrumb.Item;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ active: Boolean, as: Text, block: Boolean, bsPrefix: Text, disabled: Boolean, href: Text, size: Text, type: <"button", "reset", "submit", null>, variant: Text })
+native widget Button {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Button;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, role: Text, size: Text, toggle: Boolean, vertical: Boolean })
+native widget ButtonGroup {
+
+    category bindings {
+        JavaScript: ReactBootstrap.ButtonGroup;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bsPrefix: Text, role: Text })
+native widget ButtonToolbar {
+
+    category bindings {
+        JavaScript: ReactBootstrap.ButtonToolbar;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bg: Text, body: Boolean, border: Text, bsPrefix: Text, text: Text })
+native widget Card {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Card;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget CardHeader {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Card.Header;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget CardBody {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Card.Body;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget CardFooter {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Card.Footer;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget CardTitle {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Card.Title;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget CardSubtitle {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Card.Subtitle;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget CardText {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Card.Text;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, variant: <"top", "bottom", null> })
+native widget CardImg {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Card.Img;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget CardImgOverlay {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Card.ImgOverlay;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget CardColumns {
+
+    category bindings {
+        JavaScript: ReactBootstrap.CardColumns;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget CardDeck {
+
+    category bindings {
+        JavaScript: ReactBootstrap.CardDeck;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget CardGroup {
+
+    category bindings {
+        JavaScript: ReactBootstrap.CardGroup;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ activeIndex: Integer, as: Text, bsPrefix: Text, controls: Boolean, fade: Boolean, indicators: Boolean, interval: Integer, keyboard: Boolean, nextIcon: Any, nextLabel: Text, onSelect: IntegerCallback, onSlid: CarouselEventCallback, onSlide: CarouselEventCallback, pause: <"hover", false, null>, prevIcon: Any, prevLabel: Text, slide: Boolean, touch: Boolean, wrap: Boolean })
+native widget Carousel {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Carousel;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget CarouselCaption {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Carousel.Caption;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, interval: Integer })
+native widget CarouselItem {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Carousel.Item;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, lg: <<Boolean, Integer, Text, <"auto">>, Any, null>, md: <<Boolean, Integer, Text, <"auto">>, Any, null>, sm: <<Boolean, Integer, Text, <"auto">>, Any, null>, xl: <<Boolean, Integer, Text, <"auto">>, Any, null>, xs: <<Boolean, Integer, Text, <"auto">>, Any, null> })
+native widget Col {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Col;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ appear: Boolean, dimension: <<"height", "width">, Callback, null>, getDimensionValue: Callback, in: Boolean, mountOnEnter: Boolean, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, role: Text, timeout: Integer, unmountOnExit: Boolean })
+native widget Collapse {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Collapse;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, fluid: <Boolean, <"sm", "md", "lg", "xl">, null> })
+native widget Container {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Container;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ alignRight: Boolean, as: Text, bsPrefix: Text, drop: <"up", "left", "right", "down", null>, flip: Boolean, focusFirstItemOnShow: <false, true, "keyboard", null>, navbar: Boolean, onSelect: AnyCallback, onToggle: BooleanCallback, show: Boolean })
+native widget Dropdown {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Dropdown;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget DropdownHeader {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Dropdown.Header;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget DropdownDivider {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Dropdown.Divider;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bsPrefix: Text, disabled: Boolean, href: Text, id: Any, menuAlign: <<"left", "right">, Any, Any, Any, Any, null>, menuRole: Text, onClick: ClickEventCallback, renderMenuOnMount: Boolean, rootCloseEvent: Text, size: Text, title: { type: Any, required: true }, variant: Text })
+native widget DropdownButton {
+
+    category bindings {
+        JavaScript: ReactBootstrap.DropdownButton;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ active: Boolean, as: Text, bsPrefix: Text, disabled: Boolean, eventKey: Any, href: Text, onClick: ClickEventCallback, onSelect: AnyCallback })
+native widget DropdownItem {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Dropdown.Item;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, childBsPrefix: Text, id: Any, split: Boolean })
+native widget DropdownToggle {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Dropdown.Toggle;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ align: <<"left", "right">, Any, Any, Any, Any, null>, alignRight: Boolean, as: Text, bsPrefix: Text, flip: Boolean, onSelect: Callback, popperConfig: Any, renderOnMount: Boolean, rootCloseEvent: <"click", "mousedown", null>, show: Boolean })
+native widget DropdownMenu {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Dropdown.Menu;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ appear: Boolean, in: Boolean, mountOnEnter: Boolean, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, timeout: Integer, unmountOnExit: Boolean })
+native widget Fade {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Fade;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget Figure {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Figure;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bsPrefix: Text, fluid: Boolean, rounded: Boolean, roundedCircle: Boolean, thumbnail: Boolean })
+native widget FigureImage {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Figure.Image;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget FigureCaption {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Figure.Caption;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, inline: Boolean, validated: Boolean })
+native widget Form {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsCustomPrefix: Text, bsPrefix: Text, children: Any, custom: Boolean, disabled: Boolean, feedback: Any, feedbackTooltip: Boolean, id: Any, inline: Boolean, isInvalid: Boolean, isValid: Boolean, label: Any, title: Text, type: <"radio", "checkbox", "switch", null> })
+native widget FormCheck {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form.Check;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsCustomPrefix: Text, bsPrefix: Text, id: Any, isInvalid: Boolean, isStatic: Boolean, isValid: Boolean, type: <"radio", "checkbox"> })
+native widget FormCheckInput {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form.Check.Input;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bsCustomPrefix: Text, bsPrefix: Text, htmlFor: Text })
+native widget FormCheckLabel {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form.Check.Label;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsCustomPrefix: Text, bsPrefix: Text, custom: Boolean, disabled: Boolean, htmlSize: Integer, id: Any, isInvalid: Boolean, isValid: Boolean, onChange: InputChangedEventCallback, plaintext: Boolean, readOnly: Boolean, size: Text, type: Text, value: <Text, Text[], Integer, null> })
+native widget FormControl {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form.Control;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, tooltip: Boolean, type: Text })
+native widget FormControlFeedback {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form.Control.Feedback;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsCustomPrefix: Text, bsPrefix: Text, children: Any, custom: Boolean, "data-browse": Text, disabled: Boolean, feedback: Any, feedbackTooltip: Boolean, id: Any, inputAs: Text, isInvalid: Boolean, isValid: Boolean, label: Any, lang: Text })
+native widget FormFile {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form.File;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsCustomPrefix: Text, bsPrefix: Text, id: Any, isInvalid: Boolean, isValid: Boolean, lang: Text })
+native widget FormFileInput {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form.File.Input;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bsCustomPrefix: Text, bsPrefix: Text, "data-browse": Text, htmlFor: Text })
+native widget FormFileLabel {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form.File.Label;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, controlId: Text })
+native widget FormGroup {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form.Group;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, column: <Boolean, <"sm", "lg">, null>, htmlFor: Text, srOnly: Boolean })
+native widget FormLabel {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form.Label;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget FormRow {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form.Row;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+native widget FormSwitch {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form.Switch;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, muted: Boolean })
+native widget FormText {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Form.Text;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bsPrefix: Text, fluid: Boolean, rounded: Boolean, roundedCircle: Boolean, thumbnail: Boolean })
+native widget Imager {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Image;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, hasValidation: Boolean, size: Text })
+native widget InputGroup {
+
+    category bindings {
+        JavaScript: ReactBootstrap.InputGroup;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget InputGroupAppend {
+
+    category bindings {
+        JavaScript: ReactBootstrap.InputGroup.Append;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget InputGroupPrepend {
+
+    category bindings {
+        JavaScript: ReactBootstrap.InputGroup.Prepend;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget InputGroupText {
+
+    category bindings {
+        JavaScript: ReactBootstrap.InputGroup.Text;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+native widget InputGroupCheckbox {
+
+    category bindings {
+        JavaScript: ReactBootstrap.InputGroup.Checkbox;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+native widget InputGroupRadio {
+
+    category bindings {
+        JavaScript: ReactBootstrap.InputGroup.Radio;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, fluid: Boolean })
+native widget Jumbotron {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Jumbotron;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, horizontal: <true, "sm", "md", "lg", "xl", undefined, null>, variant: <"flush", undefined, null> })
+native widget ListGroup {
+
+    category bindings {
+        JavaScript: ReactBootstrap.ListGroup;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ action: Boolean, active: Boolean, as: Text, bsPrefix: Text, disabled: Boolean, eventKey: Text, href: Text, onClick: ClickEventCallback, variant: Text })
+native widget ListGroupItem {
+
+    category bindings {
+        JavaScript: ReactBootstrap.ListGroup.Item;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget Media {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Media;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget MediaBody {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Media.Body;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ animation: Boolean, "aria-labelledby": Any, autoFocus: Boolean, backdrop: <"static", true, false, null>, backdropClassName: Text, bsPrefix: Text, centered: Boolean, container: Any, contentClassName: Text, dialogAs: Text, dialogClassName: Text, enforceFocus: Boolean, keyboard: Boolean, manager: Any, onEnter: Callback, onEntered: Callback, onEntering: Callback, onEscapeKeyDown: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, onHide: Callback, onShow: Callback, restoreFocus: Boolean, restoreFocusOptions: Any, scrollable: Boolean, show: Boolean, size: Text })
+native widget Modal {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Modal;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bsPrefix: Text, centered: Boolean, contentClassName: Text, scrollable: Boolean, size: Text })
+native widget ModalDialog {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Modal.Dialog;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bsPrefix: Text, closeButton: Boolean, closeLabel: Text, onHide: Callback })
+native widget ModalHeader {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Modal.Header;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget ModalTitle {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Modal.Title;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget ModalBody {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Modal.Body;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget ModalFooter {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Modal.Footer;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ activeKey: Any, as: Text, bsPrefix: Text, cardHeaderBsPrefix: Text, fill: Boolean, justify: Boolean, navbar: Boolean, navbarBsPrefix: Text, onKeyDown: KeyboardEventCallback, onSelect: Callback, role: Text, variant: Text })
+native widget Nav {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Nav;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, role: Text })
+native widget NavItem {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Nav.Item;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ active: Boolean, as: Text, bsPrefix: Text, disabled: Boolean, eventKey: Any, href: Text, onSelect: Callback, role: Text })
+native widget NavLink {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Nav.Link;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bg: Text, bsPrefix: Text, collapseOnSelect: Boolean, expand: <true, "sm", "md", "lg", "xl">, expanded: Boolean, fixed: <"top", "bottom", null>, onSelect: Callback, onToggle: Callback, role: Text, sticky: <"top", null>, variant: Text })
+native widget Navbar {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Navbar;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, href: Text })
+native widget NavbarBrand {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Navbar.Brand;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bsPrefix: Text })
+native widget NavbarCollapse {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Navbar.Collapse;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget NavbarText {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Navbar.Text;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, children: Any, label: Text, onClick: ClickEventCallback })
+native widget NavbarToggle {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Navbar.Toggle;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ active: Boolean, bsPrefix: Text, disabled: Boolean, id: Any, menuRole: Text, onClick: ClickEventCallback, renderMenuOnMount: Boolean, rootCloseEvent: Text, title: { type: Any, required: true } })
+native widget NavDropdown {
+
+    category bindings {
+        JavaScript: ReactBootstrap.NavDropdown;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ container: <null, Callback, null>, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, onHide: Callback, placement: <"auto-start", "auto", "auto-end", "top-start", "top", "top-end", "right-start", "right", "right-end", "bottom-end", "bottom", "bottom-start", "left-end", "left", "left-start", null>, popperConfig: Any, rootClose: Boolean, rootCloseEvent: <"click", "mousedown", null>, show: Boolean, target: <null, Callback, null>, transition: <Boolean, null, null> })
+native widget Overlay {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Overlay;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ children: <Html, Callback>, defaultShow: Boolean, delay: <Integer, Any, null>, flip: Boolean, onHide: Callback, onToggle: Callback, overlay: <Callback, Html, null>, placement: <"auto-start", "auto", "auto-end", "top-start", "top", "top-end", "right-start", "right", "right-end", "bottom-end", "bottom", "bottom-start", "left-end", "left", "left-start", null>, popperConfig: Any, show: Boolean, target: <null>, trigger: Any })
+native widget OverlayTrigger {
+
+    category bindings {
+        JavaScript: ReactBootstrap.OverlayTrigger;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ arrowProps: Any, bsPrefix: Text, content: Boolean, id: Any, placement: <"auto", "top", "bottom", "left", "right", null>, popper: Any, show: Boolean })
+native widget Popover {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Popover;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget PopoverTitle {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Popover.Title;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget PopoverContent {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Popover.Content;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bsPrefix: Text, size: Text })
+native widget Pagination {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Pagination;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ active: Boolean, activeLabel: Text, disabled: Boolean, onClick: ClickEventCallback })
+native widget PaginationItem {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Pagination.Item;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+native widget PaginationFirst {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Pagination.First;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+native widget PaginationPrev {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Pagination.Prev;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+native widget PaginationEllipsis {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Pagination.Ellipsis;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+native widget PaginationNext {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Pagination.Next;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+native widget PaginationLast {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Pagination.Last;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ animated: Boolean, bsPrefix: Text, children: ProgressBar[], isChild: Boolean, label: Any, max: Integer, min: Integer, now: Integer, srOnly: Boolean, striped: Boolean, variant: Text })
+native widget ProgressBar {
+
+    category bindings {
+        JavaScript: ReactBootstrap.ProgressBar;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ aspectRatio: <"21by9", "16by9", "4by3", "1by1", null>, bsPrefix: Text, children: { type: Html, required: true } })
+native widget ResponsiveEmbed {
+
+    category bindings {
+        JavaScript: ReactBootstrap.ResponsiveEmbed;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text, lg: <<Integer, Text>, Any, null>, md: <<Integer, Text>, Any, null>, noGutters: { type: Boolean, required: true }, sm: <<Integer, Text>, Any, null>, xl: <<Integer, Text>, Any, null>, xs: <<Integer, Text>, Any, null> })
+native widget Row {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Row;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ animation: <"border", "grow">, as: Text, bsPrefix: Text, children: Html, role: Text, size: Text, variant: Text })
+native widget Spinner {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Spinner;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bsPrefix: Text, disabled: Boolean, href: Text, id: Any, menuAlign: <<"left", "right">, Any, Any, Any, Any, null>, menuRole: Text, onClick: ClickEventCallback, renderMenuOnMount: Boolean, rootCloseEvent: Text, size: Text, target: Text, title: { type: Any, required: true }, toggleLabel: Text, type: Text, variant: Text })
+native widget SplitButton {
+
+    category bindings {
+        JavaScript: ReactBootstrap.SplitButton;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bordered: Boolean, borderless: Boolean, bsPrefix: Text, hover: Boolean, responsive: <Boolean, Text, null>, size: Text, striped: Boolean, variant: Text })
+native widget Table {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Table;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ title: { type: Any, required: true } })
+native widget Tab {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Tab;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ activeKey: Any, generateChildId: Callback, id: Any, mountOnEnter: Boolean, onSelect: Callback, transition: <<false>, Text, null>, unmountOnExit: Boolean })
+native widget TabContainer {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Tab.Container;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget TabContent {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Tab.Content;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ active: Boolean, "aria-labelledby": Text, as: Text, bsPrefix: Text, eventKey: Any, id: Any, mountOnEnter: Boolean, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, transition: <Boolean, Text, null>, unmountOnExit: Boolean })
+native widget TabPane {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Tab.Pane;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ activeKey: Any, defaultActiveKey: Any, id: Any, mountOnEnter: Boolean, onSelect: Callback, transition: <<false>, Text, null>, unmountOnExit: Boolean, variant: Text })
+native widget Tabs {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Tabs;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ animation: Boolean, autohide: Boolean, bsPrefix: Text, delay: Integer, onClose: Callback, show: Boolean, transition: Text })
+native widget Toast {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Toast;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ bsPrefix: Text, closeButton: Boolean, closeLabel: Text })
+native widget ToastHeader {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Toast.Header;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ as: Text, bsPrefix: Text })
+native widget ToastBody {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Toast.Body;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ checked: Boolean, disabled: Boolean, inputRef: <Callback, Any, null>, name: Text, onChange: InputChangedEventCallback, type: <"checkbox", "radio", null>, value: <Text, Text[], Integer> })
+native widget ToggleButton {
+
+    category bindings {
+        JavaScript: ReactBootstrap.ToggleButton;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ name: Text, onChange: InputChangedEventCallback, size: Text, type: <"checkbox", "radio">, value: Any, vertical: Boolean })
+native widget ToggleButtonGroup {
+
+    category bindings {
+        JavaScript: ReactBootstrap.ToggleButtonGroup;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ arrowProps: Any, bsPrefix: Text, id: Any, placement: <"auto-start", "auto", "auto-end", "top-start", "top", "top-end", "right-start", "right", "right-end", "bottom-end", "bottom", "bottom-start", "left-end", "left", "left-start", null>, popper: Any, show: Any })
+native widget Tooltip {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Tooltip;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+abstract method CarouselEventCallback(Integer eventKey, Text direction);
