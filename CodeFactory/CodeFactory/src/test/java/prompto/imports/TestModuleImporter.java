@@ -1,4 +1,4 @@
-package prompto.codefactory;
+package prompto.imports;
 
 import static org.junit.Assert.*;
 

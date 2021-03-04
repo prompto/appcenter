@@ -1,4 +1,4 @@
-package prompto.codefactory;
+package prompto.imports;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +12,7 @@ import java.nio.file.spi.FileSystemProvider;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -22,6 +23,7 @@ import prompto.code.Module;
 import prompto.code.ModuleType;
 import prompto.code.TextResource;
 import prompto.code.WebLibrary;
+import prompto.imports.populator.ModulePopulator;
 import prompto.intrinsic.PromptoVersion;
 import prompto.utils.Logger;
 import prompto.utils.StreamUtils;
@@ -30,6 +32,7 @@ import prompto.value.ImageValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class SampleImporter {
 
@@ -39,8 +42,10 @@ public class SampleImporter {
 	PromptoVersion migrateFrom;
 	URL imageResource;
 	URL codeResource;
-	URL nativeResource;
 	URL stubResource;
+	List<URLWithMimeType> javaScripts;
+	List<URLWithMimeType> styleSheets;
+	List<URLWithMimeType> resources;
 	
 	public SampleImporter(Module module, URL codeResource) {
 		this.module = module;
@@ -70,28 +75,75 @@ public class SampleImporter {
 			this.migrateFrom = PromptoVersion.parse(descriptor.get("migrateFrom").asText());
 	}
 
-	private void populateResources(URL url, JsonNode descriptor) throws MalformedURLException {
-		this.imageResource = makeResourceURL(url, descriptor, "imageResource");
-		this.codeResource = makeResourceURL(url, descriptor, "codeResource");
-		this.nativeResource = makeResourceURL(url, descriptor, "nativeResource");
-		this.stubResource = makeResourceURL(url, descriptor, "stubResource");
+	private void populateResources(URL moduleUrl, JsonNode descriptor) {
+		imageResource = makeResourceUrlFromField(moduleUrl, descriptor, "imageResource");
+		codeResource = makeResourceUrlFromField(moduleUrl, descriptor, "codeResource");
+		stubResource = makeResourceUrlFromField(moduleUrl, descriptor, "stubResource");
+		javaScripts = makeResourceUrlsWithMimeType(descriptor, "javaScripts", node -> this.makeResourceUrlWithMimeTypeFromTextualNode(moduleUrl, node, "text/javascript"));
+		if(javaScripts==null) {
+			URL nativeResource = makeResourceUrlFromField(moduleUrl, descriptor, "nativeResource");
+			if(nativeResource != null)
+				javaScripts = Collections.singletonList(new URLWithMimeType(nativeResource, "text/javascript"));
+		}
+		styleSheets = makeResourceUrlsWithMimeType(descriptor, "styleSheets", node -> this.makeResourceUrlWithMimeTypeFromTextualNode(moduleUrl, node, "text/css"));
+		resources = makeResourceUrlsWithMimeType(descriptor, "resources", node -> this.makeResourceUrlWithMimeTypeFromObjectNode(moduleUrl, node));
 	}
 
-	private URL makeResourceURL(URL url, JsonNode descriptor, String name) throws MalformedURLException {
-		if(descriptor.get(name)==null)
+	private URL makeResourceUrlFromField(URL moduleUrl, JsonNode descriptor, String name) {
+		JsonNode node = descriptor.get(name);
+		if(node==null || !node.isTextual())
 			return null;
-		String value = descriptor.get(name).asText();
-		if(value.startsWith("http"))
-			return new URL(value);
 		else
-			return new URL(url, value);
+			return makeResourceUrlFromString(moduleUrl, node.asText());
+	}
+	
+	private URL makeResourceUrlFromString(URL moduleUrl, String value) {
+		try {
+			if(value.startsWith("http"))
+				return new URL(value);
+			else
+				return new URL(moduleUrl, value);
+		} catch(MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
+	private List<URLWithMimeType> makeResourceUrlsWithMimeType(JsonNode descriptor, String name, Function<JsonNode, URLWithMimeType> supplier) {
+		JsonNode node = descriptor.get(name);
+		if(node==null || !node.isArray())
+			return null;
+		return StreamSupport.stream(((ArrayNode)node).spliterator(), false)
+				.map(supplier)
+				.collect(Collectors.toList());
+			
+	}
+	
+	
+	private URLWithMimeType makeResourceUrlWithMimeTypeFromTextualNode(URL moduleUrl, JsonNode node, String mimeType) {
+		if(node==null || !node.isTextual())
+			return null;
+		else {
+			URL url = makeResourceUrlFromString(moduleUrl, node.asText());
+			return new URLWithMimeType(url, mimeType);
+		}
+	}
+	
+	
+	private URLWithMimeType makeResourceUrlWithMimeTypeFromObjectNode(URL moduleUrl, JsonNode node) {
+		if(node!=null && node.isObject()) {
+			JsonNode mimeType = node.get("mimeType");
+			if(mimeType!=null && mimeType.isTextual()) {
+				URL url = makeResourceUrlFromField(moduleUrl, node, "url");
+				return 	new URLWithMimeType(url, mimeType.asText());	
+			}
+		}
+		return null;
+	}
+	
 	private void populateModule(Module module, JsonNode descriptor) throws Exception {
 		ModulePopulator populator = ModulePopulator.forType(module);
 		populator.populate(module, descriptor);
 	}
-	
 	
 
 	private Module newModule(JsonNode descriptor) throws InstantiationException, IllegalAccessException {
@@ -155,10 +207,14 @@ public class SampleImporter {
 		if(codeResource!=null)
 			storeAssociatedCode(codeStore);
 		if(module instanceof WebLibrary) {
-			if(nativeResource!=null && isLocalResource(nativeResource)) 
-				storeResource(codeStore, nativeResource);
 			if(stubResource!=null && isLocalResource(stubResource)) 
-				storeResource(codeStore, stubResource);
+				storeTextResource(codeStore, stubResource, "text/javascript");
+			if(javaScripts!=null) 
+				javaScripts.forEach(res -> storeTextResource(codeStore, res));
+			if(styleSheets!=null) 
+				styleSheets.forEach(res -> storeTextResource(codeStore, res));
+			if(resources!=null) 
+				resources.forEach(res -> storeTextResource(codeStore, res));
 		}
 	}
 
@@ -167,6 +223,15 @@ public class SampleImporter {
 		codeStore.storeDeclarations(rcs.getDeclarations(), rcs.getModuleDialect(), module.getVersion(), module.getDbId());
 	}
 	
+	private void storeTextResource(ICodeStore codeStore, URLWithMimeType res) {
+		try {
+			if(isLocalResource(res.getUrl()))
+				storeTextResource(codeStore, res.getUrl(), res.getMimeType());
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private boolean isLocalResource(URL resource) throws URISyntaxException {
 		if("file".equals(resource.getProtocol()))
 			return Paths.get(resource.toURI()).toFile().exists();
@@ -174,12 +239,12 @@ public class SampleImporter {
 			return "jar".equals(resource.getProtocol());
 	}
 
-	private void storeResource(ICodeStore codeStore, URL resourceUrl) throws Exception {
+	private void storeTextResource(ICodeStore codeStore, URL resourceUrl, String mimeType) throws IOException, URISyntaxException {
 		initializeJarFileSystem(resourceUrl.toURI());
 		String fileName = Paths.get(resourceUrl.toURI()).getFileName().toString();
 		String fullName = module.getName().toLowerCase().replaceAll(" ", "-") + "/" + fileName;
 		TextResource resource = new TextResource();
-		resource.setMimeType("text/javascript");
+		resource.setMimeType(mimeType);
 		resource.setName(fullName);
 		resource.setVersion(PromptoVersion.LATEST);
 		resource.setLastModified(OffsetDateTime.now());

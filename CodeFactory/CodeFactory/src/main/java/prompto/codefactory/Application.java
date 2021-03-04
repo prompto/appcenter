@@ -29,6 +29,7 @@ import prompto.config.auth.source.IAuthenticationSourceConfiguration;
 import prompto.config.auth.source.IStoredAuthenticationSourceConfiguration;
 import prompto.declaration.CategoryDeclaration;
 import prompto.grammar.Identifier;
+import prompto.imports.SampleImporter;
 import prompto.intrinsic.PromptoVersion;
 import prompto.libraries.Libraries;
 import prompto.runtime.ApplicationContext;

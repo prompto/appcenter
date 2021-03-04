@@ -1,4 +1,4 @@
-package prompto.codefactory;
+package prompto.imports;
 
 import static org.junit.Assert.*;
 
@@ -80,19 +80,20 @@ public class TestSampleImporter {
 		assertNotNull(importer.module.getDbId());
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
-	public void reactBootstrapIsImported() throws Exception {
+	public void reactBootstrap3IsImported() throws Exception {
 		SampleImporter importer = new SampleImporter("libraries/react-bootstrap-3/");
 		importer.importModule(ICodeStore.getInstance());
 		assertTrue(importer.module instanceof WebLibrary);
 		assertNotNull(importer.module.getDbId());
 		assertNotNull(((WebLibrary)importer.module).getWidgetLibrary());
 		assertNull(((WebLibrary)importer.module).getHtmlEngine());
-		assertNull(((WebLibrary)importer.module).getUIFramework());
+		assertNull(((WebLibrary)importer.module).getUiFramework());
 	}
 	
 	@Test
-	public void reactBootstrapNewVersionIsImported() throws Exception {
+	public void reactBootstrap3NewVersionIsImported() throws Exception {
 		SampleImporter importer = new SampleImporter("samples/react-bootstrap-3-1.0.0/");
 		importer.importModule(ICodeStore.getInstance());
 		Module module = ICodeStore.getInstance().fetchVersionedModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.LATEST);
@@ -106,7 +107,7 @@ public class TestSampleImporter {
 		}
 	
 	@Test
-	public void reactBootstrapIsUpdated() throws Exception {
+	public void reactBootstrap3IsUpdated() throws Exception {
 		SampleImporter importer = new SampleImporter("samples/react-bootstrap-3-1.0.0/");
 		importer.importModule(ICodeStore.getInstance());
 		Module module = ICodeStore.getInstance().fetchVersionedModule(ModuleType.WEBLIBRARY, "React-Bootstrap-3", PromptoVersion.LATEST);
@@ -119,5 +120,20 @@ public class TestSampleImporter {
 		assertNull(module);
 		
 	}
+	
+	@Test
+	public void reactBootstrap4IsImported() throws Exception {
+		SampleImporter importer = new SampleImporter("libraries/react-bootstrap-4/");
+		importer.importModule(ICodeStore.getInstance());
+		assertTrue(importer.module instanceof WebLibrary);
+		assertNotNull(importer.module.getDbId());
+		WebLibrary library = (WebLibrary)importer.module;
+		assertNotNull(library.getHtmlEngine());
+		assertNotNull(library.getStubResource());
+		assertNotNull(library.getStyleSheets());
+		assertNotNull(library.getJavaScripts());
+		assertNotNull(library.getResources());
+	}
+
 
 }
