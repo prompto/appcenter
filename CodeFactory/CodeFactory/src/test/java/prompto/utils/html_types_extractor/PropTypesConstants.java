@@ -1,9 +1,7 @@
-package prompto.utils.prop_types_extractor;
+package prompto.utils.html_types_extractor;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 import prompto.grammar.Identifier;
 import prompto.property.IPropertyValidator;
@@ -18,7 +16,6 @@ import prompto.type.HtmlType;
 import prompto.type.IntegerType;
 import prompto.type.TextType;
 
-@SuppressWarnings("serial")
 public class PropTypesConstants {
 
 	public static final IPropertyValidator CALLBACK_VALIDATOR = new TypeValidator(new CategoryType(new Identifier("Callback")));
@@ -48,14 +45,4 @@ public class PropTypesConstants {
 	public static final IPropertyValidator COLOR_VALIDATOR = TEXT_TYPE_VALIDATOR; // for now, see https://drafts.csswg.org/css-color/#typedef-color
 
 	
-	public static final Map<String, Map<String, Map<String, IPropertyValidator>>> SPECIFIC_VALIDATORS = populateSpecificValidators();
-
-	private static Map<String, Map<String, Map<String, IPropertyValidator>>> populateSpecificValidators() {
-		return new HashMap<String, Map<String, Map<String, IPropertyValidator>>>() {
-			{
-				put("react-bootstrap", ReactBootstrap3PropTypes.VALIDATORS);
-			}
-		};	
-	}
-
 }

@@ -20,7 +20,6 @@ import prompto.property.TypeSetValidator;
 import prompto.property.ValueSetValidator;
 import prompto.type.DateTimeType;
 import prompto.type.DateType;
-import prompto.utils.prop_types_extractor.PropTypesConstants;
 
 
 public class HtmlAttributesExtractor {
