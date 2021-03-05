@@ -237,7 +237,7 @@ public class Application {
 	public static void createLibraries() {
 		try {
 			ICodeStore codeStore = codeStoreUsingDataStore();
-			createResourceLibraries(codeStore, "thesaurus/", "react-bootstrap-3/", "react-file-uploader/");
+			createResourceLibraries(codeStore, "thesaurus/", "react-file-uploader/", "react-bootstrap-3/", "react-bootstrap-4/");
 			if(isSeedDataStore()) {
 				createResourceLibraries(codeStore, "resource-editors/");
 				createSeedLibraries(codeStore);
