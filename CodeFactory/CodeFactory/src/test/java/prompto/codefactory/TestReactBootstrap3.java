@@ -193,7 +193,7 @@ public class TestReactBootstrap3 extends BaseUITest {
 
 
 	private void linkResourcesAndLoadPage(String resourceName, Dialect dialect) throws Exception {
-		URL bootstrapURL = Thread.currentThread().getContextClassLoader().getResource("libraries/react-bootstrap-3/React-Bootstrap-3.poc");
+		URL bootstrapURL = Thread.currentThread().getContextClassLoader().getResource("libraries/react-bootstrap-3/widgets.poc");
 		ImmutableCodeStore bootstrapResource = new ImmutableCodeStore(null, ModuleType.LIBRARY, bootstrapURL, PromptoVersion.LATEST);
 		URL codeResourceURL = Thread.currentThread().getContextClassLoader().getResource("react-bootstrap-3-tests/" + resourceName + ".p" + dialect.name().toLowerCase() + "c");
 		ImmutableCodeStore codeResource = new ImmutableCodeStore(bootstrapResource, ModuleType.LIBRARY, codeResourceURL, PromptoVersion.LATEST);
