@@ -944,7 +944,7 @@ native widget ModalFooter {
 
 }
 
-@WidgetProperties({ activeKey: Any, as: Text, bsPrefix: Text, cardHeaderBsPrefix: Text, fill: Boolean, justify: Boolean, navbar: Boolean, navbarBsPrefix: Text, onKeyDown: KeyboardEventCallback, onSelect: Callback, role: Text, variant: Text })
+@WidgetProperties({ activeKey: Any, as: Text, bsPrefix: Text, cardHeaderBsPrefix: Text, fill: Boolean, justify: Boolean, navbar: Boolean, navbarBsPrefix: Text, onKeyDown: KeyboardEventCallback, onSelect: AnyCallback, role: Text, variant: Text })
 native widget Nav {
 
     category bindings {
