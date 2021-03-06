@@ -87,8 +87,8 @@ public class TestSampleImporter {
 		importer.importModule(ICodeStore.getInstance());
 		assertTrue(importer.module instanceof WebLibrary);
 		assertNotNull(importer.module.getDbId());
-		assertNotNull(((WebLibrary)importer.module).getWidgetLibrary());
-		assertNull(((WebLibrary)importer.module).getHtmlEngine());
+		assertNotNull(((WebLibrary)importer.module).getHtmlEngine());
+		assertNull(((WebLibrary)importer.module).getWidgetLibrary());
 		assertNull(((WebLibrary)importer.module).getUiFramework());
 	}
 	
