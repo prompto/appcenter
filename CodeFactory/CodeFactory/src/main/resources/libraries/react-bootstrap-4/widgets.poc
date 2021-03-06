@@ -76,7 +76,7 @@ native widget AlertLink {
 
 }
 
-@WidgetProperties({ as: Text, bsPrefix: Text, pill: { type: Boolean, required: true }, variant: Text })
+@WidgetProperties({ as: Text, bsPrefix: Text, pill: Boolean, variant: Text })
 native widget Badge {
 
     category bindings {
@@ -983,7 +983,7 @@ native widget NavLink {
 
 }
 
-@WidgetProperties({ as: Text, bg: Text, bsPrefix: Text, collapseOnSelect: Boolean, expand: <true, "sm", "md", "lg", "xl">, expanded: Boolean, fixed: <"top", "bottom", null>, onSelect: Callback, onToggle: Callback, role: Text, sticky: <"top", null>, variant: Text })
+@WidgetProperties({ as: Text, bg: Text, bsPrefix: Text, collapseOnSelect: Boolean, expand: <true, "sm", "md", "lg", "xl", null>, expanded: Boolean, fixed: <"top", "bottom", null>, onSelect: Callback, onToggle: Callback, role: Text, sticky: <"top", null>, variant: Text })
 native widget Navbar {
 
     category bindings {
@@ -1238,7 +1238,7 @@ native widget ResponsiveEmbed {
 
 }
 
-@WidgetProperties({ as: Text, bsPrefix: Text, lg: <<Integer, Text>, Any, null>, md: <<Integer, Text>, Any, null>, noGutters: { type: Boolean, required: true }, sm: <<Integer, Text>, Any, null>, xl: <<Integer, Text>, Any, null>, xs: <<Integer, Text>, Any, null> })
+@WidgetProperties({ as: Text, bsPrefix: Text, lg: <<Integer, Text>, Any, null>, md: <<Integer, Text>, Any, null>, noGutters: Boolean, sm: <<Integer, Text>, Any, null>, xl: <<Integer, Text>, Any, null>, xs: <<Integer, Text>, Any, null> })
 native widget Row {
 
     category bindings {
@@ -1407,7 +1407,7 @@ native widget ToggleButton {
 
 }
 
-@WidgetProperties({ name: Text, onChange: InputChangedEventCallback, size: Text, type: <"checkbox", "radio">, value: Any, vertical: Boolean })
+@WidgetProperties({ name: Text, onChange: InputChangedEventCallback, size: Text, type: <"checkbox", "radio", null>, value: Any, vertical: Boolean })
 native widget ToggleButtonGroup {
 
     category bindings {
