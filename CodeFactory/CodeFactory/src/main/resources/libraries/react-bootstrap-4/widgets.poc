@@ -37,7 +37,7 @@ native widget AccordionToggle {
 
 }
 
-@WidgetProperties({ bsPrefix: Text, closeLabel: Text, dismissible: Boolean, onClose: Callback, show: Boolean, transition: <Boolean, null, null>, variant: Text })
+@WidgetProperties({ bsPrefix: Text, closeLabel: Text, dismissible: Boolean, onClose: Callback, show: Boolean, transition: <Boolean, Text>, variant: Text })
 native widget Alert {
 
     category bindings {
@@ -310,7 +310,7 @@ native widget CardGroup {
 
 }
 
-@WidgetProperties({ activeIndex: Integer, as: Text, bsPrefix: Text, controls: Boolean, fade: Boolean, indicators: Boolean, interval: Integer, keyboard: Boolean, nextIcon: Any, nextLabel: Text, onSelect: IntegerCallback, onSlid: CarouselEventCallback, onSlide: CarouselEventCallback, pause: <"hover", false, null>, prevIcon: Any, prevLabel: Text, slide: Boolean, touch: Boolean, wrap: Boolean })
+@WidgetProperties({ activeIndex: Integer, as: Text, bsPrefix: Text, controls: Boolean, fade: Boolean, indicators: Boolean, interval: Integer, keyboard: Boolean, nextIcon: Any, nextLabel: Text, onSelect: IntegerCallback, onSlid: CarouselEventCallback, onSlide: CarouselEventCallback, pause: <"hover", false>, prevIcon: Any, prevLabel: Text, slide: Boolean, touch: Boolean, wrap: Boolean })
 native widget Carousel {
 
     category bindings {
@@ -349,7 +349,7 @@ native widget CarouselItem {
 
 }
 
-@WidgetProperties({ as: Text, bsPrefix: Text, lg: <<Boolean, Integer, Text, <"auto">>, Any, null>, md: <<Boolean, Integer, Text, <"auto">>, Any, null>, sm: <<Boolean, Integer, Text, <"auto">>, Any, null>, xl: <<Boolean, Integer, Text, <"auto">>, Any, null>, xs: <<Boolean, Integer, Text, <"auto">>, Any, null> })
+@WidgetProperties({ as: Text, bsPrefix: Text, lg: <<Boolean, Integer, Text, <"auto">>, Any>, md: <<Boolean, Integer, Text, <"auto">>, Any>, sm: <<Boolean, Integer, Text, <"auto">>, Any>, xl: <<Boolean, Integer, Text, <"auto">>, Any>, xs: <<Boolean, Integer, Text, <"auto">>, Any> })
 native widget Col {
 
     category bindings {
@@ -362,7 +362,7 @@ native widget Col {
 
 }
 
-@WidgetProperties({ appear: Boolean, dimension: <<"height", "width">, Callback, null>, getDimensionValue: Callback, in: Boolean, mountOnEnter: Boolean, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, role: Text, timeout: Integer, unmountOnExit: Boolean })
+@WidgetProperties({ appear: Boolean, dimension: <<"height", "width">, Callback>, getDimensionValue: Callback, in: Boolean, mountOnEnter: Boolean, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, role: Text, timeout: Integer, unmountOnExit: Boolean })
 native widget Collapse {
 
     category bindings {
@@ -375,7 +375,7 @@ native widget Collapse {
 
 }
 
-@WidgetProperties({ as: Text, bsPrefix: Text, fluid: <Boolean, <"sm", "md", "lg", "xl">, null> })
+@WidgetProperties({ as: Text, bsPrefix: Text, fluid: <Boolean, <"sm", "md", "lg", "xl">> })
 native widget Container {
 
     category bindings {
@@ -388,7 +388,7 @@ native widget Container {
 
 }
 
-@WidgetProperties({ alignRight: Boolean, as: Text, bsPrefix: Text, drop: <"up", "left", "right", "down", null>, flip: Boolean, focusFirstItemOnShow: <false, true, "keyboard", null>, navbar: Boolean, onSelect: AnyCallback, onToggle: BooleanCallback, show: Boolean })
+@WidgetProperties({ alignRight: Boolean, as: Text, bsPrefix: Text, drop: <"up", "left", "right", "down">, flip: Boolean, focusFirstItemOnShow: <false, true, "keyboard">, navbar: Boolean, onSelect: AnyCallback, onToggle: BooleanCallback, show: Boolean })
 native widget Dropdown {
 
     category bindings {
@@ -427,7 +427,7 @@ native widget DropdownDivider {
 
 }
 
-@WidgetProperties({ bsPrefix: Text, disabled: Boolean, href: Text, id: Any, menuAlign: <<"left", "right">, Any, Any, Any, Any, null>, menuRole: Text, onClick: ClickEventCallback, renderMenuOnMount: Boolean, rootCloseEvent: Text, size: Text, title: { type: Any, required: true }, variant: Text })
+@WidgetProperties({ bsPrefix: Text, disabled: Boolean, href: Text, id: Any, menuAlign: <<"left", "right">, Any, Any, Any, Any>, menuRole: Text, onClick: ClickEventCallback, renderMenuOnMount: Boolean, rootCloseEvent: Text, size: Text, title: { type: Any, required: true }, variant: Text })
 native widget DropdownButton {
 
     category bindings {
@@ -466,7 +466,7 @@ native widget DropdownToggle {
 
 }
 
-@WidgetProperties({ align: <<"left", "right">, Any, Any, Any, Any, null>, alignRight: Boolean, as: Text, bsPrefix: Text, flip: Boolean, onSelect: Callback, popperConfig: Any, renderOnMount: Boolean, rootCloseEvent: <"click", "mousedown", null>, show: Boolean })
+@WidgetProperties({ align: <<"left", "right">, Any, Any, Any, Any>, alignRight: Boolean, as: Text, bsPrefix: Text, flip: Boolean, onSelect: Callback, popperConfig: Any, renderOnMount: Boolean, rootCloseEvent: <"click", "mousedown">, show: Boolean })
 native widget DropdownMenu {
 
     category bindings {
@@ -544,7 +544,7 @@ native widget Form {
 
 }
 
-@WidgetProperties({ as: Text, bsCustomPrefix: Text, bsPrefix: Text, children: Any, custom: Boolean, disabled: Boolean, feedback: Any, feedbackTooltip: Boolean, id: Any, inline: Boolean, isInvalid: Boolean, isValid: Boolean, label: Any, title: Text, type: <"radio", "checkbox", "switch", null> })
+@WidgetProperties({ as: Text, bsCustomPrefix: Text, bsPrefix: Text, children: Any, custom: Boolean, disabled: Boolean, feedback: Any, feedbackTooltip: Boolean, id: Any, inline: Boolean, isInvalid: Boolean, isValid: Boolean, label: Any, title: Text, type: <"radio", "checkbox", "switch"> })
 native widget FormCheck {
 
     category bindings {
@@ -583,7 +583,7 @@ native widget FormCheckLabel {
 
 }
 
-@WidgetProperties({ as: Text, bsCustomPrefix: Text, bsPrefix: Text, custom: Boolean, disabled: Boolean, htmlSize: Integer, id: Any, isInvalid: Boolean, isValid: Boolean, onChange: InputChangedEventCallback, plaintext: Boolean, readOnly: Boolean, size: Text, type: Text, value: <Text, Text[], Integer, null> })
+@WidgetProperties({ as: Text, bsCustomPrefix: Text, bsPrefix: Text, custom: Boolean, disabled: Boolean, htmlSize: Integer, id: Any, isInvalid: Boolean, isValid: Boolean, onChange: InputChangedEventCallback, plaintext: Boolean, readOnly: Boolean, size: Text, type: Text, value: <Text, Text[], Integer> })
 native widget FormControl {
 
     category bindings {
@@ -661,7 +661,7 @@ native widget FormGroup {
 
 }
 
-@WidgetProperties({ as: Text, bsPrefix: Text, column: <Boolean, <"sm", "lg">, null>, htmlFor: Text, srOnly: Boolean })
+@WidgetProperties({ as: Text, bsPrefix: Text, column: <Boolean, <"sm", "lg">>, htmlFor: Text, srOnly: Boolean })
 native widget FormLabel {
 
     category bindings {
@@ -814,7 +814,7 @@ native widget Jumbotron {
 
 }
 
-@WidgetProperties({ as: Text, bsPrefix: Text, horizontal: <true, "sm", "md", "lg", "xl", undefined, null>, variant: <"flush", undefined, null> })
+@WidgetProperties({ as: Text, bsPrefix: Text, horizontal: <true, "sm", "md", "lg", "xl", undefined>, variant: <"flush", undefined> })
 native widget ListGroup {
 
     category bindings {
@@ -866,7 +866,7 @@ native widget MediaBody {
 
 }
 
-@WidgetProperties({ animation: Boolean, "aria-labelledby": Any, autoFocus: Boolean, backdrop: <"static", true, false, null>, backdropClassName: Text, bsPrefix: Text, centered: Boolean, container: Any, contentClassName: Text, dialogAs: Text, dialogClassName: Text, enforceFocus: Boolean, keyboard: Boolean, manager: Any, onEnter: Callback, onEntered: Callback, onEntering: Callback, onEscapeKeyDown: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, onHide: Callback, onShow: Callback, restoreFocus: Boolean, restoreFocusOptions: Any, scrollable: Boolean, show: Boolean, size: Text })
+@WidgetProperties({ animation: Boolean, "aria-labelledby": Any, autoFocus: Boolean, backdrop: <"static", true, false>, backdropClassName: Text, bsPrefix: Text, centered: Boolean, container: Any, contentClassName: Text, dialogAs: Text, dialogClassName: Text, enforceFocus: Boolean, keyboard: Boolean, manager: Any, onEnter: Callback, onEntered: Callback, onEntering: Callback, onEscapeKeyDown: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, onHide: Callback, onShow: Callback, restoreFocus: Boolean, restoreFocusOptions: Any, scrollable: Boolean, show: Boolean, size: Text })
 native widget Modal {
 
     category bindings {
@@ -983,7 +983,7 @@ native widget NavLink {
 
 }
 
-@WidgetProperties({ as: Text, bg: Text, bsPrefix: Text, collapseOnSelect: Boolean, expand: <true, "sm", "md", "lg", "xl", null>, expanded: Boolean, fixed: <"top", "bottom", null>, onSelect: Callback, onToggle: Callback, role: Text, sticky: <"top", null>, variant: Text })
+@WidgetProperties({ as: Text, bg: Text, bsPrefix: Text, collapseOnSelect: Boolean, expand: <true, "sm", "md", "lg", "xl">, expanded: Boolean, fixed: <"top", "bottom">, onSelect: Callback, onToggle: Callback, role: Text, sticky: <"top">, variant: Text })
 native widget Navbar {
 
     category bindings {
@@ -1061,7 +1061,7 @@ native widget NavDropdown {
 
 }
 
-@WidgetProperties({ container: <null, Callback, null>, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, onHide: Callback, placement: <"auto-start", "auto", "auto-end", "top-start", "top", "top-end", "right-start", "right", "right-end", "bottom-end", "bottom", "bottom-start", "left-end", "left", "left-start", null>, popperConfig: Any, rootClose: Boolean, rootCloseEvent: <"click", "mousedown", null>, show: Boolean, target: <null, Callback, null>, transition: <Boolean, null, null> })
+@WidgetProperties({ container: <Text, Callback>, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, onHide: Callback, placement: <"auto-start", "auto", "auto-end", "top-start", "top", "top-end", "right-start", "right", "right-end", "bottom-end", "bottom", "bottom-start", "left-end", "left", "left-start">, popperConfig: Any, rootClose: Boolean, rootCloseEvent: <"click", "mousedown">, show: Boolean, target: <Text, Callback>, transition: <Boolean, Text> })
 native widget Overlay {
 
     category bindings {
@@ -1074,7 +1074,7 @@ native widget Overlay {
 
 }
 
-@WidgetProperties({ children: <Html, Callback>, defaultShow: Boolean, delay: <Integer, Any, null>, flip: Boolean, onHide: Callback, onToggle: Callback, overlay: <Callback, Html, null>, placement: <"auto-start", "auto", "auto-end", "top-start", "top", "top-end", "right-start", "right", "right-end", "bottom-end", "bottom", "bottom-start", "left-end", "left", "left-start", null>, popperConfig: Any, show: Boolean, target: <null>, trigger: Any })
+@WidgetProperties({ children: <Html, Callback>, defaultShow: Boolean, delay: <Integer, Any>, flip: Boolean, onHide: Callback, onToggle: Callback, overlay: <Callback, Html>, placement: <"auto-start", "auto", "auto-end", "top-start", "top", "top-end", "right-start", "right", "right-end", "bottom-end", "bottom", "bottom-start", "left-end", "left", "left-start">, popperConfig: Any, show: Boolean, trigger: Any })
 native widget OverlayTrigger {
 
     category bindings {
@@ -1087,7 +1087,7 @@ native widget OverlayTrigger {
 
 }
 
-@WidgetProperties({ arrowProps: Any, bsPrefix: Text, content: Boolean, id: Any, placement: <"auto", "top", "bottom", "left", "right", null>, popper: Any, show: Boolean })
+@WidgetProperties({ arrowProps: Any, bsPrefix: Text, content: Boolean, id: Any, placement: <"auto", "top", "bottom", "left", "right">, popper: Any, show: Boolean })
 native widget Popover {
 
     category bindings {
@@ -1225,7 +1225,7 @@ native widget ProgressBar {
 
 }
 
-@WidgetProperties({ aspectRatio: <"21by9", "16by9", "4by3", "1by1", null>, bsPrefix: Text, children: { type: Html, required: true } })
+@WidgetProperties({ aspectRatio: <"21by9", "16by9", "4by3", "1by1">, bsPrefix: Text, children: { type: Html, required: true } })
 native widget ResponsiveEmbed {
 
     category bindings {
@@ -1238,7 +1238,7 @@ native widget ResponsiveEmbed {
 
 }
 
-@WidgetProperties({ as: Text, bsPrefix: Text, lg: <<Integer, Text>, Any, null>, md: <<Integer, Text>, Any, null>, noGutters: Boolean, sm: <<Integer, Text>, Any, null>, xl: <<Integer, Text>, Any, null>, xs: <<Integer, Text>, Any, null> })
+@WidgetProperties({ as: Text, bsPrefix: Text, lg: <<Integer, Text>, Any>, md: <<Integer, Text>, Any>, noGutters: Boolean, sm: <<Integer, Text>, Any>, xl: <<Integer, Text>, Any>, xs: <<Integer, Text>, Any> })
 native widget Row {
 
     category bindings {
@@ -1264,7 +1264,7 @@ native widget Spinner {
 
 }
 
-@WidgetProperties({ bsPrefix: Text, disabled: Boolean, href: Text, id: Any, menuAlign: <<"left", "right">, Any, Any, Any, Any, null>, menuRole: Text, onClick: ClickEventCallback, renderMenuOnMount: Boolean, rootCloseEvent: Text, size: Text, target: Text, title: { type: Any, required: true }, toggleLabel: Text, type: Text, variant: Text })
+@WidgetProperties({ bsPrefix: Text, disabled: Boolean, href: Text, id: Any, menuAlign: <<"left", "right">, Any, Any, Any, Any>, menuRole: Text, onClick: ClickEventCallback, renderMenuOnMount: Boolean, rootCloseEvent: Text, size: Text, target: Text, title: { type: Any, required: true }, toggleLabel: Text, type: Text, variant: Text })
 native widget SplitButton {
 
     category bindings {
@@ -1277,7 +1277,7 @@ native widget SplitButton {
 
 }
 
-@WidgetProperties({ bordered: Boolean, borderless: Boolean, bsPrefix: Text, hover: Boolean, responsive: <Boolean, Text, null>, size: Text, striped: Boolean, variant: Text })
+@WidgetProperties({ bordered: Boolean, borderless: Boolean, bsPrefix: Text, hover: Boolean, responsive: <Boolean, Text>, size: Text, striped: Boolean, variant: Text })
 native widget Table {
 
     category bindings {
@@ -1303,7 +1303,7 @@ native widget Tab {
 
 }
 
-@WidgetProperties({ activeKey: Any, generateChildId: Callback, id: Any, mountOnEnter: Boolean, onSelect: Callback, transition: <<false>, Text, null>, unmountOnExit: Boolean })
+@WidgetProperties({ activeKey: Any, generateChildId: Callback, id: Any, mountOnEnter: Boolean, onSelect: Callback, transition: <<false>, Text>, unmountOnExit: Boolean })
 native widget TabContainer {
 
     category bindings {
@@ -1329,7 +1329,7 @@ native widget TabContent {
 
 }
 
-@WidgetProperties({ active: Boolean, "aria-labelledby": Text, as: Text, bsPrefix: Text, eventKey: Any, id: Any, mountOnEnter: Boolean, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, transition: <Boolean, Text, null>, unmountOnExit: Boolean })
+@WidgetProperties({ active: Boolean, "aria-labelledby": Text, as: Text, bsPrefix: Text, eventKey: Any, id: Any, mountOnEnter: Boolean, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, transition: <Boolean, Text>, unmountOnExit: Boolean })
 native widget TabPane {
 
     category bindings {
@@ -1342,7 +1342,7 @@ native widget TabPane {
 
 }
 
-@WidgetProperties({ activeKey: Any, defaultActiveKey: Any, id: Any, mountOnEnter: Boolean, onSelect: Callback, transition: <<false>, Text, null>, unmountOnExit: Boolean, variant: Text })
+@WidgetProperties({ activeKey: Any, defaultActiveKey: Any, id: Any, mountOnEnter: Boolean, onSelect: Callback, transition: <<false>, Text>, unmountOnExit: Boolean, variant: Text })
 native widget Tabs {
 
     category bindings {
@@ -1394,7 +1394,7 @@ native widget ToastBody {
 
 }
 
-@WidgetProperties({ checked: Boolean, disabled: Boolean, inputRef: <Callback, Any, null>, name: Text, onChange: InputChangedEventCallback, type: <"checkbox", "radio", null>, value: <Text, Text[], Integer> })
+@WidgetProperties({ checked: Boolean, disabled: Boolean, inputRef: <Callback, Any>, name: Text, onChange: InputChangedEventCallback, type: <"checkbox", "radio">, value: <Text, Text[], Integer> })
 native widget ToggleButton {
 
     category bindings {
@@ -1407,7 +1407,7 @@ native widget ToggleButton {
 
 }
 
-@WidgetProperties({ name: Text, onChange: InputChangedEventCallback, size: Text, type: <"checkbox", "radio", null>, value: Any, vertical: Boolean })
+@WidgetProperties({ name: Text, onChange: InputChangedEventCallback, size: Text, type: <"checkbox", "radio">, value: Any, vertical: Boolean })
 native widget ToggleButtonGroup {
 
     category bindings {
@@ -1420,7 +1420,7 @@ native widget ToggleButtonGroup {
 
 }
 
-@WidgetProperties({ arrowProps: Any, bsPrefix: Text, id: Any, placement: <"auto-start", "auto", "auto-end", "top-start", "top", "top-end", "right-start", "right", "right-end", "bottom-end", "bottom", "bottom-start", "left-end", "left", "left-start", null>, popper: Any, show: Any })
+@WidgetProperties({ arrowProps: Any, bsPrefix: Text, id: Any, placement: <"auto-start", "auto", "auto-end", "top-start", "top", "top-end", "right-start", "right", "right-end", "bottom-end", "bottom", "bottom-start", "left-end", "left", "left-start">, popper: Any, show: Any })
 native widget Tooltip {
 
     category bindings {
