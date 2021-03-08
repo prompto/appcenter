@@ -102,7 +102,7 @@ native widget FormGroup {
 
 }
 
-@WidgetProperties({ bsClass: Text, bsSize: <"sm", "small", "lg", "large">, componentClass: Text, id: Any, inputRef: WidgetCallback, onChange: InputChangedEventCallback, type: Text })
+@WidgetProperties({ bsClass: Text, bsSize: <"sm", "small", "lg", "large">, componentClass: Text, id: Text, inputRef: WidgetCallback, onChange: InputChangedEventCallback, type: Text })
 native widget FormControl {
 
     category bindings {
@@ -232,7 +232,7 @@ native widget ModalTitle {
 
 }
 
-@WidgetProperties({ defaultExpanded: Boolean, expanded: Boolean, innerRef: WidgetCallback, onSelect: Callback, onToggle: ToggleChangedCallback })
+@WidgetProperties({ bsClass: Text, bsStyle: <"success", "warning", "danger", "info", "default", "primary">, eventKey: Any, expanded: Boolean, id: Text, onSelect: Callback, onToggle: ToggleChangedCallback })
 native widget Panel {
 
     category bindings {
@@ -323,7 +323,7 @@ native widget PanelFooter {
 
 }
 
-@WidgetProperties({ activeKey: Any, defaultActiveKey: Any, innerRef: WidgetCallback, onSelect: ItemSelectedCallback })
+@WidgetProperties({ accordion: Boolean, activeKey: Any, bsClass: Text, generateChildId: Callback, id: Text, onSelect: ItemSelectedCallback, role: Text })
 native widget PanelGroup {
 
     category bindings {
@@ -336,7 +336,7 @@ native widget PanelGroup {
 
 }
 
-@WidgetProperties({ active: Boolean, bsClass: Text, bsStyle: <"success", "warning", "danger", "info">, children: Html, isChild: Boolean, label: Any, max: Integer, min: Integer, now: Integer, srOnly: Boolean, striped: Boolean })
+@WidgetProperties({ active: Boolean, bsClass: Text, bsStyle: <"success", "warning", "danger", "info">, children: Html[], isChild: Boolean, label: Any, max: Integer, min: Integer, now: Integer, srOnly: Boolean, striped: Boolean })
 native widget ProgressBar {
 
     category bindings {
@@ -349,7 +349,7 @@ native widget ProgressBar {
 
 }
 
-@WidgetProperties({ bsStyle: <"default", "inverse">, defaultExpanded: Boolean, expanded: Boolean, innerRef: WidgetCallback, onSelect: ItemSelectedCallback, onToggle: ToggleChangedCallback })
+@WidgetProperties({ bsClass: Text, collapseOnSelect: Boolean, componentClass: Text, expanded: Boolean, fixedBottom: Boolean, fixedTop: Boolean, fluid: Boolean, inverse: Boolean, onSelect: ItemSelectedCallback, onToggle: ToggleChangedCallback, role: Text, staticTop: Boolean })
 native widget Navbar {
 
     category bindings {
@@ -476,7 +476,7 @@ native widget NavbarForm {
 
 }
 
-@WidgetProperties({ activeKey: Any, defaultActiveKey: Any, innerRef: WidgetCallback, onSelect: ItemSelectedCallback })
+@WidgetProperties({ activeKey: Any, animation: <Boolean, Text>, bsClass: Text, bsStyle: <"tabs", "pills">, id: Text, mountOnEnter: Boolean, onSelect: ItemSelectedCallback, unmountOnExit: Boolean })
 native widget Tabs {
 
     category bindings {
@@ -489,7 +489,7 @@ native widget Tabs {
 
 }
 
-@WidgetProperties({ animation: <Boolean, Text>, "aria-labelledby": Text, bsClass: Text, disabled: Boolean, eventKey: Any, id: Any, mountOnEnter: Boolean, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, tabClassName: Text, title: Any, unmountOnExit: Boolean })
+@WidgetProperties({ animation: <Boolean, Text>, "aria-labelledby": Text, bsClass: Text, disabled: Boolean, eventKey: Any, id: Text, mountOnEnter: Boolean, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, tabClassName: Text, title: Any, unmountOnExit: Boolean })
 native widget Tab {
 
     category bindings {
@@ -502,7 +502,7 @@ native widget Tab {
 
 }
 
-@WidgetProperties({ defaultOpen: Boolean, innerRef: WidgetCallback, onSelect: ItemSelectedCallback, onToggle: AnyCallback, open: Boolean })
+@WidgetProperties({ bsClass: Text, children: Html[], componentClass: Text, defaultOpen: Boolean, disabled: Boolean, dropup: Boolean, id: Text, onMouseEnter: MouseEventCallback, onMouseLeave: MouseEventCallback, onSelect: ItemSelectedCallback, onToggle: AnyCallback, open: Boolean, pullRight: Boolean, role: Text, rootCloseEvent: <"click", "mousedown"> })
 native widget Dropdown {
 
     category bindings {
@@ -709,7 +709,7 @@ native widget ButtonGroup {
 
 }
 
-@WidgetProperties({ defaultValue: Any, innerRef: WidgetCallback, onChange: AnyCallback, value: Any })
+@WidgetProperties({ name: Text, onChange: AnyCallback, type: <"checkbox", "radio">, value: Any })
 native widget ToggleButtonGroup {
 
     category bindings {
@@ -878,7 +878,7 @@ native widget Typeahead {
 
 }
 
-@WidgetProperties({ autoComplete: Text, autoFocus: Boolean, bsClass: Text, bsSize: Text, calendarContainer: Any, calendarPlacement: <Text, Callback>, cellPadding: Text, children: <Any[], Any>, className: Text, clearButtonElement: <Text, Any>, customControl: Any, dateFormat: Text, dayLabels: Any[], defaultValue: Date, disabled: Boolean, id: Any, instanceCount: Integer, maxDate: Date, minDate: Date, monthLabels: Any[], name: Text, nextButtonElement: <Text, Any>, noValidate: Boolean, onBlur: Callback, onChange: DateChangedCallback, onClear: Callback, onFocus: Callback, onInvalid: Callback, placeholder: Text, previousButtonElement: <Text, Any>, required: Boolean, roundedCorners: Boolean, showClearButton: Boolean, showTodayButton: Boolean, showWeeks: Boolean, style: Any, todayButtonLabel: Text, value: Date, weekStartsOn: Integer })
+@WidgetProperties({ autoComplete: Text, autoFocus: Boolean, bsClass: Text, bsSize: Text, calendarContainer: Any, calendarPlacement: <Text, Callback>, cellPadding: Text, children: <Any[], Any>, className: Text, clearButtonElement: <Text, Any>, customControl: Any, dateFormat: Text, dayLabels: Any[], defaultValue: Date, disabled: Boolean, id: Text, instanceCount: Integer, maxDate: Date, minDate: Date, monthLabels: Any[], name: Text, nextButtonElement: <Text, Any>, noValidate: Boolean, onBlur: Callback, onChange: DateChangedCallback, onClear: Callback, onFocus: Callback, onInvalid: Callback, placeholder: Text, previousButtonElement: <Text, Any>, required: Boolean, roundedCorners: Boolean, showClearButton: Boolean, showTodayButton: Boolean, showWeeks: Boolean, style: Any, todayButtonLabel: Text, value: Date, weekStartsOn: Integer })
 native widget DatePicker {
 
     category bindings {
@@ -1021,7 +1021,7 @@ native widget OverlayTrigger {
 
 }
 
-@WidgetProperties({ arrowOffsetLeft: <Integer, Text>, arrowOffsetTop: <Integer, Text>, bsClass: Text, id: Any, placement: <"top", "right", "bottom", "left">, positionLeft: <Integer, Text>, positionTop: <Integer, Text> })
+@WidgetProperties({ arrowOffsetLeft: <Integer, Text>, arrowOffsetTop: <Integer, Text>, bsClass: Text, id: Text, placement: <"top", "right", "bottom", "left">, positionLeft: <Integer, Text>, positionTop: <Integer, Text> })
 native widget Tooltip {
 
     category bindings {
