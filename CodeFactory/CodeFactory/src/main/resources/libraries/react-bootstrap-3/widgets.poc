@@ -437,7 +437,7 @@ native widget Nav {
 
 }
 
-@WidgetProperties({ active: Boolean, activeHref: Text, activeKey: Any, children: Any, defaultOpen: Boolean, innerRef: WidgetCallback, noCaret: Boolean, open: Boolean, title: { type: Any, required: true } })
+@WidgetProperties({ active: Boolean, activeHref: Text, activeKey: Any, bsClass: Text, children: Any, componentClass: Text, defaultOpen: Boolean, disabled: Boolean, dropup: Boolean, id: Text, innerRef: WidgetCallback, noCaret: Boolean, onMouseEnter: MouseEventCallback, onMouseLeave: MouseEventCallback, onSelect: Callback, onToggle: Callback, open: Boolean, pullRight: Boolean, role: Text, rootCloseEvent: <"click", "mousedown">, title: { type: Any, required: true } })
 native widget NavDropdown {
 
     category bindings {
