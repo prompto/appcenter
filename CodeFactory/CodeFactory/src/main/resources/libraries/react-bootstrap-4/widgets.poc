@@ -1074,7 +1074,7 @@ native widget Overlay {
 
 }
 
-@WidgetProperties({ children: <Html, Callback>, defaultShow: Boolean, delay: <Integer, Any>, flip: Boolean, onHide: Callback, onToggle: Callback, overlay: <Callback, Html>, placement: <"auto-start", "auto", "auto-end", "top-start", "top", "top-end", "right-start", "right", "right-end", "bottom-end", "bottom", "bottom-start", "left-end", "left", "left-start">, popperConfig: Any, show: Boolean, trigger: Any })
+@WidgetProperties({ children: { types: <Html, Callback>, required: true }, defaultShow: Boolean, delay: <Integer, Any>, flip: Boolean, onHide: Callback, onToggle: Callback, overlay: <Callback, Html>, placement: <"auto-start", "auto", "auto-end", "top-start", "top", "top-end", "right-start", "right", "right-end", "bottom-end", "bottom", "bottom-start", "left-end", "left", "left-start">, popperConfig: Any, show: Boolean, trigger: Any })
 native widget OverlayTrigger {
 
     category bindings {
@@ -1394,7 +1394,7 @@ native widget ToastBody {
 
 }
 
-@WidgetProperties({ checked: Boolean, disabled: Boolean, inputRef: <Callback, Any>, name: Text, onChange: InputChangedEventCallback, type: <"checkbox", "radio">, value: <Text, Text[], Integer> })
+@WidgetProperties({ checked: Boolean, disabled: Boolean, inputRef: <Callback, Any>, name: Text, onChange: InputChangedEventCallback, type: <"checkbox", "radio">, value: { types: <Text, Text[], Integer>, required: true } })
 native widget ToggleButton {
 
     category bindings {
@@ -1433,4 +1433,49 @@ native widget Tooltip {
 
 }
 
+native widget ContextMenu {
+
+    category bindings {
+        JavaScript: ReactBootstrap.ContextMenu;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ autoComplete: Text, autoFocus: Boolean, bsPrefix: Text, calendarContainer: Any, calendarPlacement: <Text, Callback>, cellPadding: Text, children: <Any[], Any>, className: Text, clearButtonElement: <Text, Any>, customControl: Any, dateFormat: Text, dayLabels: Text[], defaultValue: Thu Mar 18 2021 19:18:29 GMT+0800 (Hong Kong Standard Time), disabled: Boolean, id: Text, instanceCount: Integer, maxDate: Thu Mar 18 2021 19:18:29 GMT+0800 (Hong Kong Standard Time), minDate: Thu Mar 18 2021 19:18:29 GMT+0800 (Hong Kong Standard Time), monthLabels: Text[], name: Text, nextButtonElement: <Text, Any>, noValidate: Boolean, onBlur: Callback, onChange: DateChangedCallback, onClear: Callback, onFocus: Callback, onInvalid: Callback, placeholder: Text, previousButtonElement: <Text, Any>, required: Boolean, roundedCorners: Boolean, showClearButton: Boolean, showTodayButton: Boolean, showWeeks: Boolean, size: Text, style: Any, todayButtonLabel: Text, value: Thu Mar 18 2021 19:18:29 GMT+0800 (Hong Kong Standard Time), weekStartsOn: Integer })
+native widget DatePicker {
+
+    category bindings {
+        JavaScript: ReactBootstrap.DatePicker;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ align: <"justify", "left", "right">, allowNew: <Boolean, Callback>, "aria-label": Text, autoFocus: Boolean, bsSize: <"large", "lg", "sm", "small">, caseSensitive: Boolean, clearButton: Boolean, defaultInputValue: Text, defaultOpen: Boolean, defaultSelected: <Any[], Text[]>, dropup: Boolean, emptyLabel: Any, filterBy: <Text[], Callback>, flip: Boolean, highlightOnlyResult: Boolean, id: Text, ignoreDiacritics: Boolean, inputProps: Document, isInvalid: Boolean, isLoading: Boolean, isMenuShown: Boolean, isValid: Boolean, labelKey: <Text, TypeaheadLabelCallback>, maxHeight: Text, maxResults: Integer, minLength: Integer, multiple: Boolean, newSelectionPrefix: Any, onBlur: Callback, onChange: TypeaheadSelectionChangedCallback, onFocus: Callback, onInputChange: Callback, onKeyDown: KeyboardEventCallback, onMenuToggle: Callback, onPaginate: Callback, open: Boolean, options: { types: <Any[], Text[]>, required: true }, paginate: Boolean, paginationText: Any, positionFixed: Boolean, referenceElement: Any, renderInput: Callback, renderMenu: Callback, renderMenuItemChildren: Callback, renderToken: Callback, selectHintOnEnter: Boolean, selected: <Text[], Any[]>, size: <"large", "lg", "sm", "small"> })
+native widget Typeahead {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Typeahead;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
 abstract method CarouselEventCallback(Integer eventKey, Text direction);
+native method clearTypeahead (Any typeahead) {
+    JavaScript: typeahead.clear();
+}
+
+abstract Text method TypeaheadLabelCallback(Any value);
+
+abstract method TypeaheadSelectionChangedCallback(Any[] values);
