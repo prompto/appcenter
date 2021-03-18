@@ -232,7 +232,7 @@ native widget ModalTitle {
 
 }
 
-@WidgetProperties({ bsClass: Text, bsStyle: <"success", "warning", "danger", "info", "default", "primary">, eventKey: Any, expanded: Boolean, id: Text, onSelect: Callback, onToggle: ToggleChangedCallback })
+@WidgetProperties({ bsClass: Text, bsStyle: <"success", "warning", "danger", "info", "default", "primary">, eventKey: Any, expanded: Boolean, id: Text, onSelect: ItemSelectedCallback, onToggle: ToggleChangedCallback })
 native widget Panel {
 
     category bindings {
@@ -437,7 +437,7 @@ native widget Nav {
 
 }
 
-@WidgetProperties({ active: Boolean, activeHref: Text, activeKey: Any, bsClass: Text, children: Any, componentClass: Text, defaultOpen: Boolean, disabled: Boolean, dropup: Boolean, id: Text, innerRef: WidgetCallback, noCaret: Boolean, onMouseEnter: MouseEventCallback, onMouseLeave: MouseEventCallback, onSelect: Callback, onToggle: Callback, open: Boolean, pullRight: Boolean, role: Text, rootCloseEvent: <"click", "mousedown">, title: { type: Any, required: true } })
+@WidgetProperties({ active: Boolean, activeHref: Text, activeKey: Any, bsClass: Text, children: Any, componentClass: Text, defaultOpen: Boolean, disabled: Boolean, dropup: Boolean, id: Text, innerRef: WidgetCallback, noCaret: Boolean, onMouseEnter: MouseEventCallback, onMouseLeave: MouseEventCallback, onSelect: ItemSelectedCallback, onToggle: Callback, open: Boolean, pullRight: Boolean, role: Text, rootCloseEvent: <"click", "mousedown">, title: { type: Any, required: true } })
 native widget NavDropdown {
 
     category bindings {
@@ -528,7 +528,7 @@ native widget DropdownToggle {
 
 }
 
-@WidgetProperties({ bsClass: Text, labelledBy: <Text, Integer>, onClose: Callback, onSelect: Callback, open: Boolean, pullRight: Boolean, rootCloseEvent: <"click", "mousedown"> })
+@WidgetProperties({ bsClass: Text, labelledBy: <Text, Integer>, onClose: Callback, onSelect: ItemSelectedCallback, open: Boolean, pullRight: Boolean, rootCloseEvent: <"click", "mousedown"> })
 native widget DropdownMenu {
 
     category bindings {
@@ -761,7 +761,7 @@ native widget Pagination {
 
 }
 
-@WidgetProperties({ active: Boolean, activeLabel: Text, className: Text, disabled: Boolean, eventKey: Any, onSelect: Callback })
+@WidgetProperties({ active: Boolean, activeLabel: Text, className: Text, disabled: Boolean, eventKey: Any, onSelect: ItemSelectedCallback })
 native widget PaginationItem {
 
     category bindings {
@@ -839,7 +839,7 @@ native widget PaginationEllipsis {
 
 }
 
-@WidgetProperties({ bsClass: Text, onSelect: Callback })
+@WidgetProperties({ bsClass: Text, onSelect: ItemSelectedCallback })
 native widget Pager {
 
     category bindings {
@@ -852,7 +852,7 @@ native widget Pager {
 
 }
 
-@WidgetProperties({ disabled: Boolean, eventKey: Any, next: Boolean, onClick: ClickEventCallback, onSelect: Callback, previous: Boolean })
+@WidgetProperties({ disabled: Boolean, eventKey: Any, next: Boolean, onClick: ClickEventCallback, onSelect: ItemSelectedCallback, previous: Boolean })
 native widget PagerItem {
 
     category bindings {
@@ -865,7 +865,7 @@ native widget PagerItem {
 
 }
 
-@WidgetProperties({ bsSize: <"large", "lg", "sm", "small">, clearButton: Boolean, inputProps: Document, isInvalid: Boolean, isLoading: Boolean, isValid: Boolean, renderInput: Callback, renderMenu: Callback, renderToken: Callback, size: <"large", "lg", "sm", "small"> })
+@WidgetProperties({ align: <"justify", "left", "right">, allowNew: <Boolean, Callback>, "aria-label": Text, autoFocus: Boolean, bsSize: <"large", "lg", "sm", "small">, caseSensitive: Boolean, children: { type: Callback, required: true }, clearButton: Boolean, defaultInputValue: Text, defaultOpen: Boolean, defaultSelected: <Any[], Text[]>, dropup: Boolean, emptyLabel: Any, filterBy: <Text[], Callback>, flip: Boolean, highlightOnlyResult: Boolean, id: Text, ignoreDiacritics: Boolean, inputProps: Document, isInvalid: Boolean, isLoading: Boolean, isMenuShown: Boolean, isValid: Boolean, labelKey: <Text, TypeaheadLabelCallback>, maxHeight: Text, maxResults: Integer, minLength: Integer, multiple: Boolean, newSelectionPrefix: Any, onBlur: Callback, onChange: TypeaheadSelectionChangedCallback, onFocus: Callback, onInputChange: Callback, onKeyDown: KeyboardEventCallback, onMenuToggle: Callback, onPaginate: Callback, open: Boolean, options: { types: <Any[], Text[]>, required: true }, paginate: Boolean, paginationText: Any, positionFixed: Boolean, referenceElement: Any, renderInput: Callback, renderMenu: Callback, renderMenuItemChildren: Callback, renderToken: Callback, selectHintOnEnter: Boolean, selected: <Text[], Any[]>, size: <"large", "lg", "sm", "small"> })
 native widget Typeahead {
 
     category bindings {
@@ -878,7 +878,7 @@ native widget Typeahead {
 
 }
 
-@WidgetProperties({ autoComplete: Text, autoFocus: Boolean, bsClass: Text, bsSize: Text, calendarContainer: Any, calendarPlacement: <Text, Callback>, cellPadding: Text, children: <Any[], Any>, className: Text, clearButtonElement: <Text, Any>, customControl: Any, dateFormat: Text, dayLabels: Any[], defaultValue: Date, disabled: Boolean, id: Text, instanceCount: Integer, maxDate: Date, minDate: Date, monthLabels: Any[], name: Text, nextButtonElement: <Text, Any>, noValidate: Boolean, onBlur: Callback, onChange: DateChangedCallback, onClear: Callback, onFocus: Callback, onInvalid: Callback, placeholder: Text, previousButtonElement: <Text, Any>, required: Boolean, roundedCorners: Boolean, showClearButton: Boolean, showTodayButton: Boolean, showWeeks: Boolean, style: Any, todayButtonLabel: Text, value: Date, weekStartsOn: Integer })
+@WidgetProperties({ autoComplete: Text, autoFocus: Boolean, bsClass: Text, bsSize: Text, calendarContainer: Any, calendarPlacement: <Text, Callback>, cellPadding: Text, children: <Any[], Any>, className: Text, clearButtonElement: <Text, Any>, customControl: Any, dateFormat: Text, dayLabels: Text[], defaultValue: Date, disabled: Boolean, id: Text, instanceCount: Integer, maxDate: Date, minDate: Date, monthLabels: Text[], name: Text, nextButtonElement: <Text, Any>, noValidate: Boolean, onBlur: Callback, onChange: DateChangedCallback, onClear: Callback, onFocus: Callback, onInvalid: Callback, placeholder: Text, previousButtonElement: <Text, Any>, required: Boolean, roundedCorners: Boolean, showClearButton: Boolean, showTodayButton: Boolean, showWeeks: Boolean, style: Any, todayButtonLabel: Text, value: Date, weekStartsOn: Integer })
 native widget DatePicker {
 
     category bindings {
@@ -1037,3 +1037,7 @@ native widget Tooltip {
 native method clearTypeahead (Any typeahead) {
     JavaScript: typeahead.clear();
 }
+
+abstract Text method TypeaheadLabelCallback(Any value);
+
+abstract method TypeaheadSelectionChangedCallback(Any[] values);
