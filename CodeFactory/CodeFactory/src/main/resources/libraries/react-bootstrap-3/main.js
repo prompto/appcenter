@@ -791,7 +791,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var propTypes = {
+var propTypes = Object.assign({}, _core_Typeahead__WEBPACK_IMPORTED_MODULE_11__["default"].propTypes, _TypeaheadMenu_react__WEBPACK_IMPORTED_MODULE_17__["default"].propTypes, _core_Overlay__WEBPACK_IMPORTED_MODULE_10__["default"].propTypes, {
   /**
    * Specifies the size of the input.
    */
@@ -842,7 +842,8 @@ var propTypes = {
    * Specifies the size of the input.
    */
   size: _propTypes__WEBPACK_IMPORTED_MODULE_19__["sizeType"]
-};
+});
+delete propTypes.children;
 var defaultProps = {
   clearButton: false,
   inputProps: {},
@@ -1337,7 +1338,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var propTypes = {
+var propTypes = Object.assign({}, _Menu_react__WEBPACK_IMPORTED_MODULE_8__["default"].propTypes, {
   /**
    * Provides the ability to specify a prefix before the user-entered text to
    * indicate that the selection will be new. No-op unless `allowNew={true}`.
@@ -1353,7 +1354,7 @@ var propTypes = {
    * Provides a hook for customized rendering of menu item contents.
    */
   renderMenuItemChildren: prop_types__WEBPACK_IMPORTED_MODULE_6___default.a.func
-};
+});
 var defaultProps = {
   newSelectionPrefix: 'New selection: ',
   paginationText: 'Display additional results...',
