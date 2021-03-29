@@ -91,11 +91,7 @@ public class ModuleProcess {
 			try {
 				if(dbId instanceof IValue)
 					dbId = ((IValue)dbId).getStorableData();
-				// already launched ?
-				ModuleProcess module = modules.get(dbId);
-				// if no longer alive recreate 
-				if(module!=null && !module.process.isAlive())
-					module = null;
+				ModuleProcess module = getModuleProcess(dbId);
 				if("READ".equals(action)) {
 					return module==null ? new Long(0) : new Long(module.port);
 				}
@@ -123,6 +119,16 @@ public class ModuleProcess {
 				t.printStackTrace();
 				return -1L; // TODO send error to client
 			}
+		}
+	}
+
+	private static ModuleProcess getModuleProcess(Object dbId) {
+		synchronized(modules) {
+			ModuleProcess module = modules.get(dbId);
+			// if no longer alive recreate 
+			if(module!=null && !module.process.isAlive())
+				module = null;
+			return module;
 		}
 	}
 
