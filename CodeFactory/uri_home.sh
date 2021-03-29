@@ -1,2 +1,2 @@
 #!/bin/bash
-uri="mongodb://prompto:prompto@119.237.156.192:27017"
+uri="mongodb://prompto:prompto@192.168.1.7:27017"
