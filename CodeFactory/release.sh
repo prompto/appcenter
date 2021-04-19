@@ -21,7 +21,8 @@ then
 	release=$?	 
 	if [ $release -eq 0 ]
 	then
-		./copy_home_seed_to_atlas_seed.sh
+#		./copy_home_seed_to_atlas_seed.sh
+		./release_factory_asset.sh
 	fi
 else
 	echo $deploy
