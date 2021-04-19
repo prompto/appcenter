@@ -184,6 +184,12 @@
 			<artifactId>Server</artifactId>
 			<version>${prompto.version}</version>
 		</dependency>
+		<!--  for FactoryUpgrader -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>MongoStore</artifactId>
+			<version>${prompto.version}</version>
+		</dependency>
 		<!-- testing -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -215,12 +221,6 @@
 			<artifactId>Core</artifactId>
 			<version>${prompto.version}</version>
 			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>MongoStore</artifactId>
-			<version>${prompto.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
