@@ -41,14 +41,14 @@ import prompto.server.DataServlet;
 import prompto.store.AttributeInfo;
 import prompto.store.DataStore;
 import prompto.store.IQueryBuilder;
+import prompto.store.IQueryBuilder.MatchOp;
+import prompto.store.IStorable;
+import prompto.store.IStorable.IDbIdFactory;
 import prompto.store.IStore;
 import prompto.store.IStoreFactory;
 import prompto.store.IStored;
 import prompto.store.IStoredIterable;
 import prompto.store.memory.MemStore;
-import prompto.store.IQueryBuilder.MatchOp;
-import prompto.store.IStorable.IDbIdFactory;
-import prompto.store.IStorable;
 import prompto.utils.CmdLineParser;
 import prompto.utils.Logger;
 import prompto.utils.ResourceUtils;
@@ -70,7 +70,7 @@ public class Application {
 	
 	public static void main(ICodeFactoryConfiguration config) throws Throwable {
 		Application.config = config;
-		AppServer.main(config, Application::migrateDataModelIfRequired, null, null, Application::init); 
+		AppServer.main(config, Application::serverPrepared, null, null, Application::afterStart); 
 	}
 	
 	public static ICodeFactoryConfiguration loadConfiguration(String[] args) throws Exception {
@@ -93,12 +93,16 @@ public class Application {
 		return config;
 	}
 	
-	
-	private static void init(ICodeFactoryConfiguration config) {
-		initDataServletStores(config);
-		initModuleProcessPortRange(config);
+	private static void serverPrepared() {
+		upgradeFactoryIfRequired();
+		migrateDataModelIfRequired();
 	}
 	
+	private static void upgradeFactoryIfRequired() {
+		FactoryUpgrader upgrader = new FactoryUpgrader();
+		upgrader.upgradeIfRequired();
+	}
+
 	private static void migrateDataModelIfRequired() {
 		migrateStuffsToResourcesIfRequired();
 	}
@@ -118,7 +122,7 @@ public class Application {
 		return store!=null && !(store instanceof MemStore);
 	}
 
-	private static IStore storeFromCodeStore() {
+	static IStore storeFromCodeStore() {
 		ICodeStore codeStore = ICodeStore.getInstance();
 		if(codeStore instanceof QueryableCodeStore)
 			return ((QueryableCodeStore)codeStore).getStore();
@@ -168,6 +172,11 @@ public class Application {
 		store.store(storable);
 	}
 
+	private static void afterStart(ICodeFactoryConfiguration config) {
+		initDataServletStores(config);
+		initModuleProcessPortRange(config);
+	}
+	
 	private static void initModuleProcessPortRange(ICodeFactoryConfiguration config) {
 		try {
 			ITargetConfiguration target = config.getTargetConfiguration();
