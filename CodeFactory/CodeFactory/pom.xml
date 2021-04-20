@@ -183,6 +183,12 @@
 			<artifactId>Server</artifactId>
 			<version>${prompto.version}</version>
 		</dependency>
+		<!--  for cloud deployments -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>AwsClient</artifactId>
+			<version>${prompto.version}</version>
+		</dependency>
 		<!--  for FactoryUpgrader -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
