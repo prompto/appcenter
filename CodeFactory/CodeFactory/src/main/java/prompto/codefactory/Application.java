@@ -18,6 +18,7 @@ import prompto.code.Library;
 import prompto.code.Module;
 import prompto.code.ModuleStatus;
 import prompto.code.QueryableCodeStore;
+import prompto.compiler.PromptoClassLoader;
 import prompto.config.CodeFactoryConfiguration;
 import prompto.config.ICodeFactoryConfiguration;
 import prompto.config.IConfigurationReader;
@@ -100,7 +101,16 @@ public class Application {
 	
 	private static void upgradeFactoryIfRequired() {
 		FactoryUpgrader upgrader = new FactoryUpgrader();
-		upgrader.upgradeIfRequired();
+		boolean didUpgrade = upgrader.upgradeIfRequired();
+		if(didUpgrade) try {
+			PromptoClassLoader.uninitialize();
+			ICodeStore codeStore = Standalone.initializeCodeStore(Application.config);
+			IStore dataStore = Standalone.initializeDataStore(Application.config);
+			Standalone.synchronizeSchema(codeStore, dataStore);
+		} catch(Throwable t) {
+			logger.error(()->"While rebootstrapping after upgrade", t); 
+			throw new RuntimeException(t);
+		}
 	}
 
 	private static void migrateDataModelIfRequired() {
