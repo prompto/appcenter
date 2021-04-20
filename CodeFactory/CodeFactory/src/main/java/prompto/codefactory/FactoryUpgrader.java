@@ -28,15 +28,28 @@ public class FactoryUpgrader {
 	static Logger logger = new Logger();
 
 	
-	public void upgradeIfRequired() {
-		if(isUpgradeRequired()) try {
+	public boolean upgradeIfRequired() {
+		if(isUpgradeToThisJarVersionRequired()) try {
 			upgradeToThisJarVersion();
+			return true;
 		} catch (Throwable t) {
 			logger.error(()->"Failed to upgrade factory", t);
-		}
+		} else if(isUpgradeToEnvVariableVersionRequired()) try {
+			upgradeToEnvVariableVersion();
+			return true;
+		} catch (Throwable t) {
+			logger.error(()->"Failed to upgrade factory", t);
+		} 
+		return false;
 	}
 
 	
+	private void upgradeToEnvVariableVersion() throws Exception {
+		PromptoVersion version = getEnvVariableFactoryVersion();
+		upgradeTo(version);
+	}
+
+
 	private static void upgradeToThisJarVersion() throws Exception {
 		PromptoVersion version = getThisJarFactoryVersion();
 		upgradeTo(version);
@@ -76,14 +89,17 @@ public class FactoryUpgrader {
 			File srcDir = new File(dirPath.toFile(), "FACTORY-SEED");
 			srcDir.renameTo(dbDir);
 		}
-		String tool = locateMongoRestore();
+		String tool = locateMongoRestoreTool();
 		String[] args = { tool, "--uri", uri, "--dir", dbDir.getAbsolutePath(), "--drop" };
-		ProcessBuilder builder = new ProcessBuilder(args);
+		ProcessBuilder builder = new ProcessBuilder(args)
+				.inheritIO();
 		Process process = builder.start();
-		process.waitFor();
+		int error = process.waitFor();
+		if(error!=0)
+			throw new RuntimeException("mongorestore failed with error " + error);
 	}
 
-	private static String locateMongoRestore() {
+	private static String locateMongoRestoreTool() {
 		String[] paths = new String[] { "/usr/local/bin/", "/usr/bin/", "/usr/sbin/"};
 		for(String path : paths) {
 			if(new File(path + "mongorestore").exists())
@@ -138,7 +154,29 @@ public class FactoryUpgrader {
 	}
 	
 
-	private static boolean isUpgradeRequired() {
+	private boolean isUpgradeToEnvVariableVersionRequired() {
+		PromptoVersion envVersion = getEnvVariableFactoryVersion();
+		if(envVersion!=null) {
+			boolean isMongo = Application.config.getCodeStoreConfiguration() instanceof IMongoStoreConfiguration;
+			if(isMongo) {
+				PromptoVersion storedVersion = getStoredFactoryVersion();
+				return storedVersion == null || envVersion.compareTo(storedVersion) > 0;
+			}
+		}
+		return false;
+	}
+
+
+	private PromptoVersion getEnvVariableFactoryVersion() {
+		String version = System.getenv("UPGRADE_FACTORY_VERSION");
+		if(version == null || version.isEmpty())
+			return null;
+		else
+			return PromptoVersion.parse(version);
+	}
+
+
+	private static boolean isUpgradeToThisJarVersionRequired() {
 		PromptoVersion storedVersion = getStoredFactoryVersion();
 		PromptoVersion latestVersion = getThisJarFactoryVersion();
 		boolean isMongo = Application.config.getCodeStoreConfiguration() instanceof IMongoStoreConfiguration;
