@@ -23,6 +23,7 @@ then
 			 --header "Content-Type: application/x-compressed-tar" \
 			 --header "Authorization: token $(cat token.txt)" \
 			 --data-binary @${dump_dir}/FACTORY-SEED.tar.gz \
-			 --url $upload_url
+			 --url $upload_url \
+			 >> upload-result.json
 	fi
 fi
