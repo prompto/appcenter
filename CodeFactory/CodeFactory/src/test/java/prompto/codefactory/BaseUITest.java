@@ -15,7 +15,7 @@ public abstract class BaseUITest extends BaseWebTest {
 	public static void startCodeServer() throws Throwable {
 		String[] args = {
 				"-yamlConfigFile",
-				"config/test-local.yml"
+				"configs/local-memstore.yml"
 		};
 		ICodeFactoryConfiguration config = Application.loadConfiguration(args);
 		config = Application.adjustConfiguration(config, Mode.UNITTEST)
