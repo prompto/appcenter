@@ -1,11 +1,12 @@
-sudo: required
+dist: xenial
 addons:
   chrome: stable
 language: java
 jdk:
   - openjdk8
-before_script:
+before_install:
   - sudo mkdir /AwsClient & sudo chown -R travis:travis /AwsClient
+before_script:
   - echo 0.0.225 >> platform-version.txt
   - mvn dependency:get -Dartifact=org.prompto:AwsClient:$(cat platform-version.txt)
   - echo ~/.m2/repository/org/prompto/AwsClient/$(cat platform-version.txt)/AwsClient-$(cat platform-version.txt) >> AwsClient-prefix.txt
