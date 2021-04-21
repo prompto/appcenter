@@ -9,9 +9,9 @@ before_install:
   - sleep 3
   - sudo chown -R travis:travis /AwsClient
 before_script:
-  - echo 0.0.225 >> platform-version.txt
-  - mvn dependency:get -Dartifact=org.prompto:AwsClient:$(cat platform-version.txt)
-  - echo ~/.m2/repository/org/prompto/AwsClient/$(cat platform-version.txt)/AwsClient-$(cat platform-version.txt) >> AwsClient-prefix.txt
+  - platform_version=$(cat CodeFactory/pom.xml | grep prompto.version\> | cut -d'>' -f 2 | cut -d'<' -f 1)
+  - mvn dependency:get -Dartifact=org.prompto:AwsClient:${platform-version}
+  - echo ~/.m2/repository/org/prompto/AwsClient/${platform-version}/AwsClient-${platform-version} >> AwsClient-prefix.txt
   - mvn dependency:copy-dependencies -f $(cat AwsClient-prefix.txt).pom -DoutputDirectory=/AwsClient
   - cp $(cat AwsClient-prefix.txt).jar /AwsClient/
   - cd CodeFactory
