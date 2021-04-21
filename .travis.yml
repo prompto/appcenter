@@ -5,10 +5,10 @@ language: java
 jdk:
   - openjdk8
 before_script:
-  - mkdir /AwsClient
+  - sudo mkdir /AwsClient
   - echo 0.0.225 >> platform-version.txt
   - mvn dependency:get -Dartifact=org.prompto:AwsClient:$(cat platform-version.txt)
-  - echo /home/prompto/.m2/repository/org/prompto/AwsClient/$(cat platform-version.txt)/AwsClient-$(cat platform-version.txt) >> AwsClient-prefix.txt
+  - echo ~/.m2/repository/org/prompto/AwsClient/$(cat platform-version.txt)/AwsClient-$(cat platform-version.txt) >> AwsClient-prefix.txt
   - mvn dependency:copy-dependencies -f $(cat AwsClient-prefix.txt).pom -DoutputDirectory=/AwsClient
   - cp $(cat AwsClient-prefix.txt).jar /AwsClient/
   - cd CodeFactory
