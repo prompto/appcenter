@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import prompto.cloud.Cloud;
 import prompto.code.BaseCodeStore;
 import prompto.code.Dependency;
 import prompto.code.ICodeStore;
@@ -95,10 +96,23 @@ public class Application {
 	}
 	
 	private static void serverPrepared() {
+		installCloudJARsIfRequired();
 		upgradeFactoryIfRequired();
 		migrateDataModelIfRequired();
 	}
 	
+	private static void installCloudJARsIfRequired() {
+		try {
+			for(Cloud cloud : Cloud.values()) {
+				if(!cloud.isInClassPath())
+					AppServer.installCloudJARs(cloud);
+			}
+		} catch(Throwable t) {
+			logger.error(()->"While installing cloud jars", t); 
+			throw new RuntimeException(t);
+		}
+	}
+
 	private static void upgradeFactoryIfRequired() {
 		FactoryUpgrader upgrader = new FactoryUpgrader();
 		boolean didUpgrade = upgrader.upgradeIfRequired();
