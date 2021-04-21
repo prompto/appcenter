@@ -22,6 +22,12 @@ then
 	if [ $release -eq 0 ]
 	then
 		./upload_factory_asset.sh
+		upload=$?
+		if [ $upload -eq 0 ]
+			./build_and_push_docker_image.sh $version
+		else
+			echo upload failed: $upload
+		fi
 	else
 		echo release failed: $release
 	fi
