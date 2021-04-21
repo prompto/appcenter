@@ -103,9 +103,14 @@ public class Application {
 	
 	private static void installCloudJARsIfRequired() {
 		try {
+			logger.info(()->"Installing cloud jars..."); 
 			for(Cloud cloud : Cloud.values()) {
-				if(!cloud.isInClassPath())
+				if(!cloud.isInClassPath()) {
+					logger.info(()->"Installing cloud jars for " + cloud.name() + "...");
 					AppServer.installCloudJARs(cloud);
+					if(!cloud.isInClassPath())
+						throw new RuntimeException("Failed to install cloud jars for " + cloud.name());
+				}
 			}
 		} catch(Throwable t) {
 			logger.error(()->"While installing cloud jars", t); 
