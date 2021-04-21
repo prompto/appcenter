@@ -45,12 +45,14 @@ public class FactoryUpgrader {
 
 	
 	private void upgradeToEnvVariableVersion() throws Exception {
+		logger.info(()->"upgradeToEnvVariableVersion");
 		PromptoVersion version = getEnvVariableFactoryVersion();
 		upgradeTo(version);
 	}
 
 
 	private static void upgradeToThisJarVersion() throws Exception {
+		logger.info(()->"upgradeToThisJarVersion");
 		PromptoVersion version = getThisJarFactoryVersion();
 		upgradeTo(version);
 	}
