@@ -3,7 +3,7 @@ rm -f platform_version.txt
 platform_version=$(cat CodeFactory/pom.xml | grep prompto.version\> | cut -d'>' -f 2 | cut -d'<' -f 1)
 echo platform_version: $platform_version
 pushd ../../prompto-docker
-	docker build -t prompto/factory:$1 -f factory.dockerfile --build-arg PLATFORM_VERSION=${platform_version} .
+	docker build --no-cache -t prompto/factory:$1 -f factory.dockerfile --build-arg PLATFORM_VERSION=${platform_version} .
 	build=$?
 popd
 if [ $build -eq 0 ] 
