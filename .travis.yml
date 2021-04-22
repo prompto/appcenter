@@ -11,8 +11,8 @@ before_install:
 before_script:
   - cd CodeFactory
   - platform_version=$(cat CodeFactory/pom.xml | grep prompto.version\> | cut -d'>' -f 2 | cut -d'<' -f 1)
-  - mvn dependency:get -Dartifact=org.prompto:AwsClient:${platform-version}
-  - AwsClientPrefix="~/.m2/repository/org/prompto/AwsClient/${platform-version}/AwsClient-"${platform-version}
+  - mvn dependency:get -Dartifact=org.prompto:AwsClient:${platform_version}
+  - AwsClientPrefix="~/.m2/repository/org/prompto/AwsClient/${platform_version}/AwsClient-"${platform_version}
   - mvn dependency:copy-dependencies -f ${AwsClientPrefix}.pom -DoutputDirectory=/AwsClient
   - cp ${AwsClientPrefix}.jar /AwsClient/
 script:
