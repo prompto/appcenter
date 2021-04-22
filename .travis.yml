@@ -9,11 +9,11 @@ before_install:
   - sleep 3
   - sudo chown -R travis:travis /AwsClient
 before_script:
-  - cat CodeFactory/pom.xml
-  - cat CodeFactory/pom.xml | grep prompto.version\>
-  - cat CodeFactory/pom.xml | grep prompto.version\> | cut -d'>' -f 2 
-  - cat CodeFactory/pom.xml | grep prompto.version\> | cut -d'>' -f 2 | cut -d'<' -f 1
-  - platform_version=$(cat CodeFactory/pom.xml | grep prompto.version\> | cut -d'>' -f 2 | cut -d'<' -f 1)
+  - cat CodeFactory/CodeFactory/pom.xml
+  - cat CodeFactory/CodeFactory/pom.xml | grep prompto.version\>
+  - cat CodeFactory/CodeFactory/pom.xml | grep prompto.version\> | cut -d'>' -f 2 
+  - cat CodeFactory/CodeFactory/pom.xml | grep prompto.version\> | cut -d'>' -f 2 | cut -d'<' -f 1
+  - platform_version=$(cat CodeFactory/CodeFactory/pom.xml | grep prompto.version\> | cut -d'>' -f 2 | cut -d'<' -f 1)
   - echo platform_version = ${platform_version}
   - mvn dependency:get -Dartifact=org.prompto:AwsClient:${platform-version}
   - echo ~/.m2/repository/org/prompto/AwsClient/${platform-version}/AwsClient-${platform-version} >> AwsClient-prefix.txt
