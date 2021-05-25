@@ -17,5 +17,5 @@ then
 		mv ${dump_dir}/$2 ${dump_dir}/$4
 	fi
 	echo "Restoring $3/$4 from ${dump_dir}"
-	mongorestore --uri $dst_uri/$4 --dir ${dump_dir} --drop
+	mongorestore --uri $dst_uri/?authSource=admin --dir ${dump_dir}/$4/ -d $4 --drop 
 fi
