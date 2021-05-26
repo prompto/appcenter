@@ -1,6 +1,7 @@
 #!/bin/bash
 echo "Did you bump the platform version in pom.xml?"
 echo "Is the platform version released?"
+echo "Is the docker daemon running?"
 read -p "version to publish: " version
 read -p "release name: " name
 mvn versions:set -DnewVersion=$version -DgenerateBackupPoms=false
@@ -9,9 +10,9 @@ deploy=$?
 mvn versions:set -DnewVersion=0.0.1-SNAPSHOT -DgenerateBackupPoms=false
 if [ $deploy -eq 0 ]
 then
+	rm -f release.json
 	tag=v$version
 	json="{ \"tag_name\": \"$tag\", \"name\": \"$name\" }"
-	rm -f release.json
 	echo $json >> release.json
 	curl --request POST \
 		 --header "Content-Type: application/json" \
@@ -26,11 +27,11 @@ then
 		if [ $upload -eq 0 ]
 			./build_and_push_docker_image.sh $version
 		else
-			echo upload failed: $upload
+			echo "upload failed: $upload"
 		fi
 	else
-		echo release failed: $release
+		echo "release failed: $release"
 	fi
 else
-	echo deploy failed: $deploy
+	echo "deploy failed: $deploy"
 fi
