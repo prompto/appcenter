@@ -27,3 +27,4 @@ then
 			 >> upload-result.json
 	fi
 fi
+exit $dumped
