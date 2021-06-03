@@ -1,3 +1,29 @@
+@WidgetProperties({ bsClass: Text })
+native widget Breadcrumb {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Breadcrumb;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
+@WidgetProperties({ active: Boolean, href: Text, target: Text, title: Any })
+native widget BreadcrumbItem {
+
+    category bindings {
+        JavaScript: ReactBootstrap.Breadcrumb.Item;
+    }
+    
+    Html method render () {
+        JavaScript: return this.render();
+    }
+
+}
+
 @WidgetProperties({ active: Boolean, block: Boolean, bsClass: Text, bsSize: <"lg", "large", "sm", "small", "xs", "xsmall">, bsStyle: <"success", "warning", "danger", "info", "default", "primary", "link">, componentClass: Text, disabled: Boolean, href: Text, onClick: ClickEventCallback, type: <"button", "reset", "submit"> })
 native widget Button {
 
@@ -865,7 +891,7 @@ native widget PagerItem {
 
 }
 
-@WidgetProperties({ align: <"justify", "left", "right">, allowNew: <Boolean, Callback>, "aria-label": Text, autoFocus: Boolean, bsSize: <"large", "lg", "sm", "small">, caseSensitive: Boolean, clearButton: Boolean, defaultInputValue: Text, defaultOpen: Boolean, defaultSelected: <Any[], Text[]>, dropup: Boolean, emptyLabel: Any, filterBy: <Text[], Callback>, flip: Boolean, highlightOnlyResult: Boolean, id: Text, ignoreDiacritics: Boolean, inputProps: Document, isInvalid: Boolean, isLoading: Boolean, isMenuShown: Boolean, isValid: Boolean, labelKey: <Text, TypeaheadLabelCallback>, maxHeight: Text, maxResults: Integer, minLength: Integer, multiple: Boolean, newSelectionPrefix: Any, onBlur: Callback, onChange: TypeaheadSelectionChangedCallback, onFocus: Callback, onInputChange: Callback, onKeyDown: KeyboardEventCallback, onMenuToggle: Callback, onPaginate: Callback, open: Boolean, options: { types: <Any[], Text[]>, required: true }, paginate: Boolean, paginationText: Any, positionFixed: Boolean, referenceElement: Any, renderInput: Callback, renderMenu: Callback, renderMenuItemChildren: Callback, renderToken: Callback, selectHintOnEnter: Boolean, selected: <Text[], Any[]>, size: <"large", "lg", "sm", "small"> })
+@WidgetProperties({ bsSize: <"large", "lg", "sm", "small">, clearButton: Boolean, inputProps: Document, isInvalid: Boolean, isLoading: Boolean, isValid: Boolean, renderInput: Callback, renderMenu: Callback, renderToken: Callback, size: <"large", "lg", "sm", "small"> })
 native widget Typeahead {
 
     category bindings {
