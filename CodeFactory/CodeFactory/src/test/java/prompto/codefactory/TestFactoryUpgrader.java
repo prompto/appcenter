@@ -79,6 +79,11 @@ public class TestFactoryUpgrader extends BaseMongoTest {
 			}
 
 			@Override
+			public boolean useConsole() {
+				return true;
+			}
+
+			@Override
 			public <T extends IServerConfiguration> T withServerAboutToStartMethod(String method) {
 				// TODO Auto-generated method stub
 				return null;
@@ -89,6 +94,13 @@ public class TestFactoryUpgrader extends BaseMongoTest {
 				// TODO Auto-generated method stub
 				return null;
 			}
+			
+			@Override
+			public <T extends IServerConfiguration> T withUseConsole(boolean set) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
 
 			@Override
 			public Supplier<Collection<URL>> getRuntimeLibs() {
