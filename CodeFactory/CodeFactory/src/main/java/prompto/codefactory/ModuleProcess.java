@@ -314,21 +314,34 @@ public class ModuleProcess {
 	}
 
 	private String[] buildCommandLineArgs() throws Throwable {
-		List<String> cmds = new ArrayList<String>();
-		cmds.add("java");
-		String debugPort = System.getenv("PROMPTO_DEBUG_TARGET_PORT");
-		if(debugPort!=null && !debugPort.isEmpty()) {
-			cmds.add("-Xdebug");
-			cmds.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=" + debugPort);
-		}
-		addClassPathArgs(cmds);
+		List<String> args = new ArrayList<String>();
+		args.add("java");
+		addJavaArgs(args);
+		addDebugArgs(args);
+		addClassPathArgs(args);
+		addMainClassArg(args);
+		addPromptoArgs(args);
+		return args.toArray(new String[0]);
+	}
+
+	private void addMainClassArg(List<String> args) {
 		boolean factory = "CodeFactory".equals(getModuleName());
 		if(factory) 
-			cmds.add(Application.class.getName());
+			args.add(Application.class.getName());
 		else			
-			cmds.add(AppServer.class.getName());
-		addPromptoArgs(cmds);
-		return cmds.toArray(new String[cmds.size()]);
+			args.add(AppServer.class.getName());
+	}
+
+	private void addDebugArgs(List<String> args) {
+		String debugPort = System.getenv("PROMPTO_DEBUG_TARGET_PORT");
+		if(debugPort!=null && !debugPort.isEmpty()) {
+			args.add("-Xdebug");
+			args.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=" + debugPort);
+		}
+	}
+
+	private void addJavaArgs(List<String> args) {
+		args.add("d-Dnashorn.args=--no-deprecation-warning");
 	}
 
 	private void addPromptoArgs(List<String> args) throws Throwable {
