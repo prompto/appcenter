@@ -273,6 +273,11 @@ public class ModuleProcess {
 	}
 
 
+	String getSiteMap() {
+		Object value = stored.getData("siteMap");
+		return value==null ? null : value.toString();
+	}
+
 	public void shutDown() {
 		try {
 			process.destroyForcibly();

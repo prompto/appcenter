@@ -100,6 +100,8 @@ public class YamlConfigBuilder {
 		}
 		if(process.getWelcomePage()!=null)
 			http.setEntry("welcomePage", process.getWelcomePage());
+		if(process.getSiteMap()!=null)
+			http.setEntry("siteMap", process.getSiteMap());
 		http.deleteEntry("redirectFrom");
 		http.deleteEntry("sendsXAuthorization");
 		http.deleteEntry("authentication");
