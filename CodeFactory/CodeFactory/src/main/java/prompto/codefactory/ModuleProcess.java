@@ -341,7 +341,7 @@ public class ModuleProcess {
 	}
 
 	private void addJavaArgs(List<String> args) {
-		args.add("d-Dnashorn.args=--no-deprecation-warning");
+		args.add("-Dnashorn.args=--no-deprecation-warning");
 	}
 
 	private void addPromptoArgs(List<String> args) throws Throwable {
