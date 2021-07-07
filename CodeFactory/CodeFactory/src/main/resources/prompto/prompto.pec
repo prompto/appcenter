@@ -463,6 +463,7 @@ define "printLine an integer" as test method doing:
 	printLine 12345 with w as writer
 and verifying: 
 	w.text = "12345\n" 
+
 define Email as native category with bindings:
 	
 	define category bindings as:
