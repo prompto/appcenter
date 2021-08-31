@@ -110,85 +110,29 @@ public class TestFactoryUpgrader extends BaseMongoTest {
 			@Override
 			public IStoreConfiguration getCodeStoreConfiguration() {
 				return new IMongoStoreConfiguration() {
-
-					@Override
-					public String getFactory() {
-						return MongoStoreFactory.class.getName();
-					}
-
-					@Override
-					public String getHost() {
-						return "localhost";
-					}
-
-					@Override
-					public Integer getPort() {
-						return mongoPort;
-					}
-
-					@Override
-					public String getDbName() {
-						return "FACTORY";
-					}
-
-					@Override
-					public String getUser() {
-						return null;
-					}
-
-					@Override
-					public ISecretKeyConfiguration getSecretKeyConfiguration() {
-						return null;
-					}
-
-					@Override
-					public IStoreConfiguration withDbName(String dbName) {
-						return this;
-					}
-
-					@Override
-					public String getReplicaSetURI() {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public IMongoStoreConfiguration withReplicaSetURI(String uri) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public IMongoReplicaSetConfiguration getReplicaSetConfiguration() {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public IMongoStoreConfiguration withReplicaSetConfiguration(IMongoReplicaSetConfiguration config) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-					
+					@Override public String getFactory() { return MongoStoreFactory.class.getName(); }
+					@Override public String getHost() { return "localhost"; }
+					@Override public Integer getPort() { return mongoPort; }
+					@Override public String getDbName() { return "FACTORY"; }
+					@Override public Boolean getAudit() { return false; }
+					@Override public String getUser() { return null; }
+					@Override public ISecretKeyConfiguration getSecretKeyConfiguration() { return null; }
+					@Override public IStoreConfiguration withDbName(String dbName) { return this; }
+					@Override public String getReplicaSetURI() { return null; }
+					@Override public IMongoStoreConfiguration withReplicaSetURI(String uri) { return null; }
+					@Override public IMongoReplicaSetConfiguration getReplicaSetConfiguration() { return null; }
+					@Override public IMongoStoreConfiguration withReplicaSetConfiguration(IMongoReplicaSetConfiguration config) { return null; }
 				};
 			}
 
 			@Override
-			public IStoreConfiguration getDataStoreConfiguration() {
-				// TODO Auto-generated method stub
-				return null;
-			}
+			public IStoreConfiguration getDataStoreConfiguration() { return null; }
 
 			@Override
-			public IDebugConfiguration getDebugConfiguration() {
-				// TODO Auto-generated method stub
-				return null;
-			}
+			public IDebugConfiguration getDebugConfiguration() { return null; }
 
 			@Override
-			public Mode getRuntimeMode() {
-				return Mode.UNITTEST;
-			}
+			public Mode getRuntimeMode() { return Mode.UNITTEST; }
 
 			@Override
 			public Map<String, String> getArguments() {
