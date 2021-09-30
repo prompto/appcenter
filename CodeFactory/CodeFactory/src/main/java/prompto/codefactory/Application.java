@@ -134,6 +134,12 @@ public class Application {
 
 	private static void migrateDataModelIfRequired() {
 		migrateStuffsToResourcesIfRequired();
+		migrateProjectsIfRequired();
+	}
+
+	private static void migrateProjectsIfRequired() {
+		ICodeStore codeStore = codeStoreUsingDataStore();
+		codeStore.upgradeIfRequired();
 	}
 
 	private static void migrateStuffsToResourcesIfRequired() {
