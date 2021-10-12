@@ -1,2 +1,2 @@
 # Application factory
-web site for development of prompto applications
+web based IDE for development of prompto applications
