@@ -220,7 +220,7 @@ public class SampleImporter {
 
 	private void storeAssociatedCode(ICodeStore codeStore) throws Exception {
 		ImmutableCodeStore rcs = new ImmutableCodeStore(null, module.getType(), codeResource, module.getVersion());
-		codeStore.storeDeclarations(rcs.getDeclarations(), rcs.getModuleDialect(), module.getVersion(), module.getDbId());
+		codeStore.storeDeclarations(rcs.getDeclarations(), rcs.getModuleDialect(), module.getDbId());
 	}
 	
 	private void storeTextResource(ICodeStore codeStore, URLWithMimeType res) {
@@ -246,7 +246,6 @@ public class SampleImporter {
 		TextResource resource = new TextResource();
 		resource.setMimeType(mimeType);
 		resource.setName(fullName);
-		resource.setVersion(PromptoVersion.LATEST);
 		resource.setLastModified(OffsetDateTime.now());
 		resource.setBody(StreamUtils.readString(resourceUrl));
 		codeStore.storeResource(resource, module.getDbId());
