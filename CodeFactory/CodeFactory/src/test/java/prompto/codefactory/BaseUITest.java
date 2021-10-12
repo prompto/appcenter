@@ -27,7 +27,8 @@ public abstract class BaseUITest extends BaseWebTest {
 	
 	@AfterClass
 	public static void stopCodeServer() throws Exception {
-		AppServer.stop();
+		if(AppServer.isStarted())
+			AppServer.stop();
 	}
 	
 	
