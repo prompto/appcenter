@@ -27,6 +27,7 @@ import com.esotericsoftware.yamlbeans.document.YamlMapping;
 import prompto.config.IPortRangeConfiguration;
 import prompto.config.StoredRecordConfigurationReader;
 import prompto.config.auth.CodeStoreAuthenticationConfiguration;
+import prompto.intrinsic.PromptoDbId;
 import prompto.runtime.Mode;
 import prompto.server.AppServer;
 import prompto.server.CleverServlet;
@@ -107,7 +108,7 @@ public class ModuleProcess {
 					module = null;
 				// create if needed
 				if(module==null) {
-					module = createModuleProcess(dbId, debug);
+					module = createModuleProcess(DataStore.getInstance().convertToDbId(dbId), debug);
 					if(module!=null)
 						modules.put(dbId, module);
 					else {
@@ -133,7 +134,7 @@ public class ModuleProcess {
 		}
 	}
 
-	private static ModuleProcess createModuleProcess(Object dbId, boolean debug) throws Throwable {
+	private static ModuleProcess createModuleProcess(PromptoDbId dbId, boolean debug) throws Throwable {
 		IStored stored = DataStore.getInstance().fetchUnique(dbId);
 		if(stored==null)
 			return null;
