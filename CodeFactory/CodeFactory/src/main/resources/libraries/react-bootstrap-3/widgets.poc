@@ -24,7 +24,7 @@ native widget BreadcrumbItem {
 
 }
 
-@WidgetProperties({ active: Boolean, block: Boolean, bsClass: Text, bsSize: <"lg", "large", "sm", "small", "xs", "xsmall">, bsStyle: <"success", "warning", "danger", "info", "default", "primary", "link">, componentClass: Text, disabled: Boolean, href: Text, onClick: ClickEventCallback, type: <"button", "reset", "submit"> })
+@WidgetProperties({ active: Boolean, block: Boolean, bsClass: Text, bsSize: <"lg", "large", "sm", "small", "xs", "xsmall">, bsStyle: <"success", "warning", "danger", "info", "default", "primary", "link">, componentClass: <Text, Type<ReactWidget>>, disabled: Boolean, href: Text, onClick: ClickEventCallback, type: <"button", "reset", "submit"> })
 native widget Button {
 
     category bindings {
@@ -102,7 +102,7 @@ native widget InputGroupButton {
 
 }
 
-@WidgetProperties({ bsClass: Text, componentClass: Text, horizontal: Boolean, inline: Boolean })
+@WidgetProperties({ bsClass: Text, componentClass: <Text, Type<ReactWidget>>, horizontal: Boolean, inline: Boolean })
 native widget Form {
 
     category bindings {
@@ -128,7 +128,7 @@ native widget FormGroup {
 
 }
 
-@WidgetProperties({ bsClass: Text, bsSize: <"sm", "small", "lg", "large">, componentClass: Text, id: Text, inputRef: WidgetCallback, onChange: InputChangedEventCallback, type: Text })
+@WidgetProperties({ bsClass: Text, bsSize: <"sm", "small", "lg", "large">, componentClass: <Text, Type<ReactWidget>>, id: Text, inputRef: WidgetCallback, onChange: InputChangedEventCallback, type: Text })
 native widget FormControl {
 
     category bindings {
@@ -219,7 +219,7 @@ native widget ModalHeader {
 
 }
 
-@WidgetProperties({ bsClass: Text, componentClass: Text })
+@WidgetProperties({ bsClass: Text, componentClass: <Text, Type<ReactWidget>> })
 native widget ModalFooter {
 
     category bindings {
@@ -232,7 +232,7 @@ native widget ModalFooter {
 
 }
 
-@WidgetProperties({ bsClass: Text, componentClass: Text })
+@WidgetProperties({ bsClass: Text, componentClass: <Text, Type<ReactWidget>> })
 native widget ModalBody {
 
     category bindings {
@@ -245,7 +245,7 @@ native widget ModalBody {
 
 }
 
-@WidgetProperties({ bsClass: Text, componentClass: Text })
+@WidgetProperties({ bsClass: Text, componentClass: <Text, Type<ReactWidget>> })
 native widget ModalTitle {
 
     category bindings {
@@ -284,7 +284,7 @@ native widget PanelCollapse {
 
 }
 
-@WidgetProperties({ componentClass: Text, onClick: ClickEventCallback })
+@WidgetProperties({ componentClass: <Text, Type<ReactWidget>>, onClick: ClickEventCallback })
 native widget PanelToggle {
 
     category bindings {
@@ -297,7 +297,7 @@ native widget PanelToggle {
 
 }
 
-@WidgetProperties({ bsClass: Text, componentClass: Text, toggle: Boolean })
+@WidgetProperties({ bsClass: Text, componentClass: <Text, Type<ReactWidget>>, toggle: Boolean })
 native widget PanelTitle {
 
     category bindings {
@@ -310,7 +310,7 @@ native widget PanelTitle {
 
 }
 
-@WidgetProperties({ bsClass: Text, componentClass: Text })
+@WidgetProperties({ bsClass: Text, componentClass: <Text, Type<ReactWidget>> })
 native widget PanelHeading {
 
     category bindings {
@@ -375,7 +375,7 @@ native widget ProgressBar {
 
 }
 
-@WidgetProperties({ bsClass: Text, collapseOnSelect: Boolean, componentClass: Text, expanded: Boolean, fixedBottom: Boolean, fixedTop: Boolean, fluid: Boolean, inverse: Boolean, onSelect: ItemSelectedCallback, onToggle: ToggleChangedCallback, role: Text, staticTop: Boolean })
+@WidgetProperties({ bsClass: Text, collapseOnSelect: Boolean, componentClass: <Text, Type<ReactWidget>>, expanded: Boolean, fixedBottom: Boolean, fixedTop: Boolean, fluid: Boolean, inverse: Boolean, onSelect: ItemSelectedCallback, onToggle: ToggleChangedCallback, role: Text, staticTop: Boolean })
 native widget Navbar {
 
     category bindings {
@@ -412,7 +412,7 @@ native widget NavbarHeader {
 
 }
 
-@WidgetProperties({ componentClass: Text, pullLeft: Boolean, pullRight: Boolean })
+@WidgetProperties({ componentClass: <Text, Type<ReactWidget>>, pullLeft: Boolean, pullRight: Boolean })
 native widget NavbarText {
 
     category bindings {
@@ -425,7 +425,7 @@ native widget NavbarText {
 
 }
 
-@WidgetProperties({ children: Any, onClick: ClickEventCallback })
+@WidgetProperties({ children: Html[], onClick: ClickEventCallback })
 native widget NavbarToggle {
 
     category bindings {
@@ -463,7 +463,7 @@ native widget Nav {
 
 }
 
-@WidgetProperties({ active: Boolean, activeHref: Text, activeKey: Any, bsClass: Text, children: Any, componentClass: Text, defaultOpen: Boolean, disabled: Boolean, dropup: Boolean, id: Text, innerRef: WidgetCallback, noCaret: Boolean, onMouseEnter: MouseEventCallback, onMouseLeave: MouseEventCallback, onSelect: ItemSelectedCallback, onToggle: Callback, open: Boolean, pullRight: Boolean, role: Text, rootCloseEvent: <"click", "mousedown">, title: { type: Any, required: true } })
+@WidgetProperties({ active: Boolean, activeHref: Text, activeKey: Any, bsClass: Text, children: Html[], componentClass: <Text, Type<ReactWidget>>, defaultOpen: Boolean, disabled: Boolean, dropup: Boolean, id: Text, innerRef: WidgetCallback, noCaret: Boolean, onMouseEnter: MouseEventCallback, onMouseLeave: MouseEventCallback, onSelect: ItemSelectedCallback, onToggle: Callback, open: Boolean, pullRight: Boolean, role: Text, rootCloseEvent: <"click", "mousedown">, title: { type: Any, required: true } })
 native widget NavDropdown {
 
     category bindings {
@@ -489,7 +489,7 @@ native widget NavItem {
 
 }
 
-@WidgetProperties({ componentClass: Text, pullLeft: Boolean, pullRight: Boolean })
+@WidgetProperties({ componentClass: <Text, Type<ReactWidget>>, pullLeft: Boolean, pullRight: Boolean })
 native widget NavbarForm {
 
     category bindings {
@@ -528,7 +528,7 @@ native widget Tab {
 
 }
 
-@WidgetProperties({ bsClass: Text, children: Html[], componentClass: Text, defaultOpen: Boolean, disabled: Boolean, dropup: Boolean, id: Text, onMouseEnter: MouseEventCallback, onMouseLeave: MouseEventCallback, onSelect: ItemSelectedCallback, onToggle: AnyCallback, open: Boolean, pullRight: Boolean, role: Text, rootCloseEvent: <"click", "mousedown"> })
+@WidgetProperties({ bsClass: Text, children: Html[], componentClass: <Text, Type<ReactWidget>>, defaultOpen: Boolean, disabled: Boolean, dropup: Boolean, id: Text, onMouseEnter: MouseEventCallback, onMouseLeave: MouseEventCallback, onSelect: ItemSelectedCallback, onToggle: AnyCallback, open: Boolean, pullRight: Boolean, role: Text, rootCloseEvent: <"click", "mousedown"> })
 native widget Dropdown {
 
     category bindings {
@@ -567,7 +567,7 @@ native widget DropdownMenu {
 
 }
 
-@WidgetProperties({ bsSize: Text, bsStyle: Text, children: Any, defaultOpen: Boolean, innerRef: WidgetCallback, noCaret: Boolean, open: Boolean, title: { type: Any, required: true } })
+@WidgetProperties({ bsClass: Text, bsSize: Text, bsStyle: Text, children: Html[], componentClass: <Text, Type<ReactWidget>>, defaultOpen: Boolean, disabled: Boolean, dropup: Boolean, id: Text, innerRef: WidgetCallback, noCaret: Boolean, onMouseEnter: MouseEventCallback, onMouseLeave: MouseEventCallback, onSelect: ItemSelectedCallback, onToggle: Callback, open: Boolean, pullRight: Boolean, role: Text, rootCloseEvent: <"click", "mousedown">, title: { type: Any, required: true } })
 native widget DropdownButton {
 
     category bindings {
@@ -580,7 +580,7 @@ native widget DropdownButton {
 
 }
 
-@WidgetProperties({ bsSize: Text, bsStyle: Text, children: Any, defaultOpen: Boolean, href: Text, innerRef: WidgetCallback, onClick: ClickEventCallback, open: Boolean, title: { type: Any, required: true }, toggleLabel: Text })
+@WidgetProperties({ bsSize: Text, bsStyle: Text, children: Html[], defaultOpen: Boolean, href: Text, innerRef: WidgetCallback, onClick: ClickEventCallback, open: Boolean, title: { type: Any, required: true }, toggleLabel: Text })
 native widget SplitButton {
 
     category bindings {
@@ -618,7 +618,7 @@ native widget MenuItem {
 
 }
 
-@WidgetProperties({ bsClass: Text, componentClass: Text, fluid: Boolean })
+@WidgetProperties({ bsClass: Text, componentClass: <Text, Type<ReactWidget>>, fluid: Boolean })
 native widget Grid {
 
     category bindings {
@@ -631,7 +631,7 @@ native widget Grid {
 
 }
 
-@WidgetProperties({ bsClass: Text, componentClass: Text })
+@WidgetProperties({ bsClass: Text, componentClass: <Text, Type<ReactWidget>> })
 native widget Row {
 
     category bindings {
@@ -644,7 +644,7 @@ native widget Row {
 
 }
 
-@WidgetProperties({ bsClass: Text, componentClass: Text, lg: Integer, lgHidden: Boolean, lgOffset: Integer, lgPull: Integer, lgPush: Integer, md: Integer, mdHidden: Boolean, mdOffset: Integer, mdPull: Integer, mdPush: Integer, sm: Integer, smHidden: Boolean, smOffset: Integer, smPull: Integer, smPush: Integer, xs: Integer, xsHidden: Boolean, xsOffset: Integer, xsPull: Integer, xsPush: Integer })
+@WidgetProperties({ bsClass: Text, componentClass: <Text, Type<ReactWidget>>, lg: Integer, lgHidden: Boolean, lgOffset: Integer, lgPull: Integer, lgPush: Integer, md: Integer, mdHidden: Boolean, mdOffset: Integer, mdPull: Integer, mdPush: Integer, sm: Integer, smHidden: Boolean, smOffset: Integer, smPull: Integer, smPush: Integer, xs: Integer, xsHidden: Boolean, xsOffset: Integer, xsPull: Integer, xsPush: Integer })
 native widget Col {
 
     category bindings {
@@ -657,7 +657,7 @@ native widget Col {
 
 }
 
-@WidgetProperties({ bsClass: Text, componentClass: Text, visibleLgBlock: Boolean, visibleMdBlock: Boolean, visibleSmBlock: Boolean, visibleXsBlock: Boolean })
+@WidgetProperties({ bsClass: Text, componentClass: <Text, Type<ReactWidget>>, visibleLgBlock: Boolean, visibleMdBlock: Boolean, visibleSmBlock: Boolean, visibleXsBlock: Boolean })
 native widget Clearfix {
 
     category bindings {
@@ -891,7 +891,7 @@ native widget PagerItem {
 
 }
 
-@WidgetProperties({ bsSize: <"large", "lg", "sm", "small">, clearButton: Boolean, inputProps: Document, isInvalid: Boolean, isLoading: Boolean, isValid: Boolean, renderInput: Callback, renderMenu: Callback, renderToken: Callback, size: <"large", "lg", "sm", "small"> })
+@WidgetProperties({ align: <"justify", "left", "right">, allowNew: <Boolean, Callback>, "aria-label": Text, autoFocus: Boolean, bsSize: <"large", "lg", "sm", "small">, caseSensitive: Boolean, clearButton: Boolean, defaultInputValue: Text, defaultOpen: Boolean, defaultSelected: <Any[], Text[]>, dropup: Boolean, emptyLabel: Any, filterBy: <Text[], Callback>, flip: Boolean, highlightOnlyResult: Boolean, id: Text, ignoreDiacritics: Boolean, inputProps: Document, isInvalid: Boolean, isLoading: Boolean, isMenuShown: Boolean, isValid: Boolean, labelKey: <Text, TypeaheadLabelCallback>, maxHeight: Text, maxResults: Integer, minLength: Integer, multiple: Boolean, newSelectionPrefix: Any, onBlur: Callback, onChange: TypeaheadSelectionChangedCallback, onFocus: Callback, onInputChange: Callback, onKeyDown: KeyboardEventCallback, onMenuToggle: Callback, onPaginate: Callback, open: Boolean, options: { types: <Any[], Text[]>, required: true }, paginate: Boolean, paginationText: Any, positionFixed: Boolean, referenceElement: Any, renderInput: Callback, renderMenu: Callback, renderMenuItemChildren: Callback, renderToken: Callback, selectHintOnEnter: Boolean, selected: <Text[], Any[]>, size: <"large", "lg", "sm", "small"> })
 native widget Typeahead {
 
     category bindings {
@@ -904,7 +904,7 @@ native widget Typeahead {
 
 }
 
-@WidgetProperties({ autoComplete: Text, autoFocus: Boolean, bsClass: Text, bsSize: Text, calendarContainer: Any, calendarPlacement: <Text, Callback>, cellPadding: Text, children: <Any[], Any>, className: Text, clearButtonElement: <Text, Any>, customControl: Any, dateFormat: Text, dayLabels: Text[], defaultValue: Date, disabled: Boolean, id: Text, instanceCount: Integer, maxDate: Date, minDate: Date, monthLabels: Text[], name: Text, nextButtonElement: <Text, Any>, noValidate: Boolean, onBlur: Callback, onChange: DateChangedCallback, onClear: Callback, onFocus: Callback, onInvalid: Callback, placeholder: Text, previousButtonElement: <Text, Any>, required: Boolean, roundedCorners: Boolean, showClearButton: Boolean, showTodayButton: Boolean, showWeeks: Boolean, style: Any, todayButtonLabel: Text, value: Date, weekStartsOn: Integer })
+@WidgetProperties({ autoComplete: Text, autoFocus: Boolean, bsClass: Text, bsSize: Text, calendarContainer: Any, calendarPlacement: <Text, Callback>, cellPadding: Text, children: Html[], className: Text, clearButtonElement: <Text, Any>, customControl: Any, dateFormat: Text, dayLabels: Text[], defaultValue: Date, disabled: Boolean, id: Text, instanceCount: Integer, maxDate: Date, minDate: Date, monthLabels: Text[], name: Text, nextButtonElement: <Text, Any>, noValidate: Boolean, onBlur: Callback, onChange: DateChangedCallback, onClear: Callback, onFocus: Callback, onInvalid: Callback, placeholder: Text, previousButtonElement: <Text, Any>, required: Boolean, roundedCorners: Boolean, showClearButton: Boolean, showTodayButton: Boolean, showWeeks: Boolean, style: Any, todayButtonLabel: Text, value: Date, weekStartsOn: Integer })
 native widget DatePicker {
 
     category bindings {
@@ -943,7 +943,7 @@ native widget CarouselItem {
 
 }
 
-@WidgetProperties({ bsClass: Text, componentClass: Text })
+@WidgetProperties({ bsClass: Text, componentClass: <Text, Type<ReactWidget>> })
 native widget CarouselCaption {
 
     category bindings {
@@ -1008,7 +1008,7 @@ native widget Collapse {
 
 }
 
-@WidgetProperties({ bsClass: Text, componentClass: Text })
+@WidgetProperties({ bsClass: Text, componentClass: <Text, Type<ReactWidget>> })
 native widget ListGroup {
 
     category bindings {
