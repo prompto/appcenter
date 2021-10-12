@@ -148,7 +148,7 @@ public class FactoryUpgrader {
 	}
 
 	static JsonNode fetchFactoryRelease(PromptoVersion version) throws IOException {
-		URL url =  new URL("https://api.github.com/repos/prompto/prompto-factory/releases/tags/v" + version.toString());
+		URL url =  new URL("https://api.github.com/repos/prompto/prompto-factory/releases/tags/" + version.toString());
 		URLConnection connection = url.openConnection();
 		try( InputStream input = connection.getInputStream()) {
 			return JsonUtils.parseInput(input);
