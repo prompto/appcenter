@@ -18,7 +18,7 @@ import prompto.code.ImmutableCodeStore;
 import prompto.code.Library;
 import prompto.code.Module;
 import prompto.code.ModuleStatus;
-import prompto.code.QueryableCodeStore;
+import prompto.code.MutableCodeStore;
 import prompto.compiler.PromptoClassLoader;
 import prompto.config.CodeFactoryConfiguration;
 import prompto.config.ICodeFactoryConfiguration;
@@ -32,6 +32,7 @@ import prompto.config.auth.source.IStoredAuthenticationSourceConfiguration;
 import prompto.declaration.CategoryDeclaration;
 import prompto.grammar.Identifier;
 import prompto.imports.SampleImporter;
+import prompto.intrinsic.PromptoDbId;
 import prompto.intrinsic.PromptoVersion;
 import prompto.libraries.Libraries;
 import prompto.runtime.ApplicationContext;
@@ -159,8 +160,8 @@ public class Application {
 
 	static IStore storeFromCodeStore() {
 		ICodeStore codeStore = ICodeStore.getInstance();
-		if(codeStore instanceof QueryableCodeStore)
-			return ((QueryableCodeStore)codeStore).getStore();
+		if(codeStore instanceof MutableCodeStore)
+			return ((MutableCodeStore)codeStore).getStore();
 		else
 			return null;
 	}
@@ -198,8 +199,8 @@ public class Application {
 		CategoryDeclaration decl = context.getRegisteredDeclaration(CategoryDeclaration.class, new Identifier(category));
 		List<String> newCategories = decl.collectCategories(context);
 		IStorable storable = store.newStorable(newCategories, new IDbIdFactory() {
-			@Override public void accept(Object t) { }
-			@Override public Object get() { return stuff.getDbId(); }
+			@Override public void accept(PromptoDbId t) { }
+			@Override public PromptoDbId get() { return stuff.getDbId(); }
 			@Override public boolean isUpdate() { return true; }
 		});
 		// force dirty
@@ -305,7 +306,7 @@ public class Application {
 
 	private static ICodeStore codeStoreUsingDataStore() {
 		ICodeStore runtime = ImmutableCodeStore.bootstrapRuntime(()->Libraries.getPromptoLibraries(Libraries.class, AppServer.class));
-		return new QueryableCodeStore(DataStore.getInstance(), runtime, null, null, null);
+		return new MutableCodeStore(DataStore.getInstance(), runtime, null, null, null);
 	}
 
 	private static void doImportModule(ICodeStore codeStore, URL url) throws Exception {
