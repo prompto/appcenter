@@ -17,4 +17,6 @@ home-seed-secure.yml
 atlas-baiya.yml
 atlas-zubin.yml
 home-baiya-atlas.yml
-upload-result.json
+CodeFactory/upload-result.json
+CodeFactory/CodeFactory/src/test/resources/configs-saved/atlas-factory-dev.yml
+CodeFactory/CodeFactory/src/test/resources/configs-saved/atlas-factory-test.yml
