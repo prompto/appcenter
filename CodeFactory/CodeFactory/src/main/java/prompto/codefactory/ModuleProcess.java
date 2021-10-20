@@ -391,7 +391,7 @@ public class ModuleProcess {
 	}
 
 	private File locateJvmsDir() {
-		File file = new File("/usr/java/");
+		File file = new File("/usr/bin/java/");
 		if(file.exists())
 			return file;
 		file = new File("/Library/java/JavaVirtualMachines/");
