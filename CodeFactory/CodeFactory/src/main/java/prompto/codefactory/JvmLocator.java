@@ -4,7 +4,11 @@ import java.io.File;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import prompto.utils.Logger;
+
 public abstract class JvmLocator {
+
+	static Logger logger = new Logger();
 
 	public static String locateJava8() {
 		String jvmDir = locateJdkDir();
@@ -19,8 +23,8 @@ public abstract class JvmLocator {
 		Optional<String> jvm = Stream.of(jvms.list())
 				.filter(s -> s.contains("jdk") && s.contains("1.8"))
 				.sorted((s1, s2)->{
-					s1 = fixVersionOf(s1);
-					s2 = fixVersionOf(s2);
+					s1 = fixNumberOf(s1);
+					s2 = fixNumberOf(s2);
 					return Integer.compareUnsigned(Integer.parseInt(s2), Integer.parseInt(s1)); // reverse order 
 				})
 				.findFirst();
@@ -30,10 +34,11 @@ public abstract class JvmLocator {
 			return null;
 	}
 
-	public static String fixVersionOf(String s) {
-		s = s.substring(s.indexOf("jdk") + 3);
-		s = s.substring(s.indexOf("1.8.0") + 6);
-		return s.substring(0, s.indexOf('.'));
+	public static String fixNumberOf(String s) {
+		logger.info(()->"Locating fix number in " + s);
+		String number = s.substring(s.indexOf("jdk") + 3);
+		number = number.substring(number.indexOf("1.8.0") + 6);
+		return number.substring(0, number.indexOf('.'));
 	}
 
 	private static File locateJvmsDir() {
