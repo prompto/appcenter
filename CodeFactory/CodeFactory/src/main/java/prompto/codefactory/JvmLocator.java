@@ -22,6 +22,7 @@ public abstract class JvmLocator {
 		File jvms = locateJvmsDir();
 		Optional<String> jvm = Stream.of(jvms.list())
 				.filter(s -> s.contains("jdk") && s.contains("1.8"))
+				.filter(s -> fixNumberOf(s) != null)
 				.sorted((s1, s2)->{
 					s1 = fixNumberOf(s1);
 					s2 = fixNumberOf(s2);
@@ -36,9 +37,19 @@ public abstract class JvmLocator {
 
 	public static String fixNumberOf(String s) {
 		logger.info(()->"Locating fix number in " + s);
-		String number = s.substring(s.indexOf("jdk") + 3);
-		number = number.substring(number.indexOf("1.8.0") + 6);
-		return number.substring(0, number.indexOf('.'));
+		int idx = s.indexOf("jdk");
+		if(idx < 0)
+			return null;
+		String number = s.substring(idx + 3);
+		idx = number.indexOf("1.8.0");
+		if(idx < 0)
+			return null;
+		number = number.substring(idx + 6);
+		if(Character.isDigit(number.charAt(0))) {
+			idx = number.indexOf(".");
+			return idx < 0 ? number : number.substring(0, number.indexOf('.'));
+		} else 
+			return null;
 	}
 
 	private static File locateJvmsDir() {

@@ -13,15 +13,16 @@ public class TestJvmLocator {
 	}
 	
 	@Test
-	public void extractsLinuxFixVersion() {
-		String fullName = "java-1.8.0-openjdk-1.8.0.302.b08-0.el7_9.x86_64";
-		assertEquals("302", JvmLocator.fixNumberOf(fullName));
+	public void extractsFixVersions() {
+		String[] namesAndVersions = { 
+				"java-1.8.0-openjdk-1.8.0.302.b08-0.el7_9.x86_64" , "302",
+				"jdk1.8.0_281.jdk", "281",
+				".java-1.8.0-openjdk-amd64.jinfo", null,
+				"java-1.8.0-openjdk-amd64", null
+		};
+		for(int i = 0; i < namesAndVersions.length; i += 2)
+			assertEquals(namesAndVersions[i+1], JvmLocator.fixNumberOf(namesAndVersions[i]));
 	}
 	
-	@Test
-	public void extractsMacOSFixVersion() {
-		String fullName = "jdk1.8.0_281.jdk";
-		assertEquals("281", JvmLocator.fixNumberOf(fullName));
-	}
 
 }
