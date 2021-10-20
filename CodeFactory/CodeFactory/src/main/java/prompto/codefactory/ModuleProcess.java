@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.regex.Matcher;
@@ -348,57 +347,8 @@ public class ModuleProcess {
 	}
 
 	private void addJavaArg(List<String> args) {
-		String java = locateJava8();
+		String java = JvmLocator.locateJava8();
 		args.add(java);
-	}
-
-	private String locateJava8() {
-		String jvmDir = locateJvmDir();
-		if(jvmDir==null)
-			return "java";
-		else
-			return locateJvmExe(jvmDir);
-	}
-
-	private String locateJvmExe(String jvmDir) {
-		File dirFile = new File(jvmDir);
-		// special case for MacOS X
-		File embedded = new File(dirFile, "Contents/Home");
-		if(embedded.exists())
-			dirFile = embedded;
-		embedded = new File(dirFile, "jre");	
-		if(embedded.exists())
-			dirFile = embedded;
-		return new File(dirFile, "bin/java").getAbsolutePath();
-	}
-
-	private String locateJvmDir() {
-		File jvms = locateJvmsDir();
-		Optional<String> jvm = Stream.of(jvms.list())
-				.filter(s -> s.startsWith("jdk1.8"))
-				.sorted((s1,s2)->{
-					s1 = s1.substring(s1.indexOf('_'));
-					s1 = s1.substring(1, s1.indexOf('.'));
-					s2 = s2.substring(s2.indexOf('_'));
-					s2 = s2.substring(1, s2.indexOf('.'));
-					return Integer.compareUnsigned(Integer.parseInt(s2), Integer.parseInt(s1)); // reverse order 
-				})
-				.findFirst();
-		if(jvm.isPresent())
-			return jvms.getAbsolutePath() + "/" + jvm.get();
-		else
-			return null;
-	}
-
-	private File locateJvmsDir() {
-		File file = new File("/usr/bin/java/");
-		if(file.exists())
-			return file;
-		file = new File("/Library/java/JavaVirtualMachines/");
-		if(file.exists())
-			return file;
-		else
-			throw new RuntimeException("Unable to locate JVM");
 	}
 
 	private void addJavaArgs(List<String> args) {
