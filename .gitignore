@@ -20,3 +20,4 @@ home-baiya-atlas.yml
 CodeFactory/upload-result.json
 CodeFactory/CodeFactory/src/test/resources/configs-saved/atlas-factory-dev.yml
 CodeFactory/CodeFactory/src/test/resources/configs-saved/atlas-factory-test.yml
+atlas-factory-seed.yml
