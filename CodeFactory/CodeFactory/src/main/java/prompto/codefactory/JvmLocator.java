@@ -18,11 +18,9 @@ public abstract class JvmLocator {
 		File jvms = locateJvmsDir();
 		Optional<String> jvm = Stream.of(jvms.list())
 				.filter(s -> s.contains("jdk") && s.contains("1.8"))
-				.sorted((s1,s2)->{
-					s1 = s1.substring(s1.indexOf('_'));
-					s1 = s1.substring(1, s1.indexOf('.'));
-					s2 = s2.substring(s2.indexOf('_'));
-					s2 = s2.substring(1, s2.indexOf('.'));
+				.sorted((s1, s2)->{
+					s1 = fixVersionOf(s1);
+					s2 = fixVersionOf(s2);
 					return Integer.compareUnsigned(Integer.parseInt(s2), Integer.parseInt(s1)); // reverse order 
 				})
 				.findFirst();
@@ -30,6 +28,12 @@ public abstract class JvmLocator {
 			return jvms.getAbsolutePath() + "/" + jvm.get();
 		else
 			return null;
+	}
+
+	public static String fixVersionOf(String s) {
+		s = s.substring(s.indexOf("jdk") + 3);
+		s = s.substring(s.indexOf("1.8.0") + 6);
+		return s.substring(0, s.indexOf('.'));
 	}
 
 	private static File locateJvmsDir() {
