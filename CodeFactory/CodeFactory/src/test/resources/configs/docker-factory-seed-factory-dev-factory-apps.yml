@@ -17,6 +17,7 @@ codeStore:
 dataStore: 
   <<: *dockerMongoStore
   dbName: FACTORY-DEV
+  audit: true
 
 target:
   dataStore:
