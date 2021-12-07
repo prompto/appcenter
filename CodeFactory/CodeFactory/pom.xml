@@ -15,7 +15,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<prompto.version>0.0.243</prompto.version>
+		<prompto.version>0.0.244</prompto.version>
 		<jackson.version>2.12.5</jackson.version>
 		<jetty.version>9.3.3.v20150827</jetty.version>
 		<solr.version>5.4.0</solr.version>
@@ -36,7 +36,7 @@
 		<repository>
 			<id>Central</id>
 			<name>Maven Central</name>
-			<url>http://repo.maven.apache.org/maven2</url>
+			<url>https://repo.maven.apache.org/maven2</url>
 		</repository>
 	</repositories>
 
@@ -241,6 +241,7 @@
 			<version>2.2.0</version>
 			<scope>test</scope>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>SOLRStore</artifactId>
@@ -266,7 +267,6 @@
 			<version>${solr.version}</version>
 			<scope>test</scope>
 			<exclusions>
-				<!-- SOLR core uses older versions, so need to exclude them -->
 				<exclusion>
 					<groupId>org.eclipse.jetty</groupId>
 					<artifactId>*</artifactId>
@@ -285,6 +285,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
