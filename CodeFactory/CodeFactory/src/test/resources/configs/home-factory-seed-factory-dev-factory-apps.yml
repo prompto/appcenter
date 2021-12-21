@@ -1,6 +1,6 @@
 mongoStore: &homeMongoStore
   factory: prompto.store.mongo.MongoStoreFactory
-  host: 119.237.156.192
+  host: 192.168.1.7
   port: 27017
   user: prompto
   secretKey:
@@ -21,5 +21,5 @@ target:
     dbName: FACTORY-APPS
 
 http:
-  port: 8081
+  port: 8080
   publicAddress: eric.prompto.cloud
