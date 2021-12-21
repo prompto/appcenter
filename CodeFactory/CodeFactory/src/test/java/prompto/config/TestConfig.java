@@ -14,7 +14,7 @@ public class TestConfig {
 
 	@Test
 	public void targetIsRead() {
-		InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("configs/home-factory-dev-factory-apps-apps.yml");
+		InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("configs-saved/home-factory-dev-factory-apps-apps.yml");
 		IConfigurationReader reader = new YamlConfigurationReader(input);
 		ICodeFactoryConfiguration config = new CodeFactoryConfiguration(reader, Collections.emptyMap());
 		ITargetConfiguration target = config.getTargetConfiguration();
