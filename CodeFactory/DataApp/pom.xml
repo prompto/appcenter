@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>org.prompto</groupId>
 		<artifactId>Parent-Factory</artifactId>
-		<version>1.0.26</version>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataApp</artifactId>
 
