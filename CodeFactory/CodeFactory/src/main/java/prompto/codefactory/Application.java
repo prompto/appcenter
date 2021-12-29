@@ -353,7 +353,7 @@ public class Application {
 	}
 
 	private static boolean isSeedDataStore() {
-		final Set<String> names = new HashSet<>(Arrays.asList("tools", "factory-ide"));
+		final Set<String> names = new HashSet<>(Arrays.asList("tools", "factory-dev"));
 		IStoreConfiguration sfg = config.getDataStoreConfiguration();
 		return sfg==null ? false : names.contains(sfg.getDbName().toLowerCase());
 	}
