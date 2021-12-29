@@ -16,9 +16,27 @@ native widget AceResourceEditor {
 	
 }
 
+@WidgetProperties({mimeType: Text, currentVersion: Text, proposedVersion: Text})
+native widget AceChangeViewer {
+
+	category bindings {
+		JavaScript: ResourceEditors.AceChangeViewer;
+	}
+	
+	Html method render () {
+		JavaScript: return this.render();
+	}
+	
+	@Inlined
+	Void method forceResize() {
+		JavaScript: return this.forceResize();
+	}
+	
+}
+
 abstract method CatalogLoadedCallback(Document catalog, Boolean complete); 
 
-@WidgetProperties({catalogLoaded: CatalogLoadedCallback, catalogUpdated:DocumentCallback, bodyEdited: AnyCallback, breakpointAdded: AnyCallback, breakpointRemoved: AnyCallback, onCommit: Callback})
+@WidgetProperties({catalogLoaded: CatalogLoadedCallback, catalogUpdated:DocumentCallback, bodyEdited: AnyCallback, breakpointAdded: AnyCallback, breakpointRemoved: AnyCallback, onCommit: Callback, useWorker: Boolean})
 native widget AcePromptoEditor {
 
 	category bindings {
@@ -47,6 +65,11 @@ native widget AcePromptoEditor {
 	@Inlined
 	method setResource(Any resource, Boolean readOnly) {
 		JavaScript: this.setResource(resource, readOnly);
+	}
+	
+	@Inlined
+	method getResourceBody(Any resource, TextCallback callback) {
+		JavaScript: this.getResourceBody(resource, callback);
 	}
 	
 	@Inlined
