@@ -22,11 +22,11 @@ dataStore:
 target:
   dataStore:
     <<: *dockerMongoStore
-    dbName: TEST-AUDIT
+    dbName: APPS
     audit: true
   portRange:
-    minPort: 8000
-    maxPort: 8000    
+    minPort: 8081
+    maxPort: 8081    
 
 http:
   port: 8080
