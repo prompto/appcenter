@@ -4,7 +4,7 @@ widget ButtonIsActivePage extends ReactWidget {
 		return { active: false };
 	}
 	
-    method buttonClicked(ClickEvent event) {
+    method buttonClicked(MouseEvent event) {
         setState({ active: true });
     }
     

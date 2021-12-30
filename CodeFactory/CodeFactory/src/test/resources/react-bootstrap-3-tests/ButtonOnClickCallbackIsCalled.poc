@@ -4,7 +4,7 @@ native method log(Text value) {
 
 widget ButtonOnClickCallbackIsCalledPage extends ReactWidget {
 
-    method buttonClicked(ClickEvent event) {
+    method buttonClicked(MouseEvent event) {
         log("ok!");
     }
     

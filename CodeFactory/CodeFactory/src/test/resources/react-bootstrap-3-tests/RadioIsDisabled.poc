@@ -4,7 +4,7 @@ widget RadioIsDisabledPage extends ReactWidget {
 		return { disabled: false };
 	}
 	
-    method radioClicked(ClickEvent event) {
+    method radioClicked(MouseEvent event) {
         setState({ disabled: true });
     }
     

@@ -4,7 +4,7 @@ widget CheckboxOnClickCallbackIsCalledPage extends ReactWidget {
 		return { checked: false };
 	}
 	
-    method checkboxClicked(ClickEvent event) {
+    method checkboxClicked(MouseEvent event) {
         state = getState();
         setState({ checked: !state.checked });
     }

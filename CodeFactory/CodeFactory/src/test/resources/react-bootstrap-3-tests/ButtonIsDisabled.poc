@@ -4,7 +4,7 @@ widget ButtonIsDisabledPage extends ReactWidget {
 		return { disabled: false };
 	}
 	
-    method buttonClicked(ClickEvent event) {
+    method buttonClicked(MouseEvent event) {
         setState({ disabled: true });
     }
     

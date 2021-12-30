@@ -4,7 +4,7 @@ widget CheckboxIsDisabledPage extends ReactWidget {
 		return { disabled: false };
 	}
 	
-    method checkboxClicked(ClickEvent event) {
+    method checkboxClicked(MouseEvent event) {
         setState({ disabled: true });
     }
     
