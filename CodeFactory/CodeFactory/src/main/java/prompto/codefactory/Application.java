@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.StreamSupport;
 
 import prompto.cloud.Cloud;
 import prompto.code.BaseCodeStore;
@@ -43,6 +44,7 @@ import prompto.server.AppServer;
 import prompto.server.DataServlet;
 import prompto.store.AttributeInfo;
 import prompto.store.DataStore;
+import prompto.store.Family;
 import prompto.store.IQueryBuilder;
 import prompto.store.IQueryBuilder.MatchOp;
 import prompto.store.IStorable;
@@ -135,6 +137,7 @@ public class Application {
 
 	private static void migrateDataModelIfRequired() {
 		migrateStuffsToResourcesIfRequired();
+		migrateClickEventsToMouseEventsIfRequired();
 		migrateProjectsIfRequired();
 	}
 
@@ -143,18 +146,52 @@ public class Application {
 		codeStore.upgradeIfRequired();
 	}
 
+	private static void migrateClickEventsToMouseEventsIfRequired() {
+		// migrate this factory if required
+		IStore codeStore = storeFromCodeStore();
+		if(isMigratableStore(codeStore) && isMigratingClickEventsToMouseEventsRequired(codeStore))
+			migrateClickEventsToMouseEvents(codeStore);
+		// migrate projects if required
+		IStore dataStore = DataStore.getInstance();
+		if(isMigratableStore(dataStore) && isMigratingClickEventsToMouseEventsRequired(codeStore))
+			migrateClickEventsToMouseEvents(dataStore);
+	}
+
+	private static void migrateClickEventsToMouseEvents(IStore store) {
+		AttributeInfo BODY = new AttributeInfo("body", Family.TEXT, false, null);
+		IQueryBuilder builder = store.newQueryBuilder()
+				.verify(AttributeInfo.CATEGORY, MatchOp.HAS, "Declaration")
+				.verify(BODY, MatchOp.CONTAINS, "ClickEvent")
+				.and();
+		StreamSupport.stream(store.fetchMany(builder.build()).spliterator(), false)
+			.forEach(stored -> {
+				Object body = stored.getData("body");
+				if(body instanceof String) {
+					body = ((String) body).replaceAll("ClickEvent", "MouseEvent");
+					IStorable storable = store.newStorable(stored.getCategories(), IDbIdFactory.of(()->stored.getDbId(), null, ()->true));
+					storable.setData("body", body);
+					store.store(storable);
+				}
+			});
+	}
+
+	private static boolean isMigratingClickEventsToMouseEventsRequired(IStore codeStore) {
+		PromptoVersion version = FactoryUpgrader.fetchStoredFactoryVersion(codeStore);
+		return version==null || version.compareTo(PromptoVersion.parse("0.1.29")) < 0;
+	}
+
 	private static void migrateStuffsToResourcesIfRequired() {
 		// migrate this factory if required
 		IStore codeStore = storeFromCodeStore();
-		if(migratableStore(codeStore) && isMigratingStuffsToResourcesRequired(codeStore, codeStore))
+		if(isMigratableStore(codeStore) && isMigratingStuffsToResourcesRequired(codeStore, codeStore))
 			migrateStuffsToResources(codeStore);
 		// migrate projects if required
 		IStore dataStore = DataStore.getInstance();
-		if(migratableStore(dataStore) && isMigratingStuffsToResourcesRequired(codeStore, dataStore))
+		if(isMigratableStore(dataStore) && isMigratingStuffsToResourcesRequired(codeStore, dataStore))
 			migrateStuffsToResources(dataStore);
 	}
 	
-	private static boolean migratableStore(IStore store) {
+	private static boolean isMigratableStore(IStore store) {
 		return store!=null && !(store instanceof MemStore);
 	}
 

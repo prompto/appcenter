@@ -67,6 +67,16 @@ public class FactoryUpgrader {
 		storeFactoryVersion(version);
 	}
 
+	static PromptoVersion fetchStoredFactoryVersion(IStore store) {
+		try {
+			Map<String, Object> config = store.fetchConfiguration("FactoryConfiguration");
+			Object version = config==null ? null : config.get("version");
+			return version==null ? null : PromptoVersion.parse(version.toString());
+		} catch(Throwable t) {
+			return null;
+		} 
+		
+	}
 
 	private static void storeFactoryVersion(PromptoVersion version) {
 		try {
