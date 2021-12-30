@@ -12,6 +12,7 @@ then
 	tag=v$version
 	json="{ \"tag_name\": \"$tag\", \"name\": \"$name\" }"
 	echo $json >> release.json
+	rm -f release-data.json
 	./create_github_release.sh https://api.github.com/repos/prompto/prompto-factory/releases release-data.json
 	release=$?	 
 	if [ $release -eq 0 ]
