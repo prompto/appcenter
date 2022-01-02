@@ -5,14 +5,12 @@ widget CheckboxOnClickCallbackIsCalledPage extends ReactWidget {
 	}
 	
     method checkboxClicked(MouseEvent event) {
-        state = getState();
-        setState({ checked: !state.checked });
+        setState({ checked: !(Boolean)state.checked });
     }
     
 	Html method render () {
-		state = getState();
 		return <div>
-			<Checkbox id="checkbox" onClick={checkboxClicked} checked={state.checked} >Hello "Checkbox"!</Checkbox>
+			<Checkbox id="checkbox" onClick={checkboxClicked} checked={(Boolean)state.checked} >Hello "Checkbox"!</Checkbox>
 			</div>;
 	}
 	
