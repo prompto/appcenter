@@ -10,6 +10,7 @@
 
 	<modules>
 		<module>DataApp</module>
+		<module>GitClient</module>
 		<module>CodeFactory</module>
 	</modules>
 
