@@ -1,0 +1,31 @@
+version: 2.1
+
+jobs:
+  build-and-test:
+    docker:
+      - image: circleci/openjdk:8-jdk-buster-node-browsers-legacy
+    steps:
+      - checkout
+      - run:
+          name: Install AWS
+          command: >-
+            sudo mkdir /AwsClient &&
+            sleep 3 && 
+            sudo chown -R $USER:$USER /AwsClient &&
+            cd CodeFactory &&
+            platform_version=$(cat CodeFactory/pom.xml | grep prompto.version\> | cut -d'>' -f 2 | cut -d'<' -f 1) &&
+            mvn dependency:get -Dartifact=org.prompto:AwsClient:${platform_version} &&
+            AwsClientPrefix=${HOME}/.m2/repository/org/prompto/AwsClient/${platform_version}/AwsClient-${platform_version} &&
+            mvn dependency:copy-dependencies -f ${AwsClientPrefix}.pom -DoutputDirectory=/AwsClient && 
+            cp ${AwsClientPrefix}.jar /AwsClient/
+      - run:
+          name: Build
+          command: mvn -B -q -DskipTests clean package
+      - run:
+          name: Test
+          command: mvn test
+
+workflows:
+  regular:
+    jobs:
+      - build-and-test
