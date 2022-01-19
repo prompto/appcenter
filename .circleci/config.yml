@@ -9,12 +9,14 @@ jobs:
       - run:
           name: Create AwsClient dir
           command: >-
+            echo "user: " $USER &&
             sudo mkdir /AwsClient &&
             sleep 3 && 
             sudo chown -R $USER:$USER /AwsClient
       - run:
           name: Install AWS
           command: >-
+            echo "user: " $USER &&
             cd CodeFactory &&
             platform_version=$(cat CodeFactory/pom.xml | grep prompto.version\> | cut -d'>' -f 2 | cut -d'<' -f 1) &&
             mvn dependency:get -Dartifact=org.prompto:AwsClient:${platform_version} &&
