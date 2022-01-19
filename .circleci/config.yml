@@ -19,7 +19,7 @@ jobs:
             platform_version=$(cat CodeFactory/pom.xml | grep prompto.version\> | cut -d'>' -f 2 | cut -d'<' -f 1) &&
             mvn dependency:get -Dartifact=org.prompto:AwsClient:${platform_version} &&
             AwsClientPrefix=${HOME}/.m2/repository/org/prompto/AwsClient/${platform_version}/AwsClient-${platform_version} &&
-            mvn dependency:copy-dependencies -f ${AwsClientPrefix}.pom -DoutputDirectory=/AwsClient && 
+            mvn dependency:copy-dependencies -e -f ${AwsClientPrefix}.pom -DoutputDirectory=/AwsClient && 
             cp ${AwsClientPrefix}.jar /AwsClient/
       - run:
           name: Build
