@@ -12,7 +12,7 @@ jobs:
             ls -all / &&
             sudo mkdir /AwsClient &&
             sleep 3 && 
-            sudo chown -R $USER:$USER /AwsClient
+            sudo chown -R circleci:circleci /AwsClient
       - run:
           name: Install AWS
           command: >-
