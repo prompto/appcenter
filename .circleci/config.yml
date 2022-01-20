@@ -8,11 +8,8 @@ jobs:
       - checkout
       - run:
           name: Install Mongo CLI
-          command: >-
-            sudo mkdir /etc/yum.repos.d/ &&
-            sudo chown -R circleci:circleci /etc/yum.repos.d/ &&
-            cp CodeFactory/mongodb-org-4.4.repo /etc/yum.repos.d/ &&
-            yum install -y mongodb-org-tools
+          command: |
+            sudo apt-get install -y mongodb-org
       - run:
           name: Install AWS Client
           command: >-
