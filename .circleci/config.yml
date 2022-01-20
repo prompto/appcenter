@@ -9,7 +9,6 @@ jobs:
       - run:
           name: Create AwsClient dir
           command: >-
-            ls -all / &&
             sudo mkdir /AwsClient &&
             sleep 3 && 
             sudo chown -R circleci:circleci /AwsClient
@@ -25,7 +24,7 @@ jobs:
             cp ${AwsClientPrefix}.jar /AwsClient/
       - run:
           name: Build
-          command: mvn -B -q -DskipTests clean package
+          command: ls && mvn -B -q -DskipTests clean package
       - run:
           name: Test
           command: mvn test
