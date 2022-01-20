@@ -24,10 +24,14 @@ jobs:
             cp ${AwsClientPrefix}.jar /AwsClient/
       - run:
           name: Build
-          command: ls && mvn -B -q -DskipTests clean package
+          command: >-
+            cd CodeFactory &&
+            mvn -B -q -DskipTests clean package
       - run:
           name: Test
-          command: mvn test
+          command: >-
+            cd CodeFactory &&
+            mvn test
 
 workflows:
   regular:
