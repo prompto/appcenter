@@ -31,7 +31,7 @@ jobs:
           name: Test
           command: >-
             cd CodeFactory &&
-            mvn test
+            mvn -B -q test
 
 workflows:
   regular:
