@@ -7,7 +7,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install AWS
+          name: Install Mongo CLI
+          command: >-
+            cp CodeFactory/mongodb-org-4.4.repo /etc/yum.repos.d/ &&
+            yum install -y mongodb-org-tools
+      - run:
+          name: Install AWS Client
           command: >-
             sudo mkdir /AwsClient &&
             sleep 3 && 
