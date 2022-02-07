@@ -353,6 +353,7 @@ public class ModuleProcess {
 
 	private void addJavaArgs(List<String> args) {
 		args.add("-Dnashorn.arg.prepend=--no-deprecation-warning");
+		args.add("-Xmx256m");
 	}
 
 	private void addPromptoArgs(List<String> args) throws Throwable {
