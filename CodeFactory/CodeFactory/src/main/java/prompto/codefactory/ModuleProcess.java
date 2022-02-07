@@ -352,8 +352,16 @@ public class ModuleProcess {
 	}
 
 	private void addJavaArgs(List<String> args) {
-		args.add("-Dnashorn.arg.prepend=--no-deprecation-warning");
-		args.add("-Xmx256m");
+		args.addAll(Arrays.asList(
+					"-Dnashorn.arg.prepend=--no-deprecation-warning",
+					"-Xmx256m",
+					"-Dcom.sun.management.jmxremote",
+					"-Dcom.sun.management.jmxremote.port=9010",
+					"-Dcom.sun.management.jmxremote.rmi.port=9010",
+					"-Dcom.sun.management.jmxremote.local.only=true",
+					"-Dcom.sun.management.jmxremote.authenticate=false",
+					"-Dcom.sun.management.jmxremote.ssl=false"
+				));
 	}
 
 	private void addPromptoArgs(List<String> args) throws Throwable {
