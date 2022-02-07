@@ -31,3 +31,5 @@ target:
 http:
   port: 8080
   publicAddress: eric.prompto.cloud
+
+runtimeMode: DEVELOPMENT
