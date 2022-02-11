@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ProcessBuilder.Redirect;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.http.HttpRequest;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -94,7 +96,7 @@ public class ModuleProcess {
 					dbId = ((IValue)dbId).getStorableData();
 				ModuleProcess module = getModuleProcess(dbId);
 				if("READ".equals(action)) {
-					return module==null ? new Long(0) : new Long(module.port);
+					return module==null ? Long.valueOf(0) : Long.valueOf(module.port);
 				}
 				// kill if debug flag differs
 				boolean debug = "DEBUG".equals(action);
@@ -115,7 +117,7 @@ public class ModuleProcess {
 						return -1L; // TODO send error to client
 					}
 				}
-				return new Long(module.port);
+				return Long.valueOf(module.port);
 			} catch(Throwable t) {
 				t.printStackTrace();
 				return -1L; // TODO send error to client
@@ -303,8 +305,8 @@ public class ModuleProcess {
 	
 	private void clearContextHttps() {
 		try {
-			URL url = new URL("https://localhost:" + port + "/ws/control/clear-context");
-			SSLUtils.trustingAllCertificates(url, cnx -> cnx.getResponseCode());
+			HttpRequest request = HttpRequest.newBuilder(new URI("https://localhost:" + port + "/ws/control/clear-context")).build();
+			SSLUtils.trustingAllCertificates(request, s -> s);
 		} catch(Throwable t) {
 			logger.warn(()->"Error while clearing context", t);
 		}

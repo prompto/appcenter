@@ -20,7 +20,7 @@ public class ModulePopulator {
 		String packageName = ModulePopulator.class.getPackage().getName();
 		String className = module.getType().getModuleClass().getSimpleName() + "Populator";
 		Class<?> klass = Class.forName(packageName + "." + className);
-		return (ModulePopulator)klass.newInstance();
+		return (ModulePopulator)klass.getDeclaredConstructor().newInstance();
 	}
 
 	public void populate(Module module, JsonNode descriptor) {

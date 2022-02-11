@@ -2,6 +2,7 @@ package prompto.imports;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -146,10 +147,10 @@ public class SampleImporter {
 	}
 	
 
-	private Module newModule(JsonNode descriptor) throws InstantiationException, IllegalAccessException {
+	private Module newModule(JsonNode descriptor) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		String typeName = descriptor.get("type").asText();
 		ModuleType type = ModuleType.valueOf(typeName);
-		return type.getModuleClass().newInstance();
+		return type.getModuleClass().getDeclaredConstructor().newInstance();
 	}
 
 	private JsonNode readDescriptor(URL path) throws JsonProcessingException, IOException {
