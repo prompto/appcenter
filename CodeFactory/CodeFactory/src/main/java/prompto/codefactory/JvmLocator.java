@@ -1,6 +1,7 @@
 package prompto.codefactory;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -10,7 +11,7 @@ public abstract class JvmLocator {
 
 	static Logger logger = new Logger();
 
-	public static String locateJava8() {
+	public static String locateJava11() {
 		String jvmDir = locateJdkDir();
 		if(jvmDir==null)
 			return "java";
@@ -21,17 +22,39 @@ public abstract class JvmLocator {
 	private static String locateJdkDir() {
 		File jvms = locateJvmsDir();
 		Optional<String> jvm = Stream.of(jvms.list())
-				.filter(s -> s.contains("jdk") && s.contains("1.8"))
+				.filter(s -> s.contains("jdk-11."))
+				.filter(s -> minorNumberOf(s) != null)
 				.filter(s -> fixNumberOf(s) != null)
 				.sorted((s1, s2)->{
-					s1 = fixNumberOf(s1);
-					s2 = fixNumberOf(s2);
-					return Integer.compareUnsigned(Integer.parseInt(s2), Integer.parseInt(s1)); // reverse order 
+					var n1 = minorNumberOf(s1);
+					var n2 = minorNumberOf(s2);
+					if(Objects.equals(n1, n2)) {
+						n1 = fixNumberOf(s1);
+						n2 = fixNumberOf(s2);
+					}
+					return Integer.compareUnsigned(Integer.parseInt(n2), Integer.parseInt(n1)); // reverse order 
 				})
 				.findFirst();
 		if(jvm.isPresent())
 			return jvms.getAbsolutePath() + "/" + jvm.get();
 		else
+			return null;
+	}
+
+	public static String minorNumberOf(String s) {
+		logger.info(()->"Locating minor number in " + s);
+		int idx = s.indexOf("jdk");
+		if(idx < 0)
+			return null;
+		String number = s.substring(idx + 3);
+		idx = number.indexOf("11.");
+		if(idx < 0)
+			return null;
+		number = number.substring(idx + 3);
+		if(Character.isDigit(number.charAt(0))) {
+			idx = number.indexOf(".");
+			return idx < 0 ? number : number.substring(0, number.indexOf('.'));
+		} else 
 			return null;
 	}
 
@@ -41,10 +64,15 @@ public abstract class JvmLocator {
 		if(idx < 0)
 			return null;
 		String number = s.substring(idx + 3);
-		idx = number.indexOf("1.8.0");
+		idx = number.indexOf("11.");
 		if(idx < 0)
 			return null;
-		number = number.substring(idx + 6);
+		number = number.substring(idx + 3);
+		idx = number.indexOf(".");
+		if(idx < 0)
+			return null;
+		number = number.substring(idx + 1);
+		idx = number.indexOf(".");
 		if(Character.isDigit(number.charAt(0))) {
 			idx = number.indexOf(".");
 			return idx < 0 ? number : number.substring(0, number.indexOf('.'));
