@@ -355,14 +355,15 @@ public class ModuleProcess {
 
 	private void addJavaArgs(List<String> args) {
 		args.addAll(Arrays.asList(
-					"-Dnashorn.arg.prepend=--no-deprecation-warning",
+					"-Dnashorn.args=--no-deprecation-warning",
 					 /*"-Dcom.sun.management.jmxremote",
 					"-Dcom.sun.management.jmxremote.port=9010",
 					"-Dcom.sun.management.jmxremote.rmi.port=9010",
 					"-Dcom.sun.management.jmxremote.local.only=true",
 					"-Dcom.sun.management.jmxremote.authenticate=false",
 					"-Dcom.sun.management.jmxremote.ssl=false", */
-					"-Xmx256m"
+					"-Xmx256m",
+					"-javaagent:JarLoader-1.0.1.jar"
 				));
 	}
 
