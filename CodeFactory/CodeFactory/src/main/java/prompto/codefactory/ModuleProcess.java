@@ -353,17 +353,11 @@ public class ModuleProcess {
 		args.add(java);
 	}
 
-	private void addJavaArgs(List<String> args) {
+	private void addJavaArgs(List<String> args) throws Exception {
 		args.addAll(Arrays.asList(
 					"-Dnashorn.args=--no-deprecation-warning",
-					 /*"-Dcom.sun.management.jmxremote",
-					"-Dcom.sun.management.jmxremote.port=9010",
-					"-Dcom.sun.management.jmxremote.rmi.port=9010",
-					"-Dcom.sun.management.jmxremote.local.only=true",
-					"-Dcom.sun.management.jmxremote.authenticate=false",
-					"-Dcom.sun.management.jmxremote.ssl=false", */
 					"-Xmx256m",
-					"-javaagent:JarLoader-1.0.1.jar"
+					"-javaagent:" + getJarLoaderPath()
 				));
 	}
 
@@ -465,6 +459,18 @@ public class ModuleProcess {
 		}
 		throw new IllegalStateException("Could not locate Server jar in " + System.getProperty("user.dir") + "!");
 	}
+	
+	private String getJarLoaderPath() throws URISyntaxException {
+		URL thisJar = this.getClass().getProtectionDomain().getCodeSource().getLocation();
+		File parent = Paths.get(thisJar.toURI()).getParent().toFile();
+		for(File file : parent.listFiles()) {
+			String name = file.getName();
+			if(name.startsWith("JarLoader-") && name.endsWith(".jar"))
+				return file.getAbsolutePath();
+		}
+		throw new IllegalStateException("Could not locate JarLoader jar in " + System.getProperty("user.dir") + "!");
+	}
+
 
 	// see: https://stackoverflow.com/questions/13495449/how-to-split-a-command-line-like-string
 	private static final Pattern splitter = Pattern.compile("[^\\s]*\"(\\\\+\"|[^\"])*?\"|[^\\s]*'(\\\\+'|[^'])*?'|(\\\\\\s|[^\\s])+", Pattern.MULTILINE);
