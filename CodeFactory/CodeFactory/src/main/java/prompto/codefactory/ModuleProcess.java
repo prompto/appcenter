@@ -355,7 +355,6 @@ public class ModuleProcess {
 
 	private void addJavaArgs(List<String> args) throws Exception {
 		args.addAll(Arrays.asList(
-					"-Dnashorn.args=--no-deprecation-warning",
 					"-Xmx256m",
 					"-javaagent:" + getJarLoaderPath()
 				));
