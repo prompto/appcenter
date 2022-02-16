@@ -14,7 +14,7 @@ public abstract class JvmLocator {
 	public static String locateJava17() {
 		String jvmDir = locateJdkDir("17");
 		if(jvmDir==null)
-			return "java";
+			return "java"; // and pray
 		else
 			return locateJvmExe(jvmDir);
 	}
@@ -22,7 +22,7 @@ public abstract class JvmLocator {
 	private static String locateJdkDir(String majorVersion) {
 		File jvms = locateJvmsDir();
 		Optional<String> jvm = Stream.of(jvms.list())
-				.filter(s -> s.contains("jre-" + majorVersion + "."))
+				.filter(s -> s.contains("jdk-" + majorVersion + "."))
 				.filter(s -> minorNumberOf(majorVersion, s) != null)
 				.filter(s -> fixNumberOf(majorVersion, s) != null)
 				.sorted((s1, s2)->{
@@ -41,13 +41,20 @@ public abstract class JvmLocator {
 			return null;
 	}
 
-	public static String minorNumberOf(String majorVersion, String s) {
-		logger.info(()->"Locating minor number in " + s);
-		int idx = s.indexOf("jdk");
+	private static String fullVersionOf(String s) {
+		int idx = s.indexOf("openjdk");
+		if(idx >= 0)
+			return s.substring(idx + 7);
+		idx = s.indexOf("jdk");
 		if(idx < 0)
 			return null;
-		String number = s.substring(idx + 3);
-		idx = number.indexOf(majorVersion + ".");
+		return s.substring(idx + 3);
+	}
+
+	public static String minorNumberOf(String majorVersion, String s) {
+		logger.info(()->"Locating minor number in " + s);
+		String number = fullVersionOf(s);
+		int idx = number.indexOf(majorVersion + ".");
 		if(idx < 0)
 			return null;
 		number = number.substring(idx + 3);
@@ -60,11 +67,8 @@ public abstract class JvmLocator {
 
 	public static String fixNumberOf(String majorVersion, String s) {
 		logger.info(()->"Locating fix number in " + s);
-		int idx = s.indexOf("jdk");
-		if(idx < 0)
-			return null;
-		String number = s.substring(idx + 3);
-		idx = number.indexOf(majorVersion + ".");
+		String number = fullVersionOf(s);
+		int idx = number.indexOf(majorVersion + ".");
 		if(idx < 0)
 			return null;
 		number = number.substring(idx + 3);
@@ -97,6 +101,7 @@ public abstract class JvmLocator {
 		File embedded = new File(dirFile, "Contents/Home");
 		if(embedded.exists())
 			dirFile = embedded;
+		// special case for old JDKs
 		embedded = new File(dirFile, "jre");	
 		if(embedded.exists())
 			dirFile = embedded;
