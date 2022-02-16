@@ -1,11 +1,16 @@
 version: 2.1
 
+orbs:
+  browser-tools: circleci/browser-tools@1.2.4
+
 jobs:
   build-and-test:
     docker:
-      - image: circleci/openjdk:11.0-browsers
+      - image: cimg/openjdk:16.0-browsers
     steps:
       - checkout
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - run:
           name: Install Mongo CLI
           command: |
