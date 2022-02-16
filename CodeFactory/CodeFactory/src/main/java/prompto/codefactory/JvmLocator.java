@@ -91,8 +91,12 @@ public abstract class JvmLocator {
 		file = new File("/Library/java/JavaVirtualMachines/");
 		if(file.exists())
 			return file;
-		else
-			throw new RuntimeException("Unable to locate JVM");
+		String javaHome = System.getenv("JAVA_HOME");
+		if(javaHome != null)
+			file = new File(javaHome).toPath().getParent().toFile();
+		if(file.exists())
+			return file;
+		throw new RuntimeException("Unable to locate JVMs dir");
 	}
 
 	private static String locateJvmExe(String jvmDir) {
