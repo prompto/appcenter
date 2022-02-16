@@ -12,25 +12,25 @@ public abstract class JvmLocator {
 	static Logger logger = new Logger();
 
 	public static String locateJava17() {
-		String jvmDir = locateJdkDir();
+		String jvmDir = locateJdkDir("17");
 		if(jvmDir==null)
 			return "java";
 		else
 			return locateJvmExe(jvmDir);
 	}
 
-	private static String locateJdkDir() {
+	private static String locateJdkDir(String majorVersion) {
 		File jvms = locateJvmsDir();
 		Optional<String> jvm = Stream.of(jvms.list())
-				.filter(s -> s.contains("jre-17."))
-				.filter(s -> minorNumberOf(s) != null)
-				.filter(s -> fixNumberOf(s) != null)
+				.filter(s -> s.contains("jre-" + majorVersion + "."))
+				.filter(s -> minorNumberOf(majorVersion, s) != null)
+				.filter(s -> fixNumberOf(majorVersion, s) != null)
 				.sorted((s1, s2)->{
-					var n1 = minorNumberOf(s1);
-					var n2 = minorNumberOf(s2);
+					var n1 = minorNumberOf(majorVersion, s1);
+					var n2 = minorNumberOf(majorVersion, s2);
 					if(Objects.equals(n1, n2)) {
-						n1 = fixNumberOf(s1);
-						n2 = fixNumberOf(s2);
+						n1 = fixNumberOf(majorVersion, s1);
+						n2 = fixNumberOf(majorVersion, s2);
 					}
 					return Integer.compareUnsigned(Integer.parseInt(n2), Integer.parseInt(n1)); // reverse order 
 				})
@@ -41,13 +41,13 @@ public abstract class JvmLocator {
 			return null;
 	}
 
-	public static String minorNumberOf(String s) {
+	public static String minorNumberOf(String majorVersion, String s) {
 		logger.info(()->"Locating minor number in " + s);
 		int idx = s.indexOf("jdk");
 		if(idx < 0)
 			return null;
 		String number = s.substring(idx + 3);
-		idx = number.indexOf("17.");
+		idx = number.indexOf(majorVersion + ".");
 		if(idx < 0)
 			return null;
 		number = number.substring(idx + 3);
@@ -58,13 +58,13 @@ public abstract class JvmLocator {
 			return null;
 	}
 
-	public static String fixNumberOf(String s) {
+	public static String fixNumberOf(String majorVersion, String s) {
 		logger.info(()->"Locating fix number in " + s);
 		int idx = s.indexOf("jdk");
 		if(idx < 0)
 			return null;
 		String number = s.substring(idx + 3);
-		idx = number.indexOf("17.");
+		idx = number.indexOf(majorVersion + ".");
 		if(idx < 0)
 			return null;
 		number = number.substring(idx + 3);
