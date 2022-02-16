@@ -349,7 +349,7 @@ public class ModuleProcess {
 	}
 
 	private void addJavaArg(List<String> args) {
-		String java = JvmLocator.locateJava11();
+		String java = JvmLocator.locateJava17();
 		args.add(java);
 	}
 

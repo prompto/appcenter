@@ -11,7 +11,7 @@ public abstract class JvmLocator {
 
 	static Logger logger = new Logger();
 
-	public static String locateJava11() {
+	public static String locateJava17() {
 		String jvmDir = locateJdkDir();
 		if(jvmDir==null)
 			return "java";
@@ -22,7 +22,7 @@ public abstract class JvmLocator {
 	private static String locateJdkDir() {
 		File jvms = locateJvmsDir();
 		Optional<String> jvm = Stream.of(jvms.list())
-				.filter(s -> s.contains("jdk-11."))
+				.filter(s -> s.contains("jre-17."))
 				.filter(s -> minorNumberOf(s) != null)
 				.filter(s -> fixNumberOf(s) != null)
 				.sorted((s1, s2)->{
@@ -47,7 +47,7 @@ public abstract class JvmLocator {
 		if(idx < 0)
 			return null;
 		String number = s.substring(idx + 3);
-		idx = number.indexOf("11.");
+		idx = number.indexOf("17.");
 		if(idx < 0)
 			return null;
 		number = number.substring(idx + 3);
@@ -64,7 +64,7 @@ public abstract class JvmLocator {
 		if(idx < 0)
 			return null;
 		String number = s.substring(idx + 3);
-		idx = number.indexOf("11.");
+		idx = number.indexOf("17.");
 		if(idx < 0)
 			return null;
 		number = number.substring(idx + 3);

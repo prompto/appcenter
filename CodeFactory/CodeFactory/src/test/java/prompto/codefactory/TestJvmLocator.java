@@ -8,8 +8,8 @@ import org.junit.Test;
 public class TestJvmLocator {
 
 	@Test
-	public void locatesJava11() {
-		assertNotNull(JvmLocator.locateJava11());
+	public void locatesJava17() {
+		assertNotNull(JvmLocator.locateJava17());
 	}
 	
 	@Test
