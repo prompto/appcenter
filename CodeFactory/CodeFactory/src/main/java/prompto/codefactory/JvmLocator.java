@@ -85,18 +85,39 @@ public abstract class JvmLocator {
 	}
 
 	private static File locateJvmsDir() {
-		File file = new File("/usr/lib/jvm/");
-		if(file.exists())
+		File file = locateJavaHomeDir();
+		if(file!=null && file.exists())
 			return file;
-		file = new File("/Library/java/JavaVirtualMachines/");
-		if(file.exists())
+		file = locatedOracleJdksDir();
+		if(file!=null && file.exists())
 			return file;
-		String javaHome = System.getenv("JAVA_HOME");
-		if(javaHome != null)
-			file = new File(javaHome).toPath().getParent().toFile();
-		if(file.exists())
+		file = locateOpenJdksDir();
+		if(file!=null && file.exists())
+			return file;
+		file = locateMacOSXJdksDir();
+		if(file!=null && file.exists())
 			return file;
 		throw new RuntimeException("Unable to locate JVMs dir");
+	}
+
+	private static File locateMacOSXJdksDir() {
+		return new File("/Library/java/JavaVirtualMachines/");
+	}
+
+	private static File locateOpenJdksDir() {
+		return new File("/usr/lib/jvm/");
+	}
+
+	private static File locatedOracleJdksDir() {
+		return new File("/usr/java/");
+	}
+
+	private static File locateJavaHomeDir() {
+		String javaHome = System.getenv("JAVA_HOME");
+		if(javaHome != null)
+			return new File(javaHome).toPath().getParent().toFile();
+		else
+			return null;
 	}
 
 	private static String locateJvmExe(String jvmDir) {
