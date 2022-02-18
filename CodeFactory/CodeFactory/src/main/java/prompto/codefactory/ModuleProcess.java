@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ProcessBuilder.Redirect;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -460,6 +462,28 @@ public class ModuleProcess {
 	}
 	
 	private String getJarLoaderPath() throws URISyntaxException {
+		if(isRunningFromJar())
+			return getJarLoaderPathFromClassPath();
+		else
+			return getJarLoaderPathFromCmdLine();
+	}
+
+	static final String JAVA_AGENT_ARG_PREFIX = "-javaagent:";
+	
+	private String getJarLoaderPathFromCmdLine() {
+		RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+		String path = bean.getInputArguments().stream()
+				.filter(s -> s.startsWith(JAVA_AGENT_ARG_PREFIX))
+				.map(s -> s.substring(JAVA_AGENT_ARG_PREFIX.length()))
+				.findFirst()
+				.orElse(null);
+		if(path!=null)
+			return path;
+		throw new IllegalStateException("Could not locate JarLoader jar in command line!");
+			
+	}
+
+	private String getJarLoaderPathFromClassPath() throws URISyntaxException {
 		URL thisJar = this.getClass().getProtectionDomain().getCodeSource().getLocation();
 		File parent = Paths.get(thisJar.toURI()).getParent().toFile();
 		for(File file : parent.listFiles()) {
