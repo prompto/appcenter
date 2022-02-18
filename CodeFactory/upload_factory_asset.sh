@@ -11,6 +11,12 @@ then
 	pushd ${dump_dir}
 	rm FACTORY-SEED/configurations.bson
 	rm FACTORY-SEED/configurations.metadata.json
+	rm FACTORY-SEED/auditConfigs.bson
+	rm FACTORY-SEED/auditConfigs.metadata.json
+	rm FACTORY-SEED/auditMetadatas.bson
+	rm FACTORY-SEED/auditMetadatas.metadata.json
+	rm FACTORY-SEED/auditRecords.bson
+	rm FACTORY-SEED/auditRecords.metadata.json
 	tar czf ${dump_dir}/FACTORY-SEED.tar.gz FACTORY-SEED
 	tared=$?
 	popd
