@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -190,9 +189,13 @@ public class FactoryUpgrader {
 
 	private static boolean isUpgradeToThisJarVersionRequired() {
 		PromptoVersion storedVersion = getStoredFactoryVersion();
+		logger.info(()->"StoredFactoryVersion is " + storedVersion);
 		PromptoVersion latestVersion = getThisJarFactoryVersion();
+		logger.info(()->"ThisFactoryVersion is " + latestVersion);
 		boolean isMongo = Application.config.getCodeStoreConfiguration() instanceof IMongoStoreConfiguration;
-		return isMongo && latestVersion!=null && (storedVersion == null || latestVersion.compareTo(storedVersion) > 0);
+		boolean required = isMongo && latestVersion!=null && (storedVersion == null || latestVersion.compareTo(storedVersion) > 0);
+		logger.info(()->"Factory upgrade " + (required ? "" : "not ") + "required, stored version is " + storedVersion + ", this version is " + latestVersion);
+		return required;
 	}
 	
 	static PromptoVersion getStoredFactoryVersion() {
@@ -210,19 +213,22 @@ public class FactoryUpgrader {
 	static final String CODE_FACTORY_PREFIX = "/CodeFactory-";
 
 	private static PromptoVersion getThisJarFactoryVersion() {
+		String className = FactoryUpgrader.class.getCanonicalName();
+		className = className.replace('.', '/') + ".class";
 		ClassLoader loader = FactoryUpgrader.class.getClassLoader();
-		if(loader instanceof URLClassLoader) {
-			for(URL url : ((URLClassLoader)loader).getURLs()) {
-				String s = url.toString();
-				int start = s.indexOf(CODE_FACTORY_PREFIX);
-				if(start >= 0) {
-					int end = s.indexOf(".jar", start);
-					if(end > start) 
-						return PromptoVersion.parse(s.substring(start + CODE_FACTORY_PREFIX.length(), end));
-				}
-			}
-		}
-		return null;
+		URL classURL = loader.getResource(className);
+		if(classURL == null)
+			return null;
+		String fullPath = classURL.toString();
+		int idx = fullPath.indexOf(CODE_FACTORY_PREFIX);
+		if(idx < 0)
+			return null;
+		fullPath = fullPath.substring(idx + CODE_FACTORY_PREFIX.length());
+		idx = fullPath.indexOf(".jar");
+		if(idx < 0)
+			return null;
+		fullPath = fullPath.substring(0, idx);
+		return PromptoVersion.parse(fullPath);
 	}
 
 
