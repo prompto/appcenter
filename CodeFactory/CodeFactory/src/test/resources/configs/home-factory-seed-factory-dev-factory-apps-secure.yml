@@ -1,6 +1,6 @@
 mongoStore: &homeMongoStore
   factory: prompto.store.mongo.MongoStoreFactory
-  host: 119.237.156.192
+  host: 192.168.1.7
   port: 27017
   user: prompto
   secretKey:
@@ -28,17 +28,17 @@ http:
   keyStore:
     provider:
       factory: prompto.security.FileKeyStoreFactory
-      file: /Users/ericvergnaud/Development/prompto/prompto-factory/CodeFactory/CodeFactory/src/test/resources/security/keystore.jks
+      file: /Users/ericvergnaud/Development/prompto/prompto-factory/CodeFactory/CodeFactory/src/test/resources/security/keystore_test.jks
     secretKey:
       factory: prompto.security.PlainSecretKeyFactory
-      secret: Pink-floyd01
+      secret: password
   trustStore:
     provider:
       factory: prompto.security.FileKeyStoreFactory
-      file: /Users/ericvergnaud/Development/prompto/prompto-factory/CodeFactory/CodeFactory/src/test/resources/security/truststore.jks
+      file: /Users/ericvergnaud/Development/prompto/prompto-factory/CodeFactory/CodeFactory/src/test/resources/security/truststore_test.jks
     secretKey:
       factory: prompto.security.PlainSecretKeyFactory
-      secret: Pink-floyd01
+      secret: password
   authentication:
     source:
       factory: prompto.security.auth.source.PasswordIsUserNameAuthenticationSourceFactory
