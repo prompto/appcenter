@@ -201,6 +201,7 @@ public class ModuleProcess {
 			reader.start();
 		}
 		
+		@SuppressWarnings("resource")
 		private void readLoop(BiFunction<byte[], Integer, Boolean> hook) throws IOException {
 			InputStream input = this.process.getInputStream();
 			byte[] data = new byte[0x10000];

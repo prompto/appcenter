@@ -256,11 +256,11 @@ public class SampleImporter {
 		if("jar".equals(uri.getScheme())) {
 		  for (FileSystemProvider provider: FileSystemProvider.installedProviders()) {
 		        if (provider.getScheme().equalsIgnoreCase("jar")) {
-		            try {
-		                provider.getFileSystem(uri);
+		            try(var fs1 = provider.getFileSystem(uri)) {
 		            } catch (FileSystemNotFoundException e) {
 		                // in this case we need to initialize it first:
-		                provider.newFileSystem(uri, Collections.emptyMap());
+		                try(var fs2 = provider.newFileSystem(uri, Collections.emptyMap())) {
+		                }
 		            }
 		        }
 		    }
