@@ -1,0 +1,35 @@
+mongoStore: &dockerMongoStore
+  factory: prompto.store.mongo.MongoStoreFactory
+  replicaSet:
+    name: mongo-rs
+    nodes:
+      - host: localhost
+        port: 27001
+      - host: localhost
+        port: 27002
+      - host: localhost
+        port: 27003
+    
+codeStore: 
+  <<: *dockerMongoStore
+  dbName: FACTORY-SEED
+
+dataStore: 
+  <<: *dockerMongoStore
+  dbName: APPS
+  audit: true
+
+target:
+  dataStore:
+    <<: *dockerMongoStore
+    dbName: DATA
+    audit: true
+  portRange:
+    minPort: 8081
+    maxPort: 8081    
+
+http:
+  port: 8080
+  publicAddress: eric.prompto.cloud
+
+runtimeMode: DEVELOPMENT
