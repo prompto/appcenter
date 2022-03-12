@@ -1,9 +1,11 @@
 #!/bin/bash
 source ./uri_home.sh
 src_uri=$uri
+src_auth=$auth
 dump_dir=`mktemp -d -t factory-dump`
 echo "Dumping home/FACTORY-SEED to ${dump_dir}"
-mongodump --uri $src_uri/FACTORY-SEED?authSource=admin --out ${dump_dir}
+authOption=$([ "$src_auth" == "noAuth" ] && echo "" || echo "authSource=admin")
+mongodump --uri $src_uri/FACTORY-SEED?$authOption --out ${dump_dir}
 dumped=$?
 if [ $dumped -eq 0 ]
 then
