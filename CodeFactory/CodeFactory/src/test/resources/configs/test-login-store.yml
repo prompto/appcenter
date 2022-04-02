@@ -1,6 +1,6 @@
 http:
-  protocol: https
-  port: 443
+  protocol: http
+  port: 8000
   authentication:
     source:
       factory: prompto.security.auth.source.StoredPasswordDigestAuthenticationSourceFactory
