@@ -142,7 +142,7 @@ public class Application {
 	}
 
 	private static void migrateProjectsIfRequired() {
-		ICodeStore codeStore = codeStoreUsingDataStore();
+		ICodeStore codeStore = codeStoreUsingDataStore("ProjectMigrator", PromptoVersion.LATEST);
 		codeStore.upgradeIfRequired();
 	}
 
@@ -318,7 +318,7 @@ public class Application {
 
 	public static void createLibraries() {
 		try {
-			ICodeStore codeStore = codeStoreUsingDataStore();
+			ICodeStore codeStore = codeStoreUsingDataStore("LibraryCreator", PromptoVersion.LATEST);
 			createResourceLibraries(codeStore, "thesaurus/", "react-file-uploader/", "react-bootstrap-3/", "react-bootstrap-4/");
 			if(isSeedDataStore()) {
 				createResourceLibraries(codeStore, "resource-editors/");
@@ -341,9 +341,9 @@ public class Application {
 		doImportModule(codeStore, url);
 	}
 
-	private static ICodeStore codeStoreUsingDataStore() {
+	private static ICodeStore codeStoreUsingDataStore(String application, PromptoVersion version) {
 		ICodeStore runtime = ImmutableCodeStore.bootstrapRuntime(()->Libraries.getPromptoLibraries(Libraries.class, AppServer.class));
-		return new MutableCodeStore(DataStore.getInstance(), runtime, null, null, null);
+		return new MutableCodeStore(DataStore.getInstance(), runtime, application, version, null);
 	}
 
 	private static void doImportModule(ICodeStore codeStore, URL url) throws Exception {
@@ -362,7 +362,7 @@ public class Application {
 	
 	public static void importSample(URL sample) {
 		try {
-			ICodeStore codeStore = codeStoreUsingDataStore();
+			ICodeStore codeStore = codeStoreUsingDataStore("SampleImporter", PromptoVersion.LATEST);
 			doImportModule(codeStore, sample);
 		} catch(Throwable t) {
 			t.printStackTrace();
