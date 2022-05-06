@@ -24,7 +24,7 @@ native widget BreadcrumbItem {
 
 }
 
-@WidgetProperties({ active: Boolean, block: Boolean, bsClass: Text, bsSize: <"lg", "large", "sm", "small", "xs", "xsmall">, bsStyle: <"success", "warning", "danger", "info", "default", "primary", "link">, componentClass: <Text, Type<ReactWidget>>, disabled: Boolean, href: Text, onClick: ClickEventCallback, type: <"button", "reset", "submit"> })
+@WidgetProperties({ active: Boolean, block: Boolean, bsClass: Text, bsSize: <"lg", "large", "sm", "small", "xs", "xsmall">, bsStyle: <"success", "warning", "danger", "info", "default", "primary", "link">, componentClass: <Text, Type<ReactWidget>>, disabled: Boolean, href: Text, onClick: MouseEventCallback, type: <"button", "reset", "submit"> })
 native widget Button {
 
     category bindings {
@@ -284,7 +284,7 @@ native widget PanelCollapse {
 
 }
 
-@WidgetProperties({ componentClass: <Text, Type<ReactWidget>>, onClick: ClickEventCallback })
+@WidgetProperties({ componentClass: <Text, Type<ReactWidget>>, onClick: MouseEventCallback })
 native widget PanelToggle {
 
     category bindings {
@@ -425,7 +425,7 @@ native widget NavbarText {
 
 }
 
-@WidgetProperties({ children: Html[], onClick: ClickEventCallback })
+@WidgetProperties({ children: Html[], onClick: MouseEventCallback })
 native widget NavbarToggle {
 
     category bindings {
@@ -476,7 +476,7 @@ native widget NavDropdown {
 
 }
 
-@WidgetProperties({ active: Boolean, disabled: Boolean, eventKey: Any, href: Text, onClick: ClickEventCallback, onSelect: ItemSelectedCallback, role: Text })
+@WidgetProperties({ active: Boolean, disabled: Boolean, eventKey: Any, href: Text, onClick: MouseEventCallback, onSelect: ItemSelectedCallback, role: Text })
 native widget NavItem {
 
     category bindings {
@@ -580,7 +580,7 @@ native widget DropdownButton {
 
 }
 
-@WidgetProperties({ bsSize: Text, bsStyle: Text, children: Html[], defaultOpen: Boolean, href: Text, innerRef: WidgetCallback, onClick: ClickEventCallback, open: Boolean, title: { type: Any, required: true }, toggleLabel: Text })
+@WidgetProperties({ bsSize: Text, bsStyle: Text, children: Html[], defaultOpen: Boolean, href: Text, innerRef: WidgetCallback, onClick: MouseEventCallback, open: Boolean, title: { type: Any, required: true }, toggleLabel: Text })
 native widget SplitButton {
 
     category bindings {
@@ -605,7 +605,7 @@ native widget ContextMenu {
 
 }
 
-@WidgetProperties({ active: Boolean, bsClass: Text, disabled: Boolean, divider: Boolean, eventKey: Any, header: Boolean, href: Text, onClick: ClickEventCallback, onSelect: ItemSelectedCallback })
+@WidgetProperties({ active: Boolean, bsClass: Text, disabled: Boolean, divider: Boolean, eventKey: Any, header: Boolean, href: Text, onClick: MouseEventCallback, onSelect: ItemSelectedCallback })
 native widget MenuItem {
 
     category bindings {
@@ -878,7 +878,7 @@ native widget Pager {
 
 }
 
-@WidgetProperties({ disabled: Boolean, eventKey: Any, next: Boolean, onClick: ClickEventCallback, onSelect: ItemSelectedCallback, previous: Boolean })
+@WidgetProperties({ disabled: Boolean, eventKey: Any, next: Boolean, onClick: MouseEventCallback, onSelect: ItemSelectedCallback, previous: Boolean })
 native widget PagerItem {
 
     category bindings {
@@ -1021,7 +1021,7 @@ native widget ListGroup {
 
 }
 
-@WidgetProperties({ active: Any, bsClass: Text, bsStyle: <"success", "warning", "danger", "info">, disabled: Any, header: Any, href: Text, listItem: Boolean, onClick: ClickEventCallback, type: Text })
+@WidgetProperties({ active: Any, bsClass: Text, bsStyle: <"success", "warning", "danger", "info">, disabled: Any, header: Any, href: Text, listItem: Boolean, onClick: MouseEventCallback, type: Text })
 native widget ListGroupItem {
 
     category bindings {
@@ -1034,7 +1034,7 @@ native widget ListGroupItem {
 
 }
 
-@WidgetProperties({ animation: <Boolean, Text>, container: <Text, Callback>, containerPadding: Integer, defaultOverlayShown: Boolean, delay: Integer, delayHide: Integer, delayShow: Integer, onBlur: Callback, onClick: ClickEventCallback, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, onFocus: Callback, onHide: Callback, onMouseOut: MouseEventCallback, onMouseOver: MouseEventCallback, onRendered: Callback, overlay: { type: Any, required: true }, placement: <"top", "right", "bottom", "left">, rootClose: Boolean, rootCloseEvent: <"click", "mousedown">, shouldUpdatePosition: Boolean, transition: Text, trigger: Any })
+@WidgetProperties({ animation: <Boolean, Text>, container: <Text, Callback>, containerPadding: Integer, defaultOverlayShown: Boolean, delay: Integer, delayHide: Integer, delayShow: Integer, onBlur: Callback, onClick: MouseEventCallback, onEnter: Callback, onEntered: Callback, onEntering: Callback, onExit: Callback, onExited: Callback, onExiting: Callback, onFocus: Callback, onHide: Callback, onMouseOut: MouseEventCallback, onMouseOver: MouseEventCallback, onRendered: Callback, overlay: { type: Any, required: true }, placement: <"top", "right", "bottom", "left">, rootClose: Boolean, rootCloseEvent: <"click", "mousedown">, shouldUpdatePosition: Boolean, transition: Text, trigger: Any })
 native widget OverlayTrigger {
 
     category bindings {

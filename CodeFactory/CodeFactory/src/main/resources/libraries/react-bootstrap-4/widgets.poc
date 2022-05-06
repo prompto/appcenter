@@ -24,7 +24,7 @@ native widget AccordionCollapse {
 
 }
 
-@WidgetProperties({ as: Text, eventKey: { type: Text, required: true }, onClick: ClickEventCallback })
+@WidgetProperties({ as: Text, eventKey: { type: Text, required: true }, onClick: MouseEventCallback })
 native widget AccordionToggle {
 
     category bindings {
@@ -427,7 +427,7 @@ native widget DropdownDivider {
 
 }
 
-@WidgetProperties({ bsPrefix: Text, disabled: Boolean, href: Text, id: Text, menuAlign: <<"left", "right">, Any, Any, Any, Any>, menuRole: Text, onClick: ClickEventCallback, renderMenuOnMount: Boolean, rootCloseEvent: Text, size: Text, title: { type: Any, required: true }, variant: Text })
+@WidgetProperties({ bsPrefix: Text, disabled: Boolean, href: Text, id: Text, menuAlign: <<"left", "right">, Any, Any, Any, Any>, menuRole: Text, onClick: MouseEventCallback, renderMenuOnMount: Boolean, rootCloseEvent: Text, size: Text, title: { type: Any, required: true }, variant: Text })
 native widget DropdownButton {
 
     category bindings {
@@ -440,7 +440,7 @@ native widget DropdownButton {
 
 }
 
-@WidgetProperties({ active: Boolean, as: Text, bsPrefix: Text, disabled: Boolean, eventKey: Any, href: Text, onClick: ClickEventCallback, onSelect: AnyCallback })
+@WidgetProperties({ active: Boolean, as: Text, bsPrefix: Text, disabled: Boolean, eventKey: Any, href: Text, onClick: MouseEventCallback, onSelect: AnyCallback })
 native widget DropdownItem {
 
     category bindings {
@@ -827,7 +827,7 @@ native widget ListGroup {
 
 }
 
-@WidgetProperties({ action: Boolean, active: Boolean, as: Text, bsPrefix: Text, disabled: Boolean, eventKey: Text, href: Text, onClick: ClickEventCallback, variant: Text })
+@WidgetProperties({ action: Boolean, active: Boolean, as: Text, bsPrefix: Text, disabled: Boolean, eventKey: Text, href: Text, onClick: MouseEventCallback, variant: Text })
 native widget ListGroupItem {
 
     category bindings {
@@ -1035,7 +1035,7 @@ native widget NavbarText {
 
 }
 
-@WidgetProperties({ as: Text, bsPrefix: Text, children: Any, label: Text, onClick: ClickEventCallback })
+@WidgetProperties({ as: Text, bsPrefix: Text, children: Any, label: Text, onClick: MouseEventCallback })
 native widget NavbarToggle {
 
     category bindings {
@@ -1048,7 +1048,7 @@ native widget NavbarToggle {
 
 }
 
-@WidgetProperties({ active: Boolean, bsPrefix: Text, disabled: Boolean, id: Text, menuRole: Text, onClick: ClickEventCallback, renderMenuOnMount: Boolean, rootCloseEvent: Text, title: { type: Any, required: true } })
+@WidgetProperties({ active: Boolean, bsPrefix: Text, disabled: Boolean, id: Text, menuRole: Text, onClick: MouseEventCallback, renderMenuOnMount: Boolean, rootCloseEvent: Text, title: { type: Any, required: true } })
 native widget NavDropdown {
 
     category bindings {
@@ -1139,7 +1139,7 @@ native widget Pagination {
 
 }
 
-@WidgetProperties({ active: Boolean, activeLabel: Text, disabled: Boolean, onClick: ClickEventCallback })
+@WidgetProperties({ active: Boolean, activeLabel: Text, disabled: Boolean, onClick: MouseEventCallback })
 native widget PaginationItem {
 
     category bindings {
@@ -1264,7 +1264,7 @@ native widget Spinner {
 
 }
 
-@WidgetProperties({ bsPrefix: Text, disabled: Boolean, href: Text, id: Text, menuAlign: <<"left", "right">, Any, Any, Any, Any>, menuRole: Text, onClick: ClickEventCallback, renderMenuOnMount: Boolean, rootCloseEvent: Text, size: Text, target: Text, title: { type: Any, required: true }, toggleLabel: Text, type: Text, variant: Text })
+@WidgetProperties({ bsPrefix: Text, disabled: Boolean, href: Text, id: Text, menuAlign: <<"left", "right">, Any, Any, Any, Any>, menuRole: Text, onClick: MouseEventCallback, renderMenuOnMount: Boolean, rootCloseEvent: Text, size: Text, target: Text, title: { type: Any, required: true }, toggleLabel: Text, type: Text, variant: Text })
 native widget SplitButton {
 
     category bindings {
