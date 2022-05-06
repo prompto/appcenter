@@ -240,7 +240,9 @@ public class SampleImporter {
 
 	private void storeTextResource(ICodeStore codeStore, URL resourceUrl, String mimeType) throws IOException {
 		String fileName = URLUtils.extractFileName(resourceUrl);
-		String fullName = module.getName().toLowerCase().replaceAll(" ", "-") + "/" + fileName;
+		String[] parts = fileName.split("/");
+		fileName = parts[parts.length - 1]; // assuming flat structure
+		String fullName = module.getResourcePrefix() + "/" + fileName;
 		TextResource resource = new TextResource();
 		resource.setMimeType(mimeType);
 		resource.setName(fullName);
