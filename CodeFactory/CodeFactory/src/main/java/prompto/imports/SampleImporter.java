@@ -4,18 +4,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Paths;
-import java.nio.file.spi.FileSystemProvider;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import prompto.code.Dependency;
 import prompto.code.ICodeStore;
@@ -28,12 +30,8 @@ import prompto.imports.populator.ModulePopulator;
 import prompto.intrinsic.PromptoVersion;
 import prompto.utils.Logger;
 import prompto.utils.StreamUtils;
+import prompto.utils.URLUtils;
 import prompto.value.ImageValue;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class SampleImporter {
 
@@ -240,9 +238,8 @@ public class SampleImporter {
 			return "jar".equals(resource.getProtocol());
 	}
 
-	private void storeTextResource(ICodeStore codeStore, URL resourceUrl, String mimeType) throws IOException, URISyntaxException {
-		initializeJarFileSystem(resourceUrl.toURI());
-		String fileName = Paths.get(resourceUrl.toURI()).getFileName().toString();
+	private void storeTextResource(ICodeStore codeStore, URL resourceUrl, String mimeType) throws IOException {
+		String fileName = URLUtils.extractFileName(resourceUrl);
 		String fullName = module.getName().toLowerCase().replaceAll(" ", "-") + "/" + fileName;
 		TextResource resource = new TextResource();
 		resource.setMimeType(mimeType);
@@ -250,21 +247,6 @@ public class SampleImporter {
 		resource.setLastModified(OffsetDateTime.now());
 		resource.setBody(StreamUtils.readString(resourceUrl));
 		codeStore.storeResource(resource, module.getDbId());
-	}
-
-	private void initializeJarFileSystem(URI uri) throws IOException {
-		if("jar".equals(uri.getScheme())) {
-		  for (FileSystemProvider provider: FileSystemProvider.installedProviders()) {
-		        if (provider.getScheme().equalsIgnoreCase("jar")) {
-		            try(var fs1 = provider.getFileSystem(uri)) {
-		            } catch (FileSystemNotFoundException e) {
-		                // in this case we need to initialize it first:
-		                try(var fs2 = provider.newFileSystem(uri, Collections.emptyMap())) {
-		                }
-		            }
-		        }
-		    }
-		}
 	}
 
 }
