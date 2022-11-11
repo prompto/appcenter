@@ -55,7 +55,7 @@ public class TestModuleImporter {
 		assertNotNull(blob);
 		Identifier blobId = new Identifier("blob");
 		Context context = ApplicationContext.get().newLocalContext();
-		context.registerValue(new Variable(blobId, BlobType.instance()));
+		context.registerInstance(new Variable(blobId, BlobType.instance()));
 		context.setValue(blobId, blob);
 		Argument argument = new Argument(new CategoryParameter(BlobType.instance(), blobId), new InstanceExpression(blobId));
 		ArgumentList arguments = new ArgumentList(Collections.singletonList(argument));
